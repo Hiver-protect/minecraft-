@@ -111,11 +111,11 @@ function createIsland(p: player, x: number, z: number):
         if loop-entity is not a player:
             delete loop-entity
 
-    loop integers from -25 to 25:
+    loop integers from -8 to 8:
         set {_dx} to loop-integer-1
-        loop integers from -25 to 25:
+        loop integers from -8 to 8:
             set {_dz} to loop-integer-2
-            loop integers from 70 to 190:
+            loop integers from 144 to 165:
                 set {_bLoc} to location(({_x} + {_dx}), loop-integer-3, ({_z} + {_dz}), {_w})
                 if block at {_bLoc} is not air:
                     if block at {_bLoc} is chest or trapped chest or barrel or hopper or furnace or dropper or dispenser:
