@@ -142,16 +142,17 @@ on death of warden:
     drop 4 of golden apple at victim's location
     spawn 150 of xp at victim's location
 
-# ==================== COMMANDES ADMIN (/wardenboss) ====================
+# ==================== COMMANDES ADMIN (/boss & /wardenboss) ====================
 
 command /wardenboss [<text>]:
+    aliases: /spawnboss, /warden, /titan
     permission: op
     permission message: &cTu n'as pas la permission !
     trigger:
-        if arg-1 is "spawn":
+        if arg-1 is "spawn" or "create":
             spawn 1 warden at player
-            send "{@prefix}&aWarden Titan invoqué à ta position !" to player
-        else if arg-1 is "kill":
+            send "{@prefix}&aWarden Titan invoqué à votre position !" to player
+        else if arg-1 is "kill" or "clear":
             set {_c} to 0
             loop all entities in world of player:
                 if "%type of loop-entity%" is "warden":
@@ -159,8 +160,104 @@ command /wardenboss [<text>]:
                     add 1 to {_c}
             send "{@prefix}&c%{_c}% Warden(s) supprimé(s) dans ce monde." to player
         else:
-            send "" to player
-            send "{@prefix}&6&lCOMMANDES WARDEN TITAN :" to player
-            send " &e▸ &f/wardenboss spawn &7- Invoquer le Boss" to player
-            send " &e▸ &f/wardenboss kill &7- Supprimer les Boss" to player
-            send "" to player
+            execute player command "boss"
+
+command /boss [<text>]:
+    aliases: /bosses, /menuboss, /bossmenu
+    permission: op
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is "warden" or "titan":
+            spawn 1 warden at player
+            send "{@prefix}&aWarden Titan invoqué !" to player
+            stop
+        else if arg-1 is "wither":
+            spawn 1 wither at player
+            send "{@prefix}&aWither Boss invoqué !" to player
+            stop
+        else if arg-1 is "dragon":
+            spawn 1 ender dragon at player
+            send "{@prefix}&aDragon de l'Ender invoqué !" to player
+            stop
+        else if arg-1 is "guard" or "garde":
+            spawn 1 zombie at player
+            set {_b} to last spawned zombie
+            set name of {_b} to "&6&l✦ GARDE CÉLESTE ✦ &c[Mini-Boss]"
+            set max health of {_b} to 60
+            set health of {_b} to 60
+            equip {_b} with netherrite helmet
+            equip {_b} with golden chestplate
+            equip {_b} with iron sword
+            set {skyblock_boss::%uuid of {_b}%} to "garde_celeste"
+            send "{@prefix}&aGarde Céleste (Mini-Boss) invoqué !" to player
+            stop
+        else if arg-1 is "spectre":
+            spawn 1 skeleton at player
+            set {_b} to last spawned skeleton
+            set name of {_b} to "&d&l✦ SPECTRE DU NÉANT ✦ &c[Mini-Boss]"
+            set max health of {_b} to 50
+            set health of {_b} to 50
+            equip {_b} with diamond helmet
+            equip {_b} with bow of power 2
+            set {skyblock_boss::%uuid of {_b}%} to "spectre_neant"
+            send "{@prefix}&aSpectre du Néant (Mini-Boss) invoqué !" to player
+            stop
+            
+        # Menu GUI Interactif (3 Rows)
+        set {_gui} to a new chest inventory with 3 rows named "&8» &4&lINVOQUER UN BOSS &8(Admin)"
+        loop 27 times:
+            set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
+            
+        # Coins rouges
+        set slot 0 of {_gui} to 1 of red stained glass pane named " "
+        set slot 8 of {_gui} to 1 of red stained glass pane named " "
+        set slot 18 of {_gui} to 1 of red stained glass pane named " "
+        set slot 26 of {_gui} to 1 of red stained glass pane named " "
+        
+        # 1. WARDEN TITAN (Slot 10)
+        set slot 10 of {_gui} to 1 of sculk catalyst named "&4&l✦ WARDEN TITAN ✦ &c(Boss Ultime)" with lore "&8&m─────────────────────────" and "&7• Santé : &c500❤ &7(3 Phases Épiques)" and "&7• Attaques : &3Vortex Sculk & Rayon Sonique" and "&7• Butin : &a+1,500$&7, &d✦ Lame du Sculk ✦" and "&7& et &bClé de Caisse Titanesque" and "&8&m─────────────────────────" and "&a▸ Cliquer pour Invoquer (/boss warden)"
+        
+        # 2. WITHER BOSS (Slot 12)
+        set slot 12 of {_gui} to 1 of wither skeleton skull named "&8&l✦ WITHER BOSS ✦ &c(Vanilla)" with lore "&8&m─────────────────────────" and "&7• Santé : &c150❤ / 300❤" and "&7• Attaques : &8Crânes explosifs & Effet Wither" and "&7• Butin : &bÉtoile du Nether" and "&8&m─────────────────────────" and "&a▸ Cliquer pour Invoquer (/boss wither)"
+        
+        # 3. ENDER DRAGON (Slot 14)
+        set slot 14 of {_gui} to 1 of dragon egg named "&d&l✦ ENDER DRAGON ✦ &c(Vanilla)" with lore "&8&m─────────────────────────" and "&7• Santé : &c200❤" and "&7• Attaques : &dSouffle de Dragon & Vol Céleste" and "&7• Butin : &eOeuf de Dragon & Beaucoup d'XP" and "&8&m─────────────────────────" and "&a▸ Cliquer pour Invoquer (/boss dragon)"
+        
+        # 4. GARDE CÉLESTE (Slot 16)
+        set slot 16 of {_gui} to 1 of golden chestplate named "&6&l✦ GARDE CÉLESTE ✦ &e(Mini-Boss)" with lore "&8&m─────────────────────────" and "&7• Santé : &e60❤" and "&7• Équipement : &8Netherite & Or" and "&7• Butin : &6Lingots d'or & Diamants" and "&8&m─────────────────────────" and "&a▸ Cliquer pour Invoquer (/boss guard)"
+        
+        # 5. SPECTRE DU NÉANT (Slot 22)
+        set slot 22 of {_gui} to 1 of bow named "&d&l✦ SPECTRE DU NÉANT ✦ &d(Mini-Boss)" with lore "&8&m─────────────────────────" and "&7• Santé : &d50❤" and "&7• Équipement : &bDiamant & Arc Power" and "&7• Butin : &aLivre Enchanté & XP" and "&8&m─────────────────────────" and "&a▸ Cliquer pour Invoquer (/boss spectre)"
+        
+        open {_gui} to player
+        play sound "block.chest.open" to player
+
+on inventory click:
+    if name of event-inventory is "&8» &4&lINVOQUER UN BOSS &8(Admin)":
+        cancel event
+        
+        # 1. Warden Titan (Slot 10)
+        if index of event-slot is 10:
+            close player's inventory
+            execute player command "boss warden"
+            
+        # 2. Wither (Slot 12)
+        else if index of event-slot is 12:
+            close player's inventory
+            execute player command "boss wither"
+            
+        # 3. Dragon (Slot 14)
+        else if index of event-slot is 14:
+            close player's inventory
+            execute player command "boss dragon"
+            
+        # 4. Garde Céleste (Slot 16)
+        else if index of event-slot is 16:
+            close player's inventory
+            execute player command "boss guard"
+            
+        # 5. Spectre du Néant (Slot 22)
+        else if index of event-slot is 22:
+            close player's inventory
+            execute player command "boss spectre"
+
