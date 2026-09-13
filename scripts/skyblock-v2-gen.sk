@@ -25,6 +25,27 @@ on load:
         set {skyblock_next_x} to 0
     if {skyblock_next_z} is not set:
         set {skyblock_next_z} to 0
+        
+    # Auto-Récupération & Sauvegarde garantie des domaines existants
+    if {island::copilote420::x} is not set:
+        set {island::copilote420::x} to 10000
+        set {island::copilote420::y} to 150
+        set {island::copilote420::z} to 0
+        set {island::copilote420::world} to world "skyblock"
+        set {island_home::copilote420} to location(10000.5, 151, 2.5, world "skyblock")
+        set {islands_list::copilote420} to true
+
+    if {island::jeremydp21::x} is not set:
+        set {island::jeremydp21::x} to 0
+        set {island::jeremydp21::y} to 150
+        set {island::jeremydp21::z} to 0
+        set {island::jeremydp21::world} to world "skyblock"
+        set {island_home::jeremydp21} to location(0.5, 151, 2.5, world "skyblock")
+        set {islands_list::jeremydp21} to true
+
+    set {islands_list::copilote420} to true
+    set {islands_list::jeremydp21} to true
+
     wait 10 ticks
     loop all players:
         if "%world of loop-player%" contains "skyblock":
@@ -41,13 +62,36 @@ on join:
     set {_u} to uuid of player
     set {_name} to "%player%"
     
-    # 1. Synchronisation UUID <-> Pseudo (Empêche toute perte d'île)
+    # 1. Rétablissement prioritaire pour les membres connus
+    if {_name} is "copilote420":
+        if {island::copilote420::x} is not set:
+            set {island::copilote420::x} to 10000
+            set {island::copilote420::y} to 150
+            set {island::copilote420::z} to 0
+            set {island::copilote420::world} to world "skyblock"
+            set {island_home::copilote420} to location(10000.5, 151, 2.5, world "skyblock")
+            set {island_uuid::%{_u}%::x} to 10000
+            set {island_uuid::%{_u}%::z} to 0
+            set {islands_list::copilote420} to true
+    else if {_name} is "jeremydp21":
+        if {island::jeremydp21::x} is not set:
+            set {island::jeremydp21::x} to 0
+            set {island::jeremydp21::y} to 150
+            set {island::jeremydp21::z} to 0
+            set {island::jeremydp21::world} to world "skyblock"
+            set {island_home::jeremydp21} to location(0.5, 151, 2.5, world "skyblock")
+            set {island_uuid::%{_u}%::x} to 0
+            set {island_uuid::%{_u}%::z} to 0
+            set {islands_list::jeremydp21} to true
+    
+    # 2. Synchronisation bidirectionnelle UUID <-> Pseudo
     if {island_uuid::%{_u}%::x} is set:
-        if {island::%{_name}%::x} is not set:
-            set {island::%{_name}%::x} to {island_uuid::%{_u}%::x}
-            set {island::%{_name}%::y} to 150
-            set {island::%{_name}%::z} to {island_uuid::%{_u}%::z}
-            set {island::%{_name}%::world} to {island_uuid::%{_u}%::world}
+        set {island::%{_name}%::x} to {island_uuid::%{_u}%::x}
+        set {island::%{_name}%::y} to 150
+        set {island::%{_name}%::z} to {island_uuid::%{_u}%::z}
+        set {island::%{_name}%::world} to {island_uuid::%{_u}%::world}
+        set {islands_list::%{_name}%} to true
+        if {island_uuid::%{_u}%::home} is set:
             set {island_home::%{_name}%} to {island_uuid::%{_u}%::home}
     else if {island::%{_name}%::x} is set:
         set {island_uuid::%{_u}%::x} to {island::%{_name}%::x}
@@ -55,8 +99,9 @@ on join:
         set {island_uuid::%{_u}%::z} to {island::%{_name}%::z}
         set {island_uuid::%{_u}%::world} to {island::%{_name}%::world}
         set {island_uuid::%{_u}%::home} to {island_home::%{_name}%}
+        set {islands_list::%{_name}%} to true
         
-    # 2. Auto-Détection si le joueur se trouve sur une île physique existante
+    # 3. Auto-Détection si le joueur se trouve sur une île physique existante
     if "%world of player%" contains "skyblock":
         if {island::%{_name}%::x} is not set:
             set {_px} to x-coordinate of player
@@ -69,6 +114,7 @@ on join:
                 set {island_home::%{_name}%} to location(({_roundedX} + 0.5), 151, 2.5, world "skyblock")
                 set {island_uuid::%{_u}%::x} to {_roundedX}
                 set {island_uuid::%{_u}%::z} to 0
+                set {islands_list::%{_name}%} to true
                 send "{@prefix}&aVotre île a été automatiquement reconnue et rattachée (X: %{_roundedX}%) !" to player
                 
         set {_owner} to "%player%"
@@ -144,19 +190,8 @@ function createIsland(p: player, x: number, z: number):
         if loop-entity is not a player:
             delete loop-entity
 
-    loop integers from -8 to 8:
-        set {_dx} to loop-integer-1
-        loop integers from -8 to 8:
-            set {_dz} to loop-integer-2
-            loop integers from 144 to 165:
-                set {_bLoc} to location(({_x} + {_dx}), loop-integer-3, ({_z} + {_dz}), {_w})
-                if block at {_bLoc} is not air:
-                    if block at {_bLoc} is chest or trapped chest or barrel or hopper or furnace or dropper or dispenser:
-                        clear inventory of block at {_bLoc}
-                    set block at {_bLoc} to air
-
-    # Purge des items résiduels au sol
-    loop entities in radius 50 of {_centerLoc}:
+    # Purge rapide des entites sans lag
+    loop entities in radius 25 of {_centerLoc}:
         if loop-entity is not a player:
             delete loop-entity
 
@@ -315,11 +350,11 @@ command /isadmin [<text>] [<text>] [<text>] [<text>]:
             send "" to player
             send "&e&l✦ LISTE DES ÎLES SKYBLOCK ENREGISTRÉES ✦" to player
             set {_count} to 0
-            loop {island::*}:
+            loop {islands_list::*}:
                 add 1 to {_count}
             set {_gui} to a new chest inventory with 6 rows named "<#FFA502>&lMINE<#FFFFFF>&lSTARS &8▸ &6Îles Skyblock &8(&e%{_count}%&8)"
             set {_slot} to 0
-            loop {island::*}:
+            loop {islands_list::*}:
                 set {_owner} to loop-index
                 set {_x} to {island::%{_owner}%::x}
                 set {_z} to {island::%{_owner}%::z}
@@ -567,7 +602,7 @@ command /skyblock [<text>] [<text>] [<number>]:
             stop
 
         # 2. HOME / TP (REJOINDRE SON ÎLE OU CELLE DE SON ÉQUIPE)
-        else if {_cmd} is "home" or "go" or "tp" or "rejoindre":
+        else if {_cmd} is "home" or "go" or "tp" or "rejoindre" or "join" or "load":
             if {island::%{_owner}%::x} is set:
                 set {_w} to {island::%{_owner}%::world}
                 if {_w} is not set:
@@ -588,6 +623,11 @@ command /skyblock [<text>] [<text>] [<number>]:
                 play sound "entity.experience_orb.pickup" to player
             else:
                 send "{@prefix}&cTu n'as pas encore d'île ! Fais &e/is &cpour la créer." to player
+            stop
+
+        # 2b. PARAMÈTRES / MOBS / SÉCURITÉ D'ÎLE
+        else if {_cmd} is "setting" or "settings" or "mobs" or "mob" or "securite":
+            execute player command "is-gui-mobs"
             stop
 
         # 3. KIT DE SECOURS (/is kit)

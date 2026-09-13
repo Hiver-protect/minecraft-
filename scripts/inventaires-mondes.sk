@@ -108,7 +108,7 @@ function handleInventorySwitch(p: player, targetWorld: text):
 
 on load:
     execute console command "mv gamerule set keep_inventory true *"
-    execute console command "mv gamerule set keepInventory true *"
+    execute console command "gamerule keepInventory true"
 
 on world change:
     set {_targetWorld} to "%event-world%"
