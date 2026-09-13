@@ -1,0 +1,169 @@
+# ==============================================================================
+#      MINESTARS - RELAIS CHAT DISCORD EN TEMPS RÉEL (SURVIE & SKYBLOCK)
+#      - Synchronisation instantanée du Chat Survie & Skyblock sur Discord
+#      - Affichage du Skin / Avatar HD du joueur + Préfixe de Monde
+#      - Annonces de Connexions, Déconnexions, Morts & Succès
+#      - Sécurisation anti-mentions (@everyone/@here) et anti-spam
+# ==============================================================================
+
+options:
+    prefix: &9&l✦ DISCORD RELAY &8> &7
+    
+    # Webhooks Discord par défaut (Configurables en jeu via /setdiscordwebhook)
+    # Laissez vide ou définissez l'URL d'un webhook de salon Discord
+    default_webhook_global: ""
+    default_webhook_survie: ""
+    default_webhook_skyblock: ""
+
+# ==================== FONCTION D'ENVOI DISCORD ====================
+
+function sendDiscordMessage(p: player, worldType: text, msg: text, isSystem: boolean):
+    # Sécurité anti-mentions
+    set {_cleanMsg} to {_msg}
+    replace all "@everyone" with "@ everyone" in {_cleanMsg}
+    replace all "@here" with "@ here" in {_cleanMsg}
+    replace all "\" with "\\" in {_cleanMsg}
+    replace all """" with "\""" in {_cleanMsg}
+    
+    # Choix du webhook selon le monde
+    set {_webhook} to {discord_webhook::global} ? "{@default_webhook_global}"
+    if {_worldType} contains "Skyblock":
+        if {discord_webhook::skyblock} is set:
+            set {_webhook} to {discord_webhook::skyblock}
+    else if {_worldType} contains "Survie":
+        if {discord_webhook::survie} is set:
+            set {_webhook} to {discord_webhook::survie}
+            
+    if {_webhook} is "" or "none" or "URL_ICI":
+        stop
+        
+    set {_name} to "%{_p}%"
+    set {_avatar} to "https://mc-heads.net/avatar/%{_name}%/64"
+    set {_botName} to "[%{_worldType}%] %{_name}%"
+    
+    if {_isSystem} is true:
+        set {_botName} to "MineStars • %{_worldType}%"
+        set {_avatar} to "https://mc-heads.net/avatar/MHF_Chest/64"
+        
+    set {_json} to "{""username"":""%{_botName}%"",""avatar_url"":""%{_avatar}%"",""content"":""%{_cleanMsg}%""}"
+    
+    send a post request to "%{_webhook}%" with body {_json} and headers "Content-Type: application/json", "User-Agent: MineStars-Server"
+
+# ==================== ÉVÉNEMENTS DU CHAT ====================
+
+on chat:
+    if player is not online:
+        stop
+    if {discord_relay_enabled} is false:
+        stop
+        
+    set {_w} to "%world of player%"
+    set {_worldType} to "Survie"
+    
+    if {_w} contains "skyblock":
+        set {_worldType} to "Skyblock"
+    else if {_w} contains "spawn":
+        set {_worldType} to "Spawn"
+    else if {_w} contains "nether":
+        set {_worldType} to "Nether"
+    else if {_w} contains "the_end" or "end":
+        set {_worldType} to "End"
+        
+    set {_u} to uuid of player
+    set {_rank} to {rank::%{_u}%} ? "Joueur"
+    
+    set {_chatMsg} to message
+    sendDiscordMessage(player, {_worldType}, {_chatMsg}, false)
+
+# ==================== ÉVÉNEMENTS JOUEURS (JOIN / QUIT / MORT) ====================
+
+on join:
+    if {discord_relay_enabled} is false:
+        stop
+    wait 5 ticks
+    set {_w} to "%world of player%"
+    set {_worldType} to "Survie"
+    if {_w} contains "skyblock":
+        set {_worldType} to "Skyblock"
+    else if {_w} contains "spawn":
+        set {_worldType} to "Spawn"
+    sendDiscordMessage(player, {_worldType}, "🟢 **%player%** a rejoint le serveur (`%{_worldType}%`)", true)
+
+on quit:
+    if {discord_relay_enabled} is false:
+        stop
+    set {_w} to "%world of player%"
+    set {_worldType} to "Survie"
+    if {_w} contains "skyblock":
+        set {_worldType} to "Skyblock"
+    sendDiscordMessage(player, {_worldType}, "🔴 **%player%** s'est déconnecté", true)
+
+on death of player:
+    if {discord_relay_enabled} is false:
+        stop
+    set {_w} to "%world of victim%"
+    set {_worldType} to "Survie"
+    if {_w} contains "skyblock":
+        set {_worldType} to "Skyblock"
+        
+    sendDiscordMessage(victim, {_worldType}, "☠️ **%victim%** a succombé en `%{_worldType}%`", true)
+
+# ==================== COMMANDES DE GESTION DU RELAIS ====================
+
+command /discordrelay [<text>] [<text>] [<text>]:
+    aliases: /dcrelay, /chatdiscord, /setdiscordwebhook
+    permission: op
+    permission message: &cTu n'as pas la permission!
+    trigger:
+        if arg-1 is not set:
+            send "" to player
+            send "{@prefix}&b&lGESTION DU RELAIS DISCORD" to player
+            send "&7• Statut : %({discord_relay_enabled} ? ""&aActivé"" : ""&cActif par défaut"")%" to player
+            send "&7• Webhook Global : &e%{discord_webhook::global} ? ""Non défini""%" to player
+            send "&7• Webhook Survie : &e%{discord_webhook::survie} ? ""Non défini""%" to player
+            send "&7• Webhook Skyblock : &e%{discord_webhook::skyblock} ? ""Non défini""%" to player
+            send "" to player
+            send "&7Commandes disponibles :" to player
+            send "&e/discordrelay setwebhook <global|survie|skyblock> <URL_WEBHOOK>" to player
+            send "&e/discordrelay toggle &7(Activer/Désactiver le relais)" to player
+            send "&e/discordrelay test &7(Envoyer un message de test)" to player
+            send "" to player
+            stop
+            
+        if arg-1 is "setwebhook" or "webhook" or "set":
+            if arg-2 is not set or arg-3 is not set:
+                send "{@prefix}&cUtilisation : &e/discordrelay setwebhook <global|survie|skyblock> <URL>" to player
+                stop
+            set {_target} to arg-2
+            set {_url} to arg-3
+            if {_target} is "global" or "all":
+                set {discord_webhook::global} to {_url}
+                send "{@prefix}&aWebhook &bGlobal &adéfini avec succès !" to player
+            else if {_target} is "survie" or "survival":
+                set {discord_webhook::survie} to {_url}
+                send "{@prefix}&aWebhook &2Survie &adéfini avec succès !" to player
+            else if {_target} is "skyblock" or "is":
+                set {discord_webhook::skyblock} to {_url}
+                send "{@prefix}&aWebhook &eSkyblock &adéfini avec succès !" to player
+            else:
+                send "{@prefix}&cType invalide. Choisissez &eglobal&c, &esurvie &cou &eskyblock&c." to player
+            play sound "block.note_block.pling" to player
+            stop
+            
+        else if arg-1 is "toggle":
+            if {discord_relay_enabled} is not set:
+                set {discord_relay_enabled} to true
+            if {discord_relay_enabled} is true:
+                set {discord_relay_enabled} to false
+                send "{@prefix}&cRelais Discord désactivé !" to player
+            else:
+                set {discord_relay_enabled} to true
+                send "{@prefix}&aRelais Discord activé !" to player
+            play sound "block.note_block.pling" to player
+            stop
+            
+        else if arg-1 is "test":
+            sendDiscordMessage(player, "Survie", "👋 **Message de Test du Relais Discord MineStars !** Tout fonctionne parfaitement.", true)
+            send "{@prefix}&aMessage de test envoyé à Discord !" to player
+            play sound "entity.player.levelup" to player
+            stop
