@@ -1,0 +1,130 @@
+# ==============================================================================
+#           BATTLE PASS SAISONNIER & QUÊTES - ÉDITION PRO
+#           Design 4 Rangées, 10 Paliers de Progression & Récompenses Automatiques
+# ==============================================================================
+
+options:
+    prefix: &5&l✦ PASS &8> &7
+
+on join:
+    if {pass_level::%uuid of player%} is not set:
+        set {pass_level::%uuid of player%} to 1
+        set {pass_xp::%uuid of player%} to 0
+
+# Menu du Pass
+command /pass:
+    aliases: /battlepass, /quetes, /quests, /bp
+    trigger:
+        set {_gui} to a new chest inventory with 4 rows named "&8» &0&lBATTLE PASS SAISONNIER"
+        
+        loop 36 times:
+            set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
+            
+        set slot 0 of {_gui} to 1 of purple stained glass pane named " "
+        set slot 8 of {_gui} to 1 of purple stained glass pane named " "
+        set slot 27 of {_gui} to 1 of purple stained glass pane named " "
+        set slot 35 of {_gui} to 1 of purple stained glass pane named " "
+            
+        set {_lvl} to {pass_level::%uuid of player%}
+        if {_lvl} is not set:
+            set {_lvl} to 1
+        set {_xp} to {pass_xp::%uuid of player%}
+        if {_xp} is not set:
+            set {_xp} to 0
+            
+        # En-tête profil Battle Pass (Slot 4)
+        set slot 4 of {_gui} to 1 of nether star named "&6&l✦ PROGRESSION DU PASS : NIVEAU %{_lvl}%/10 ✦" with lore "&8Tableau saisonnier", "", "&7• Niveau actuel : &e%{_lvl}% / 10", "&7• Barre d'XP : &a%{_xp}% / 100 XP", "", "&7Gagne de l'XP en minant (+5 XP) et tuant des monstres (+10 XP) !", "", "&e✦ Débloque les 10 paliers pour les récompenses ultimes !"
+        
+        # Paliers 1 à 5 (Ligne 2)
+        if {_lvl} >= 1:
+            set slot 10 of {_gui} to 1 of chest named "&a&l✦ PALIER 1 ✦ &a[✔ DÉBLOQUÉ]" with lore "&7• Récompense : &e200$", "", "&a✔ Palier accompli !"
+        else:
+            set slot 10 of {_gui} to 1 of chest named "&e&l✦ PALIER 1 ✦" with lore "&7• Récompense : &e200$", "", "&e▸ Requis : Niveau 1"
+
+        if {_lvl} >= 2:
+            set slot 11 of {_gui} to 1 of iron ingot named "&a&l✦ PALIER 2 ✦ &a[✔ DÉBLOQUÉ]" with lore "&7• Récompense : &e400$ + 16 Fers", "", "&a✔ Palier accompli !"
+        else:
+            set slot 11 of {_gui} to 1 of iron ingot named "&e&l✦ PALIER 2 ✦" with lore "&7• Récompense : &e400$ + 16 Fers", "", "&e▸ Requis : Niveau 2"
+
+        if {_lvl} >= 3:
+            set slot 12 of {_gui} to 1 of diamond named "&a&l✦ PALIER 3 ✦ &a[✔ DÉBLOQUÉ]" with lore "&7• Récompense : &e600$ + 8 Diamants", "", "&a✔ Palier accompli !"
+        else:
+            set slot 12 of {_gui} to 1 of diamond named "&e&l✦ PALIER 3 ✦" with lore "&7• Récompense : &e600$ + 8 Diamants", "", "&e▸ Requis : Niveau 3"
+
+        if {_lvl} >= 4:
+            set slot 13 of {_gui} to 1 of golden apple named "&a&l✦ PALIER 4 ✦ &a[✔ DÉBLOQUÉ]" with lore "&7• Récompense : &e800$ + 4 Pommes Dorées", "", "&a✔ Palier accompli !"
+        else:
+            set slot 13 of {_gui} to 1 of golden apple named "&e&l✦ PALIER 4 ✦" with lore "&7• Récompense : &e800$ + 4 Pommes Dorées", "", "&e▸ Requis : Niveau 4"
+
+        if {_lvl} >= 5:
+            set slot 14 of {_gui} to 1 of emerald named "&a&l✦ PALIER 5 ✦ &a[✔ DÉBLOQUÉ]" with lore "&7• Récompense : &e1,000$ + 12 Émeraudes", "", "&a✔ Palier accompli !"
+        else:
+            set slot 14 of {_gui} to 1 of emerald named "&e&l✦ PALIER 5 ✦" with lore "&7• Récompense : &e1,000$ + 12 Émeraudes", "", "&e▸ Requis : Niveau 5"
+
+        if {_lvl} >= 6:
+            set slot 15 of {_gui} to 1 of gold block named "&a&l✦ PALIER 6 ✦ &a[✔ DÉBLOQUÉ]" with lore "&7• Récompense : &e1,200$ + 1 Clé Rare", "", "&a✔ Palier accompli !"
+        else:
+            set slot 15 of {_gui} to 1 of gold block named "&e&l✦ PALIER 6 ✦" with lore "&7• Récompense : &e1,200$ + 1 Clé Rare", "", "&e▸ Requis : Niveau 6"
+
+        if {_lvl} >= 7:
+            set slot 16 of {_gui} to 1 of diamond block named "&a&l✦ PALIER 7 ✦ &a[✔ DÉBLOQUÉ]" with lore "&7• Récompense : &e1,500$ + 16 Diamants", "", "&a✔ Palier accompli !"
+        else:
+            set slot 16 of {_gui} to 1 of diamond block named "&e&l✦ PALIER 7 ✦" with lore "&7• Récompense : &e1,500$ + 16 Diamants", "", "&e▸ Requis : Niveau 7"
+
+        # Paliers 8 à 10 (Ligne 3)
+        if {_lvl} >= 8:
+            set slot 20 of {_gui} to 1 of netherite ingot named "&a&l✦ PALIER 8 ✦ &a[✔ DÉBLOQUÉ]" with lore "&7• Récompense : &e2,000$ + 2 Netherites", "", "&a✔ Palier accompli !"
+        else:
+            set slot 20 of {_gui} to 1 of netherite ingot named "&e&l✦ PALIER 8 ✦" with lore "&7• Récompense : &e2,000$ + 2 Netherites", "", "&e▸ Requis : Niveau 8"
+
+        if {_lvl} >= 9:
+            set slot 22 of {_gui} to 1 of beacon named "&a&l✦ PALIER 9 ✦ &a[✔ DÉBLOQUÉ]" with lore "&7• Récompense : &e3,000$ + 1 Balise", "", "&a✔ Palier accompli !"
+        else:
+            set slot 22 of {_gui} to 1 of beacon named "&e&l✦ PALIER 9 ✦" with lore "&7• Récompense : &e3,000$ + 1 Balise", "", "&e▸ Requis : Niveau 9"
+
+        if {_lvl} >= 10:
+            set slot 24 of {_gui} to 1 of totem of undying named "&6&l★ PALIER 10 : CHAMPION ★ &a[✔ DÉBLOQUÉ]" with lore "&7• Récompense : &a5,000$ + Totem + 1 Clé Légendaire", "", "&6✔ Palier Ultime Débloqué !"
+        else:
+            set slot 24 of {_gui} to 1 of totem of undying named "&6&l★ PALIER 10 : CHAMPION ★" with lore "&7• Récompense : &a5,000$ + Totem + 1 Clé Légendaire", "", "&e▸ Requis : Niveau 10"
+
+        # Fermer (Slot 31)
+        set slot 31 of {_gui} to 1 of barrier named "&c&lFERMER LE MENU" with lore "&7Fermer l'interface"
+
+        open {_gui} to player
+        play sound "block.chest.open" to player
+
+on inventory click:
+    if name of event-inventory is "&8» &0&lBATTLE PASS SAISONNIER":
+        cancel event
+        if index of event-slot is 31:
+            close player's inventory
+            play sound "block.chest.close" to player
+
+# Gain d'XP du pass en minant et tuant des monstres
+on break:
+    if "%event-block%" contains "ore":
+        add 5 to {pass_xp::%uuid of player%}
+        checkPassLevel(player)
+
+on death of monster:
+    if attacker is a player:
+        add 10 to {pass_xp::%uuid of attacker%}
+        checkPassLevel(attacker)
+
+function checkPassLevel(p: player):
+    if {pass_xp::%uuid of {_p}%} >= 100:
+        if {pass_level::%uuid of {_p}%} < 10:
+            remove 100 from {pass_xp::%uuid of {_p}%}
+            add 1 to {pass_level::%uuid of {_p}%}
+            set {_lvl} to {pass_level::%uuid of {_p}%}
+            
+            # Récompense d'argent à chaque palier
+            set {_bonusMoney} to {_lvl} * 250
+            execute console command "eco give %{_p}% %{_bonusMoney}%"
+            
+            send "" to {_p}
+            send "{@prefix}&aFélicitations ! Tu passes &eNiveau %{_lvl}% &adu Battle Pass !" to {_p}
+            send "{@prefix}&e+ %{_bonusMoney}%$ &aajoutés à ton compte !" to {_p}
+            send "&7Fais &e/pass &7pour voir ta progression." to {_p}
+            send "" to {_p}
+            play sound "ui.toast.challenge_complete" to {_p}

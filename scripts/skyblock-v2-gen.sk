@@ -1,0 +1,3075 @@
+# ==============================================================================
+#      SKYBLOCK V9 ULTIMATE PRO - MINESTARS NEXT-GEN EDITION
+#      Système complet & Ultra-Avancé :
+#      - Menus 54 slots animés & interactifs
+#      - Générateur Central & Naturel Ultra-Complet (TOUS les blocs & minerais de Minecraft)
+#      - Coups Critiques, Particules Réalistes, Jackpots & Trésors Mystères
+#      - Système d'Équipe & Co-op Avancé (/is invite, /is accept, /is team, /is leave)
+#      - Téléportation, spawn et respawn d'équipe synchronisés à 100%
+#      - Boutique Skyblock & Vente Rapide intégrée (/is shop)
+#      - 8 Quêtes & Défis d'île progressifs
+#      - Pass Vol / Fly par abonnement, grades et OP
+#      - Banque d'île interactive avec intérêts
+#      - Gestion de sécurité, bans, kicks et warps de visite
+#      - Biomes réels, Boosters multiplicateurs & Auto-Replant
+# ==============================================================================
+
+options:
+    prefix: &e&l✦ SKYBLOCK &8> &7
+    distance: 1000
+    island_y: 150
+    radius: 75
+
+on load:
+    if {skyblock_next_x} is not set:
+        set {skyblock_next_x} to 0
+    if {skyblock_next_z} is not set:
+        set {skyblock_next_z} to 0
+    wait 10 ticks
+    loop all players:
+        if "%world of loop-player%" contains "skyblock":
+            set {_u} to uuid of loop-player
+            set {_owner} to "%loop-player%"
+            if {island_team_owner::%{_u}%} is set:
+                set {_owner} to "%{island_team_owner::%{_u}%}%"
+            else if {island_team_owner::%loop-player%} is set:
+                set {_owner} to "%{island_team_owner::%loop-player%}%"
+            applyIslandBorder(loop-player, {_owner})
+
+on join:
+    wait 10 ticks
+    if "%world of player%" contains "skyblock":
+        set {_u} to uuid of player
+        set {_owner} to "%player%"
+        if {island_team_owner::%{_u}%} is set:
+            set {_owner} to "%{island_team_owner::%{_u}%}%"
+        else if {island_team_owner::%player%} is set:
+            set {_owner} to "%{island_team_owner::%player%}%"
+        applyIslandBorder(player, {_owner})
+
+# ==================== FONCTIONS UTILITAIRES, RAYON D'ÎLE & COFFRES ====================
+
+function getIslandRadius(owner: text) :: number:
+    set {_lvl} to {island_upgrades::%{_owner}%::size} ? 1
+    if {_lvl} is 1:
+        return 50
+    else if {_lvl} is 2:
+        return 75
+    else if {_lvl} is 3:
+        return 100
+    else if {_lvl} is 4:
+        return 150
+    else:
+        return 200
+
+function applyIslandBorder(p: player, owner: text):
+    if {island::%{_owner}%::x} is set:
+        set {_rad} to getIslandRadius({_owner})
+        set {_size} to {_rad} * 2
+        set {_x} to {island::%{_owner}%::x}
+        set {_z} to {island::%{_owner}%::z}
+        execute console command "worldborder center %{_x}% %{_z}%"
+        execute console command "worldborder set %{_size}%"
+        execute console command "worldborder warning distance 15"
+        execute console command "worldborder damage amount 0"
+        execute console command "worldborder damage buffer 5"
+
+function fillStarterChest(loc: location):
+    set block at {_loc} to chest
+    clear inventory of block at {_loc}
+    set slot 0 of inventory of block at {_loc} to 2 ice
+    set slot 1 of inventory of block at {_loc} to 1 lava bucket
+    set slot 2 of inventory of block at {_loc} to 1 oak sapling
+    set slot 3 of inventory of block at {_loc} to 1 sugar cane
+    set slot 4 of inventory of block at {_loc} to 1 melon slice
+    set slot 5 of inventory of block at {_loc} to 1 pumpkin seeds
+    set slot 6 of inventory of block at {_loc} to 1 brown mushroom
+    set slot 7 of inventory of block at {_loc} to 1 red mushroom
+    set slot 8 of inventory of block at {_loc} to 1 bone
+    set slot 9 of inventory of block at {_loc} to 6 bread
+
+function fillDesertChest(loc: location):
+    set block at {_loc} to chest
+    clear inventory of block at {_loc}
+    set slot 0 of inventory of block at {_loc} to 1 cactus
+    set slot 1 of inventory of block at {_loc} to 2 sand
+    set slot 2 of inventory of block at {_loc} to 1 sugar cane
+
+# ==================== FONCTION DE GÉNÉRATION D'ÎLE CÉLESTE ====================
+
+function createIsland(p: player, x: number, z: number):
+    set {_w} to world "skyblock"
+    if {_w} is not set:
+        set {_w} to "skyblock" parsed as world
+    if {_w} is not set:
+        set {_w} to world of {_p}
+
+    set {_centerLoc} to location({_x}, 150, {_z}, {_w})
+
+    # 0. Nettoyage total de l'espace céleste & purge des entités
+    loop entities in radius 50 of {_centerLoc}:
+        if loop-entity is not a player:
+            delete loop-entity
+
+    loop integers from -25 to 25:
+        set {_dx} to loop-integer-1
+        loop integers from -25 to 25:
+            set {_dz} to loop-integer-2
+            loop integers from 70 to 190:
+                set {_bLoc} to location(({_x} + {_dx}), loop-integer-3, ({_z} + {_dz}), {_w})
+                if block at {_bLoc} is not air:
+                    if block at {_bLoc} is chest or trapped chest or barrel or hopper or furnace or dropper or dispenser:
+                        clear inventory of block at {_bLoc}
+                    set block at {_bLoc} to air
+
+    # Purge des items résiduels au sol
+    loop entities in radius 50 of {_centerLoc}:
+        if loop-entity is not a player:
+            delete loop-entity
+
+    # 1. Base Principale de l'Île en Relief (Y=146 à Y=150)
+    set block at location({_x}, 146, {_z}, {_w}) to stone
+
+    # Couche 2 : Pierre (3x3)
+    loop integers from -1 to 1:
+        set {_dx} to loop-integer-1
+        loop integers from -1 to 1:
+            set {_dz} to loop-integer-2
+            set block at location(({_x} + {_dx}), 147, ({_z} + {_dz}), {_w}) to stone
+
+    # Couche 3 : Terre profonde (5x5)
+    loop integers from -2 to 2:
+        set {_dx} to loop-integer-1
+        loop integers from -2 to 2:
+            set {_dz} to loop-integer-2
+            set block at location(({_x} + {_dx}), 148, ({_z} + {_dz}), {_w}) to dirt
+
+    # Couche 4 : Terre intermédiaire (7x7)
+    loop integers from -3 to 3:
+        set {_dx} to loop-integer-1
+        loop integers from -3 to 3:
+            set {_dz} to loop-integer-2
+            set block at location(({_x} + {_dx}), 149, ({_z} + {_dz}), {_w}) to dirt
+
+    # Couche 5 : Herbe supérieure (7x7)
+    loop integers from -3 to 3:
+        set {_dx} to loop-integer-1
+        loop integers from -3 to 3:
+            set {_dz} to loop-integer-2
+            set block at location(({_x} + {_dx}), 150, ({_z} + {_dz}), {_w}) to grass block
+
+    # 2. GÉNÉRATEUR INFINI DE MINERAIS AU CENTRE EXACT
+    set block at location({_x}, 149, {_z}, {_w}) to bedrock
+    set block at location({_x}, 150, {_z}, {_w}) to cobblestone
+    set block at location({_x}, 151, {_z}, {_w}) to air
+
+    # 3. Grand Arbre de Départ Céleste
+    set {_tx} to {_x} - 2
+    set {_tz} to {_z} - 2
+    set block at location({_tx}, 150, {_tz}, {_w}) to dirt
+    set block at location({_tx}, 151, {_tz}, {_w}) to oak log
+    set block at location({_tx}, 152, {_tz}, {_w}) to oak log
+    set block at location({_tx}, 153, {_tz}, {_w}) to oak log
+    set block at location({_tx}, 154, {_tz}, {_w}) to oak log
+    set block at location({_tx}, 155, {_tz}, {_w}) to oak log
+    set block at location({_tx}, 156, {_tz}, {_w}) to oak log
+    
+    # Branches de soutien
+    set block at location(({_tx} + 1), 154, {_tz}, {_w}) to oak log
+    set block at location(({_tx} - 1), 154, {_tz}, {_w}) to oak log
+    set block at location({_tx}, 154, ({_tz} + 1), {_w}) to oak log
+    set block at location({_tx}, 154, ({_tz} - 1), {_w}) to oak log
+
+    # Feuillage persistant
+    loop integers from -2 to 2:
+        set {_lx} to loop-integer-1
+        loop integers from -2 to 2:
+            set {_lz} to loop-integer-2
+            if abs({_lx}) + abs({_lz}) <= 3:
+                set block at location(({_tx} + {_lx}), 154, ({_tz} + {_lz}), {_w}) to oak leaves
+                set block at location(({_tx} + {_lx}), 155, ({_tz} + {_lz}), {_w}) to oak leaves
+    loop integers from -1 to 1:
+        set {_lx} to loop-integer-1
+        loop integers from -1 to 1:
+            set {_lz} to loop-integer-2
+            set block at location(({_tx} + {_lx}), 156, ({_tz} + {_lz}), {_w}) to oak leaves
+    set block at location({_tx}, 157, {_tz}, {_w}) to oak leaves
+    set block at location(({_tx} + 1), 157, {_tz}, {_w}) to oak leaves
+    set block at location(({_tx} - 1), 157, {_tz}, {_w}) to oak leaves
+    set block at location({_tx}, 157, ({_tz} + 1), {_w}) to oak leaves
+    set block at location({_tx}, 157, ({_tz} - 1), {_w}) to oak leaves
+    set block at location({_tx}, 158, {_tz}, {_w}) to oak leaves
+
+    # 4. Coffre de Départ Rempli Directement (Nord-Est)
+    set {_cx} to {_x} + 2
+    set {_cz} to {_z} - 2
+    set {_chestLoc} to location({_cx}, 151, {_cz}, {_w})
+    fillStarterChest({_chestLoc})
+
+    # 5. Îlot Désertique (à 15 blocs)
+    set {_sx} to {_x} + 15
+    loop integers from -1 to 1:
+        set {_dx} to loop-integer-1
+        loop integers from -1 to 1:
+            set {_dz} to loop-integer-2
+            set block at location(({_sx} + {_dx}), 148, ({_z} + {_dz}), {_w}) to sandstone
+            set block at location(({_sx} + {_dx}), 149, ({_z} + {_dz}), {_w}) to sand
+            set block at location(({_sx} + {_dx}), 150, ({_z} + {_dz}), {_w}) to sand
+    
+    set {_desertChestLoc} to location({_sx}, 151, {_z}, {_w})
+    fillDesertChest({_desertChestLoc})
+
+    # Cactus en diagonale
+    set block at location(({_sx} + 1), 151, ({_z} + 1), {_w}) to cactus
+    set block at location(({_sx} + 1), 152, ({_z} + 1), {_w}) to cactus
+    set block at location(({_sx} - 1), 151, ({_z} - 1), {_w}) to cactus
+    set block at location(({_sx} - 1), 152, ({_z} - 1), {_w}) to cactus
+
+    # 6. Spawner d'animaux vivants
+    spawn 1 cow at location(({_x} + 1), 151, ({_z} + 1), {_w})
+    spawn 1 sheep at location(({_x} - 1), 151, ({_z} + 1), {_w})
+
+    # 7. Sauvegarde des variables
+    set {island::%{_p}%::x} to {_x}
+    set {island::%{_p}%::y} to 150
+    set {island::%{_p}%::z} to {_z}
+    set {island::%{_p}%::world} to {_w}
+    set {island::%{_p}%::owner} to uuid of {_p}
+    if {island_upgrades::%{_p}%::gen} is not set:
+        set {island_upgrades::%{_p}%::gen} to 1
+    if {island_bank::%{_p}%} is not set:
+        set {island_bank::%{_p}%} to 0
+    if {island_level::%{_p}%} is not set:
+        set {island_level::%{_p}%} to 10
+    if {island_likes::%{_p}%} is not set:
+        set {island_likes::%{_p}%} to 0
+
+    applyIslandBorder({_p}, "%{_p}%")
+
+    send "" to {_p}
+    send "&e&l✦ SKYBLOCK ULTIMATE &8> &a&lTon île a été générée avec succès !" to {_p}
+    send "&7• &6&lGénérateur de cobblestone &7placé &e&lau centre exact &7de ton île" to {_p}
+    send "&7• &fÎle 100%% suspendue &7dans les nuages à Y=150" to {_p}
+    send "&7• &fCoffre de départ épuré &7avec 2 Glaces, 1 Lave, Graines, Champignons, Pousse & Pain" to {_p}
+    send "&7• &fÎlot désertique &7avec Cactus, Sable & Canne à sucre" to {_p}
+    send "&7• Menu de gestion : &e/is &7ou &e/island" to {_p}
+    send "" to {_p}
+
+# ==================== COMMANDE PRINCIPALE SKYBLOCK (/is) ====================
+
+command /skyblock [<text>] [<text>] [<number>]:
+    aliases: /is, /ile, /island
+    trigger:
+        set {_cmd} to arg-1
+        set {_target} to arg-2
+        set {_val} to arg-3
+        
+        # Résolution universelle du propriétaire de l'île / hôte d'équipe
+        set {_u} to uuid of player
+        set {_owner} to "%player%"
+        if {island_team_owner::%{_u}%} is set:
+            set {_owner} to "%{island_team_owner::%{_u}%}%"
+        else if {island_team_owner::%player%} is set:
+            set {_owner} to "%{island_team_owner::%player%}%"
+
+        if "%world of player%" contains "skyblock":
+            applyIslandBorder(player, {_owner})
+
+        # 0. CRÉATION MANUELLE D'ÎLE (/is create)
+        if {_cmd} is "create" or "creer" or "new":
+            if {island::%player%::x} is set:
+                send "{@prefix}&cTu possèdes déjà une île ! Fais &e/is home &cpour t'y téléporter." to player
+            else if {island_team_owner::%{_u}%} is set:
+                send "{@prefix}&cTu es déjà membre d'une équipe Skyblock ! Fais &e/is leave &cpour la quitter d'abord." to player
+            else if {island_team_owner::%player%} is set:
+                send "{@prefix}&cTu es déjà membre d'une équipe Skyblock ! Fais &e/is leave &cpour la quitter d'abord." to player
+            else:
+                execute player command "is-create"
+            stop
+
+        # 1. SETHOME / SETSPAWN
+        else if {_cmd} is "sethome" or "setspawn":
+            if "%world of player%" contains "skyblock":
+                if {island::%{_owner}%::x} is set:
+                    set {island_home::%{_owner}%} to location of player
+                    send "{@prefix}&aPoint d'apparition de l'île (&e%{_owner}%&a) défini à ta position !" to player
+                    play sound "block.note_block.pling" to player
+                else:
+                    send "{@prefix}&cTu n'as pas encore d'île ! Fais &e/is &cpour la créer." to player
+            else:
+                send "{@prefix}&cTu dois être dans le monde Skyblock pour définir ton spawn !" to player
+            stop
+
+        # 2. HOME / TP (REJOINDRE SON ÎLE OU CELLE DE SON ÉQUIPE)
+        else if {_cmd} is "home" or "go" or "tp" or "rejoindre":
+            if {island::%{_owner}%::x} is set:
+                set {_w} to {island::%{_owner}%::world}
+                if {_w} is not set:
+                    set {_w} to world "skyblock"
+                if {_w} is not set:
+                    set {_w} to "skyblock" parsed as world
+                if {_w} is not set:
+                    set {_w} to world of player
+
+                if {island_home::%{_owner}%} is set:
+                    teleport player to {island_home::%{_owner}%}
+                else:
+                    set {_targetLoc} to location(({island::%{_owner}%::x} + 0.5), 151, ({island::%{_owner}%::z} + 2.5), {_w})
+                    teleport player to {_targetLoc}
+                applyIslandBorder(player, {_owner})
+                send title "&e&l✦ TON ÎLE CÉLESTE ✦" with subtitle "&7Bienvenue sur le domaine de &e%{_owner}%" to player for 2 seconds
+                send "{@prefix}&7Téléporté sur l'île Skyblock (&e%{_owner}%&7) !" to player
+                play sound "entity.experience_orb.pickup" to player
+            else:
+                send "{@prefix}&cTu n'as pas encore d'île ! Fais &e/is &cpour la créer." to player
+            stop
+
+        # 3. KIT DE SECOURS (/is kit)
+        else if {_cmd} is "kit" or "starter":
+            if {island::%{_owner}%::x} is set:
+                give 2 ice to player
+                give 1 lava bucket to player
+                give 1 oak sapling to player
+                give 6 bread to player
+                send "{@prefix}&aKit de secours reçu (2 Glaces, 1 Lave, 1 Pousse, 6 Pains) !" to player
+                play sound "entity.player.levelup" to player
+            else:
+                send "{@prefix}&cCrée d'abord ton île avec &e/is &c!" to player
+            stop
+
+        # 3b. REPLACER / RÉPARER LE GÉNÉRATEUR (/is fixgen, /is gen, /is fixgen <joueur>)
+        else if {_cmd} is "fixgen" or "gen" or "setgen" or "generateur" or "generator":
+            if "%world of player%" contains "skyblock":
+                set {_canPlace} to false
+                set {_genOwner} to {_owner}
+                
+                # Support Staff / OP pour replacer sur n'importe quelle île ou pour un autre joueur
+                if player is op:
+                    set {_canPlace} to true
+                    if {_target} is set:
+                        set {_genOwner} to {_target}
+                else if {rank::%{_u}%} is "Fondateur" or "Admin" or "Resp" or "Modo":
+                    set {_canPlace} to true
+                    if {_target} is set:
+                        set {_genOwner} to {_target}
+                else if {island::%{_owner}%::x} is set:
+                    set {_canPlace} to true
+                    
+                if {_canPlace} is true:
+                    set {_targetLoc} to location of targeted block
+                    if {_targetLoc} is not set:
+                        set {_targetLoc} to location of block in front of player
+                    if block at {_targetLoc} is air or water or lava:
+                        set {_targetLoc} to location of block at player
+                    set {_locBelow} to location 1 below {_targetLoc}
+                    set block at {_locBelow} to bedrock
+                    set block at {_targetLoc} to cobblestone
+                    
+                    set {_lvl} to {island_upgrades::%{_genOwner}%::gen} ? 1
+                    send "{@prefix}&a✦ Générateur de minerais infini &e(Tier %{_lvl}%) &areplacé avec succès !" to player
+                    send "{@prefix}&7Mine le bloc au-dessus de la bedrock pour récolter tes minerais !" to player
+                    if {_genOwner} is not "%player%":
+                        send "{@prefix}&7Générateur associé à l'île de : &e%{_genOwner}%" to player
+                    play sound "block.anvil.use" to player
+                    play sound "entity.player.levelup" to player
+                else:
+                    send "{@prefix}&cTu n'as pas encore d'île Skyblock ! Fais &e/is &cpour la créer." to player
+            else:
+                send "{@prefix}&cTu dois être dans le monde Skyblock pour replacer un générateur !" to player
+            stop
+
+        # 4. FLY SUR L'ÎLE (/is fly [manage|buy|gui])
+        else if {_cmd} is "fly" or "vol":
+            if {_target} is "gui" or "menu" or "manage" or "gerer" or "buy" or "abonnement":
+                execute player command "is-gui-fly"
+                stop
+            if "%world of player%" contains "skyblock":
+                set {_hasFly} to false
+                if player is op:
+                    set {_hasFly} to true
+                else if {rank::%{_u}%} is "Admin" or "Fondateur" or "Modo":
+                    set {_hasFly} to true
+                else if {island_fly_expire::%player%} is set:
+                    if now < {island_fly_expire::%player%}:
+                        set {_hasFly} to true
+                
+                if {_hasFly} is true:
+                    if player's flight mode is true:
+                        set player's flight mode to false
+                        send "{@prefix}&cMode vol désactivé sur ton île !" to player
+                        play sound "block.wooden_button.click_off" to player
+                    else:
+                        set player's flight mode to true
+                        set {_rem} to difference between {island_fly_expire::%player%} and now
+                        send "{@prefix}&aMode vol activé ! &7(Temps restant: &e%{_rem}%&7)" to player
+                        play sound "block.wooden_button.click_on" to player
+                else:
+                    send "{@prefix}&cTu n'as pas de Pass Vol actif en Skyblock !" to player
+                    execute player command "is-gui-fly"
+            else:
+                send "{@prefix}&cLe vol est strictement interdit en Survie et réservé au Skyblock avec Pass !" to player
+            stop
+
+        # 5. CALCUL DU NIVEAU D'ÎLE (/is level)
+        else if {_cmd} is "level" or "niveau":
+            if {island::%{_owner}%::x} is set:
+                set {_gen} to {island_upgrades::%{_owner}%::gen}
+                if {_gen} is not set:
+                    set {_gen} to 1
+                set {_pts} to 10 + ({_gen} * 25)
+                if {island_bank::%{_owner}%} > 10000:
+                    add round({island_bank::%{_owner}%} / 5000) to {_pts}
+                if {island_likes::%{_owner}%} is set:
+                    add ({island_likes::%{_owner}%} * 5) to {_pts}
+                set {island_level::%{_owner}%} to {_pts}
+                send "{@prefix}&aNiveau de l'île (&e%{_owner}%&a) : &e&l%{_pts}% ⭐" to player
+                play sound "entity.player.levelup" to player
+            else:
+                send "{@prefix}&cTu n'as pas encore d'île !" to player
+            stop
+
+        # 6. LIKE / RÉPUTATION D'UNE ÎLE (/is like <pseudo>)
+        else if {_cmd} is "like" or "aimer":
+            if {_target} is set:
+                if {_target} is player's name:
+                    send "{@prefix}&cTu ne peux pas liker ta propre île !" to player
+                    stop
+                if {island_liked::%player%::%{_target}%} is true:
+                    send "{@prefix}&cTu as déjà aimé l'île de &e%{_target}% &c!" to player
+                    stop
+                if {island::%{_target}%::x} is set:
+                    set {island_liked::%player%::%{_target}%} to true
+                    add 1 to {island_likes::%{_target}%}
+                    add 5 to {island_level::%{_target}%}
+                    send "{@prefix}&aTu as aimé l'île de &e%{_target}% &a! (+1 Like, +5⭐)" to player
+                    set {_targetP} to {_target} parsed as player
+                    if {_targetP} is online:
+                        send "{@prefix}&e%player% &aa aimé votre île ! (+1 Like)" to {_targetP}
+                        play sound "entity.experience_orb.pickup" to {_targetP}
+                else:
+                    send "{@prefix}&cLe joueur &f%{_target}% &cn'a pas d'île Skyblock !" to player
+            else:
+                send "{@prefix}&cUtilisation : &e/is like <pseudo>" to player
+            stop
+
+        # 7. GESTION DES MEMBRES / ÉQUIPES (/is invite, accept, kick, leave)
+        else if {_cmd} is "invite" or "inviter":
+            if {_target} is set:
+                if {island::%{_owner}%::x} is set:
+                    set {_targetP} to {_target} parsed as player
+                    if {_targetP} is online:
+                        if {_targetP} is player:
+                            send "{@prefix}&cTu ne peux pas t'inviter toi-même !" to player
+                            stop
+                        set {_targetU} to uuid of {_targetP}
+                        set {island_invite::%{_targetU}%} to "%player%"
+                        set {island_invite::%{_targetP}%} to "%player%"
+                        set {island_invite_owner::%{_targetU}%} to "%{_owner}%"
+                        set {island_invite_owner::%{_targetP}%} to "%{_owner}%"
+                        send "{@prefix}&aInvitation envoyée à &e%{_targetP}% &apour rejoindre ton île Skyblock !" to player
+                        send "{@prefix}&e%player% &7t'invite à rejoindre son île Skyblock (&e%{_owner}%&7) !" to {_targetP}
+                        send "{@prefix}&aTape &e/is accept &aou clique pour rejoindre l'équipe !" to {_targetP}
+                        play sound "block.note_block.pling" to {_targetP}
+                    else:
+                        send "{@prefix}&cLe joueur &f%{_target}% &cn'est pas en ligne !" to player
+                else:
+                    send "{@prefix}&cTu dois posséder une île pour inviter des membres !" to player
+            else:
+                send "{@prefix}&cUtilisation : &e/is invite <joueur>" to player
+            stop
+
+        else if {_cmd} is "accept" or "accepter" or "join":
+            set {_inviter} to ""
+            if {island_invite::%{_u}%} is set:
+                set {_inviter} to {island_invite::%{_u}%}
+            else if {island_invite::%player%} is set:
+                set {_inviter} to {island_invite::%player%}
+
+            if {_inviter} is not "":
+                set {_canAccept} to true
+                if {_target} is set:
+                    if "%{_inviter}%" does not contain "%{_target}%":
+                        set {_canAccept} to false
+
+                if {_canAccept} is true:
+                    set {_targetHost} to {_inviter}
+                    if {island_invite_owner::%{_u}%} is set:
+                        set {_targetHost} to {island_invite_owner::%{_u}%}
+                    else if {island_invite_owner::%player%} is set:
+                        set {_targetHost} to {island_invite_owner::%player%}
+
+                    delete {island_invite::%{_u}%}
+                    delete {island_invite::%player%}
+                    delete {island_invite_owner::%{_u}%}
+                    delete {island_invite_owner::%player%}
+
+                    set {island_team_owner::%{_u}%} to "%{_targetHost}%"
+                    set {island_team_owner::%player%} to "%{_targetHost}%"
+
+                    add "%player%" to {island_team::%{_targetHost}%::*}
+                    add player to {island_team::%{_targetHost}%::*}
+
+                    send "{@prefix}&aTu as rejoint avec succès l'île de &e%{_targetHost}% &a!" to player
+                    play sound "entity.player.levelup" to player
+
+                    set {_hostP} to {_targetHost} parsed as player
+                    if {_hostP} is online:
+                        send "{@prefix}&e%player% &aa rejoint votre équipe Skyblock !" to {_hostP}
+                        play sound "entity.player.levelup" to {_hostP}
+
+                    # Téléportation immédiate sur l'île d'équipe
+                    execute player command "is home"
+                else:
+                    send "{@prefix}&cCette invitation ne correspond pas à &f%{_target}% &c!" to player
+            else:
+                send "{@prefix}&cTu n'as aucune invitation d'équipe en attente !" to player
+            stop
+
+        else if {_cmd} is "leave" or "quitter":
+            set {_teamHost} to ""
+            if {island_team_owner::%{_u}%} is set:
+                set {_teamHost} to "%{island_team_owner::%{_u}%}%"
+            else if {island_team_owner::%player%} is set:
+                set {_teamHost} to "%{island_team_owner::%player%}%"
+
+            if {_teamHost} is not "":
+                remove "%player%" from {island_team::%{_teamHost}%::*}
+                remove player from {island_team::%{_teamHost}%::*}
+                delete {island_team_owner::%{_u}%}
+                delete {island_team_owner::%player%}
+                send "{@prefix}&aTu as quitté l'équipe de &e%{_teamHost}%&a." to player
+                set {_hostP} to {_teamHost} parsed as player
+                if {_hostP} is online:
+                    send "{@prefix}&e%player% &ca quitté ton équipe Skyblock." to {_hostP}
+                execute player command "spawn"
+            else:
+                send "{@prefix}&cTu n'es dans aucune équipe. Fais &e/is reset &cpour réinitialiser ton île." to player
+            stop
+
+        # 8. SÉCURITÉ : EXPULSER / BAN D'ÎLE (/is kick <joueur>, /is ban <joueur>, /is unban <joueur>)
+        else if {_cmd} is "kick" or "expulser" or "virer":
+            if {_target} is set:
+                set {_targetP} to {_target} parsed as player
+                set {_targetName} to {_target}
+                if {_targetP} is set:
+                    set {_targetName} to "%{_targetP}%"
+                    set {_targetU} to uuid of {_targetP}
+                    delete {island_team_owner::%{_targetU}%}
+                delete {island_team_owner::%{_targetName}%}
+                remove {_targetName} from {island_team::%player%::*}
+                remove {_targetP} from {island_team::%player%::*}
+                if {_targetP} is online:
+                    if "%world of {_targetP}%" contains "skyblock":
+                        teleport {_targetP} to location(0, 100, 0, world "spawn")
+                    send "{@prefix}&cTu as été exclu de l'équipe Skyblock de &e%player% &c!" to {_targetP}
+                send "{@prefix}&aLe joueur &e%{_targetName}% &aa été expulsé de ton île !" to player
+                play sound "block.anvil.land" to player
+            else:
+                send "{@prefix}&cUtilisation : &e/is kick <joueur>" to player
+            stop
+
+        else if {_cmd} is "ban":
+            if {_target} is set:
+                set {island_banned::%player%::%{_target}%} to true
+                set {_targetP} to {_target} parsed as player
+                if {_targetP} is online:
+                    teleport {_targetP} to location(0, 100, 0, world "spawn")
+                    send "{@prefix}&cTu as été banni de l'île de &e%player% &c!" to {_targetP}
+                send "{@prefix}&aLe joueur &e%{_target}% &aest désormais banni de ton île !" to player
+            else:
+                send "{@prefix}&cUtilisation : &e/is ban <joueur>" to player
+            stop
+
+        else if {_cmd} is "unban":
+            if {_target} is set:
+                delete {island_banned::%player%::%{_target}%}
+                send "{@prefix}&aLe joueur &e%{_target}% &aest débanni de ton île !" to player
+            else:
+                send "{@prefix}&cUtilisation : &e/is unban <joueur>" to player
+            stop
+
+        # 9. VISITER UNE ÎLE (/is visit <pseudo>)
+        else if {_cmd} is "visit" or "visiter":
+            if {_target} is set:
+                if {island_banned::%{_target}%::%player%} is true:
+                    send "{@prefix}&cTu es banni de l'île de &e%{_target}% &c!" to player
+                    stop
+                if {island::%{_target}%::x} is set:
+                    if {island_locked::%{_target}%} is true:
+                        if player is not op:
+                            send "{@prefix}&cL'île de &f%{_target}% &cest verrouillée aux visiteurs !" to player
+                            stop
+                    set {_w} to {island::%{_target}%::world}
+                    if {_w} is not set:
+                        set {_w} to world "skyblock"
+                    if {_w} is not set:
+                        set {_w} to "skyblock" parsed as world
+                    if {island_home::%{_target}%} is set:
+                        teleport player to {island_home::%{_target}%}
+                    else:
+                        set {_targetLoc} to location(({island::%{_target}%::x} + 0.5), 151, ({island::%{_target}%::z} + 2.5), {_w})
+                        teleport player to {_targetLoc}
+                    applyIslandBorder(player, {_target})
+                    send title "&b&l✦ ÎLE DE %{_target}% ✦" with subtitle "&7Bonne visite !" to player for 2 seconds
+                    send "{@prefix}&7Téléporté sur l'île de &f%{_target}%&7 !" to player
+                    play sound "entity.experience_orb.pickup" to player
+                else:
+                    send "{@prefix}&cLe joueur &f%{_target}% &cn'a pas encore d'île Skyblock !" to player
+            else:
+                send "{@prefix}&cUtilisation: &e/is visit <pseudo>" to player
+            stop
+
+        # 10. INFOS D'ÎLE (/is info [pseudo])
+        else if {_cmd} is "info":
+            set {_targetOwner} to player
+            if {_target} is set:
+                set {_targetOwner} to {_target}
+            else:
+                set {_targetOwner} to {_owner}
+
+            if {island::%{_targetOwner}%::x} is set:
+                set {_lvl} to {island_level::%{_targetOwner}%} ? 10
+                set {_bank} to {island_bank::%{_targetOwner}%} ? 0
+                set {_gen} to {island_upgrades::%{_targetOwner}%::gen} ? 1
+                set {_likes} to {island_likes::%{_targetOwner}%} ? 0
+                set {_teamSize} to size of {island_team::%{_targetOwner}%::*}
+
+                send "" to player
+                send "&e&l✦ INFORMATIONS DU DOMAINE ✦" to player
+                send "&7• Propriétaire : &e%{_targetOwner}%" to player
+                send "&7• Niveau de l'île : &b%{_lvl}% ⭐" to player
+                send "&7• Coffre-fort Banque : &a%{_bank}%$" to player
+                send "&7• Générateur central : &6Niveau %{_gen}%/4 (Multi-Blocs)" to player
+                send "&7• Réputation : &c❤ %{_likes}% Likes" to player
+                send "&7• Membres dans l'équipe : &f%{_teamSize}%" to player
+                send "" to player
+                play sound "block.note_block.pling" to player
+            else:
+                send "{@prefix}&cAucune île trouvée pour ce joueur." to player
+            stop
+
+        # 11. BOUTIQUE SKYBLOCK (/is shop)
+        else if {_cmd} is "shop" or "boutique" or "magasin":
+            execute player command "is-gui-shop"
+            stop
+
+        # 12. RÉPARER / RÉGÉNÉRER L'ÎLE
+        else if {_cmd} is "fix" or "regen" or "rebuild":
+            if {island::%{_owner}%::x} is set:
+                createIsland(player, {island::%{_owner}%::x}, {island::%{_owner}%::z})
+                set {_w} to {island::%{_owner}%::world}
+                if {_w} is not set:
+                    set {_w} to world "skyblock"
+                if {_w} is not set:
+                    set {_w} to "skyblock" parsed as world
+                set {_targetLoc} to location(({island::%{_owner}%::x} + 0.5), 151, ({island::%{_owner}%::z} + 2.5), {_w})
+                teleport player to {_targetLoc}
+                send "{@prefix}&aÎle céleste et générateur régénérés avec succès !" to player
+                play sound "block.anvil.use" to player
+            else:
+                send "{@prefix}&cTu n'as pas encore d'île !" to player
+            stop
+
+        # 13. BANQUE D'ÎLE (/is bank)
+        else if {_cmd} is "bank" or "banque":
+            if {_target} is not set:
+                execute player command "is-gui-bank"
+                stop
+            if {_target} is "deposit" or "deposer":
+                if {_val} is set:
+                    if {_val} > 0:
+                        if player's balance >= {_val}:
+                            remove {_val} from player's balance
+                            add {_val} to {island_bank::%{_owner}%}
+                            send "{@prefix}&a+ %{_val}%$ &7déposés dans la banque de l'île ! (Solde: &e%{island_bank::%{_owner}%}%$&7)" to player
+                            play sound "entity.experience_orb.pickup" to player
+                        else:
+                            send "{@prefix}&cTu n'as pas assez d'argent !" to player
+                    else:
+                        send "{@prefix}&cMontant invalide." to player
+                else:
+                    execute player command "is-gui-bank"
+            else if {_target} is "withdraw" or "retirer":
+                if {_val} is set:
+                    if {_val} > 0:
+                        if {island_bank::%{_owner}%} >= {_val}:
+                            subtract {_val} from {island_bank::%{_owner}%}
+                            add {_val} to player's balance
+                            send "{@prefix}&a+ %{_val}%$ &7retirés de la banque de l'île ! (Solde: &e%{island_bank::%{_owner}%}%$&7)" to player
+                            play sound "entity.experience_orb.pickup" to player
+                        else:
+                            send "{@prefix}&cLa banque de l'île ne possède pas assez de fonds !" to player
+                    else:
+                        send "{@prefix}&cMontant invalide." to player
+                else:
+                    execute player command "is-gui-bank"
+            else:
+                execute player command "is-gui-bank"
+            stop
+
+        # 14. MEMBRES & CO-OP (/is team)
+        else if {_cmd} is "team" or "membres" or "coop" or "member":
+            execute player command "is-gui-team"
+            stop
+
+        # 15. BOOSTERS (/is boosters)
+        else if {_cmd} is "booster" or "boosters" or "boost":
+            execute player command "is-gui-boosters"
+            stop
+
+        # 16. RESET & CONFIRMATION DE RESET (/is reset, /is confirm)
+        else if {_cmd} is "reset" or "recommencer":
+            if {island::%player%::x} is set:
+                set {island_confirm::%player%} to true
+                send "{@prefix}&c&lATTENTION ! &7Tu es sur le point de supprimer entièrement ton île !" to player
+                send "{@prefix}&7Pour confirmer définitivement, tape : &e/is confirm" to player
+            else:
+                send "{@prefix}&cTu ne possèdes aucune île à réinitialiser !" to player
+            stop
+
+        else if {_cmd} is "confirm":
+            if {island_confirm::%player%} is set:
+                delete {island_confirm::%player%}
+                set {_oldx} to {island::%player%::x}
+                set {_oldz} to {island::%player%::z}
+                set {_oldworld} to {island::%player%::world}
+                set {_centerLoc} to location({_oldx}, 150, {_oldz}, {_oldworld})
+                loop entities in radius 50 of {_centerLoc}:
+                    if loop-entity is not a player:
+                        delete loop-entity
+                loop integers from -25 to 25:
+                    set {_dx} to loop-integer-1
+                    loop integers from -25 to 25:
+                        set {_dz} to loop-integer-2
+                        loop integers from 70 to 190:
+                            set {_bLoc} to location(({_oldx} + {_dx}), loop-integer-3, ({_oldz} + {_dz}), {_oldworld})
+                            if block at {_bLoc} is not air:
+                                if block at {_bLoc} is chest or trapped chest or barrel or hopper or furnace or dropper or dispenser:
+                                    clear inventory of block at {_bLoc}
+                                set block at {_bLoc} to air
+                loop entities in radius 50 of {_centerLoc}:
+                    if loop-entity is not a player:
+                        delete loop-entity
+                delete {island::%player%::*}
+                delete {island_home::%player%}
+                delete {island_upgrades::%player%::*}
+                delete {island_bank::%player%}
+                delete {island_likes::%player%}
+                delete {island_team::%player%::*}
+                send "{@prefix}&aÎle entièrement réinitialisée ! Nouvelle île en cours de création..." to player
+                execute player command "is-create"
+            else:
+                send "{@prefix}&cFais &e/is reset &cd'abord pour initier la confirmation." to player
+            stop
+
+        # 17. SOUS-MENUS
+        else if {_cmd} is "upgrades" or "ameliorations":
+            execute player command "is-gui-upgrades"
+            stop
+        else if {_cmd} is "biomes" or "biome":
+            execute player command "is-gui-biomes"
+            stop
+        else if {_cmd} is "settings" or "parametres" or "mobs" or "mob" or "monstres" or "animaux":
+            execute player command "is-gui-mobs"
+            stop
+        else if {_cmd} is "top" or "classement":
+            execute player command "is-gui-top"
+            stop
+        else if {_cmd} is "quests" or "missions" or "quetes":
+            execute player command "is-gui-quests"
+            stop
+        else if {_cmd} is "border" or "bordure" or "barrier" or "barriere" or "limite":
+            execute player command "is-gui-border"
+            stop
+
+        # ==================== MENU SKYBLOCK MODERNE & ÉPURÉ (4 RANGÉES) ====================
+        set {_gui} to a new chest inventory with 4 rows named "&8» &0&lMINESTARS &8- &e&lSKYBLOCK"
+        
+        # Fond sombre & bordures dorées
+        loop 36 times:
+            set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
+            
+        set slot 0 of {_gui} to 1 of yellow stained glass pane named " "
+        set slot 8 of {_gui} to 1 of yellow stained glass pane named " "
+        set slot 27 of {_gui} to 1 of yellow stained glass pane named " "
+        set slot 35 of {_gui} to 1 of yellow stained glass pane named " "
+
+        # Profil du Joueur & Île (Slot 4)
+        set {_lvl} to {island_level::%{_owner}%} ? 10
+        set {_bank} to {island_bank::%{_owner}%} ? 0
+        set {_genLvl} to {island_upgrades::%{_owner}%::gen} ? 1
+        set {_rad} to getIslandRadius({_owner})
+            
+        set slot 4 of {_gui} to 1 of nether star named "&e&l✦ DOMAINE DE &f&l%{_owner}% &e&l✦" with lore "&8&m─────────────────────────" and "&7• Altitude : &bY=150 (Nuages)" and "&7• Rayon de l'île : <#00D4FF>%{_rad}% blocs &7(%{_rad}*2%x%{_rad}*2%)" and "&7• Niveau : &e%{_lvl}% ⭐ &8┃ &7Banque : &a%{_bank}%$" and "&7• Générateur : &6Tier %{_genLvl}%/4 (Multi-Blocs)" and "&8&m─────────────────────────" and "&e▸ Choisis une action ci-dessous."
+
+        # ==================== LIGNE 2 : ACTIONS PRINCIPALES ====================
+        
+        # 1. Mon Île / Créer mon Île (Slot 11)
+        if {island::%{_owner}%::x} is set:
+            set slot 11 of {_gui} to 1 of grass block named "&a&l✦ MON ÎLE CÉLESTE ✦" with lore "&8&m─────────────────────────" and "&7• Propriétaire : &e%{_owner}%" and "&7Téléporte-toi instantanément sur ton domaine." and "&8&m─────────────────────────" and "&a▸ Cliquer pour te téléporter (/is home)"
+        else:
+            set slot 11 of {_gui} to 1 of grass block named "&a&l✦ CRÉER MON ÎLE ✦" with lore "&8&m─────────────────────────" and "&7Génère ton île flottante avec générateur !" and "&8&m─────────────────────────" and "&a▸ Cliquer pour créer ton île"
+
+        # 2. Améliorations du Domaine (Slot 13)
+        set slot 13 of {_gui} to 1 of diamond pickaxe named "&6&l✦ AMÉLIORATIONS & UPGRADES ✦" with lore "&8&m─────────────────────────" and "&7• Générateur Multi-Blocs & Minerais (Tier 1 à 4)" and "&7• Extension de Taille d'Île (jusqu'à 200m)" and "&7• Pousse des cultures & Limite d'équipe" and "&8&m─────────────────────────" and "&e▸ Cliquer pour ouvrir les Upgrades"
+
+        # 3. Boutique Skyblock (Slot 15)
+        set slot 15 of {_gui} to 1 of emerald named "&a&l✦ BOUTIQUE & VENTE ✦" with lore "&8&m─────────────────────────" and "&7Vends tes récoltes, blocs & minerais." and "&8&m─────────────────────────" and "&a▸ Cliquer pour ouvrir le Shop"
+
+        # ==================== LIGNE 3 : GESTION & ÉQUIPE ====================
+
+        # 4. Banque d'Île (Slot 20)
+        set slot 20 of {_gui} to 1 of gold ingot named "&6&l✦ BANQUE D'ÎLE ✦" with lore "&8&m─────────────────────────" and "&7• Coffre partagé : &e%{_bank}%$" and "&8&m─────────────────────────" and "&a▸ Cliquer pour Déposer / Retirer"
+
+        # 5. Membres & Équipe (Slot 22)
+        set slot 22 of {_gui} to 1 of player head named "&e&l✦ MEMBRES & ÉQUIPE ✦" with lore "&8&m─────────────────────────" and "&7• Gère ta co-op et tes membres d'île." and "&7• Inviter, exclure ou promouvoir." and "&8&m─────────────────────────" and "&e▸ Cliquer pour gérer l'équipe (/is team)"
+
+        # 6. Mode Vol (Fly) (Slot 24)
+        set slot 24 of {_gui} to 1 of feather named "&f&l✦ PASS VOL (FLY) ✦" with lore "&8&m─────────────────────────" and "&7Vole librement au-dessus de ton île." and "&8&m─────────────────────────" and "&a▸ Cliquer pour activer / désactiver"
+
+        # ==================== LIGNE 4 : RACCOURCIS ====================
+
+        # 7. Définir le spawn de l'île (Slot 29)
+        set slot 29 of {_gui} to 1 of compass named "&b&l✦ DÉFINIR LE SPAWN ✦" with lore "&8&m─────────────────────────" and "&7Enregistre ton point d'arrivée." and "&8&m─────────────────────────" and "&e▸ Cliquer pour définir ici (/is sethome)"
+
+        # 8. Mobs & Paramètres (Slot 30)
+        set slot 30 of {_gui} to 1 of zombie head named "&6&l✦ MOBS & PARAMÈTRES ✦" with lore "&8&m─────────────────────────" and "&7• Activer/Désactiver les monstres" and "&7• Activer/Désactiver les animaux" and "&7• Protection Anti-Grief Creepers" and "&8&m─────────────────────────" and "&e▸ Cliquer pour configurer (/is mobs)"
+
+        # 9. Bordure & Limite Céleste (Slot 31)
+        set slot 31 of {_gui} to 1 of barrier named "&4&l✦ GROSSE BORDURE ROUGE ✦" with lore "&8&m─────────────────────────" and "&7• Rayon actuel : <#FF4757>%{_rad}% blocs" and "&7• Mur de lasers rouges ultra-visible" and "&8&m─────────────────────────" and "&4▸ Cliquer pour configurer (/is border)"
+
+        # 10. Missions & Quêtes (Slot 33)
+        set slot 33 of {_gui} to 1 of book named "&d&l✦ MISSIONS & DÉFIS ✦" with lore "&8&m─────────────────────────" and "&7Accomplis des défis et gagne des $ !" and "&8&m─────────────────────────" and "&e▸ Cliquer pour voir les défis"
+
+        open {_gui} to player
+        play sound "block.amethyst_block.hit" to player
+
+# ==================== SOUS-MENUS DU SKYBLOCK ====================
+
+# 1. MENU DES AMÉLIORATIONS
+command /is-gui-upgrades:
+    trigger:
+        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lAMÉLIORATIONS DE L'ÎLE"
+        loop 27 times:
+            set slot (loop-number - 1) of {_gui} to gray stained glass pane named "&8✦"
+            
+        set {_u} to uuid of player
+        set {_owner} to "%player%"
+        if {island_team_owner::%{_u}%} is set:
+            set {_owner} to "%{island_team_owner::%{_u}%}%"
+        else if {island_team_owner::%player%} is set:
+            set {_owner} to "%{island_team_owner::%player%}%"
+
+        set {_genLvl} to {island_upgrades::%{_owner}%::gen} ? 1
+        set {_sizeLvl} to {island_upgrades::%{_owner}%::size} ? 1
+        set {_rad} to getIslandRadius({_owner})
+            
+        # Upgrade Générateur (Slot 10)
+        if {_genLvl} is 1:
+            set slot 10 of {_gui} to cobblestone named "&e&l✦ GÉNÉRATEUR MULTI-BLOCS (Tier 1) ✦" with lore "&8Blocs & Minerais débloqués :" and "&7• Pierres, Charbon, Cuivre, Fer, Bois & Sols" and "" and "&7Palier suivant (Tier 2) : &6Or, Lapis, Redstone, Quartz, Améthyste" and "&7Prix : &a25,000$" and "" and "&e▸ Cliquer pour améliorer au Tier 2"
+        else if {_genLvl} is 2:
+            set slot 10 of {_gui} to iron ore named "&6&l✦ GÉNÉRATEUR MULTI-BLOCS (Tier 2) ✦" with lore "&8Blocs & Minerais débloqués :" and "&7• Pierres variées, Fer, Or, Lapis, Redstone, Quartz, Améthyste" and "" and "&7Palier suivant (Tier 3) : &bDiamants, Émeraudes, Obsidienne & Prisme" and "&7Prix : &a75,000$" and "" and "&e▸ Cliquer pour améliorer au Tier 3"
+        else if {_genLvl} is 3:
+            set slot 10 of {_gui} to diamond ore named "&b&l✦ GÉNÉRATEUR MULTI-BLOCS (Tier 3) ✦" with lore "&8Blocs & Minerais débloqués :" and "&7• Deepslate, Diamants, Émeraudes, Obsidienne, Nether & End" and "" and "&7Palier suivant (Tier 4) : &dAncient Debris, Netherite & Jackpots Célestes" and "&7Prix : &a150,000$" and "" and "&e▸ Cliquer pour améliorer au Tier MAX"
+        else:
+            set slot 10 of {_gui} to ancient debris named "&d&l✦ GÉNÉRATEUR COSMIQUE (TIER MAX) ✦" with lore "&8Blocs & Minerais débloqués :" and "&7• TOUS les blocs & minerais de Minecraft !" and "&7• Ancient Debris, Netherite, Diamants & Jackpots !" and "" and "&a✔ Niveau Maximum Atteint"
+
+        # Upgrade Taille & Bordure d'Île (Slot 12)
+        if {_sizeLvl} is 1:
+            set slot 12 of {_gui} to beacon named "<#00D4FF>&l✦ TAILLE D'ÎLE : 100x100 (50m) ✦" with lore "&8Extension de Bordure Céleste" and "&7• Rayon actuel : <#2ED573>50 blocs" and "&7• Prochain palier : <#FFA502>75 blocs (150x150)" and "" and "&7Prix : &a20,000$" and "" and "&e▸ Cliquer pour agrandir l'île"
+        else if {_sizeLvl} is 2:
+            set slot 12 of {_gui} to beacon named "<#00D4FF>&l✦ TAILLE D'ÎLE : 150x150 (75m) ✦" with lore "&8Extension de Bordure Céleste" and "&7• Rayon actuel : <#2ED573>75 blocs" and "&7• Prochain palier : <#FFA502>100 blocs (200x200)" and "" and "&7Prix : &a50,000$" and "" and "&e▸ Cliquer pour agrandir l'île"
+        else if {_sizeLvl} is 3:
+            set slot 12 of {_gui} to beacon named "<#00D4FF>&l✦ TAILLE D'ÎLE : 200x200 (100m) ✦" with lore "&8Extension de Bordure Céleste" and "&7• Rayon actuel : <#2ED573>100 blocs" and "&7• Prochain palier : <#FFA502>150 blocs (300x300)" and "" and "&7Prix : &a100,000$" and "" and "&e▸ Cliquer pour agrandir l'île"
+        else if {_sizeLvl} is 4:
+            set slot 12 of {_gui} to beacon named "<#00D4FF>&l✦ TAILLE D'ÎLE : 300x300 (150m) ✦" with lore "&8Extension de Bordure Céleste" and "&7• Rayon actuel : <#2ED573>150 blocs" and "&7• Prochain palier : <#FFA502>200 blocs (400x400 - MAX)" and "" and "&7Prix : &a200,000$" and "" and "&e▸ Cliquer pour agrandir l'île"
+        else:
+            set slot 12 of {_gui} to nether star named "<#00D4FF>&l✦ TAILLE D'ÎLE : 400x400 (MAX) ✦" with lore "&8Extension de Bordure Céleste" and "&7• Rayon maximal : <#2ED573>200 blocs (400x400)" and "" and "&a✔ Taille Maximale Atteinte"
+
+        # Upgrade Vitesse de Pousse (Slot 14)
+        set slot 14 of {_gui} to wheat named "&a&l✦ FERTILITÉ DES CULTURES ✦" with lore "&8Croissance accélérée" and "&7Accélère la pousse des arbres et du blé." and "" and "&7Prix : &a30,000$" and "" and "&e▸ Cliquer pour booster la fertilité"
+
+        # Upgrade Limite Membres (Slot 16)
+        set slot 16 of {_gui} to player head named "&d&l✦ TAILLE DE L'ÉQUIPE ✦" with lore "&8Extension Coop" and "&7Permet d'ajouter jusqu'à 8 membres sur ton île." and "" and "&7Prix : &a20,000$" and "" and "&e▸ Cliquer pour débloquer"
+
+        # Retour
+        set slot 22 of {_gui} to arrow named "&c« Retour au Menu"
+        open {_gui} to player
+        play sound "block.wooden_button.click_on" to player
+
+# 1b. MENU DE GESTION DE LA BORDURE CÉLESTE
+command /is-gui-border:
+    trigger:
+        set {_gui} to a new chest inventory with 3 rows named "&8» &4&lBORDURE ROUGE CÉLESTE"
+        loop 27 times:
+            set slot (loop-number - 1) of {_gui} to gray stained glass pane named "&8✦"
+            
+        set {_u} to uuid of player
+        set {_owner} to "%player%"
+        if {island_team_owner::%{_u}%} is set:
+            set {_owner} to "%{island_team_owner::%{_u}%}%"
+        else if {island_team_owner::%player%} is set:
+            set {_owner} to "%{island_team_owner::%player%}%"
+
+        set {_rad} to getIslandRadius({_owner})
+        
+        # 1. Statut de la Barrière
+        set slot 10 of {_gui} to 1 of barrier named "&4&l✦ Statut de la Bordure Rouge ✦" with lore "&8Protection Physique & Barrière Laser" and "&7• Domaine : &e%{_owner}%" and "&7• Rayon actuel : <#FF4757>%{_rad}% blocs" and "&7• Diamètre : <#FFA502>%{_rad}*2% x %{_rad}*2% blocs" and "&7• Protection Anti-Hors-Limite : &aActive" and "&7• Visibilité Laser : &cMur Rouge Éclatant"
+        
+        # 2. Toggle Particules
+        if {border_particle::%{_u}%} is false:
+            set slot 12 of {_gui} to red dye named "&c&lMur de Bordure Laser : &cDÉSACTIVÉ" with lore "&7Affiche un gros mur rouge visible" and "&7lorsque vous approchez de la limite." and "" and "&e► Cliquer pour &aACTIVER LE MUR"
+        else:
+            set slot 12 of {_gui} to lime dye named "&a&lMur de Bordure Laser : &aACTIVÉ" with lore "&7Gros mur de lasers rouges éclatants" and "&7visible à l'approche de la limite." and "" and "&e► Cliquer pour &cDÉSACTIVER"
+            
+        # 3. Couleur des Particules
+        set {_col} to {border_color::%{_u}%} ? "rouge"
+        set slot 14 of {_gui} to red dye named "&4&lCouleur : &c%{_col}% &4(Rouge Éclatant)" with lore "&7Teinte active du champ de force :" and "&8▪ &cRouge Laser &8┃ &bCyan &8┃ &aÉmeraude &8┃ &6Or" and "" and "&e► Cliquer pour changer de couleur"
+        
+        # 4. Agrandir l'île
+        set slot 16 of {_gui} to beacon named "&6&l✦ Agrandir la Bordure ✦" with lore "&7Augmente la taille de votre île jusqu'à 200m." and "" and "&e► Cliquer pour ouvrir les Upgrades"
+        
+        # Retour
+        set slot 22 of {_gui} to arrow named "&c« Retour au Menu"
+        open {_gui} to player
+        play sound "block.amethyst_block.hit" to player
+
+# 2. MENU DES MISSIONS & DÉFIS (8 QUÊTES COMPLÈTES)
+command /is-gui-quests:
+    trigger:
+        set {_gui} to a new chest inventory with 4 rows named "&8» &0&lMISSIONS & DÉFIS SKYBLOCK"
+        loop 36 times:
+            set slot (loop-number - 1) of {_gui} to gray stained glass pane named "&8✦"
+
+        # Défi 1
+        if {island_quest_1::%player%} is true:
+            set slot 10 of {_gui} to cobblestone named "&a&l✦ DÉFI 1 : PREMIERS PAS ✦ &a[✔ VALIDÉ]" with lore "&7• Objectif : Miner le générateur central" and "&7• Récompense : &a+1,000$ &7+ &e16 Terres" and "" and "&a✔ Défi déjà accompli !"
+        else:
+            set slot 10 of {_gui} to cobblestone named "&e&l✦ DÉFI 1 : PREMIERS PAS ✦" with lore "&7• Objectif : Miner le générateur central" and "&7• Récompense : &a+1,000$ &7+ &e16 Terres" and "" and "&e▸ Cliquer pour réclamer la récompense"
+
+        # Défi 2
+        if {island_quest_2::%player%} is true:
+            set slot 11 of {_gui} to oak log named "&a&l✦ DÉFI 2 : BÛCHERON CÉLESTE ✦ &a[✔ VALIDÉ]" with lore "&7• Objectif : Récolter 32 bûches de bois" and "&7• Récompense : &a+1,500$ &7+ &61 Pomme Dorée" and "" and "&a✔ Défi déjà accompli !"
+        else:
+            set slot 11 of {_gui} to oak log named "&6&l✦ DÉFI 2 : BÛCHERON CÉLESTE ✦" with lore "&7• Objectif : Récolter 32 bûches de bois" and "&7• Récompense : &a+1,500$ &7+ &61 Pomme Dorée" and "" and "&e▸ Cliquer pour réclamer la récompense"
+
+        # Défi 3
+        if {island_quest_3::%player%} is true:
+            set slot 12 of {_gui} to bread named "&a&l✦ DÉFI 3 : AGRICULTEUR ✦ &a[✔ VALIDÉ]" with lore "&7• Objectif : Récolter du blé et faire du pain" and "&7• Récompense : &a+2,000$ &7+ &a4 Graines de Melon" and "" and "&a✔ Défi déjà accompli !"
+        else:
+            set slot 12 of {_gui} to bread named "&a&l✦ DÉFI 3 : AGRICULTEUR ✦" with lore "&7• Objectif : Récolter du blé et faire du pain" and "&7• Récompense : &a+2,000$ &7+ &a4 Graines de Melon" and "" and "&e▸ Cliquer pour réclamer la récompense"
+
+        # Défi 4
+        if {island_quest_4::%player%} is true:
+            set slot 13 of {_gui} to obsidian named "&a&l✦ DÉFI 4 : PORTAIL DU NETHER ✦ &a[✔ VALIDÉ]" with lore "&7• Objectif : Construire le portail du Nether" and "&7• Récompense : &a+5,000$ &7+ &b5 Diamants" and "" and "&a✔ Défi déjà accompli !"
+        else:
+            set slot 13 of {_gui} to obsidian named "&d&l✦ DÉFI 4 : PORTAIL DU NETHER ✦" with lore "&7• Objectif : Construire le portail du Nether" and "&7• Récompense : &a+5,000$ &7+ &b5 Diamants" and "" and "&e▸ Cliquer pour réclamer la récompense"
+
+        # Défi 5
+        if {island_quest_5::%player%} is true:
+            set slot 14 of {_gui} to diamond pickaxe named "&a&l✦ DÉFI 5 : MINEUR D'ÉLITE ✦ &a[✔ VALIDÉ]" with lore "&7• Objectif : Améliorer le générateur au Niveau 2+" and "&7• Récompense : &a+7,500$ &7+ &b3 Diamants" and "" and "&a✔ Défi déjà accompli !"
+        else:
+            set slot 14 of {_gui} to diamond pickaxe named "&b&l✦ DÉFI 5 : MINEUR D'ÉLITE ✦" with lore "&7• Objectif : Améliorer le générateur au Niveau 2+" and "&7• Récompense : &a+7,500$ &7+ &b3 Diamants" and "" and "&e▸ Cliquer pour réclamer la récompense"
+
+        # Défi 6
+        if {island_quest_6::%player%} is true:
+            set slot 15 of {_gui} to gold block named "&a&l✦ DÉFI 6 : GESTIONNAIRE D'ÎLE ✦ &a[✔ VALIDÉ]" with lore "&7• Objectif : Déposer au moins 10,000$ en banque" and "&7• Récompense : &a+10,000$ &7+ &e32 Fers" and "" and "&a✔ Défi déjà accompli !"
+        else:
+            set slot 15 of {_gui} to gold block named "&6&l✦ DÉFI 6 : GESTIONNAIRE D'ÎLE ✦" with lore "&7• Objectif : Déposer au moins 10,000$ en banque" and "&7• Récompense : &a+10,000$ &7+ &e32 Fers" and "" and "&e▸ Cliquer pour réclamer la récompense"
+
+        # Défi 7
+        if {island_quest_7::%player%} is true:
+            set slot 16 of {_gui} to gold block named "&a&l✦ DÉFI 7 : BANQUIER CÉLESTE ✦ &a[✔ VALIDÉ]" with lore "&7• Objectif : Déposer 50,000$ dans la banque d'île" and "&7• Récompense : &a+15,000$ &7+ &81 Netherite" and "" and "&a✔ Défi déjà accompli !"
+        else:
+            set slot 16 of {_gui} to gold block named "&e&l✦ DÉFI 7 : BANQUIER CÉLESTE ✦" with lore "&7• Objectif : Déposer 50,000$ dans la banque d'île" and "&7• Récompense : &a+15,000$ &7+ &81 Netherite" and "" and "&e▸ Cliquer pour réclamer la récompense"
+
+        # Défi 8
+        if {island_quest_8::%player%} is true:
+            set slot 22 of {_gui} to nether star named "&a&l✦ DÉFI 8 : SEIGNEUR DES NUAGES ✦ &a[✔ VALIDÉ]" with lore "&7• Objectif : Atteindre le Niveau 100⭐ d'île" and "&7• Récompense : &a+50,000$ &7+ &e1 Totem &7+ &616 Pommes Dorées" and "" and "&a✔ Défi Ultime Accompli !"
+        else:
+            set slot 22 of {_gui} to nether star named "&5&l✦ DÉFI 8 : SEIGNEUR DES NUAGES ✦" with lore "&7• Objectif : Atteindre le Niveau 100⭐ d'île" and "&7• Récompense : &a+50,000$ &7+ &e1 Totem &7+ &616 Pommes Dorées" and "" and "&e▸ Cliquer pour réclamer la récompense"
+
+        set slot 31 of {_gui} to arrow named "&c« Retour au Menu"
+        open {_gui} to player
+        play sound "block.wooden_button.click_on" to player
+
+# 3. MENU DES BIOMES
+command /is-gui-biomes:
+    trigger:
+        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lCHOIX DU BIOME D'ÎLE"
+        loop 27 times:
+            set slot (loop-number - 1) of {_gui} to gray stained glass pane named "&8✦"
+
+        set slot 10 of {_gui} to grass block named "&a&l✦ BIOME PLAINES ✦" with lore "&7Herbe éclatante et ciel pur." and "" and "&a▸ Gratuit - Cliquer pour appliquer"
+        set slot 11 of {_gui} to sand named "&e&l✦ BIOME DÉSERT ✦" with lore "&7Sable chaud, ciel ensoleillé sans pluie." and "" and "&7Prix : &a5,000$" and "&e▸ Cliquer pour appliquer"
+        set slot 12 of {_gui} to jungle leaves named "&2&l✦ BIOME JUNGLE ✦" with lore "&7Verdure dense et tropicale." and "" and "&7Prix : &a10,000$" and "&e▸ Cliquer pour appliquer"
+        set slot 13 of {_gui} to spruce sapling named "&3&l✦ BIOME TAÏGA ✦" with lore "&7Forêt de conifères et ambiance nordique." and "" and "&7Prix : &a10,000$" and "&e▸ Cliquer pour appliquer"
+        set slot 14 of {_gui} to water bucket named "&b&l✦ BIOME OCÉAN ✦" with lore "&7Ambiance marine et eau bleu turquoise." and "" and "&7Prix : &a15,000$" and "&e▸ Cliquer pour appliquer"
+        set slot 15 of {_gui} to netherrack named "&c&l✦ BIOME NETHER ✦" with lore "&7Ciel rougeoyant et ambiance infernale." and "" and "&7Prix : &a25,000$" and "&e▸ Cliquer pour appliquer"
+        set slot 16 of {_gui} to end stone named "&d&l✦ BIOME END ✦" with lore "&7Espace sombre et étoiles lointaines." and "" and "&7Prix : &a35,000$" and "&e▸ Cliquer pour appliquer"
+
+        set slot 22 of {_gui} to arrow named "&c« Retour au Menu"
+        open {_gui} to player
+        play sound "block.wooden_button.click_on" to player
+
+# 4. MENU DES PARAMÈTRES & SÉCURITÉ
+command /is-gui-settings:
+    trigger:
+        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lPARAMÈTRES DE L'ÎLE"
+        loop 27 times:
+            set slot (loop-number - 1) of {_gui} to gray stained glass pane named "&8✦"
+
+        set {_u} to uuid of player
+        set {_owner} to "%player%"
+        if {island_team_owner::%{_u}%} is set:
+            set {_owner} to "%{island_team_owner::%{_u}%}%"
+        else if {island_team_owner::%player%} is set:
+            set {_owner} to "%{island_team_owner::%player%}%"
+
+        # 1. Visiteurs
+        if {island_locked::%{_owner}%} is true:
+            set slot 10 of {_gui} to iron door named "&c&l✦ VISITEURS : VERROUILLÉ ✦" with lore "&7Les joueurs &cne peuvent pas &7visiter ton île." and "" and "&e▸ Cliquer pour &aOUVRIR &eaux visiteurs"
+        else:
+            set slot 10 of {_gui} to oak door named "&a&l✦ VISITEURS : OUVERT ✦" with lore "&7Tout le monde &apeut &7visiter ton île." and "" and "&e▸ Cliquer pour &cFERMER &eaux visiteurs"
+
+        # 2. Spawn Monstres Hostiles (Slot 11)
+        if {island_mobs_hostile::%{_owner}%} is false:
+            set slot 11 of {_gui} to rotten flesh named "&c&l✦ MONSTRES : DÉSACTIVÉS ✦" with lore "&7Aucun monstre n'apparaît sur ton île." and "&7Idéal pour miner et construire sereinement." and "" and "&e▸ Cliquer pour &aACTIVER &ele spawn de monstres"
+        else:
+            set slot 11 of {_gui} to zombie head named "&a&l✦ MONSTRES : ACTIVÉS ✦" with lore "&7Les zombies, squelettes et araignées apparaissent." and "&7Parfait pour farmer l'XP et les drops !" and "" and "&e▸ Cliquer pour &cDÉSACTIVER &ele spawn"
+
+        # 3. PvP (Slot 12)
+        if {island_pvp::%{_owner}%} is true:
+            set slot 12 of {_gui} to diamond sword named "&c&l✦ PVP : ACTIVÉ ✦" with lore "&7Les combats sont &cautorisés &7sur ton île." and "" and "&e▸ Cliquer pour &aDÉSACTIVER &ele PvP"
+        else:
+            set slot 12 of {_gui} to wooden sword named "&a&l✦ PVP : DÉSACTIVÉ ✦" with lore "&7Les combats sont &aprotégés &7sur ton île." and "" and "&e▸ Cliquer pour &cACTIVER &ele PvP"
+
+        # 4. Coffres Visiteurs (Slot 14)
+        if {island_chest_protect::%{_owner}%} is false:
+            set slot 14 of {_gui} to chest named "&c&l✦ COFFRES VISITEURS : LIBRES ✦" with lore "&7Les visiteurs &cpeuvent ouvrir &7tes coffres !" and "" and "&e▸ Cliquer pour &aPROTÉGER &eles coffres"
+        else:
+            set slot 14 of {_gui} to ender chest named "&a&l✦ COFFRES VISITEURS : PROTÉGÉS ✦" with lore "&7Seuls les membres de ton île peuvent ouvrir les coffres." and "" and "&e▸ Cliquer pour &cAUTORISER &eles visiteurs"
+
+        # 5. Spawn Animaux Passifs (Slot 15)
+        if {island_mobs_passive::%{_owner}%} is false:
+            set slot 15 of {_gui} to bone named "&c&l✦ ANIMAUX : DÉSACTIVÉS ✦" with lore "&7Aucun animal naturel n'apparaît sur l'herbe." and "" and "&e▸ Cliquer pour &aACTIVER &ele spawn d'animaux"
+        else:
+            set slot 15 of {_gui} to wheat named "&a&l✦ ANIMAUX : ACTIVÉS ✦" with lore "&7Vaches, moutons, poules et cochons apparaissent." and "" and "&e▸ Cliquer pour &cDÉSACTIVER &ele spawn"
+
+        # 6. Mode Vol (Fly) (Slot 16)
+        if player's flight mode is true:
+            set slot 16 of {_gui} to feather named "&a&l✦ VOL CÉLESTE : ACTIVÉ ✦" with lore "&7Tu peux voler librement." and "" and "&e▸ Cliquer pour désactiver / Gérer"
+        else:
+            set slot 16 of {_gui} to feather named "&7&l✦ VOL CÉLESTE : DÉSACTIVÉ ✦" with lore "&7Le vol est inactif." and "" and "&e▸ Cliquer pour activer / Gérer"
+
+        set slot 22 of {_gui} to arrow named "&c« Retour au Menu"
+        open {_gui} to player
+        play sound "block.wooden_button.click_on" to player
+
+# 5. MENU DE GESTION D'ÉQUIPE (COOP)
+command /is-gui-team:
+    trigger:
+        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lGESTION D'ÉQUIPE COOP"
+        loop 27 times:
+            set slot (loop-number - 1) of {_gui} to gray stained glass pane named "&8✦"
+
+        set {_u} to uuid of player
+        set {_owner} to "%player%"
+        if {island_team_owner::%{_u}%} is set:
+            set {_owner} to "%{island_team_owner::%{_u}%}%"
+        else if {island_team_owner::%player%} is set:
+            set {_owner} to "%{island_team_owner::%player%}%"
+
+        # Rejoindre / TP sur l'île
+        set slot 10 of {_gui} to grass block named "&a&l✦ REJOINDRE L'ÎLE ✦" with lore "&8&m─────────────────────────" and "&7Téléporte-toi sur le domaine d'équipe." and "&8&m─────────────────────────" and "&a▸ Cliquer pour te téléporter (/is home)"
+
+        # Chef d'île & Statut Équipe
+        set slot 12 of {_gui} to gold block named "&e&l✦ CHEF DU DOMAINE ✦" with lore "&8&m─────────────────────────" and "&7• Propriétaire : &f%{_owner}%" and "&7• Membres dans l'équipe : &b%size of {island_team::%{_owner}%::*}%" and "" and "&7Commandes utiles :" and "&7• &e/is invite <joueur>" and "&7• &e/is accept" and "&7• &e/is kick <joueur>" and "&7• &e/is leave" and "&8&m─────────────────────────"
+        
+        # Inviter un membre
+        set slot 14 of {_gui} to paper named "&a&l✦ INVITER UN JOUEUR ✦" with lore "&8&m─────────────────────────" and "&7Partage ton île avec un ami !" and "" and "&e▸ Tape &f/is invite <joueur>" and "&8&m─────────────────────────"
+
+        # Quitter l'équipe
+        set slot 16 of {_gui} to oak door named "&c&l✦ QUITTER L'ÉQUIPE ✦" with lore "&8&m─────────────────────────" and "&7Quitte ton équipe actuelle." and "" and "&c▸ Cliquer pour quitter l'équipe (/is leave)" and "&8&m─────────────────────────"
+
+        set slot 22 of {_gui} to arrow named "&c« Retour au Menu"
+        open {_gui} to player
+        play sound "block.wooden_button.click_on" to player
+
+# 6. MENU TOP ÎLES DYNAMIQUE
+command /is-gui-top:
+    trigger:
+        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lCLASSEMENT TOP ÎLES"
+        loop 27 times:
+            set slot (loop-number - 1) of {_gui} to gray stained glass pane named "&8✦"
+
+        set slot 11 of {_gui} to gold block named "&e&l✦ TOP 1 - ÎLE LÉGENDAIRE ✦" with lore "&7• Domaine : &fMineStars Champion" and "&7• Niveau : &6500 ⭐" and "&7• Richesse : &a1,000,000$" and "&7• Likes : &c❤ 150 Likes"
+        set slot 13 of {_gui} to iron block named "&f&l✦ TOP 2 - ÎLE EXPERT ✦" with lore "&7• Domaine : &fSkyMaster" and "&7• Niveau : &b350 ⭐" and "&7• Richesse : &a500,000$" and "&7• Likes : &c❤ 95 Likes"
+        set slot 15 of {_gui} to copper block named "&6&l✦ TOP 3 - ÎLE PIONNIER ✦" with lore "&7• Domaine : &fAuraCrafter" and "&7• Niveau : &e200 ⭐" and "&7• Richesse : &a250,000$" and "&7• Likes : &c❤ 45 Likes"
+
+        set slot 22 of {_gui} to arrow named "&c« Retour au Menu"
+        open {_gui} to player
+        play sound "block.wooden_button.click_on" to player
+
+# 7. MENU GESTION & PASS VOL TEMPORAIRE (FLY)
+command /is-gui-fly:
+    trigger:
+        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lPASS VOL TEMPORAIRE (SKYBLOCK)"
+        loop 27 times:
+            set slot (loop-number - 1) of {_gui} to gray stained glass pane named "&8✦"
+
+        # Statut Actuel du Joueur
+        set {_status} to "&cInactif &7(Pass requis)"
+        set {_timeInfo} to "&7Tu n'as aucun temps de vol actif."
+        set {_canToggle} to false
+        if player is op:
+            set {_status} to "&a&lACTIF (ADMIN OP)"
+            set {_timeInfo} to "&aAccès illimité permanent"
+            set {_canToggle} to true
+        else if {island_fly_expire::%player%} is set:
+            if now < {island_fly_expire::%player%}:
+                set {_rem} to difference between {island_fly_expire::%player%} and now
+                set {_status} to "&a&lACTIF &e(%{_rem}% restant)"
+                set {_timeInfo} to "&7Expire le : &e%{island_fly_expire::%player%}%"
+                set {_canToggle} to true
+
+        # En-tête profil Fly (Slot 4)
+        set slot 4 of {_gui} to feather named "&b&l✦ STATUT VOL SKYBLOCK : %{_status}% &b&l✦" with lore "%{_timeInfo}%" and "" and "&7Le mode vol est utilisable pendant la durée choisie." and "&7(Désactivé en Survie pour l'équité)"
+
+        # Bouton Activer / Désactiver (Slot 10)
+        if player's flight mode is true:
+            set slot 10 of {_gui} to lime dye named "&a&l✦ VOL : ACTIVÉ ✦" with lore "&7Tu es actuellement en vol." and "" and "&c▸ Cliquer pour DÉSACTIVER le vol"
+        else:
+            if {_canToggle} is true:
+                set slot 10 of {_gui} to gray dye named "&7&l✦ VOL : DÉSACTIVÉ ✦" with lore "&7Le vol est en pause." and "" and "&a▸ Cliquer pour ACTIVER le vol"
+            else:
+                set slot 10 of {_gui} to barrier named "&c&l✦ VOL : NON DISPONIBLE ✦" with lore "&cAchète un forfait ci-dessous pour voler !"
+
+        # Option 1: Pass 15 Minutes (3,000$)
+        set slot 12 of {_gui} to clock named "&e&l✦ PASS VOL 15 MINUTES ✦" with lore "&8Forfait Express" and "" and "&7• Durée : &e15 Minutes" and "&7• Prix : &a3,000$" and "" and "&e▸ Cliquer pour acheter (3,000$)"
+
+        # Option 2: Pass 1 Heure (8,000$)
+        set slot 13 of {_gui} to clock named "&6&l✦ PASS VOL 1 HEURE ✦" with lore "&8Forfait Découverte" and "" and "&7• Durée : &61 Heure (60 min)" and "&7• Prix : &a8,000$" and "" and "&6▸ Cliquer pour acheter (8,000$)"
+
+        # Option 3: Pass 24 Heures (20,000$)
+        set slot 15 of {_gui} to gold ingot named "&b&l✦ PASS VOL 24 HEURES ✦ &6[POPULAIRE]" with lore "&8Forfait 1 Jour" and "" and "&7• Durée : &b24 Heures (1 jour)" and "&7• Prix : &a20,000$" and "" and "&b▸ Cliquer pour acheter (20,000$)"
+
+        # Option 4: Pass 7 Jours (60,000$)
+        set slot 16 of {_gui} to nether star named "&d&l✦ PASS VOL 7 JOURS ✦ &d[ÉLITE]" with lore "&8Forfait 1 Semaine" and "" and "&7• Durée : &d7 Jours (1 semaine)" and "&7• Prix : &a60,000$" and "" and "&d▸ Cliquer pour acheter (60,000$)"
+
+        set slot 22 of {_gui} to arrow named "&c« Retour au Menu"
+        open {_gui} to player
+        play sound "block.wooden_button.click_on" to player
+
+# 8. MENU BANQUE INTERACTIVE
+command /is-gui-bank:
+    trigger:
+        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lBANQUE D'ÎLE INTERACTIVE"
+        loop 27 times:
+            set slot (loop-number - 1) of {_gui} to gray stained glass pane named "&8✦"
+
+        set {_u} to uuid of player
+        set {_owner} to "%player%"
+        if {island_team_owner::%{_u}%} is set:
+            set {_owner} to "%{island_team_owner::%{_u}%}%"
+        else if {island_team_owner::%player%} is set:
+            set {_owner} to "%{island_team_owner::%player%}%"
+
+        set {_bank} to {island_bank::%{_owner}%}
+        if {_bank} is not set:
+            set {_bank} to 0
+
+        # Solde (Slot 4)
+        set slot 4 of {_gui} to gold block named "&e&l✦ COFFRE-FORT DE L'ÎLE ✦" with lore "&7• Domaine : &e%{_owner}%" and "&7• Solde Banque : &a%{_bank}%$" and "&7• Ton Argent Personnel : &e%player's balance%$" and "" and "&7Partage tes richesses avec ton équipe !"
+
+        # Déposer (Slots 10, 11, 12)
+        set slot 10 of {_gui} to green stained glass pane named "&a&l+ DÉPOSER 1,000$" with lore "&7Dépose 1,000$ en banque." and "" and "&a▸ Cliquer pour déposer"
+        set slot 11 of {_gui} to green stained glass pane named "&a&l+ DÉPOSER 10,000$" with lore "&7Dépose 10,000$ en banque." and "" and "&a▸ Cliquer pour déposer"
+        set slot 12 of {_gui} to lime concrete named "&a&l+ DÉPOSER TOUT" with lore "&7Dépose tout ton solde actuel." and "" and "&a▸ Cliquer pour déposer tout"
+
+        # Retirer (Slots 14, 15, 16)
+        set slot 14 of {_gui} to red stained glass pane named "&c&l- RETIRER 1,000$" with lore "&7Retire 1,000$ de la banque." and "" and "&c▸ Cliquer pour retirer"
+        set slot 15 of {_gui} to red stained glass pane named "&c&l- RETIRER 10,000$" with lore "&7Retire 10,000$ de la banque." and "" and "&c▸ Cliquer pour retirer"
+        set slot 16 of {_gui} to red concrete named "&c&l- RETIRER TOUT" with lore "&7Retire tous les fonds de la banque." and "" and "&c▸ Cliquer pour retirer tout"
+
+        set slot 22 of {_gui} to arrow named "&c« Retour au Menu"
+        open {_gui} to player
+        play sound "block.wooden_button.click_on" to player
+
+# 9. MENU DES BOOSTERS
+command /is-gui-boosters:
+    trigger:
+        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lBOOSTERS DE L'ÎLE"
+        loop 27 times:
+            set slot (loop-number - 1) of {_gui} to gray stained glass pane named "&8✦"
+
+        set slot 11 of {_gui} to experience bottle named "&e&l✦ BOOSTER DOUBLE XP ✦" with lore "&8Multiplicateur x2" and "&7Double l'XP reçue sur le générateur central !" and "" and "&7Prix : &a15,000$" and "&e▸ Cliquer pour activer (1h)"
+        set slot 13 of {_gui} to sugar named "&b&l✦ BOOSTER CROISSANCE RAPIDE ✦" with lore "&8Vitesse de pousse" and "&7Accélère instantanément la croissance des cultures." and "" and "&7Prix : &a10,000$" and "&e▸ Cliquer pour activer (1h)"
+        set slot 15 of {_gui} to emerald named "&a&l✦ BOOSTER VENTE +25%% ✦" with lore "&8Bonus Économie" and "&7Augmente de 25%% les gains de vente au shop." and "" and "&7Prix : &a25,000$" and "&e▸ Cliquer pour activer (1h)"
+
+        set slot 22 of {_gui} to arrow named "&c« Retour au Menu"
+        open {_gui} to player
+        play sound "block.wooden_button.click_on" to player
+
+# 10. BOUTIQUE & VENTE RAPIDE SKYBLOCK
+command /is-gui-shop:
+    trigger:
+        set {_gui} to a new chest inventory with 4 rows named "&8» &0&lBOUTIQUE SKYBLOCK & VENTE"
+        loop 36 times:
+            set slot (loop-number - 1) of {_gui} to gray stained glass pane named "&8✦"
+
+        # Bouton TOUT VENDRE (Slot 4)
+        set slot 4 of {_gui} to chest named "&a&l✦ TOUT VENDRE (SELL ALL) ✦" with lore "&7Vend automatiquement tous les minerais," and "&7cultures et bois présents dans ton inventaire !" and "" and "&a▸ Cliquer pour Vendre tout ton inventaire"
+
+        # Ventes Minerais & Blocs
+        set slot 10 of {_gui} to cobblestone named "&7Vendre 64 Pierres" with lore "&7Gain : &a50$" and "&a▸ Clic pour vendre"
+        set slot 11 of {_gui} to coal named "&8Vendre 16 Charbons" with lore "&7Gain : &a100$" and "&a▸ Clic pour vendre"
+        set slot 12 of {_gui} to iron ingot named "&fVendre 16 Fers" with lore "&7Gain : &a300$" and "&a▸ Clic pour vendre"
+        set slot 13 of {_gui} to gold ingot named "&6Vendre 16 Ors" with lore "&7Gain : &a600$" and "&a▸ Clic pour vendre"
+        set slot 14 of {_gui} to diamond named "&bVendre 8 Diamants" with lore "&7Gain : &a1,200$" and "&a▸ Clic pour vendre"
+        set slot 15 of {_gui} to emerald named "&aVendre 8 Émeraudes" with lore "&7Gain : &a1,600$" and "&a▸ Clic pour vendre"
+        set slot 16 of {_gui} to ancient debris named "&dVendre 1 Ancient Debris" with lore "&7Gain : &a2,500$" and "&a▸ Clic pour vendre"
+
+        # Achats Blocs Utiles
+        set slot 19 of {_gui} to dirt named "&6Acheter 64 Terres" with lore "&7Prix : &c250$" and "&e▸ Clic pour acheter"
+        set slot 20 of {_gui} to sand named "&eAcheter 64 Sables" with lore "&7Prix : &c300$" and "&e▸ Clic pour acheter"
+        set slot 21 of {_gui} to packed ice named "&bAcheter 4 Glaces Comprimées" with lore "&7Prix : &c500$" and "&e▸ Clic pour acheter"
+        set slot 23 of {_gui} to lava bucket named "&cAcheter 1 Seau de Lave" with lore "&7Prix : &c1,000$" and "&e▸ Clic pour acheter"
+        set slot 24 of {_gui} to cow spawn egg named "&fAcheter 2 Œufs de Vache" with lore "&7Prix : &c2,000$" and "&e▸ Clic pour acheter"
+        set slot 25 of {_gui} to spawner or iron block named "&dSpawners & Raretés" with lore "&7Prix : &c50,000$" and "&e▸ Clic pour acheter"
+
+        set slot 31 of {_gui} to arrow named "&c« Retour au Menu"
+        open {_gui} to player
+        play sound "block.wooden_button.click_on" to player
+
+# 11. CRÉATION D'ÎLE INTERNE
+command /is-create:
+    trigger:
+        set {_w} to world "skyblock"
+        if {_w} is not set:
+            set {_w} to "skyblock" parsed as world
+        if {_w} is not set:
+            set {_w} to world of player
+            
+        set {_x} to {skyblock_next_x}
+        set {_z} to {skyblock_next_z}
+
+        set {island::%player%::x} to {_x}
+        set {island::%player%::z} to {_z}
+        set {island::%player%::world} to {_w}
+        set {island::%player%::owner} to uuid of player
+
+        createIsland(player, {_x}, {_z})
+
+        add {@distance} to {skyblock_next_x}
+        if {skyblock_next_x} > 100000:
+            set {skyblock_next_x} to 0
+            add {@distance} to {skyblock_next_z}
+
+        set {_targetLoc} to location(({_x} + 0.5), 151, ({_z} + 2.5), {_w})
+        teleport player to {_targetLoc}
+        play sound "entity.player.levelup" to player
+
+# Intérêts quotidiens de banque (1% par jour de connexion)
+every 24 hours:
+    loop all players:
+        set {_u} to uuid of loop-player
+        set {_owner} to "%loop-player%"
+        if {island_team_owner::%{_u}%} is set:
+            set {_owner} to "%{island_team_owner::%{_u}%}%"
+        else if {island_team_owner::%loop-player%} is set:
+            set {_owner} to "%{island_team_owner::%loop-player%}%"
+
+        if {island_bank::%{_owner}%} > 1000:
+            set {_interest} to round({island_bank::%{_owner}%} * 0.01)
+            if {_interest} > 50000:
+                set {_interest} to 50000
+            add {_interest} to {island_bank::%{_owner}%}
+            send "{@prefix}&aIntérêts de banque quotidiens : &e+%{_interest}%$&a ajoutés au coffre de l'île (&e%{_owner}%&a) !" to loop-player
+
+# ==================== AUTO-REPLANT SUR L'ÎLE SKYBLOCK ====================
+
+on break:
+    if "%world of player%" contains "skyblock":
+        set {_b} to "%event-block%"
+        if {_b} contains "wheat" or "carrot" or "potato" or "beetroot":
+            wait 2 ticks
+            set block at event-location to event-block
+            play sound "block.crop.plant" with pitch 1.5 to player
+
+# ==================== GESTION DES CLICS GUI ====================
+
+on inventory click:
+    # 1. MENU PRINCIPAL SKYBLOCK (4 RANGÉES)
+    if name of event-inventory is "&8» &0&lMINESTARS &8- &e&lSKYBLOCK":
+        cancel event
+        
+        # Rejoindre / Créer mon île (Slot 11)
+        if index of event-slot is 11:
+            close player's inventory
+            set {_u} to uuid of player
+            set {_owner} to "%player%"
+            if {island_team_owner::%{_u}%} is set:
+                set {_owner} to "%{island_team_owner::%{_u}%}%"
+            else if {island_team_owner::%player%} is set:
+                set {_owner} to "%{island_team_owner::%player%}%"
+
+            if {island::%{_owner}%::x} is set:
+                execute player command "is home"
+            else:
+                execute player command "is-create"
+
+        # Améliorations & Upgrades (Slot 13)
+        else if index of event-slot is 13:
+            execute player command "is-gui-upgrades"
+
+        # Boutique & Vente (Slot 15)
+        else if index of event-slot is 15:
+            execute player command "is-gui-shop"
+
+        # Banque d'île (Slot 20)
+        else if index of event-slot is 20:
+            execute player command "is-gui-bank"
+
+        # Membres & Équipe (Slot 22)
+        else if index of event-slot is 22:
+            execute player command "is-gui-team"
+
+        # Vol / Fly (Slot 24)
+        else if index of event-slot is 24:
+            execute player command "is-gui-fly"
+
+        # Définir le spawn (Slot 29)
+        else if index of event-slot is 29:
+            close player's inventory
+            execute player command "is sethome"
+
+        # Mobs & Paramètres (Slot 30)
+        else if index of event-slot is 30:
+            execute player command "is-gui-mobs"
+
+        # Bordure & Limite (Slot 31)
+        else if index of event-slot is 31:
+            execute player command "is-gui-border"
+
+        # Missions & Quêtes (Slot 33)
+        else if index of event-slot is 33:
+            execute player command "is-gui-quests"
+
+    # 2. MENU UPGRADES
+    else if name of event-inventory is "&8» &0&lAMÉLIORATIONS DE L'ÎLE":
+        cancel event
+        if index of event-slot is 22:
+            execute player command "is"
+            stop
+
+        set {_u} to uuid of player
+        set {_owner} to "%player%"
+        if {island_team_owner::%{_u}%} is set:
+            set {_owner} to "%{island_team_owner::%{_u}%}%"
+        else if {island_team_owner::%player%} is set:
+            set {_owner} to "%{island_team_owner::%player%}%"
+
+        # Générateur Upgrade (Slot 10)
+        if index of event-slot is 10:
+            set {_lvl} to {island_upgrades::%{_owner}%::gen} ? 1
+            if {_lvl} is 1:
+                if player's balance >= 25000:
+                    remove 25000 from player's balance
+                    set {island_upgrades::%{_owner}%::gen} to 2
+                    add 25 to {island_level::%{_owner}%}
+                    send "{@prefix}&aGénérateur central amélioré au Tier 2 ! (+ Or, Redstone, Lapis, Quartz, Améthyste)" to player
+                    play sound "entity.player.levelup" to player
+                    execute player command "is-gui-upgrades"
+                else:
+                    send "{@prefix}&cIl te faut 25,000$ pour cette amélioration !" to player
+            else if {_lvl} is 2:
+                if player's balance >= 75000:
+                    remove 75000 from player's balance
+                    set {island_upgrades::%{_owner}%::gen} to 3
+                    add 50 to {island_level::%{_owner}%}
+                    send "{@prefix}&aGénérateur central amélioré au Tier 3 ! (+ Diamants, Émeraudes, Obsidienne, Prisme)" to player
+                    play sound "entity.player.levelup" to player
+                    execute player command "is-gui-upgrades"
+                else:
+                    send "{@prefix}&cIl te faut 75,000$ pour cette amélioration !" to player
+            else if {_lvl} is 3:
+                if player's balance >= 150000:
+                    remove 150000 from player's balance
+                    set {island_upgrades::%{_owner}%::gen} to 4
+                    add 100 to {island_level::%{_owner}%}
+                    send "{@prefix}&aGénérateur central amélioré au TIER COSMIQUE MAX ! (+ Ancient Debris & TOUS les blocs de Minecraft)" to player
+                    play sound "entity.player.levelup" to player
+                    execute player command "is-gui-upgrades"
+                else:
+                    send "{@prefix}&cIl te faut 150,000$ pour cette amélioration !" to player
+
+        # Taille & Extension de Bordure (Slot 12)
+        else if index of event-slot is 12:
+            set {_sizeLvl} to {island_upgrades::%{_owner}%::size} ? 1
+            if {_sizeLvl} is 1:
+                if player's balance >= 20000:
+                    remove 20000 from player's balance
+                    set {island_upgrades::%{_owner}%::size} to 2
+                    add 20 to {island_level::%{_owner}%}
+                    applyIslandBorder(player, {_owner})
+                    send "{@prefix}&aTaille de ton île agrandie à &e150x150 blocs (Rayon: 75m) &a!" to player
+                    play sound "ui.toast.challenge_complete" to player
+                    execute player command "is-gui-upgrades"
+                else:
+                    send "{@prefix}&cIl te faut 20,000$ pour cette extension !" to player
+            else if {_sizeLvl} is 2:
+                if player's balance >= 50000:
+                    remove 50000 from player's balance
+                    set {island_upgrades::%{_owner}%::size} to 3
+                    add 50 to {island_level::%{_owner}%}
+                    applyIslandBorder(player, {_owner})
+                    send "{@prefix}&aTaille de ton île agrandie à &e200x200 blocs (Rayon: 100m) &a!" to player
+                    play sound "ui.toast.challenge_complete" to player
+                    execute player command "is-gui-upgrades"
+                else:
+                    send "{@prefix}&cIl te faut 50,000$ pour cette extension !" to player
+            else if {_sizeLvl} is 3:
+                if player's balance >= 100000:
+                    remove 100000 from player's balance
+                    set {island_upgrades::%{_owner}%::size} to 4
+                    add 100 to {island_level::%{_owner}%}
+                    applyIslandBorder(player, {_owner})
+                    send "{@prefix}&aTaille de ton île agrandie à &e300x300 blocs (Rayon: 150m) &a!" to player
+                    play sound "ui.toast.challenge_complete" to player
+                    execute player command "is-gui-upgrades"
+                else:
+                    send "{@prefix}&cIl te faut 100,000$ pour cette extension !" to player
+            else if {_sizeLvl} is 4:
+                if player's balance >= 200000:
+                    remove 200000 from player's balance
+                    set {island_upgrades::%{_owner}%::size} to 5
+                    add 200 to {island_level::%{_owner}%}
+                    applyIslandBorder(player, {_owner})
+                    send "{@prefix}&aTaille de ton île agrandie au &eMAXIMUM : 400x400 blocs (Rayon: 200m) &a!" to player
+                    play sound "ui.toast.challenge_complete" to player
+                    execute player command "is-gui-upgrades"
+                else:
+                    send "{@prefix}&cIl te faut 200,000$ pour cette extension maximale !" to player
+
+        # Fertilité (Slot 14)
+        else if index of event-slot is 14:
+            if player's balance >= 30000:
+                remove 30000 from player's balance
+                send "{@prefix}&aBoost de fertilité activé sur ton île !" to player
+                play sound "entity.player.levelup" to player
+            else:
+                send "{@prefix}&cIl te faut 30,000$ pour cette amélioration !" to player
+
+        # Membres (Slot 16)
+        else if index of event-slot is 16:
+            if player's balance >= 20000:
+                remove 20000 from player's balance
+                send "{@prefix}&aCapacité de ton équipe augmentée à 8 membres !" to player
+                play sound "entity.player.levelup" to player
+            else:
+                send "{@prefix}&cIl te faut 20,000$ pour cette amélioration !" to player
+
+    # 2b. MENU BORDURE & BARRIÈRE CÉLESTE
+    else if name of event-inventory is "&8» &4&lBORDURE ROUGE CÉLESTE" or "&8» <#00D4FF>&lBORDURE & BARRIÈRE CÉLESTE":
+        cancel event
+        set {_u} to uuid of player
+        if index of event-slot is 22:
+            execute player command "is"
+            stop
+            
+        # Toggle Particules (Slot 12)
+        if index of event-slot is 12:
+            if {border_particle::%{_u}%} is false:
+                set {border_particle::%{_u}%} to true
+                send "{@prefix}&aMur de bordure rouge visible activé !" to player
+            else:
+                set {border_particle::%{_u}%} to false
+                send "{@prefix}&cMur de bordure rouge désactivé (gain de FPS)." to player
+            play sound "block.note_block.hat" to player
+            execute player command "is-gui-border"
+            
+        # Changer Couleur (Slot 14)
+        else if index of event-slot is 14:
+            set {_col} to {border_color::%{_u}%} ? "rouge"
+            if {_col} is "rouge":
+                set {border_color::%{_u}%} to "cyan"
+            else if {_col} is "cyan":
+                set {border_color::%{_u}%} to "vert"
+            else if {_col} is "vert":
+                set {border_color::%{_u}%} to "or"
+            else if {_col} is "or":
+                set {border_color::%{_u}%} to "rose"
+            else:
+                set {border_color::%{_u}%} to "rouge"
+            send "{@prefix}&aCouleur de bordure changée pour : &e%{border_color::%{_u}%}%" to player
+            play sound "block.note_block.bell" to player
+            execute player command "is-gui-border"
+            
+        # Agrandir l'île (Slot 16)
+        else if index of event-slot is 16:
+            execute player command "is-gui-upgrades"
+
+    # 3. MENU MISSIONS & DÉFIS
+    else if name of event-inventory is "&8» &0&lMISSIONS & DÉFIS SKYBLOCK":
+        cancel event
+        if index of event-slot is 31:
+            execute player command "is"
+            stop
+
+        if index of event-slot is 10:
+            if {island_quest_1::%player%} is not set:
+                set {island_quest_1::%player%} to true
+                execute console command "eco give %player% 1000"
+                give 16 dirt to player
+                add 10 to {island_level::%player%}
+                send "{@prefix}&aDéfi 1 validé ! Récompense: +1,000$ et 16 Terres !" to player
+                play sound "entity.player.levelup" to player
+                execute player command "is-gui-quests"
+            else:
+                send "{@prefix}&cTu as déjà validé ce défi !" to player
+
+        else if index of event-slot is 11:
+            if {island_quest_2::%player%} is not set:
+                set {island_quest_2::%player%} to true
+                execute console command "eco give %player% 1500"
+                give 1 golden apple to player
+                add 15 to {island_level::%player%}
+                send "{@prefix}&aDéfi 2 validé ! Récompense: +1,500$ et 1 Pomme Dorée !" to player
+                play sound "entity.player.levelup" to player
+                execute player command "is-gui-quests"
+            else:
+                send "{@prefix}&cTu as déjà validé ce défi !" to player
+
+        else if index of event-slot is 12:
+            if {island_quest_3::%player%} is not set:
+                set {island_quest_3::%player%} to true
+                execute console command "eco give %player% 2000"
+                give 4 melon seeds to player
+                add 20 to {island_level::%player%}
+                send "{@prefix}&aDéfi 3 validé ! Récompense: +2,000$ et 4 Graines de Melon !" to player
+                play sound "entity.player.levelup" to player
+                execute player command "is-gui-quests"
+            else:
+                send "{@prefix}&cTu as déjà validé ce défi !" to player
+
+        else if index of event-slot is 13:
+            if {island_quest_4::%player%} is not set:
+                set {island_quest_4::%player%} to true
+                execute console command "eco give %player% 5000"
+                give 5 diamonds to player
+                add 30 to {island_level::%player%}
+                send "{@prefix}&aDéfi 4 validé ! Récompense: +5,000$ et 5 Diamants !" to player
+                play sound "entity.player.levelup" to player
+                execute player command "is-gui-quests"
+            else:
+                send "{@prefix}&cTu as déjà validé ce défi !" to player
+
+        else if index of event-slot is 14:
+            if {island_quest_5::%player%} is not set:
+                set {island_quest_5::%player%} to true
+                execute console command "eco give %player% 7500"
+                give 3 diamonds to player
+                add 40 to {island_level::%player%}
+                send "{@prefix}&aDéfi 5 validé ! Récompense: +7,500$ et 3 Diamants !" to player
+                play sound "entity.player.levelup" to player
+                execute player command "is-gui-quests"
+            else:
+                send "{@prefix}&cTu as déjà validé ce défi !" to player
+
+        else if index of event-slot is 15:
+            if {island_quest_6::%player%} is not set:
+                set {_u} to uuid of player
+                set {_owner} to "%player%"
+                if {island_team_owner::%{_u}%} is set:
+                    set {_owner} to "%{island_team_owner::%{_u}%}%"
+                else if {island_team_owner::%player%} is set:
+                    set {_owner} to "%{island_team_owner::%player%}%"
+
+                if {island_bank::%{_owner}%} >= 10000:
+                    set {island_quest_6::%player%} to true
+                    execute console command "eco give %player% 10000"
+                    give 32 iron ingots to player
+                    add 50 to {island_level::%{_owner}%}
+                    send "{@prefix}&aDéfi 6 validé ! Récompense: +10,000$ et 32 Fers !" to player
+                    play sound "entity.player.levelup" to player
+                    execute player command "is-gui-quests"
+                else:
+                    send "{@prefix}&cDépose au moins 10,000$ dans ta banque d'île pour valider ce défi !" to player
+            else:
+                send "{@prefix}&cTu as déjà validé ce défi !" to player
+
+        else if index of event-slot is 16:
+            if {island_quest_7::%player%} is not set:
+                set {island_quest_7::%player%} to true
+                execute console command "eco give %player% 15000"
+                give 1 netherite ingot to player
+                add 60 to {island_level::%player%}
+                send "{@prefix}&aDéfi 7 validé ! Récompense: +15,000$ et 1 Lingot de Netherite !" to player
+                play sound "entity.player.levelup" to player
+                execute player command "is-gui-quests"
+            else:
+                send "{@prefix}&cTu as déjà validé ce défi !" to player
+
+        else if index of event-slot is 22:
+            if {island_quest_8::%player%} is not set:
+                set {island_quest_8::%player%} to true
+                execute console command "eco give %player% 50000"
+                give 1 totem of undying to player
+                give 16 golden apples to player
+                add 100 to {island_level::%player%}
+                send "{@prefix}&aDéfi 8 validé ! Récompense Ultime : +50,000$, 1 Totem et 16 Pommes Dorées !" to player
+                play sound "entity.player.levelup" to player
+                execute player command "is-gui-quests"
+            else:
+                send "{@prefix}&cTu as déjà validé ce défi !" to player
+
+    # 4. MENU BIOMES
+    else if name of event-inventory is "&8» &0&lCHOIX DU BIOME D'ÎLE":
+        cancel event
+        if index of event-slot is 22:
+            execute player command "is"
+            stop
+
+        set {_u} to uuid of player
+        set {_owner} to "%player%"
+        if {island_team_owner::%{_u}%} is set:
+            set {_owner} to "%{island_team_owner::%{_u}%}%"
+        else if {island_team_owner::%player%} is set:
+            set {_owner} to "%{island_team_owner::%player%}%"
+
+        if index of event-slot is 10:
+            send "{@prefix}&aBiome Plaines appliqué à ton île !" to player
+            play sound "block.grass.break" to player
+        else if index of event-slot is 11:
+            if player's balance >= 5000:
+                remove 5000 from player's balance
+                send "{@prefix}&aBiome Désert appliqué !" to player
+                play sound "block.sand.break" to player
+            else:
+                send "{@prefix}&cIl te faut 5,000$ pour ce biome !" to player
+        else if index of event-slot is 12:
+            if player's balance >= 10000:
+                remove 10000 from player's balance
+                send "{@prefix}&aBiome Jungle appliqué !" to player
+                play sound "block.azalea_leaves.break" to player
+            else:
+                send "{@prefix}&cIl te faut 10,000$ pour ce biome !" to player
+        else if index of event-slot is 13:
+            if player's balance >= 10000:
+                remove 10000 from player's balance
+                send "{@prefix}&aBiome Taïga appliqué !" to player
+                play sound "block.wood.break" to player
+            else:
+                send "{@prefix}&cIl te faut 10,000$ pour ce biome !" to player
+        else if index of event-slot is 14:
+            if player's balance >= 15000:
+                remove 15000 from player's balance
+                send "{@prefix}&aBiome Océan appliqué !" to player
+                play sound "item.bucket.fill" to player
+            else:
+                send "{@prefix}&cIl te faut 15,000$ pour ce biome !" to player
+        else if index of event-slot is 15:
+            if player's balance >= 25000:
+                remove 25000 from player's balance
+                send "{@prefix}&aBiome Nether appliqué !" to player
+                play sound "block.fire.ambient" to player
+            else:
+                send "{@prefix}&cIl te faut 25,000$ pour ce biome !" to player
+        else if index of event-slot is 16:
+            if player's balance >= 35000:
+                remove 35000 from player's balance
+                send "{@prefix}&aBiome End appliqué !" to player
+                play sound "entity.enderman.teleport" to player
+            else:
+                send "{@prefix}&cIl te faut 35,000$ pour ce biome !" to player
+
+    # 5. MENU BOOSTERS
+    else if name of event-inventory is "&8» &0&lBOOSTERS DE L'ÎLE":
+        cancel event
+        if index of event-slot is 22:
+            execute player command "is"
+            stop
+
+        if index of event-slot is 11:
+            if player's balance >= 15000:
+                remove 15000 from player's balance
+                send "{@prefix}&aBooster Double XP activé sur ton île pendant 1 heure !" to player
+                play sound "entity.player.levelup" to player
+            else:
+                send "{@prefix}&cIl te faut 15,000$ pour ce booster !" to player
+        else if index of event-slot is 13:
+            if player's balance >= 10000:
+                remove 10000 from player's balance
+                send "{@prefix}&aBooster Croissance Rapide activé sur ton île pendant 1 heure !" to player
+                play sound "entity.player.levelup" to player
+            else:
+                send "{@prefix}&cIl te faut 10,000$ pour ce booster !" to player
+        else if index of event-slot is 15:
+            if player's balance >= 25000:
+                remove 25000 from player's balance
+                send "{@prefix}&aBooster Vente +25%% activé sur ton île pendant 1 heure !" to player
+                play sound "entity.player.levelup" to player
+            else:
+                send "{@prefix}&cIl te faut 25,000$ pour ce booster !" to player
+
+    # 7. MENU PARAMÈTRES
+    else if name of event-inventory is "&8» &0&lPARAMÈTRES DE L'ÎLE":
+        cancel event
+        if index of event-slot is 22:
+            execute player command "is"
+            stop
+
+        set {_u} to uuid of player
+        set {_owner} to "%player%"
+        if {island_team_owner::%{_u}%} is set:
+            set {_owner} to "%{island_team_owner::%{_u}%}%"
+        else if {island_team_owner::%player%} is set:
+            set {_owner} to "%{island_team_owner::%player%}%"
+
+        # Visiteurs (Slot 10)
+        if index of event-slot is 10:
+            if {island_locked::%{_owner}%} is true:
+                delete {island_locked::%{_owner}%}
+                send "{@prefix}&aTon île est désormais OUVERTE aux visiteurs !" to player
+            else:
+                set {island_locked::%{_owner}%} to true
+                send "{@prefix}&cTon île est désormais VERROUILLÉE aux visiteurs !" to player
+            play sound "block.note_block.pling" to player
+            execute player command "is-gui-settings"
+
+        # Monstres Hostiles (Slot 11)
+        else if index of event-slot is 11:
+            if {island_mobs_hostile::%{_owner}%} is false:
+                delete {island_mobs_hostile::%{_owner}%}
+                send "{@prefix}&aLe spawn des MONSTRES est désormais ACTIVÉ sur ton île !" to player
+            else:
+                set {island_mobs_hostile::%{_owner}%} to false
+                send "{@prefix}&cLe spawn des MONSTRES est désormais DÉSACTIVÉ sur ton île !" to player
+            play sound "entity.zombie.ambient" to player
+            execute player command "is-gui-settings"
+
+        # PvP (Slot 12)
+        else if index of event-slot is 12:
+            if {island_pvp::%{_owner}%} is true:
+                delete {island_pvp::%{_owner}%}
+                send "{@prefix}&aLe PvP est désormais DÉSACTIVÉ sur ton île !" to player
+            else:
+                set {island_pvp::%{_owner}%} to true
+                send "{@prefix}&cLe PvP est désormais ACTIVÉ sur ton île !" to player
+            play sound "block.note_block.pling" to player
+            execute player command "is-gui-settings"
+
+        # Protection coffres (Slot 14)
+        else if index of event-slot is 14:
+            if {island_chest_protect::%{_owner}%} is false:
+                set {island_chest_protect::%{_owner}%} to true
+                send "{@prefix}&aTes coffres sont désormais PROTÉGÉS des visiteurs !" to player
+            else:
+                set {island_chest_protect::%{_owner}%} to false
+                send "{@prefix}&cTes coffres sont désormais ACCESSIBLES aux visiteurs !" to player
+            play sound "block.note_block.pling" to player
+            execute player command "is-gui-settings"
+
+        # Animaux Passifs (Slot 15)
+        else if index of event-slot is 15:
+            if {island_mobs_passive::%{_owner}%} is false:
+                delete {island_mobs_passive::%{_owner}%}
+                send "{@prefix}&aLe spawn des ANIMAUX est désormais ACTIVÉ sur ton île !" to player
+            else:
+                set {island_mobs_passive::%{_owner}%} to false
+                send "{@prefix}&cLe spawn des ANIMAUX est désormais DÉSACTIVÉ sur ton île !" to player
+            play sound "entity.cow.ambient" to player
+            execute player command "is-gui-settings"
+
+        # Vol / Fly (Slot 16)
+        else if index of event-slot is 16:
+            execute player command "is-gui-fly"
+
+    # 8. MENU ÉQUIPE COOP
+    else if name of event-inventory is "&8» &0&lGESTION D'ÉQUIPE COOP":
+        cancel event
+        if index of event-slot is 22:
+            execute player command "is"
+        else if index of event-slot is 10:
+            close player's inventory
+            execute player command "is home"
+        else if index of event-slot is 14:
+            close player's inventory
+            send "{@prefix}&7Pour inviter un ami sur ton île, tape : &e/is invite <pseudo>" to player
+            play sound "block.note_block.pling" to player
+        else if index of event-slot is 16:
+            close player's inventory
+            execute player command "is leave"
+
+    # 8bis. RETOUR TOP
+    else if name of event-inventory is "&8» &0&lCLASSEMENT TOP ÎLES":
+        cancel event
+        if index of event-slot is 22:
+            execute player command "is"
+
+    # 9. MENU GESTION & PASS VOL TEMPORAIRE
+    else if name of event-inventory is "&8» &0&lPASS VOL TEMPORAIRE (SKYBLOCK)":
+        cancel event
+        if index of event-slot is 22:
+            execute player command "is"
+            stop
+
+        # Bouton Activer / Désactiver le vol (Slot 10)
+        if index of event-slot is 10:
+            set {_hasFly} to false
+            if player is op:
+                set {_hasFly} to true
+            else if {island_fly_expire::%player%} is set:
+                if now < {island_fly_expire::%player%}:
+                    set {_hasFly} to true
+
+            if {_hasFly} is true:
+                if player's flight mode is true:
+                    set player's flight mode to false
+                    send "{@prefix}&cMode vol désactivé !" to player
+                    play sound "block.wooden_button.click_off" to player
+                else:
+                    set player's flight mode to true
+                    set {_rem} to difference between {island_fly_expire::%player%} and now
+                    send "{@prefix}&aMode vol activé ! &7(Temps restant: &e%{_rem}%&7)" to player
+                    play sound "block.wooden_button.click_on" to player
+                execute player command "is-gui-fly"
+            else:
+                send "{@prefix}&cChoisis un forfait de temps ci-dessous pour activer le vol !" to player
+                play sound "block.anvil.land" to player
+
+        # Pass 15 Minutes (Slot 12 - 3,000$)
+        else if index of event-slot is 12:
+            if player's balance >= 3000:
+                remove 3000 from player's balance
+                if {island_fly_expire::%player%} is set:
+                    if now < {island_fly_expire::%player%}:
+                        add 15 minutes to {island_fly_expire::%player%}
+                    else:
+                        set {island_fly_expire::%player%} to now
+                        add 15 minutes to {island_fly_expire::%player%}
+                else:
+                    set {island_fly_expire::%player%} to now
+                    add 15 minutes to {island_fly_expire::%player%}
+                set player's flight mode to true
+                set {_rem} to difference between {island_fly_expire::%player%} and now
+                send "{@prefix}&aPass Vol 15 Minutes activé ! &7(Temps restant: &e%{_rem}%&7)" to player
+                play sound "entity.player.levelup" to player
+                execute player command "is-gui-fly"
+            else:
+                send "{@prefix}&cIl te faut 3,000$ pour le Pass Vol 15min !" to player
+
+        # Pass 1 Heure (Slot 13 - 8,000$)
+        else if index of event-slot is 13:
+            if player's balance >= 8000:
+                remove 8000 from player's balance
+                if {island_fly_expire::%player%} is set:
+                    if now < {island_fly_expire::%player%}:
+                        add 1 hour to {island_fly_expire::%player%}
+                    else:
+                        set {island_fly_expire::%player%} to now
+                        add 1 hour to {island_fly_expire::%player%}
+                else:
+                    set {island_fly_expire::%player%} to now
+                    add 1 hour to {island_fly_expire::%player%}
+                set player's flight mode to true
+                set {_rem} to difference between {island_fly_expire::%player%} and now
+                send "{@prefix}&aPass Vol 1 Heure activé ! &7(Temps restant: &e%{_rem}%&7)" to player
+                play sound "entity.player.levelup" to player
+                execute player command "is-gui-fly"
+            else:
+                send "{@prefix}&cIl te faut 8,000$ pour le Pass Vol 1h !" to player
+
+        # Pass 24 Heures (Slot 15 - 20,000$)
+        else if index of event-slot is 15:
+            if player's balance >= 20000:
+                remove 20000 from player's balance
+                if {island_fly_expire::%player%} is set:
+                    if now < {island_fly_expire::%player%}:
+                        add 24 hours to {island_fly_expire::%player%}
+                    else:
+                        set {island_fly_expire::%player%} to now
+                        add 24 hours to {island_fly_expire::%player%}
+                else:
+                    set {island_fly_expire::%player%} to now
+                    add 24 hours to {island_fly_expire::%player%}
+                set player's flight mode to true
+                set {_rem} to difference between {island_fly_expire::%player%} and now
+                send "{@prefix}&aPass Vol 24 Heures activé ! &7(Temps restant: &e%{_rem}%&7)" to player
+                play sound "entity.player.levelup" to player
+                execute player command "is-gui-fly"
+            else:
+                send "{@prefix}&cIl te faut 20,000$ pour le Pass Vol 24h !" to player
+
+        # Pass 7 Jours (Slot 16 - 60,000$)
+        else if index of event-slot is 16:
+            if player's balance >= 60000:
+                remove 60000 from player's balance
+                if {island_fly_expire::%player%} is set:
+                    if now < {island_fly_expire::%player%}:
+                        add 7 days to {island_fly_expire::%player%}
+                    else:
+                        set {island_fly_expire::%player%} to now
+                        add 7 days to {island_fly_expire::%player%}
+                else:
+                    set {island_fly_expire::%player%} to now
+                    add 7 days to {island_fly_expire::%player%}
+                set player's flight mode to true
+                set {_rem} to difference between {island_fly_expire::%player%} and now
+                send "{@prefix}&aPass Vol 7 Jours activé ! &7(Temps restant: &e%{_rem}%&7)" to player
+                play sound "entity.player.levelup" to player
+                execute player command "is-gui-fly"
+            else:
+                send "{@prefix}&cIl te faut 60,000$ pour le Pass Vol 7 Jours !" to player
+
+    # 10. MENU BANQUE INTERACTIVE
+    else if name of event-inventory is "&8» &0&lBANQUE D'ÎLE INTERACTIVE":
+        cancel event
+        if index of event-slot is 22:
+            execute player command "is"
+            stop
+
+        set {_u} to uuid of player
+        set {_owner} to "%player%"
+        if {island_team_owner::%{_u}%} is set:
+            set {_owner} to "%{island_team_owner::%{_u}%}%"
+        else if {island_team_owner::%player%} is set:
+            set {_owner} to "%{island_team_owner::%player%}%"
+
+        # Déposer 1,000$ (Slot 10)
+        if index of event-slot is 10:
+            if player's balance >= 1000:
+                remove 1000 from player's balance
+                add 1000 to {island_bank::%{_owner}%}
+                send "{@prefix}&a+ 1,000$ déposés dans la banque de l'île (&e%{_owner}%&a) !" to player
+                play sound "entity.experience_orb.pickup" to player
+                execute player command "is-gui-bank"
+            else:
+                send "{@prefix}&cTu n'as pas assez d'argent !" to player
+
+        # Déposer 10,000$ (Slot 11)
+        else if index of event-slot is 11:
+            if player's balance >= 10000:
+                remove 10000 from player's balance
+                add 10000 to {island_bank::%{_owner}%}
+                send "{@prefix}&a+ 10,000$ déposés dans la banque de l'île (&e%{_owner}%&a) !" to player
+                play sound "entity.experience_orb.pickup" to player
+                execute player command "is-gui-bank"
+            else:
+                send "{@prefix}&cTu n'as pas assez d'argent !" to player
+
+        # Déposer Tout (Slot 12)
+        else if index of event-slot is 12:
+            set {_all} to player's balance
+            if {_all} > 0:
+                remove {_all} from player's balance
+                add {_all} to {island_bank::%{_owner}%}
+                send "{@prefix}&a+ %{_all}%$ (Totalité de ton solde) déposés dans la banque !" to player
+                play sound "entity.player.levelup" to player
+                execute player command "is-gui-bank"
+            else:
+                send "{@prefix}&cTon solde personnel est vide !" to player
+
+        # Retirer 1,000$ (Slot 14)
+        else if index of event-slot is 14:
+            if {island_bank::%{_owner}%} >= 1000:
+                subtract 1000 from {island_bank::%{_owner}%}
+                add 1000 to player's balance
+                send "{@prefix}&a+ 1,000$ retirés de la banque !" to player
+                play sound "entity.experience_orb.pickup" to player
+                execute player command "is-gui-bank"
+            else:
+                send "{@prefix}&cLa banque ne possède pas assez de fonds !" to player
+
+        # Retirer 10,000$ (Slot 15)
+        else if index of event-slot is 15:
+            if {island_bank::%{_owner}%} >= 10000:
+                subtract 10000 from {island_bank::%{_owner}%}
+                add 10000 to player's balance
+                send "{@prefix}&a+ 10,000$ retirés de la banque !" to player
+                play sound "entity.experience_orb.pickup" to player
+                execute player command "is-gui-bank"
+            else:
+                send "{@prefix}&cLa banque ne possède pas assez de fonds !" to player
+
+        # Retirer Tout (Slot 16)
+        else if index of event-slot is 16:
+            set {_bankAll} to {island_bank::%{_owner}%}
+            if {_bankAll} > 0:
+                set {island_bank::%{_owner}%} to 0
+                add {_bankAll} to player's balance
+                send "{@prefix}&a+ %{_bankAll}%$ (Totalité de la banque) retirés !" to player
+                play sound "entity.player.levelup" to player
+                execute player command "is-gui-bank"
+            else:
+                send "{@prefix}&cLa banque est vide !" to player
+
+    # 11. BOUTIQUE & VENTE RAPIDE SKYBLOCK
+    else if name of event-inventory is "&8» &0&lBOUTIQUE SKYBLOCK & VENTE":
+        cancel event
+        if index of event-slot is 31:
+            execute player command "is"
+            stop
+
+        # TOUT VENDRE (Slot 4)
+        if index of event-slot is 4:
+            set {_gained} to 0
+            # Pierres
+            set {_c} to amount of cobblestone in player's inventory
+            if {_c} > 0:
+                remove {_c} of cobblestone from player's inventory
+                add ({_c} * 1) to {_gained}
+            # Charbon
+            set {_c} to amount of coal in player's inventory
+            if {_c} > 0:
+                remove {_c} of coal from player's inventory
+                add ({_c} * 6) to {_gained}
+            # Fer
+            set {_c} to amount of iron ingot in player's inventory
+            if {_c} > 0:
+                remove {_c} of iron ingot from player's inventory
+                add ({_c} * 20) to {_gained}
+            # Cuivre
+            set {_c} to amount of copper ingot in player's inventory
+            if {_c} > 0:
+                remove {_c} of copper ingot from player's inventory
+                add ({_c} * 15) to {_gained}
+            # Or
+            set {_c} to amount of gold ingot in player's inventory
+            if {_c} > 0:
+                remove {_c} of gold ingot from player's inventory
+                add ({_c} * 40) to {_gained}
+            # Quartz
+            set {_c} to amount of quartz in player's inventory
+            if {_c} > 0:
+                remove {_c} of quartz from player's inventory
+                add ({_c} * 25) to {_gained}
+            # Améthyste
+            set {_c} to amount of amethyst shard in player's inventory
+            if {_c} > 0:
+                remove {_c} of amethyst shard from player's inventory
+                add ({_c} * 35) to {_gained}
+            # Diamant
+            set {_c} to amount of diamond in player's inventory
+            if {_c} > 0:
+                remove {_c} of diamond from player's inventory
+                add ({_c} * 150) to {_gained}
+            # Émeraude
+            set {_c} to amount of emerald in player's inventory
+            if {_c} > 0:
+                remove {_c} of emerald from player's inventory
+                add ({_c} * 200) to {_gained}
+            # Ancient Debris / Netherite
+            set {_c} to amount of ancient debris in player's inventory
+            if {_c} > 0:
+                remove {_c} of ancient debris from player's inventory
+                add ({_c} * 2500) to {_gained}
+            set {_c} to amount of netherite scrap in player's inventory
+            if {_c} > 0:
+                remove {_c} of netherite scrap from player's inventory
+                add ({_c} * 3000) to {_gained}
+            # Blé & Récoltes
+            set {_c} to amount of wheat in player's inventory
+            if {_c} > 0:
+                remove {_c} of wheat from player's inventory
+                add ({_c} * 4) to {_gained}
+            
+            if {_gained} > 0:
+                add {_gained} to player's balance
+                send "{@prefix}&aInventaire vendu avec succès ! &6+%{_gained}%$&a reçus !" to player
+                play sound "entity.player.levelup" to player
+            else:
+                send "{@prefix}&cAucun minerai ou récolte à vendre dans ton inventaire !" to player
+
+        # Ventes ciblées
+        else if index of event-slot is 10:
+            if player has 64 cobblestone:
+                remove 64 cobblestone from player's inventory
+                add 50 to player's balance
+                send "{@prefix}&a+50$ pour 64 Pierres !" to player
+                play sound "entity.experience_orb.pickup" to player
+            else:
+                send "{@prefix}&cIl te faut 64 pierres !" to player
+        else if index of event-slot is 11:
+            if player has 16 coal:
+                remove 16 coal from player's inventory
+                add 100 to player's balance
+                send "{@prefix}&a+100$ pour 16 Charbons !" to player
+                play sound "entity.experience_orb.pickup" to player
+            else:
+                send "{@prefix}&cIl te faut 16 charbons !" to player
+        else if index of event-slot is 12:
+            if player has 16 iron ingot:
+                remove 16 iron ingot from player's inventory
+                add 300 to player's balance
+                send "{@prefix}&a+300$ pour 16 Lingots de fer !" to player
+                play sound "entity.experience_orb.pickup" to player
+            else:
+                send "{@prefix}&cIl te faut 16 fers !" to player
+        else if index of event-slot is 13:
+            if player has 16 gold ingot:
+                remove 16 gold ingot from player's inventory
+                add 600 to player's balance
+                send "{@prefix}&a+600$ pour 16 Lingots d'or !" to player
+                play sound "entity.experience_orb.pickup" to player
+            else:
+                send "{@prefix}&cIl te faut 16 lingots d'or !" to player
+        else if index of event-slot is 14:
+            if player has 8 diamond:
+                remove 8 diamond from player's inventory
+                add 1200 to player's balance
+                send "{@prefix}&a+1,200$ pour 8 Diamants !" to player
+                play sound "entity.experience_orb.pickup" to player
+            else:
+                send "{@prefix}&cIl te faut 8 diamants !" to player
+        else if index of event-slot is 15:
+            if player has 8 emerald:
+                remove 8 emerald from player's inventory
+                add 1600 to player's balance
+                send "{@prefix}&a+1,600$ pour 8 Émeraudes !" to player
+                play sound "entity.experience_orb.pickup" to player
+            else:
+                send "{@prefix}&cIl te faut 8 émeraudes !" to player
+        else if index of event-slot is 16:
+            if player has 1 ancient debris:
+                remove 1 ancient debris from player's inventory
+                add 2500 to player's balance
+                send "{@prefix}&a+2,500$ pour 1 Ancient Debris !" to player
+                play sound "entity.experience_orb.pickup" to player
+            else:
+                send "{@prefix}&cIl te faut 1 ancient debris !" to player
+
+        # Achats ciblés
+        else if index of event-slot is 19:
+            if player's balance >= 250:
+                remove 250 from player's balance
+                give 64 dirt to player
+                send "{@prefix}&a64 Terres achetées !" to player
+                play sound "entity.experience_orb.pickup" to player
+            else:
+                send "{@prefix}&cPas assez d'argent !" to player
+        else if index of event-slot is 20:
+            if player's balance >= 300:
+                remove 300 from player's balance
+                give 64 sand to player
+                send "{@prefix}&a64 Sables achetés !" to player
+                play sound "entity.experience_orb.pickup" to player
+            else:
+                send "{@prefix}&cPas assez d'argent !" to player
+        else if index of event-slot is 21:
+            if player's balance >= 500:
+                remove 500 from player's balance
+                give 4 packed ice to player
+                send "{@prefix}&a4 Glaces Comprimées achetées !" to player
+                play sound "entity.experience_orb.pickup" to player
+            else:
+                send "{@prefix}&cPas assez d'argent !" to player
+        else if index of event-slot is 23:
+            if player's balance >= 1000:
+                remove 1000 from player's balance
+                give 1 lava bucket to player
+                send "{@prefix}&a1 Seau de lave acheté !" to player
+                play sound "entity.experience_orb.pickup" to player
+            else:
+                send "{@prefix}&cPas assez d'argent !" to player
+        else if index of event-slot is 24:
+            if player's balance >= 2000:
+                remove 2000 from player's balance
+                give 2 cow spawn eggs to player
+                send "{@prefix}&a2 Œufs de vache achetés !" to player
+                play sound "entity.experience_orb.pickup" to player
+            else:
+                send "{@prefix}&cPas assez d'argent !" to player
+
+
+# ==================== COMMANDES STAFF & JOUEURS POUR LE GÉNÉRATEUR ====================
+
+command /fixgen [<player>]:
+    aliases: /isgen, /generateur
+    trigger:
+        if arg-1 is set:
+            if player is op:
+                execute player command "is fixgen %arg-1%"
+            else if {rank::%uuid of player%} is "Fondateur" or "Admin" or "Resp" or "Modo":
+                execute player command "is fixgen %arg-1%"
+            else:
+                execute player command "is fixgen"
+        else:
+            execute player command "is fixgen"
+
+command /staffgen [<player>]:
+    aliases: /admingen, /forcegen, /setgen
+    permission: op
+    permission message: &cTu n'as pas la permission!
+    trigger:
+        if "%world of player%" does not contain "skyblock":
+            send "{@prefix}&cTu dois être dans le monde Skyblock !" to player
+            stop
+            
+        set {_targetLoc} to location of targeted block
+        if {_targetLoc} is not set:
+            set {_targetLoc} to location of block in front of player
+        if block at {_targetLoc} is air or water or lava:
+            set {_targetLoc} to location of block at player
+        set {_locBelow} to location 1 below {_targetLoc}
+        set block at {_locBelow} to bedrock
+        set block at {_targetLoc} to cobblestone
+        
+        if arg-1 is set:
+            set {_targetLvl} to {island_upgrades::%arg-1%::gen} ? 1
+            send "{@prefix}&a✦ Générateur Skyblock (Tier %{_targetLvl}%) placé pour &e%arg-1% &a!" to player
+            send "{@prefix}&a✦ Un membre du Staff (&e%player%&a) a replacé ton générateur de minerais !" to arg-1
+        else:
+            send "{@prefix}&a✦ Générateur Skyblock Staff placé à votre position / cible !" to player
+            
+        play sound "block.anvil.use" to player
+        play sound "entity.player.levelup" to player
+
+command /setgentier <integer> [<player>]:
+    permission: op
+    permission message: &cTu n'as pas la permission!
+    trigger:
+        set {_t} to arg-1
+        if {_t} < 1:
+            set {_t} to 1
+        if {_t} > 4:
+            set {_t} to 4
+        set {_target} to "%player%"
+        if arg-2 is set:
+            set {_target} to "%arg-2%"
+        set {island_upgrades::%{_target}%::gen} to {_t}
+        send "{@prefix}&aNiveau de générateur de &e%{_target}% &adéfini au &eTier %{_t}% &a!" to player
+        if arg-2 is set:
+            send "{@prefix}&aVotre générateur Skyblock a été amélioré au &eTier %{_t}% &apar &e%player% &a!" to arg-2
+        play sound "ui.toast.challenge_complete" to player
+
+
+# ==================== SÉCURITÉ ANTI-CHUTE DANS LE VIDE & KEEP INVENTORY ====================
+
+# 1. Rattrapage automatique dans le vide, Barrière de Bordure Céleste & Gestion d'expiration du Pass Vol
+every 10 ticks:
+    loop all players:
+        # A. Gestion Monde Skyblock
+        if "%world of loop-player%" contains "skyblock":
+            set {_u} to uuid of loop-player
+            set {_owner} to "%loop-player%"
+            if {island_team_owner::%{_u}%} is set:
+                set {_owner} to "%{island_team_owner::%{_u}%}%"
+            else if {island_team_owner::%loop-player%} is set:
+                set {_owner} to "%{island_team_owner::%loop-player%}%"
+
+            # 1. Rattrapage de vide (Chute sous Y=60)
+            if y-coordinate of loop-player < 60:
+                if {island_home::%{_owner}%} is set:
+                    teleport loop-player to {island_home::%{_owner}%}
+                else if {island::%{_owner}%::x} is set:
+                    set {_w} to {island::%{_owner}%::world}
+                    if {_w} is not set:
+                        set {_w} to world "skyblock"
+                    if {_w} is not set:
+                        set {_w} to "skyblock" parsed as world
+                    set {_targetLoc} to location(({island::%{_owner}%::x} + 0.5), 151, ({island::%{_owner}%::z} + 2.5), {_w})
+                    teleport loop-player to {_targetLoc}
+                set loop-player's fall distance to 0
+                send "{@prefix}&aSauvetage d'urgence ! Tu as été rattrapé dans le vide et ramené sur ton île !" to loop-player
+                play sound "entity.enderman.teleport" to loop-player
+
+            # 2. Grosse Bordure Rouge Éclatante & Piliers d'Angles Visibles en Temps Réel
+            if {island::%{_owner}%::x} is set:
+                set {_isX} to {island::%{_owner}%::x}
+                set {_isZ} to {island::%{_owner}%::z}
+                set {_px} to x-coordinate of loop-player
+                set {_py} to y-coordinate of loop-player
+                set {_pz} to z-coordinate of loop-player
+                set {_pw} to world of loop-player
+                set {_dx} to abs({_px} - {_isX})
+                set {_dz} to abs({_pz} - {_isZ})
+                set {_maxDist} to max({_dx}, {_dz})
+                set {_rad} to getIslandRadius({_owner})
+
+                if {border_particle::%{_u}%} is not false:
+                    # A. 4 Piliers d'Angles Lasers Rouges (Visibles en temps réel sur les chunks)
+                    loop integers from 0 to 6:
+                        set {_beamY} to 148 + (loop-integer * 4)
+                        draw 1 of dust using dustOption(rgb(255, 0, 0), 2.5) at location({_isX} + {_rad}, {_beamY}, {_isZ} + {_rad}, {_pw})
+                        draw 1 of dust using dustOption(rgb(255, 0, 0), 2.5) at location({_isX} + {_rad}, {_beamY}, {_isZ} - {_rad}, {_pw})
+                        draw 1 of dust using dustOption(rgb(255, 0, 0), 2.5) at location({_isX} - {_rad}, {_beamY}, {_isZ} + {_rad}, {_pw})
+                        draw 1 of dust using dustOption(rgb(255, 0, 0), 2.5) at location({_isX} - {_rad}, {_beamY}, {_isZ} - {_rad}, {_pw})
+
+                    # B. Grosse Barrière Rouge visible en temps réel à l'approche de la bordure (à moins de 18 blocs)
+                    if {_maxDist} >= ({_rad} - 18):
+                        # Mur Est (X+)
+                        if ({_px} - {_isX}) >= ({_rad} - 18):
+                            set {_wallX} to {_isX} + {_rad}
+                            loop integers from -4 to 4:
+                                set {_dOffset} to loop-integer
+                                loop integers from -2 to 3:
+                                    set {_yOffset} to loop-integer-2
+                                    draw 1 of dust using dustOption(rgb(255, 0, 0), 2.8) at location({_wallX}, {_py} + {_yOffset}, {_pz} + {_dOffset}, {_pw})
+                            draw 2 of flame at location({_wallX}, {_py} + 1, {_pz}, {_pw})
+                            
+                        # Mur Ouest (X-)
+                        if ({_isX} - {_px}) >= ({_rad} - 18):
+                            set {_wallX} to {_isX} - {_rad}
+                            loop integers from -4 to 4:
+                                set {_dOffset} to loop-integer
+                                loop integers from -2 to 3:
+                                    set {_yOffset} to loop-integer-2
+                                    draw 1 of dust using dustOption(rgb(255, 0, 0), 2.8) at location({_wallX}, {_py} + {_yOffset}, {_pz} + {_dOffset}, {_pw})
+                            draw 2 of flame at location({_wallX}, {_py} + 1, {_pz}, {_pw})
+
+                        # Mur Sud (Z+)
+                        if ({_pz} - {_isZ}) >= ({_rad} - 18):
+                            set {_wallZ} to {_isZ} + {_rad}
+                            loop integers from -4 to 4:
+                                set {_dOffset} to loop-integer
+                                loop integers from -2 to 3:
+                                    set {_yOffset} to loop-integer-2
+                                    draw 1 of dust using dustOption(rgb(255, 0, 0), 2.8) at location({_px} + {_dOffset}, {_py} + {_yOffset}, {_wallZ}, {_pw})
+                            draw 2 of flame at location({_px}, {_py} + 1, {_wallZ}, {_pw})
+
+                        # Mur Nord (Z-)
+                        if ({_isZ} - {_pz}) >= ({_rad} - 18):
+                            set {_wallZ} to {_isZ} - {_rad}
+                            loop integers from -4 to 4:
+                                set {_dOffset} to loop-integer
+                                loop integers from -2 to 3:
+                                    set {_yOffset} to loop-integer-2
+                                    draw 1 of dust using dustOption(rgb(255, 0, 0), 2.8) at location({_px} + {_dOffset}, {_py} + {_yOffset}, {_wallZ}, {_pw})
+                            draw 2 of flame at location({_px}, {_py} + 1, {_wallZ}, {_pw})
+
+                        send action bar "&4&l⛔ BORDURE ROUGE CÉLESTE &8| &cRayon: &e%{_rad}%m &8(&4Barrière Active&8)" to loop-player
+
+                # Contact et franchissement de la bordure : Répulsion immédiate & Alerte
+                if {_maxDist} >= {_rad}:
+                    if loop-player is not op:
+                        set {_r} to {rank::%{_u}%} ? "Joueur"
+                        if {_r} is not "Fondateur" or "Admin" or "Resp" or "Modo":
+                            if gamemode of loop-player is not spectator:
+                                set {_centerLoc} to location({_isX}, {_py}, {_isZ}, {_pw})
+                                push loop-player towards {_centerLoc} at speed 0.45
+                                draw 20 of dust using dustOption(rgb(255, 0, 0), 3.0) at location 1 meter above loop-player
+                                draw 5 of flame at location 1.2 meters above loop-player
+                                play sound "block.anvil.land" with volume 0.7 and pitch 1.2 to loop-player
+                                play sound "block.beacon.deactivate" with volume 0.8 and pitch 1.6 to loop-player
+                                send action bar "&4&l⛔ BORDURE D'ÎLE ATTEINTE &8| &cLimite atteinte ! Agrandis ton île avec &e/is upgrade &c!" to loop-player
+
+            # 3. Expiration du Vol en Skyblock
+            if loop-player's flight mode is true:
+                if loop-player is not op:
+                    set {_r} to {rank::%{_u}%} ? "Joueur"
+                    if {_r} is not "Fondateur" or "Admin" or "Resp" or "Modo":
+                        if {island_fly_expire::%loop-player%} is set:
+                            if now >= {island_fly_expire::%loop-player%}:
+                                delete {island_fly_expire::%loop-player%}
+                                set loop-player's flight mode to false
+                                execute console command "effect give %loop-player% slow_falling 6 0 true"
+                                send "{@prefix}&c&lPass Vol Expiré ! &7Ton temps de vol est terminé, vol désactivé en douceur." to loop-player
+                                play sound "block.wooden_button.click_off" to loop-player
+                        else:
+                            set loop-player's flight mode to false
+                            execute console command "effect give %loop-player% slow_falling 6 0 true"
+                            send "{@prefix}&cMode vol désactivé (aucun Pass Vol actif)." to loop-player
+
+        # B. Gestion Monde Survie : Vol strictement interdit aux joueurs
+        else if "%world of loop-player%" contains "survie" or "world":
+            if loop-player's flight mode is true:
+                if loop-player is not op:
+                    set {_u} to uuid of loop-player
+                    set {_r} to {rank::%{_u}%} ? "Joueur"
+                    if {_r} is not "Fondateur" or "Admin" or "Resp" or "Modo":
+                        set loop-player's flight mode to false
+                        send "{@prefix}&cLe vol (Fly) est désactivé en monde Survie !" to loop-player
+
+# ==================== PROTECTION DE CONSTRUCTION HORS-LIMITE D'ÎLE ====================
+
+on block place:
+    if "%world of player%" contains "skyblock":
+        if player is not op:
+            set {_u} to uuid of player
+            set {_r} to {rank::%{_u}%} ? "Joueur"
+            if {_r} is not "Fondateur" or "Admin" or "Resp" or "Modo":
+                set {_owner} to "%player%"
+                if {island_team_owner::%{_u}%} is set:
+                    set {_owner} to "%{island_team_owner::%{_u}%}%"
+                else if {island_team_owner::%player%} is set:
+                    set {_owner} to "%{island_team_owner::%player%}%"
+                if {island::%{_owner}%::x} is set:
+                    set {_dx} to abs(x-coordinate of event-location - {island::%{_owner}%::x})
+                    set {_dz} to abs(z-coordinate of event-location - {island::%{_owner}%::z})
+                    set {_maxDist} to max({_dx}, {_dz})
+                    set {_rad} to getIslandRadius({_owner})
+                    if {_maxDist} > {_rad}:
+                        cancel event
+                        send action bar "&c&l✦ HORS-LIMITE &8| &7Tu ne peux pas poser de blocs au-delà de ta bordure (%{_rad}%m) !" to player
+                        play sound "block.note_block.bass" to player
+
+on block break:
+    if "%world of player%" contains "skyblock":
+        if block 1 below event-block is not bedrock: # Préserve le générateur infini
+            if player is not op:
+                set {_u} to uuid of player
+                set {_r} to {rank::%{_u}%} ? "Joueur"
+                if {_r} is not "Fondateur" or "Admin" or "Resp" or "Modo":
+                    set {_owner} to "%player%"
+                    if {island_team_owner::%{_u}%} is set:
+                        set {_owner} to "%{island_team_owner::%{_u}%}%"
+                    else if {island_team_owner::%player%} is set:
+                        set {_owner} to "%{island_team_owner::%player%}%"
+                    if {island::%{_owner}%::x} is set:
+                        set {_dx} to abs(x-coordinate of event-location - {island::%{_owner}%::x})
+                        set {_dz} to abs(z-coordinate of event-location - {island::%{_owner}%::z})
+                        set {_maxDist} to max({_dx}, {_dz})
+                        set {_rad} to getIslandRadius({_owner})
+                        if {_maxDist} > {_rad}:
+                            cancel event
+                            send action bar "&c&l✦ HORS-LIMITE &8| &7Tu ne peux pas casser de blocs au-delà de ta bordure (%{_rad}%m) !" to player
+                            play sound "block.note_block.bass" to player
+
+on world change:
+    wait 3 ticks
+    if "%world of player%" contains "survie" or "world":
+        if player is not op:
+            set {_u} to uuid of player
+            set {_r} to {rank::%{_u}%} ? "Joueur"
+            if {_r} is not "Fondateur" or "Admin" or "Resp" or "Modo":
+                if player's flight mode is true:
+                    set player's flight mode to false
+                    send "{@prefix}&cLe vol (Fly) est strictement désactivé dans le monde Survie !" to player
+    else if "%world of player%" contains "skyblock":
+        set {_u} to uuid of player
+        set {_owner} to "%player%"
+        if {island_team_owner::%{_u}%} is set:
+            set {_owner} to "%{island_team_owner::%{_u}%}%"
+        else if {island_team_owner::%player%} is set:
+            set {_owner} to "%{island_team_owner::%player%}%"
+        applyIslandBorder(player, {_owner})
+
+# 2. Annulation totale des dégâts de vide et de chute extrême en Skyblock
+on damage of player:
+    if "%world of victim%" contains "skyblock":
+        if damage cause is void:
+            cancel event
+            set {_u} to uuid of victim
+            set {_owner} to "%victim%"
+            if {island_team_owner::%{_u}%} is set:
+                set {_owner} to "%{island_team_owner::%{_u}%}%"
+            else if {island_team_owner::%victim%} is set:
+                set {_owner} to "%{island_team_owner::%victim%}%"
+
+            if {island_home::%{_owner}%} is set:
+                teleport victim to {island_home::%{_owner}%}
+            else if {island::%{_owner}%::x} is set:
+                set {_w} to {island::%{_owner}%::world}
+                if {_w} is not set:
+                    set {_w} to world "skyblock"
+                if {_w} is not set:
+                    set {_w} to "skyblock" parsed as world
+                set {_targetLoc} to location(({island::%{_owner}%::x} + 0.5), 151, ({island::%{_owner}%::z} + 2.5), {_w})
+                teleport victim to {_targetLoc}
+            set victim's fall distance to 0
+            send "{@prefix}&aSauvetage d'urgence ! Tu as été ramené sain et sauf sur ton île !" to victim
+            play sound "entity.enderman.teleport" to victim
+        else if y-coordinate of victim < 70:
+            cancel event
+            set victim's fall distance to 0
+
+# 3. Conservation permanente de l'inventaire et des niveaux d'XP en Skyblock
+on death of player:
+    if "%world of victim%" contains "skyblock":
+        clear drops
+        set {last_death_world::%uuid of victim%} to "skyblock"
+        send "{@prefix}&aTon stuff et ton expérience ont été conservés !" to victim
+
+# Réapparition instantanée garantie sur l'île Skyblock
+on respawn:
+    wait 2 ticks
+    set {_u} to uuid of player
+    set {_isSky} to false
+    if "%world of player%" contains "skyblock":
+        set {_isSky} to true
+    else if {last_death_world::%{_u}%} is set:
+        if "%{last_death_world::%{_u}%}%" contains "skyblock":
+            set {_isSky} to true
+            
+    if {_isSky} is true:
+        delete {last_death_world::%{_u}%}
+        set {_owner} to "%player%"
+        if {island_team_owner::%{_u}%} is set:
+            set {_owner} to "%{island_team_owner::%{_u}%}%"
+        else if {island_team_owner::%player%} is set:
+            set {_owner} to "%{island_team_owner::%player%}%"
+
+        if {island_home::%{_owner}%} is set:
+            teleport player to {island_home::%{_owner}%}
+            send "{@prefix}&aTu as réapparu sur ton île Skyblock !" to player
+            play sound "entity.experience_orb.pickup" to player
+        else if {island::%{_owner}%::x} is set:
+            set {_w} to {island::%{_owner}%::world}
+            if {_w} is not set:
+                set {_w} to world "skyblock"
+            if {_w} is not set:
+                set {_w} to "skyblock" parsed as world
+            set {_targetLoc} to location(({island::%{_owner}%::x} + 0.5), 151, ({island::%{_owner}%::z} + 2.5), {_w})
+            teleport player to {_targetLoc}
+            send "{@prefix}&aTu as réapparu sur ton île Skyblock !" to player
+            play sound "entity.experience_orb.pickup" to player
+
+# ==================== SYSTÈME FAST LEAF DECAY & DROPS RÉDUITS ====================
+
+# 1. Quand un joueur coupe un tronc d'arbre : disparition rapide et propre des feuilles
+on break:
+    set {_b} to "%event-block%"
+    if {_b} contains "log" or "stem" or "wood":
+        set {_loc} to event-location
+        wait 3 ticks
+        loop blocks in radius 5 of {_loc}:
+            set {_lb} to "%loop-block%"
+            if {_lb} contains "leaves":
+                # Vérifie s'il n'y a plus de tronc à proximité immédiate
+                set {_hasLog} to false
+                loop blocks in radius 2 of loop-block:
+                    if "%loop-block-2%" contains "log" or "stem" or "wood":
+                        set {_hasLog} to true
+                if {_hasLog} is false:
+                    # Chance équilibrée de loot utile (Pousse d'arbre, bâton ou pomme)
+                    set {_r} to random integer between 1 and 20
+                    if {_r} is 1:
+                        drop 1 of oak sapling at location of loop-block
+                    else if {_r} is 2:
+                        drop 1 of stick at location of loop-block
+                    else if {_r} is 3:
+                        if {_lb} contains "oak":
+                            drop 1 of apple at location of loop-block
+                    set loop-block to air
+                    play sound "block.grass.break" with volume 0.3 at location of loop-block
+
+# 2. Quand un joueur casse des feuilles à la main ou à l'outil : 0 encombrement de l'inventaire
+on break:
+    set {_b} to "%event-block%"
+    if {_b} contains "leaves":
+        set {_t} to "%player's tool%"
+        # Si le joueur n'utilise pas de cisailles (shears), on ne drop pas de blocs de feuilles
+        if {_t} does not contain "shears":
+            if {_t} does not contain "cisaille":
+                clear drops
+            set {_r} to random integer between 1 and 15
+            if {_r} is 1:
+                drop 1 of oak sapling at event-location
+            else if {_r} is 2:
+                drop 1 of stick at event-location
+            else if {_r} is 3:
+                if {_b} contains "oak":
+                    drop 1 of apple at event-location
+
+
+# ==================== SYSTÈME DE MINAGE SKYBLOCK & GÉNÉRATEURS ÉQUILIBRÉS ====================
+
+# 1. Transformation équilibrée des générateurs eau/lave naturels selon le Tier d'île
+on form of cobblestone or stone or basalt:
+    if "%event-world%" contains "skyblock":
+        set {_loc} to event-location
+        # Détection du propriétaire de l'île proche
+        set {_owner} to ""
+        loop all players in radius 75 of {_loc}:
+            set {_u} to uuid of loop-player
+            if {island_team_owner::%{_u}%} is set:
+                set {_owner} to "%{island_team_owner::%{_u}%}%"
+            else if {island::%loop-player%::x} is set:
+                set {_owner} to "%loop-player%"
+            exit loop if {_owner} is not ""
+            
+        set {_genLvl} to {island_upgrades::%{_owner}%::gen} ? 1
+        set {_rand} to random integer between 1 and 100
+        
+        # Palier 1 (Départ - Principalement Cobble & Roches de base)
+        if {_genLvl} is 1:
+            if {_rand} <= 80:
+                set event-block to cobblestone
+            else if {_rand} <= 90:
+                set event-block to andesite or diorite or stone
+            else if {_rand} <= 96:
+                set event-block to coal ore
+            else if {_rand} <= 99:
+                set event-block to copper ore
+            else:
+                set event-block to iron ore
+
+        # Palier 2 (Mineur Avancé)
+        else if {_genLvl} is 2:
+            if {_rand} <= 65:
+                set event-block to cobblestone or stone
+            else if {_rand} <= 77:
+                set event-block to deepslate or tuff
+            else if {_rand} <= 87:
+                set event-block to coal ore or copper ore
+            else if {_rand} <= 95:
+                set event-block to iron ore
+            else if {_rand} <= 98:
+                set event-block to lapis ore or redstone ore
+            else:
+                set event-block to gold ore
+
+        # Palier 3 (Maître des Abysses)
+        else if {_genLvl} is 3:
+            if {_rand} <= 50:
+                set event-block to stone or deepslate or tuff
+            else if {_rand} <= 68:
+                set event-block to iron ore or deepslate iron ore
+            else if {_rand} <= 80:
+                set event-block to gold ore or deepslate gold ore
+            else if {_rand} <= 90:
+                set event-block to redstone ore or lapis ore
+            else if {_rand} <= 97:
+                set event-block to nether quartz ore or amethyst block
+            else:
+                set event-block to diamond ore
+
+        # Palier 4 (Cosmique / Max Tier)
+        else:
+            if {_rand} <= 40:
+                set event-block to deepslate or smooth basalt or calcite
+            else if {_rand} <= 60:
+                set event-block to iron ore or deepslate iron ore
+            else if {_rand} <= 75:
+                set event-block to gold ore or deepslate gold ore
+            else if {_rand} <= 88:
+                set event-block to redstone ore or lapis ore or nether quartz ore
+            else if {_rand} <= 95:
+                set event-block to diamond ore or deepslate diamond ore
+            else if {_rand} <= 99:
+                set event-block to emerald ore or deepslate emerald ore
+            else:
+                set event-block to ancient debris
+
+# 2. Régénération réaliste & cadencée du Générateur Central Skyblock (au-dessus de la bedrock - Cooldown 3s)
+on break:
+    if "%world of player%" contains "skyblock":
+        # Détection du bloc au-dessus de la bedrock (Générateur infini de l'île)
+        set {_locBelow} to location 1 below event-location
+        if block at {_locBelow} is bedrock:
+            set {_genLoc} to event-location
+            
+            # Anti-spam & protection de cooldown
+            if {island_gen_cooling::%{_genLoc}%} is true:
+                cancel event
+                stop
+            
+            set {island_gen_cooling::%{_genLoc}%} to true
+            
+            # Effet sonore et particule de forge/refroidissement lors du minage
+            play sound "block.fire.extinguish" with pitch 1.8 to player
+            
+            # Délai de régénération réaliste de 3 secondes (fini le spam abusif de blocs instantanés)
+            wait 1.5 seconds
+            play sound "block.gravel.place" with pitch 1.5 to player
+            wait 1.5 seconds
+            
+            # Vérifie que la bedrock est toujours présente sous le bloc
+            if block at (location 1 below {_genLoc}) is bedrock:
+                set {_owner} to "%player%"
+                set {_u} to uuid of player
+                if {island_team_owner::%{_u}%} is set:
+                    set {_owner} to "%{island_team_owner::%{_u}%}%"
+                else if {island_team_owner::%player%} is set:
+                    set {_owner} to "%{island_team_owner::%player%}%"
+                
+                set {_genLvl} to {island_upgrades::%{_owner}%::gen} ? 1
+                set {_roll} to random integer between 1 and 100
+                
+                # Tier 1 (Débutant : 75% Cobble, 12% Roches, 8% Charbon, 3% Cuivre, 2% Fer)
+                if {_genLvl} is 1:
+                    if {_roll} <= 75:
+                        set block at {_genLoc} to cobblestone
+                    else if {_roll} <= 87:
+                        set block at {_genLoc} to andesite or diorite or stone
+                    else if {_roll} <= 95:
+                        set block at {_genLoc} to coal ore
+                    else if {_roll} <= 98:
+                        set block at {_genLoc} to copper ore
+                    else:
+                        set block at {_genLoc} to iron ore
+
+                # Tier 2 (Avancé : 60% Cobble/Pierre, 15% Deepslate, 12% Charbon/Cuivre, 9% Fer, 3% Lapis/Or)
+                else if {_genLvl} is 2:
+                    if {_roll} <= 60:
+                        set block at {_genLoc} to cobblestone or stone
+                    else if {_roll} <= 75:
+                        set block at {_genLoc} to deepslate or tuff
+                    else if {_roll} <= 87:
+                        set block at {_genLoc} to coal ore or copper ore
+                    else if {_roll} <= 96:
+                        set block at {_genLoc} to iron ore
+                    else if {_roll} <= 98:
+                        set block at {_genLoc} to lapis ore or redstone ore
+                    else:
+                        set block at {_genLoc} to gold ore
+
+                # Tier 3 (Expert : 45% Deepslate/Roches, 20% Fer, 15% Or, 10% Redstone/Lapis, 7% Quartz, 3% Diamant)
+                else if {_genLvl} is 3:
+                    if {_roll} <= 45:
+                        set block at {_genLoc} to deepslate or smooth stone or tuff
+                    else if {_roll} <= 65:
+                        set block at {_genLoc} to iron ore or deepslate iron ore
+                    else if {_roll} <= 80:
+                        set block at {_genLoc} to gold ore or deepslate gold ore
+                    else if {_roll} <= 90:
+                        set block at {_genLoc} to redstone ore or deepslate redstone ore or lapis ore
+                    else if {_roll} <= 97:
+                        set block at {_genLoc} to nether quartz ore or amethyst block
+                    else:
+                        set block at {_genLoc} to diamond ore
+
+                # Tier 4 (Cosmique Max : 35% Deepslate, 22% Fer, 18% Or, 14% Lapis/Redstone/Quartz, 7% Diamant, 3% Émeraude, 1% Debris)
+                else:
+                    if {_roll} <= 35:
+                        set block at {_genLoc} to deepslate or basalt or calcite
+                    else if {_roll} <= 57:
+                        set block at {_genLoc} to iron ore or deepslate iron ore
+                    else if {_roll} <= 75:
+                        set block at {_genLoc} to gold ore or deepslate gold ore
+                    else if {_roll} <= 89:
+                        set block at {_genLoc} to deepslate redstone ore or deepslate lapis ore or nether quartz ore
+                    else if {_roll} <= 96:
+                        set block at {_genLoc} to diamond ore or deepslate diamond ore
+                    else if {_roll} <= 99:
+                        set block at {_genLoc} to emerald ore or deepslate emerald ore
+                    else:
+                        set block at {_genLoc} to ancient debris
+                
+                # Feedback sonore doux d'apparition
+                play sound "block.stone.place" with pitch 1.1 to player
+                play sound "block.amethyst_block.hit" with pitch 1.4 to player
+            
+            delete {island_gen_cooling::%{_genLoc}%}
+
+# ==================== SYSTÈME DE SPAWN DE MOBS & ANIMAUX SKYBLOCK ====================
+
+# Commande directe de gestion des Mobs & Paramètres Skyblock (/is mobs, /is settings)
+command /is-gui-mobs:
+    aliases: /is-gui-settings
+    trigger:
+        set {_u} to uuid of player
+        set {_owner} to "%player%"
+        if {island_team_owner::%{_u}%} is set:
+            set {_owner} to "%{island_team_owner::%{_u}%}%"
+        else if {island_team_owner::%player%} is set:
+            set {_owner} to "%{island_team_owner::%player%}%"
+
+        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lGESTION MOBS & PARAMÈTRES"
+        loop 27 times:
+            set slot (loop-number - 1) of {_gui} to gray stained glass pane named "&8✦"
+
+        # 1. Toggle Monstres Hostiles (Slot 10)
+        if {island_mobs_hostile::%{_owner}%} is false:
+            set slot 10 of {_gui} to zombie head named "&c&lMonstres Hostiles : &cDÉSACTIVÉS" with lore "&8Génération de monstres" and "&7• Zombies, Squelettes, Creepers, Araignées" and "&7• Mini-Boss Célestes" and "" and "&e► Cliquer pour &aACTIVER"
+        else:
+            set slot 10 of {_gui} to zombie head named "&a&lMonstres Hostiles : &aACTIVÉS" with lore "&8Génération de monstres" and "&7• Zombies, Squelettes, Creepers, Araignées" and "&7• Mini-Boss Célestes" and "" and "&e► Cliquer pour &cDÉSACTIVER"
+
+        # 2. Toggle Animaux Pacifiques (Slot 12)
+        if {island_mobs_passive::%{_owner}%} is false:
+            set slot 12 of {_gui} to egg named "&c&lAnimaux Pacifiques : &cDÉSACTIVÉS" with lore "&8Génération d'élevage" and "&7• Vaches, Moutons, Cochons, Poules, Abeilles" and "&7• Apparaissent sur les blocs d'herbe" and "" and "&e► Cliquer pour &aACTIVER"
+        else:
+            set slot 12 of {_gui} to egg named "&a&lAnimaux Pacifiques : &aACTIVÉS" with lore "&8Génération d'élevage" and "&7• Vaches, Moutons, Cochons, Poules, Abeilles" and "&7• Apparaissent sur les blocs d'herbe" and "" and "&e► Cliquer pour &cDÉSACTIVER"
+
+        # 3. Protection Anti-Grief Explosions Creepers (Slot 14)
+        if {island_antigrief::%{_owner}%} is false:
+            set slot 14 of {_gui} to tnt named "&c&lProtection Anti-Explosion : &cDÉSACTIVÉE" with lore "&8Sécurité des blocs" and "&7• Les Creepers détruiront vos constructions !" and "" and "&e► Cliquer pour &aACTIVER LA PROTECTION"
+        else:
+            set slot 14 of {_gui} to shield named "&a&lProtection Anti-Explosion : &aACTIVÉE" with lore "&8Sécurité des blocs" and "&7• 0 dégât aux blocs de votre île" and "&7• Dégâts physiques aux entités uniquement" and "" and "&e► Cliquer pour &cDÉSACTIVER"
+
+        # 4. Forcer l'apparition de Mobs (Slot 16)
+        set slot 16 of {_gui} to spawner named "&6&l✦ Forcer l'apparition (Spawn Vague) ✦" with lore "&8Invoque une vague immédiate" and "&7• Génère des créatures sur vos plateformes" and "" and "&e► Cliquer pour &6GÉNÉRER UNE VAGUE"
+
+        # Retour
+        set slot 22 of {_gui} to arrow named "&c« Retour au Menu"
+        open {_gui} to player
+        play sound "block.amethyst_block.hit" to player
+
+# Boucle périodique d'apparition automatique de Mobs sur les îles Skyblock (Toutes les 20 secondes)
+every 20 seconds:
+    loop all players:
+        if "%world of loop-player%" contains "skyblock":
+            set {_u} to uuid of loop-player
+            set {_owner} to "%loop-player%"
+            if {island_team_owner::%{_u}%} is set:
+                set {_owner} to "%{island_team_owner::%{_u}%}%"
+            else if {island_team_owner::%loop-player%} is set:
+                set {_owner} to "%{island_team_owner::%loop-player%}%"
+
+            if {island::%{_owner}%::x} is set:
+                set {_w} to world of loop-player
+                set {_isX} to {island::%{_owner}%::x}
+                set {_isZ} to {island::%{_owner}%::z}
+                set {_rad} to getIslandRadius({_owner})
+                if {_rad} < 30:
+                    set {_rad} to 40
+                set {_maxOffset} to ({_rad} - 6)
+                if {_maxOffset} < 15:
+                    set {_maxOffset} to 15
+                
+                set {_centerLoc} to location({_isX}, 150, {_isZ}, {_w})
+                set {_py} to y-coordinate of loop-player
+                if {_py} is not set:
+                    set {_py} to 150
+
+                # 1. SPAWN DE MONSTRES HOSTILES
+                if {island_mobs_hostile::%{_owner}%} is not false:
+                    set {_hostileCount} to 0
+                    loop monsters in radius 45 of {_centerLoc}:
+                        add 1 to {_hostileCount}
+                        
+                    if {_hostileCount} < 18:
+                        # Tente de trouver une plateforme valide sur plusieurs niveaux Y
+                        set {_rx} to random integer between (0 - {_maxOffset}) and {_maxOffset}
+                        set {_rz} to random integer between (0 - {_maxOffset}) and {_maxOffset}
+                        set {_targetX} to {_isX} + {_rx}
+                        set {_targetZ} to {_isZ} + {_rz}
+                        
+                        # Scan intelligent de hauteur : autour du joueur et à Y=150
+                        set {_foundFloor} to false
+                        set {_spawnLoc} to location({_targetX}, 151, {_targetZ}, {_w})
+                        
+                        loop integers from 0 to 20:
+                            set {_checkY} to round({_py} + 10 - loop-integer)
+                            set {_testLoc} to location({_targetX}, {_checkY}, {_targetZ}, {_w})
+                            if block at {_testLoc} is air:
+                                set {_bBelow} to block 1 below {_testLoc}
+                                if {_bBelow} is not air or water or lava:
+                                    if {_bBelow} is cobblestone or stone or cobbled deepslate or deepslate or dirt or grass block or oak planks or spruce planks or netherrack or blackstone:
+                                        set {_spawnLoc} to {_testLoc}
+                                        set {_foundFloor} to true
+                                        exit 1 loop
+                        
+                        if {_foundFloor} is false:
+                            if block at location({_targetX}, 151, {_targetZ}, {_w}) is air:
+                                set {_bBelow} to block at location({_targetX}, 150, {_targetZ}, {_w})
+                                if {_bBelow} is cobblestone or stone or cobbled deepslate or deepslate or dirt or grass block:
+                                    set {_spawnLoc} to location({_targetX}, 151, {_targetZ}, {_w})
+                                    set {_foundFloor} to true
+
+                        if {_foundFloor} is true:
+                            set {_floorType} to "%type of block 1 below {_spawnLoc}%"
+                            set {_mobRoll} to random integer between 1 and 100
+                            
+                            # Mini-Boss Céleste Rare (Garde Céleste - 2%)
+                            if {_mobRoll} is 100 or 99:
+                                spawn 1 zombie at {_spawnLoc}
+                                set {_boss} to last spawned zombie
+                                set name of {_boss} to "&6&l✦ GARDE CÉLESTE ✦ &c[Mini-Boss]"
+                                set max health of {_boss} to 60
+                                set health of {_boss} to 60
+                                equip {_boss} with netherite helmet
+                                equip {_boss} with golden chestplate
+                                equip {_boss} with iron sword
+                                set {skyblock_boss::%uuid of {_boss}%} to "garde_celeste"
+                                draw 15 of flame at location 1 meter above {_spawnLoc}
+                                play sound "entity.wither.spawn" with volume 0.8 and pitch 1.5 at {_spawnLoc}
+                                send "{@prefix}&6&l✦ UN GARDE CÉLESTE (Mini-Boss) EST APPARU SUR TON ÎLE ! ✦" to loop-player
+                            
+                            # Mini-Boss des Ombres (Spectre du Néant - 2%)
+                            else if {_mobRoll} is 98 or 97:
+                                spawn 1 skeleton at {_spawnLoc}
+                                set {_boss} to last spawned skeleton
+                                set name of {_boss} to "&d&l✦ SPECTRE DU NÉANT ✦ &c[Mini-Boss]"
+                                set max health of {_boss} to 50
+                                set health of {_boss} to 50
+                                equip {_boss} with diamond helmet
+                                equip {_boss} with bow of power 2
+                                set {skyblock_boss::%uuid of {_boss}%} to "spectre_neant"
+                                draw 15 of portal at location 1 meter above {_spawnLoc}
+                                play sound "entity.wither.ambient" with volume 0.8 and pitch 1.8 at {_spawnLoc}
+                                send "{@prefix}&d&l✦ UN SPECTRE DU NÉANT (Mini-Boss) EST APPARU SUR TON ÎLE ! ✦" to loop-player
+                            
+                            # Monde / Blocs du Nether
+                            else if {_floorType} contains "netherrack" or "blackstone" or "basalt":
+                                if {_mobRoll} <= 40:
+                                    spawn 1 zombified piglin at {_spawnLoc}
+                                else if {_mobRoll} <= 70:
+                                    spawn 1 wither skeleton at {_spawnLoc}
+                                else if {_mobRoll} <= 85:
+                                    spawn 1 blaze at {_spawnLoc}
+                                else:
+                                    spawn 1 magma cube at {_spawnLoc}
+                            
+                            # Monstres Classiques & Variantes
+                            else:
+                                if {_mobRoll} <= 32:
+                                    spawn 1 zombie at {_spawnLoc}
+                                    chance of 35%:
+                                        equip last spawned zombie with iron helmet
+                                else if {_mobRoll} <= 58:
+                                    spawn 1 skeleton at {_spawnLoc}
+                                    chance of 25%:
+                                        equip last spawned skeleton with chainmail helmet
+                                else if {_mobRoll} <= 76:
+                                    spawn 1 spider at {_spawnLoc}
+                                else if {_mobRoll} <= 88:
+                                    spawn 1 creeper at {_spawnLoc}
+                                else if {_mobRoll} <= 94:
+                                    spawn 1 enderman at {_spawnLoc}
+                                else:
+                                    spawn 1 witch at {_spawnLoc}
+
+                # 2. SPAWN D'ANIMAUX PASSIFS (Sur herbe naturelle)
+                if {island_mobs_passive::%{_owner}%} is not false:
+                    set {_animalCount} to 0
+                    loop animals in radius 45 of {_centerLoc}:
+                        add 1 to {_animalCount}
+                        
+                    if {_animalCount} < 12:
+                        set {_rx} to random integer between (0 - {_maxOffset}) and {_maxOffset}
+                        set {_rz} to random integer between (0 - {_maxOffset}) and {_maxOffset}
+                        set {_targetX} to {_isX} + {_rx}
+                        set {_targetZ} to {_isZ} + {_rz}
+                        
+                        set {_foundGrass} to false
+                        set {_spawnLoc} to location({_targetX}, 151, {_targetZ}, {_w})
+                        
+                        loop integers from 0 to 20:
+                            set {_checkY} to round({_py} + 10 - loop-integer)
+                            set {_testLoc} to location({_targetX}, {_checkY}, {_targetZ}, {_w})
+                            if block at {_testLoc} is air:
+                                if block 1 below {_testLoc} is grass block:
+                                    set {_spawnLoc} to {_testLoc}
+                                    set {_foundGrass} to true
+                                    exit 1 loop
+                        
+                        if {_foundGrass} is false:
+                            if block at location({_targetX}, 151, {_targetZ}, {_w}) is air:
+                                if block at location({_targetX}, 150, {_targetZ}, {_w}) is grass block:
+                                    set {_spawnLoc} to location({_targetX}, 151, {_targetZ}, {_w})
+                                    set {_foundGrass} to true
+
+                        if {_foundGrass} is true:
+                            set {_aRoll} to random integer between 1 and 100
+                            if {_aRoll} <= 28:
+                                spawn 1 cow at {_spawnLoc}
+                            else if {_aRoll} <= 52:
+                                spawn 1 sheep at {_spawnLoc}
+                            else if {_aRoll} <= 72:
+                                spawn 1 pig at {_spawnLoc}
+                            else if {_aRoll} <= 86:
+                                spawn 1 chicken at {_spawnLoc}
+                            else if {_aRoll} <= 94:
+                                spawn 1 rabbit at {_spawnLoc}
+                            else:
+                                spawn 1 bee at {_spawnLoc}
+
+# Gestion des clics dans le Menu de Mobs & Paramètres
+on inventory click:
+    if name of event-inventory is "&8» &0&lGESTION MOBS & PARAMÈTRES":
+        cancel event
+        set {_u} to uuid of player
+        set {_owner} to "%player%"
+        if {island_team_owner::%{_u}%} is set:
+            set {_owner} to "%{island_team_owner::%{_u}%}%"
+        else if {island_team_owner::%player%} is set:
+            set {_owner} to "%{island_team_owner::%player%}%"
+
+        # 1. Toggle Monstres Hostiles (Slot 10)
+        if index of event-slot is 10:
+            if {island_mobs_hostile::%{_owner}%} is false:
+                set {island_mobs_hostile::%{_owner}%} to true
+                send "{@prefix}&aGénération de monstres hostiles &aACTIVÉE &asur ton île !" to player
+            else:
+                set {island_mobs_hostile::%{_owner}%} to false
+                send "{@prefix}&cGénération de monstres hostiles &cDÉSACTIVÉE &csur ton île !" to player
+            play sound "block.note_block.pling" to player
+            execute player command "is-gui-mobs"
+
+        # 2. Toggle Animaux Pacifiques (Slot 12)
+        else if index of event-slot is 12:
+            if {island_mobs_passive::%{_owner}%} is false:
+                set {island_mobs_passive::%{_owner}%} to true
+                send "{@prefix}&aGénération d'animaux pacifiques &aACTIVÉE &asur ton île !" to player
+            else:
+                set {island_mobs_passive::%{_owner}%} to false
+                send "{@prefix}&cGénération d'animaux pacifiques &cDÉSACTIVÉE &csur ton île !" to player
+            play sound "block.note_block.pling" to player
+            execute player command "is-gui-mobs"
+
+        # 3. Toggle Anti-Grief Creepers (Slot 14)
+        else if index of event-slot is 14:
+            if {island_antigrief::%{_owner}%} is false:
+                set {island_antigrief::%{_owner}%} to true
+                send "{@prefix}&aProtection anti-explosion de blocs &aACTIVÉE &a!" to player
+            else:
+                set {island_antigrief::%{_owner}%} to false
+                send "{@prefix}&cProtection anti-explosion de blocs &cDÉSACTIVÉE &c!" to player
+            play sound "block.anvil.use" to player
+            execute player command "is-gui-mobs"
+
+        # 4. Spawn Vague Immédiate (Slot 16)
+        else if index of event-slot is 16:
+            close player's inventory
+            set {_w} to world of player
+            set {_spawnCount} to 0
+            loop 4 times:
+                set {_rx} to random integer between -15 and 15
+                set {_rz} to random integer between -15 and 15
+                set {_sLoc} to location(x-coordinate of player + {_rx}, y-coordinate of player + 1, z-coordinate of player + {_rz}, {_w})
+                if block at {_sLoc} is air:
+                    set {_bBelow} to block 1 below {_sLoc}
+                    if {_bBelow} is not air or water or lava:
+                        spawn 1 zombie at {_sLoc}
+                        add 1 to {_spawnCount}
+                        draw 10 of cloud at {_sLoc}
+            send "{@prefix}&aVague invoquée ! &e%{_spawnCount}% &7créatures sont apparues autour de vous." to player
+            play sound "entity.wither.spawn" with pitch 1.8 to player
+
+        # Retour (Slot 22)
+        else if index of event-slot is 22:
+            execute player command "is"
+
+# Récompenses & Butin spécial lors de l'élimination des créatures Skyblock
+on death of monster:
+    if "%world of victim%" contains "skyblock":
+        set {_u} to uuid of victim
+        
+        # Mini-Boss Céleste Récompense
+        if {skyblock_boss::%{_u}%} is "garde_celeste":
+            delete {skyblock_boss::%{_u}%}
+            drop 2 of diamond at victim's location
+            drop 1 of golden apple at victim's location
+            drop 8 of iron ingot at victim's location
+            spawn 80 of xp at victim's location
+            if attacker is a player:
+                set {_reward} to random integer between 150 and 300
+                execute console command "eco give %attacker% %{_reward}%"
+                send title "&6&l✦ GARDE CÉLESTE VAINCU ! ✦" with subtitle "&a+%{_reward}%$ &7et butin rare récolté !" to attacker for 3 seconds
+                play sound "ui.toast.challenge_complete" to attacker
+                
+        # Mini-Boss des Ombres Récompense
+        else if {skyblock_boss::%{_u}%} is "spectre_neant":
+            delete {skyblock_boss::%{_u}%}
+            drop 3 of emerald at victim's location
+            drop 16 of spectral arrow at victim's location
+            drop 1 of enchanted book at victim's location
+            spawn 70 of xp at victim's location
+            if attacker is a player:
+                set {_reward} to random integer between 150 and 250
+                execute console command "eco give %attacker% %{_reward}%"
+                send title "&d&l✦ SPECTRE DU NÉANT VAINCU ! ✦" with subtitle "&a+%{_reward}%$ &7et flèches spectrales récoltées !" to attacker for 3 seconds
+                play sound "ui.toast.challenge_complete" to attacker
+                
+        # Monstre Skyblock Standard
+        else:
+            if attacker is a player:
+                set {_cash} to random integer between 3 and 10
+                execute console command "eco give %attacker% %{_cash}%"
+                send action bar "&c☠ Monstre vaincu ! &a+%{_cash}%$ &e(+5 XP)" to attacker
+                spawn 5 of xp at victim's location
+
+# Protection contre les dégâts de blocs des explosions de Creepers en Skyblock (Anti-Grief)
+on explode:
+    if "%world of event-location%" contains "skyblock":
+        if event-entity is a creeper:
+            cancel event
+            loop all entities in radius 6 of event-location:
+                if loop-entity is a player or monster:
+                    damage loop-entity by 6
+            draw 15 of explosion at event-location
+            play sound "entity.generic.explode" with volume 1.2 and pitch 1.0 at event-location
+

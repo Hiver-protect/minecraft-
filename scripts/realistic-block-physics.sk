@@ -1,0 +1,120 @@
+# ==============================================================================
+#           MINESTARS - REALISTIC BLOCK PHYSICS (Paper 26.2)
+#           Physique réaliste des blocs : Chute d'arbres, Éboulements miniers,
+#           Débris d'explosions 3D & Ondes de choc physiques
+# ==============================================================================
+
+options:
+    prefix: &6&l✦ PHYSIQUE &8> &7
+
+# ==================== 1. CHUTE RÉALISTE DES ARBRES (TREE PHYSICS) ====================
+
+on break of oak log, birch log, spruce log, jungle log, acacia log, dark oak log, mangrove log, cherry log or pale oak log:
+    if player is sneaking:
+        stop # Sneak permet de couper 1 seul bloc sans faire tomber tout l'arbre
+    
+    set {_tool} to player's tool
+    if {_tool} is any axe:
+        set {_loc} to location of event-block
+        set {_logType} to type of event-block
+        
+        # Son réaliste de craquement d'arbre
+        play sound "block.wood.break" with volume 1.5 and pitch 0.8 at {_loc}
+        play sound "entity.zombie.break_wooden_door" with volume 0.8 and pitch 1.4 at {_loc}
+        
+        # Propagation physique vers le haut
+        set {_current} to {_loc}
+        set {_count} to 0
+        loop 30 times:
+            set {_current} to location 1 block above {_current}
+            if block at {_current} is {_logType} or oak log or birch log or spruce log or jungle log or acacia log or dark oak log or mangrove log or cherry log:
+                add 1 to {_count}
+                # Spawn falling block physics entity
+                set {_bType} to type of block at {_current}
+                set block at {_current} to air
+                spawn falling block of {_bType} at {_current}
+                play sound "block.wood.hit" with volume 0.6 and pitch 1.1 at {_current}
+                draw 5 dust using dustOption(rgb(140, 95, 50), 1.2) at {_current} with offset vector(0.4, 0.4, 0.4)
+            else:
+                # Si plus de bûches, faire tomber les feuilles proches
+                loop blocks in radius 3 around {_current}:
+                    if loop-block is any leaves:
+                        if chance of 60%:
+                            set {_lType} to type of loop-block
+                            set loop-block to air
+                            spawn falling block of {_lType} at location of loop-block
+                            draw 3 dust using dustOption(rgb(60, 140, 50), 1.0) at location of loop-block with offset vector(0.3, 0.3, 0.3)
+                stop loop
+
+# ==================== 2. ÉBOULEMENTS & GRAVITÉ RÉALISTE DES MINES ====================
+
+on break of stone, deepslate, cobbled_deepslate, netherrack or basalt:
+    if player is sneaking:
+        stop
+        
+    set {_loc} to location of event-block
+    # Vérifie si le plafond au-dessus est instable (Gravier/Sable/Terre meuble)
+    set {_above} to location 1 block above {_loc}
+    if block at {_above} is gravel or sand or red sand or dirt or coarse dirt:
+        # Éboulement réaliste
+        play sound "block.gravel.break" with volume 1.2 and pitch 0.9 at {_above}
+        play sound "entity.generic.small_fall" with volume 1.0 and pitch 0.8 at {_above}
+        draw 15 dust using dustOption(rgb(120, 110, 105), 1.5) at {_above} with offset vector(0.5, 0.5, 0.5)
+        
+        # Faire tomber les blocs friables au-dessus
+        set {_c} to {_above}
+        loop 5 times:
+            if block at {_c} is gravel or sand or red sand or dirt or coarse dirt:
+                set {_mat} to type of block at {_c}
+                set block at {_c} to air
+                spawn falling block of {_mat} at {_c}
+                set {_c} to location 1 block above {_c}
+            else:
+                stop loop
+
+# ==================== 3. PROJECTION PHYSIQUE DES DÉBRIS D'EXPLOSIONS ====================
+
+on explode:
+    set {_center} to location of event-location
+    play sound "entity.generic.explode" with volume 2.0 and pitch 0.8 at {_center}
+    
+    # Projection de débris 3D
+    set {_debrisCount} to 0
+    loop exploded blocks:
+        if {_debrisCount} < 12: # Limité pour éviter tout lag
+            if loop-block is not bedrock, obsidian or crying_obsidian:
+                if chance of 35%:
+                    add 1 to {_debrisCount}
+                    set {_bLoc} to location of loop-block
+                    set {_bMat} to type of loop-block
+                    
+                    # Direction de projection depuis le centre de l'explosion
+                    set {_dir} to vector between {_center} and {_bLoc}
+                    set vector length of {_dir} to (random number between 0.4 and 0.9)
+                    set y of {_dir} to (random number between 0.3 and 0.7)
+                    
+                    spawn falling block of {_bMat} at {_bLoc}
+                    set velocity of last spawned entity to {_dir}
+                    draw 8 dust using dustOption(rgb(80, 80, 80), 1.8) at {_bLoc} with offset vector(0.4, 0.4, 0.4)
+
+# ==================== 4. IMPACT PHYSIQUE DE LA MASSE (MACE SHOCKWAVE) ====================
+
+on damage:
+    if attacker is a player:
+        if attacker's tool is a mace:
+            if attacker's fall distance > 1.5:
+                set {_targetLoc} to location of victim
+                play sound "item.mace.smash_ground_heavy" with volume 1.8 and pitch 0.9 at {_targetLoc}
+                play sound "entity.generic.explode" with volume 1.0 and pitch 1.4 at {_targetLoc}
+                
+                # Onde de choc circulaire
+                draw 30 dust using dustOption(rgb(40, 220, 240), 2.0) at {_targetLoc} with offset vector(1.5, 0.2, 1.5)
+                
+                # Projection des entités proches
+                loop entities in radius 4 around victim:
+                    if loop-entity is not attacker:
+                        set {_pushDir} to vector between {_targetLoc} and location of loop-entity
+                        set vector length of {_pushDir} to 1.1
+                        set y of {_pushDir} to 0.5
+                        set velocity of loop-entity to {_pushDir}
+                        damage loop-entity by 6

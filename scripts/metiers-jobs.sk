@@ -1,0 +1,359 @@
+# ==============================================================================
+#           MINESTARS - SYSTÈME DE MÉTIERS (JOBS) ULTIMATE PRO (100% OPTIMISÉ)
+#           - 4 Carrières Élite : Mineur, Bûcheron, Chasseur, Fermier (Niveaux 1 à 10)
+#           - Multiplicateurs de Gains & Récompenses de Progression (+10% par niveau)
+#           - Menu GUI Glassmorphism 3R avec Barres de Progression & Sons
+#           - Synchronisation Instantanée : LuckPerms, TAB & Actionbar
+#           - Zéro TPS Loss & Protection Anti-Glitch Placement
+# ==============================================================================
+
+options:
+    prefix: &3&l✦ MÉTIERS &8> &7
+
+# ==================== 1. SYNCHRONISATION DES PERMISSIONS & GRADES ====================
+
+function updateJobPermissions(p: player, j: text):
+    set {_u} to uuid of {_p}
+    set {job::%{_u}%} to {_j}
+    set {skript_job::%{_p}%} to {_j}
+    set {skript_job::%{_u}%} to {_j}
+    
+    # Nettoyage des permissions LuckPerms
+    execute console command "lp user %{_p}% permission unset job.mineur"
+    execute console command "lp user %{_p}% permission unset job.bucheron"
+    execute console command "lp user %{_p}% permission unset job.chasseur"
+    execute console command "lp user %{_p}% permission unset job.fermier"
+    
+    # Synchronisation des rôles & métadonnées
+    if {_j} is "Mineur":
+        execute console command "lp user %{_p}% permission set job.mineur true"
+        execute console command "lp user %{_p}% meta set job Mineur"
+    else if {_j} is "Bûcheron" or "Bucheron":
+        execute console command "lp user %{_p}% permission set job.bucheron true"
+        execute console command "lp user %{_p}% meta set job Bûcheron"
+    else if {_j} is "Chasseur":
+        execute console command "lp user %{_p}% permission set job.chasseur true"
+        execute console command "lp user %{_p}% meta set job Chasseur"
+    else if {_j} is "Fermier":
+        execute console command "lp user %{_p}% permission set job.fermier true"
+        execute console command "lp user %{_p}% meta set job Fermier"
+    else:
+        execute console command "lp user %{_p}% meta set job Aucun"
+
+# ==================== 2. ATTRIBUTION DE GAINS & LEVEL UP ====================
+
+function addJobXP(p: player, j: text, baseMoney: number, xpAmount: number):
+    set {_u} to uuid of {_p}
+    if {job_lvl::%{_u}%::%{_j}%} is not set:
+        set {job_lvl::%{_u}%::%{_j}%} to 1
+        set {job_xp::%{_u}%::%{_j}%} to 0
+        
+    set {_lvl} to {job_lvl::%{_u}%::%{_j}%}
+    set {_multiplier} to 1.0 + (({_lvl} - 1) * 0.1)
+    
+    # Bonus VIP additionnel si applicable
+    set {_r} to {rank::%{_u}%} ? "Joueur"
+    if {_r} is "STAR" or "Star":
+        add 0.5 to {_multiplier}
+    else if {_r} is "MVP" or "Mvp":
+        add 0.3 to {_multiplier}
+    else if {_r} is "VIP" or "Vip":
+        add 0.15 to {_multiplier}
+        
+    set {_finalMoney} to round({_baseMoney} * {_multiplier})
+    if {_finalMoney} < 1:
+        set {_finalMoney} to 1
+        
+    execute console command "eco give %{_p}% %{_finalMoney}%"
+    add {_xpAmount} to {job_xp::%{_u}%::%{_j}%}
+    
+    # Vérification du passage de niveau (Niv. 1 à 10)
+    set {_reqXP} to {_lvl} * 100
+    if {job_xp::%{_u}%::%{_j}%} >= {_reqXP}:
+        if {_lvl} < 10:
+            remove {_reqXP} from {job_xp::%{_u}%::%{_j}%}
+            add 1 to {job_lvl::%{_u}%::%{_j}%}
+            set {_newLvl} to {job_lvl::%{_u}%::%{_j}%}
+            set {_bonusCash} to {_newLvl} * 500
+            execute console command "eco give %{_p}% %{_bonusCash}%"
+            
+            send "" to {_p}
+            send "{@prefix}&a&l★ NOUVEAU NIVEAU DE MÉTIER ATTEINT ! ★" to {_p}
+            send "&7• Carrière : &b&l%{_j}% &8(Niveau %{_newLvl}%/10)" to {_p}
+            send "&7• Bonus de gains : &a+%{_newLvl} * 10 - 10%%% &7sur chaque ressource !" to {_p}
+            send "&7• Prime de montée en niveau : &a+%{_bonusCash}%$ &7crédités." to {_p}
+            send "" to {_p}
+            play sound "ui.toast.challenge_complete" to {_p}
+            
+    set {_curXP} to {job_xp::%{_u}%::%{_j}%}
+    send action bar "&a+%{_finalMoney}%$ &8┃ &3&l%{_j}% &7(Niv. %{_lvl}%/10 &8• &b%{_curXP}%/%{_reqXP}% XP&7)" to {_p}
+
+# Synchronisation à la connexion
+on join:
+    wait 5 ticks
+    if {job::%uuid of player%} is not set:
+        set {job::%uuid of player%} to "Aucun"
+        set {skript_job::%player%} to "Aucun"
+        execute console command "lp user %player% meta set job Aucun"
+    else:
+        set {skript_job::%player%} to {job::%uuid of player%}
+        updateJobPermissions(player, {job::%uuid of player%})
+
+# ==================== 3. MENU MODERNE DES MÉTIERS (/jobs) 3 RANGÉES ====================
+
+function openJobsMenu(p: player):
+    set {_gui} to a new chest inventory with 3 rows named "&8» &0&lMINESTARS &8- &3&lMÉTIERS"
+    
+    # Fond Glassmorphism sombre et bordures cyan
+    loop 27 times:
+        set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
+        
+    set slot 0 of {_gui} to 1 of cyan stained glass pane named " "
+    set slot 8 of {_gui} to 1 of cyan stained glass pane named " "
+    set slot 18 of {_gui} to 1 of cyan stained glass pane named " "
+    set slot 26 of {_gui} to 1 of cyan stained glass pane named " "
+    
+    set {_u} to uuid of {_p}
+    set {_cur} to {job::%{_u}%} ? "Aucun"
+        
+    # 1. Calculs Mineur
+    set {_lvlM} to {job_lvl::%{_u}%::Mineur} ? 1
+    set {_xpM} to {job_xp::%{_u}%::Mineur} ? 0
+    set {_reqM} to {_lvlM} * 100
+    set {_bM} to ({_lvlM} - 1) * 10
+
+    # 2. Calculs Bûcheron
+    set {_lvlB} to {job_lvl::%{_u}%::Bûcheron} ? 1
+    set {_xpB} to {job_xp::%{_u}%::Bûcheron} ? 0
+    set {_reqB} to {_lvlB} * 100
+    set {_bB} to ({_lvlB} - 1) * 10
+
+    # 3. Calculs Chasseur
+    set {_lvlC} to {job_lvl::%{_u}%::Chasseur} ? 1
+    set {_xpC} to {job_xp::%{_u}%::Chasseur} ? 0
+    set {_reqC} to {_lvlC} * 100
+    set {_bC} to ({_lvlC} - 1) * 10
+
+    # 4. Calculs Fermier
+    set {_lvlF} to {job_lvl::%{_u}%::Fermier} ? 1
+    set {_xpF} to {job_xp::%{_u}%::Fermier} ? 0
+    set {_reqF} to {_lvlF} * 100
+    set {_bF} to ({_lvlF} - 1) * 10
+
+    # En-tête profil Métier (Slot 4)
+    set slot 4 of {_gui} to 1 of player head named "&e&l✦ MÉTIER ACTIF : &f&l%{_cur}% &e&l✦" with lore "&8&m─────────────────────────────────" and "&7• Joueur : &f%{_p}%" and "&7• Carrière active : &b%{_cur}%" and "&7• Sauvegarde : &aProgression 100%% conservée à vie" and "&8&m─────────────────────────────────" and "&e▸ Clique sur une carrière pour l'activer :"
+
+    # 1. MINEUR (Slot 10)
+    if {_cur} is "Mineur":
+        set slot 10 of {_gui} to 1 of diamond pickaxe named "&b&l✦ MINEUR &a[✔ ACTIF]" with lore "&8&m─────────────────────────" and "&7• Statut : &a&lACTUELLEMENT CHOISI" and "&7• Niveau : &e%{_lvlM}% / 10" and "&7• Progression : &b%{_xpM}% / %{_reqM}% XP" and "&7• Bonus de gains : &a+%{_bM}%%% &7par bloc" and "" and "&fGains par ressource :" and "&7• Pierre / Deepslate: &a+1$" and "&7• Charbon / Fer: &a+3$ à +5$" and "&7• Or / Lapis / Redstone: &a+8$ à +12$" and "&7• Diamant / Émeraude: &a+25$ à +35$" and "&7• Netherite: &a+100$" and "&8&m─────────────────────────" and "&a✔ Métier actif dans ton profil"
+    else:
+        set slot 10 of {_gui} to 1 of diamond pickaxe named "&b&l✦ MINEUR" with lore "&8&m─────────────────────────" and "&7• Niveau sauvegardé : &e%{_lvlM}% / 10" and "&7• Progression : &b%{_xpM}% / %{_reqM}% XP" and "&7• Bonus de gains : &a+%{_bM}%%%" and "" and "&fGains par ressource :" and "&7• Pierre / Deepslate: &a+1$" and "&7• Charbon / Fer: &a+3$ à +5$" and "&7• Or / Lapis / Redstone: &a+8$ à +12$" and "&7• Diamant / Émeraude: &a+25$ à +35$" and "&7• Netherite: &a+100$" and "&8&m─────────────────────────" and "&e▸ Cliquer pour choisir ce métier"
+
+    # 2. BÛCHERON (Slot 12)
+    if {_cur} is "Bûcheron" or "Bucheron":
+        set slot 12 of {_gui} to 1 of diamond axe named "&6&l✦ BÛCHERON &a[✔ ACTIF]" with lore "&8&m─────────────────────────" and "&7• Statut : &a&lACTUELLEMENT CHOISI" and "&7• Niveau : &e%{_lvlB}% / 10" and "&7• Progression : &6%{_xpB}% / %{_reqB}% XP" and "&7• Bonus de gains : &a+%{_bB}%%% &7par bûche" and "" and "&fGains par ressource :" and "&7• Bûches de bois (Tous types): &a+3$" and "&7• Bois du Nether: &a+5$" and "&7• Pommes / Feuilles: &a+1$" and "&8&m─────────────────────────" and "&a✔ Métier actif dans ton profil"
+    else:
+        set slot 12 of {_gui} to 1 of diamond axe named "&6&l✦ BÛCHERON" with lore "&8&m─────────────────────────" and "&7• Niveau sauvegardé : &e%{_lvlB}% / 10" and "&7• Progression : &6%{_xpB}% / %{_reqB}% XP" and "&7• Bonus de gains : &a+%{_bB}%%%" and "" and "&fGains par ressource :" and "&7• Bûches de bois (Tous types): &a+3$" and "&7• Bois du Nether: &a+5$" and "&7• Pommes / Feuilles: &a+1$" and "&8&m─────────────────────────" and "&e▸ Cliquer pour choisir ce métier"
+
+    # 3. CHASSEUR (Slot 14)
+    if {_cur} is "Chasseur":
+        set slot 14 of {_gui} to 1 of diamond sword named "&c&l✦ CHASSEUR &a[✔ ACTIF]" with lore "&8&m─────────────────────────" and "&7• Statut : &a&lACTUELLEMENT CHOISI" and "&7• Niveau : &e%{_lvlC}% / 10" and "&7• Progression : &c%{_xpC}% / %{_reqC}% XP" and "&7• Bonus de gains : &a+%{_bC}%%% &7par monstre" and "" and "&fGains par monstre :" and "&7• Zombie / Squelette / Araignée: &a+8$" and "&7• Creeper / Enderman / Sorcière: &a+15$" and "&7• Boss (Wither / Dragon / Warden): &a+150$" and "&8&m─────────────────────────" and "&a✔ Métier actif dans ton profil"
+    else:
+        set slot 14 of {_gui} to 1 of diamond sword named "&c&l✦ CHASSEUR" with lore "&8&m─────────────────────────" and "&7• Niveau sauvegardé : &e%{_lvlC}% / 10" and "&7• Progression : &c%{_xpC}% / %{_reqC}% XP" and "&7• Bonus de gains : &a+%{_bC}%%%" and "" and "&fGains par monstre :" and "&7• Zombie / Squelette / Araignée: &a+8$" and "&7• Creeper / Enderman / Sorcière: &a+15$" and "&7• Boss (Wither / Dragon / Warden): &a+150$" and "&8&m─────────────────────────" and "&e▸ Cliquer pour choisir ce métier"
+
+    # 4. FERMIER (Slot 16)
+    if {_cur} is "Fermier":
+        set slot 16 of {_gui} to 1 of diamond hoe named "&a&l✦ FERMIER &a[✔ ACTIF]" with lore "&8&m─────────────────────────" and "&7• Statut : &a&lACTUELLEMENT CHOISI" and "&7• Niveau : &e%{_lvlF}% / 10" and "&7• Progression : &a%{_xpF}% / %{_reqF}% XP" and "&7• Bonus de gains : &a+%{_bF}%%% &7par récolte" and "" and "&fGains par récolte :" and "&7• Blé / Carottes / Patates: &a+2$" and "&7• Canne à sucre / Melon / Citrouille: &a+3$" and "&7• Verrues du Nether / Cacao: &a+4$" and "&8&m─────────────────────────" and "&a✔ Métier actif dans ton profil"
+    else:
+        set slot 16 of {_gui} to 1 of diamond hoe named "&a&l✦ FERMIER" with lore "&8&m─────────────────────────" and "&7• Niveau sauvegardé : &e%{_lvlF}% / 10" and "&7• Progression : &a%{_xpF}% / %{_reqF}% XP" and "&7• Bonus de gains : &a+%{_bF}%%%" and "" and "&fGains par récolte :" and "&7• Blé / Carottes / Patates: &a+2$" and "&7• Canne à sucre / Melon / Citrouille: &a+3$" and "&7• Verrues du Nether / Cacao: &a+4$" and "&8&m─────────────────────────" and "&e▸ Cliquer pour choisir ce métier"
+
+    # Quitter son métier (Slot 22)
+    set slot 22 of {_gui} to 1 of barrier named "&c&l✦ DÉMISSIONNER ✦" with lore "&8&m─────────────────────────" and "&7Quitter ton métier actif." and "&7(Ta progression reste 100%% sauvegardée)" and "&8&m─────────────────────────" and "&c▸ Cliquer pour démissionner"
+
+    open {_gui} to {_p}
+    play sound "block.chest.open" to {_p}
+
+# ==================== 4. COMMANDES JOUEUR & GESTION DU MENU ====================
+
+command /jobs [<text>]:
+    aliases: /metiers, /job, /metier, /carriere, /carrieres
+    trigger:
+        openJobsMenu(player)
+
+on inventory click:
+    if name of event-inventory is "&8» &0&lMINESTARS &8- &3&lMÉTIERS":
+        cancel event
+        
+        # 1. Mineur (Slot 10)
+        if index of event-slot is 10:
+            if {job::%uuid of player%} is "Mineur":
+                send "{@prefix}&cTu exerces déjà le métier de &bMineur &c!" to player
+                play sound "entity.villager.no" to player
+            else:
+                updateJobPermissions(player, "Mineur")
+                close player's inventory
+                set {_lvl} to {job_lvl::%uuid of player%::Mineur} ? 1
+                send "{@prefix}&aTu exerces désormais le métier de &b&lMineur &7(Niveau %{_lvl}%/10) &a!" to player
+                play sound "entity.player.levelup" to player
+            
+        # 2. Bûcheron (Slot 12)
+        else if index of event-slot is 12:
+            if {job::%uuid of player%} is "Bûcheron" or "Bucheron":
+                send "{@prefix}&cTu exerces déjà le métier de &6Bûcheron &c!" to player
+                play sound "entity.villager.no" to player
+            else:
+                updateJobPermissions(player, "Bûcheron")
+                close player's inventory
+                set {_lvl} to {job_lvl::%uuid of player%::Bûcheron} ? 1
+                send "{@prefix}&aTu exerces désormais le métier de &6&lBûcheron &7(Niveau %{_lvl}%/10) &a!" to player
+                play sound "entity.player.levelup" to player
+            
+        # 3. Chasseur (Slot 14)
+        else if index of event-slot is 14:
+            if {job::%uuid of player%} is "Chasseur":
+                send "{@prefix}&cTu exerces déjà le métier de &cChasseur &c!" to player
+                play sound "entity.villager.no" to player
+            else:
+                updateJobPermissions(player, "Chasseur")
+                close player's inventory
+                set {_lvl} to {job_lvl::%uuid of player%::Chasseur} ? 1
+                send "{@prefix}&aTu exerces désormais le métier de &c&lChasseur &7(Niveau %{_lvl}%/10) &a!" to player
+                play sound "entity.player.levelup" to player
+            
+        # 4. Fermier (Slot 16)
+        else if index of event-slot is 16:
+            if {job::%uuid of player%} is "Fermier":
+                send "{@prefix}&cTu exerces déjà le métier de &aFermier &c!" to player
+                play sound "entity.villager.no" to player
+            else:
+                updateJobPermissions(player, "Fermier")
+                close player's inventory
+                set {_lvl} to {job_lvl::%uuid of player%::Fermier} ? 1
+                send "{@prefix}&aTu exerces désormais le métier de &a&lFermier &7(Niveau %{_lvl}%/10) &a!" to player
+                play sound "entity.player.levelup" to player
+            
+        # 5. Quitter (Slot 22)
+        else if index of event-slot is 22:
+            updateJobPermissions(player, "Aucun")
+            close player's inventory
+            send "{@prefix}&cTu as quitté ton métier. Toute ta progression reste sauvegardée !" to player
+            play sound "block.wooden_button.click_off" to player
+
+# ==================== 5. GAINS AUTOMATIQUES 100% OPTIMISÉS ====================
+
+on place:
+    set {placed_block::%location of event-block%} to true
+
+on break:
+    # Protection anti-glitch minage de blocs posés manuellement
+    if {placed_block::%location of event-block%} is true:
+        delete {placed_block::%location of event-block%}
+        stop
+        
+    set {_j} to {job::%uuid of player%}
+    if {_j} is not set:
+        stop
+    if {_j} is "Aucun":
+        stop
+        
+    set {_b} to "%event-block%"
+    
+    # --- GAINS MINEUR (Économie Équilibrée & Anti-Cheat) ---
+    if {_j} is "Mineur":
+        if {_b} contains "ancient debris":
+            addJobXP(player, "Mineur", 40, 30)
+        else if {_b} contains "emerald ore":
+            addJobXP(player, "Mineur", 15, 15)
+        else if {_b} contains "diamond ore":
+            addJobXP(player, "Mineur", 10, 12)
+        else if {_b} contains "gold ore":
+            addJobXP(player, "Mineur", 6, 8)
+        else if {_b} contains "lapis ore" or "redstone ore":
+            addJobXP(player, "Mineur", 4, 5)
+        else if {_b} contains "iron ore" or "copper ore":
+            addJobXP(player, "Mineur", 3, 4)
+        else if {_b} contains "coal ore" or "nether quartz ore":
+            addJobXP(player, "Mineur", 2, 2)
+        else if {_b} contains "deepslate" or "cobblestone" or "stone" or "netherrack" or "end_stone" or "basalt" or "andesite" or "diorite" or "granite" or "tuff":
+            addJobXP(player, "Mineur", 1, 1)
+            
+    # --- GAINS BÛCHERON ---
+    else if {_j} is "Bûcheron" or "Bucheron":
+        if {_b} contains "log" or "stem" or "wood":
+            addJobXP(player, "Bûcheron", 2, 3)
+        else if {_b} contains "leaves":
+            addJobXP(player, "Bûcheron", 1, 1)
+            
+    # --- GAINS FERMIER ---
+    else if {_j} is "Fermier":
+        if {_b} contains "wheat" or "carrots" or "potatoes" or "beetroots" or "beetroot":
+            addJobXP(player, "Fermier", 2, 2)
+        else if {_b} contains "sugar_cane" or "melon" or "pumpkin":
+            addJobXP(player, "Fermier", 2, 3)
+        else if {_b} contains "nether_wart" or "cocoa":
+            addJobXP(player, "Fermier", 3, 4)
+
+# --- GAINS CHASSEUR ---
+on death of monster:
+    if attacker is a player:
+        if {job::%uuid of attacker%} is "Chasseur":
+            set {_v} to "%victim%"
+            if {_v} contains "wither" or "ender_dragon" or "warden":
+                addJobXP(attacker, "Chasseur", 100, 80)
+            else if {_v} contains "creeper" or "enderman" or "witch" or "blaze" or "ghast":
+                addJobXP(attacker, "Chasseur", 8, 8)
+            else:
+                addJobXP(attacker, "Chasseur", 4, 4)
+
+# ==================== 6. COMMANDES STAFF DE GESTION DES MÉTIERS ====================
+
+command /setjob [<player>] [<text>]:
+    permission: op
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation : &e/setjob <joueur> <Mineur|Bûcheron|Chasseur|Fermier|Aucun>" to player
+            stop
+        if arg-2 is not set:
+            send "{@prefix}&cUtilisation : &e/setjob <joueur> <Mineur|Bûcheron|Chasseur|Fermier|Aucun>" to player
+            stop
+        updateJobPermissions(arg-1, arg-2)
+        send "{@prefix}&aLe métier de &f%arg-1% &aa été fixé à &b%arg-2%&a !" to player
+        send "{@prefix}&aTon métier a été défini sur &b%arg-2% &apar un administrateur." to arg-1
+
+command /setjoblvl [<player>] [<text>] [<number>]:
+    permission: op
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation : &e/setjoblvl <joueur> <Mineur|Bûcheron|Chasseur|Fermier> <niveau 1-10>" to player
+            stop
+        if arg-2 is not set:
+            send "{@prefix}&cUtilisation : &e/setjoblvl <joueur> <Mineur|Bûcheron|Chasseur|Fermier> <niveau 1-10>" to player
+            stop
+        if arg-3 is not set:
+            send "{@prefix}&cUtilisation : &e/setjoblvl <joueur> <Mineur|Bûcheron|Chasseur|Fermier> <niveau 1-10>" to player
+            stop
+        set {job_lvl::%uuid of arg-1%::%arg-2%} to arg-3
+        set {job_xp::%uuid of arg-1%::%arg-2%} to 0
+        send "{@prefix}&aLe niveau du métier &b%arg-2% &apour &f%arg-1% &aa été fixé au &eNiveau %arg-3%&a !" to player
+
+command /addjobxp [<player>] [<number>]:
+    permission: op
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation : &e/addjobxp <joueur> <quantité>" to player
+            stop
+        if arg-2 is not set:
+            send "{@prefix}&cUtilisation : &e/addjobxp <joueur> <quantité>" to player
+            stop
+        set {_j} to {job::%uuid of arg-1%}
+        if {_j} is not set:
+            send "{@prefix}&cCe joueur n'a aucun métier actif !" to player
+            stop
+        if {_j} is "Aucun":
+            send "{@prefix}&cCe joueur n'a aucun métier actif !" to player
+            stop
+        addJobXP(arg-1, {_j}, 0, arg-2)
+        send "{@prefix}&a+ %arg-2% XP ajoutés au métier &b%{_j}% &ade &f%arg-1%&a." to player

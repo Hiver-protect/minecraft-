@@ -1,0 +1,47 @@
+# ==============================================================================
+#                      ENCHANTEMENTS PERSONNALISÉS & BONUS D'ARGENT
+# ==============================================================================
+
+# 1. MINEUR CHANCEUX (Chance de trouver des pièces bonus en minant)
+on break:
+    if "%player's tool%" contains "pickaxe":
+        set {_b} to "%event-block%"
+        if {_b} contains "ore":
+            set {_r} to random integer between 1 and 100
+            if {_r} <= 25: # 25% de chance
+                set {_moneyBonus} to random integer between 5 and 20
+                if {balance::%uuid of player%} is not set:
+                    set {balance::%uuid of player%} to 100
+                add {_moneyBonus} to {balance::%uuid of player%}
+                execute console command "eco give %player% %{_moneyBonus}%"
+                send action bar "&6&l✦ BONUS MINAGE +%{_moneyBonus}%$ ✦" to player
+                play sound "entity.experience_orb.pickup" to player
+
+# 2. CHASSEUR DE TRÉSORS (Gagne des pièces bonus en éliminant des monstres)
+on death of monster:
+    if attacker is a player:
+        set {_r} to random integer between 1 and 100
+        if {_r} <= 30: # 30% de chance
+            set {_killBonus} to random integer between 10 and 30
+            if {balance::%uuid of attacker%} is not set:
+                set {balance::%uuid of attacker%} to 100
+            add {_killBonus} to {balance::%uuid of attacker%}
+            execute console command "eco give %attacker% %{_killBonus}%"
+            send action bar "&6&l✦ BONUS MONSTRE +%{_killBonus}%$ ✦" to attacker
+            play sound "entity.experience_orb.pickup" to attacker
+
+# 3. VAMPIRE (Chance de régénérer de la vie lors d'une attaque)
+on damage of monster:
+    if attacker is a player:
+        if "%attacker's tool%" contains "sword":
+            set {_r} to random integer between 1 and 10
+            if {_r} <= 2: # 20% de chance
+                heal attacker by 1 heart
+                send action bar "&c&l✦ VAMPIRE +1 CŒUR ✦" to attacker
+                play sound "entity.experience_orb.pickup" to attacker
+
+# 4. BOTTES DE VITESSE (Optimisé 0 lag)
+every 5 seconds:
+    loop all players:
+        if loop-player's boots is diamond boots or golden boots:
+            apply speed 1 to loop-player for 6 seconds

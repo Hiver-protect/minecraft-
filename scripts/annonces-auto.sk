@@ -1,0 +1,183 @@
+# ==============================================================================
+#           MINESTARS - ANNONCES AUTOMATIQUES ÉLITE (ÉPURÉES & STYLISÉES)
+#           - Design moderne, bordures colorées, conseils utiles & zéro spam
+#           - Rotation toutes les 12 minutes avec sons discrets & actionbar
+# ==============================================================================
+
+options:
+    prefix: &6&l✦ ANNONCE &8> &7
+
+on load:
+    if {autobc_index} is not set:
+        set {autobc_index} to 1
+
+# ==================== ROTATION AUTOMATIQUE (TOUTES LES 12 MINUTES) ====================
+
+every 12 minutes:
+    if number of all players >= 1:
+        triggerAutoBroadcast()
+
+function triggerAutoBroadcast():
+    if {autobc_index} is not set:
+        set {autobc_index} to 1
+        
+    # 1. BOUTIQUE & GRADES
+    if {autobc_index} is 1:
+        broadcast ""
+        broadcast "<#FFA502>&m───────────────────────────────────────────────"
+        broadcast "  <#FFA502>&l✦ BOUTIQUE OFFICIELLE &8┃ <#FFFFFF>Soutenez le serveur !"
+        broadcast "  &7Débloquez des grades exclusifs &e[VIP]&7, &b[MVP]&7, &d[STAR]&7,"
+        broadcast "  &7des clés de box légendaires et des boosters d'économie."
+        broadcast "  <#FFA502>▸ &fLien Web : <#FFA502>&nhttps://minestars.craftingstore.net &8(&7ou &e/boutique&8)"
+        broadcast "<#FFA502>&m───────────────────────────────────────────────"
+        broadcast ""
+        loop all players:
+            send action bar "<#FFA502>&l✦ BOUTIQUE &8» &e/boutique &fpour voir les offres !" to loop-player
+            play sound "block.note_block.chime" at pitch 1.6 to loop-player
+        set {autobc_index} to 2
+
+    # 2. DISCORD & COMMUNAUTÉ
+    else if {autobc_index} is 2:
+        broadcast ""
+        broadcast "<#70A1FF>&m───────────────────────────────────────────────"
+        broadcast "  <#70A1FF>&l✦ DISCORD OFFICIEL &8┃ <#FFFFFF>Rejoignez la communauté !"
+        broadcast "  &7Événements exclusifs, giveaways, patch notes & vocal."
+        broadcast "  &7Partagez vos créations et échangez avec les autres joueurs."
+        broadcast "  <#70A1FF>▸ &fInvitation : <#70A1FF>&ndiscord.gg/minestars &8(&7ou &b/discord&8)"
+        broadcast "<#70A1FF>&m───────────────────────────────────────────────"
+        broadcast ""
+        loop all players:
+            send action bar "<#70A1FF>&l✦ DISCORD &8» &bdiscord.gg/minestars" to loop-player
+            play sound "block.note_block.chime" at pitch 1.4 to loop-player
+        set {autobc_index} to 3
+
+    # 3. CHAT VOCAL DE PROXIMITÉ
+    else if {autobc_index} is 3:
+        broadcast ""
+        broadcast "<#A55EEA>&m───────────────────────────────────────────────"
+        broadcast "  <#A55EEA>&l✦ CHAT VOCAL DE PROXIMITÉ &8┃ <#FFFFFF>Immersion Totale !"
+        broadcast "  &7Parlez en direct avec vos amis en jeu grâce au mod"
+        broadcast "  &eSimple Voice Chat &7(Touche &eV &7pour configurer votre micro)."
+        broadcast "  <#A55EEA>▸ &fAide & infos : &d/vocal &8ou &d/voice"
+        broadcast "<#A55EEA>&m───────────────────────────────────────────────"
+        broadcast ""
+        loop all players:
+            send action bar "<#A55EEA>&l✦ VOCAL &8» &dSimple Voice Chat &fdisponible !" to loop-player
+            play sound "block.note_block.chime" at pitch 1.8 to loop-player
+        set {autobc_index} to 4
+
+    # 4. MÉTIERS & ÉCONOMIE
+    else if {autobc_index} is 4:
+        broadcast ""
+        broadcast "<#2ED573>&m───────────────────────────────────────────────"
+        broadcast "  <#2ED573>&l✦ MÉTIERS & ÉCONOMIE &8┃ <#FFFFFF>Gagnez de l'argent !"
+        broadcast "  &7Choisissez parmi 4 carrières : &bMineur&7, &6Bûcheron&7, &cFermier&7, &4Chasseur&7."
+        broadcast "  &7Gagnez du cash et montez de niveau jusqu'au niveau 10 !"
+        broadcast "  <#2ED573>▸ &fGestion : &a/jobs &8┃ &fDépenses : &a/shop"
+        broadcast "<#2ED573>&m───────────────────────────────────────────────"
+        broadcast ""
+        loop all players:
+            send action bar "<#2ED573>&l✦ MÉTIERS &8» &a/jobs &fpour progresser !" to loop-player
+            play sound "block.note_block.chime" at pitch 1.5 to loop-player
+        set {autobc_index} to 5
+
+    # 5. ARMES LÉGENDAIRES & BOSS TITAN
+    else if {autobc_index} is 5:
+        broadcast ""
+        broadcast "<#FF4757>&m───────────────────────────────────────────────"
+        broadcast "  <#FF4757>&l✦ ARMES LÉGENDAIRES & BOSS TITAN &8┃ <#FFFFFF>Défis Épiques !"
+        broadcast "  &7Forgez les armes du &cTitan&7, &6Phénix&7, &9Poséidon &7& &5Néant&7."
+        broadcast "  &7Affrontez le redoutable &4Titan Warden &7pour des récompenses folles."
+        broadcast "  <#FF4757>▸ &fCatalogue : &c/armes &8┃ &fBoss : &c/boss"
+        broadcast "<#FF4757>&m───────────────────────────────────────────────"
+        broadcast ""
+        loop all players:
+            send action bar "<#FF4757>&l✦ RPG &8» &c/armes &fpour voir les sets légendaires !" to loop-player
+            play sound "block.note_block.chime" at pitch 1.2 to loop-player
+        set {autobc_index} to 6
+
+    # 6. SKYBLOCK & SURVIE
+    else if {autobc_index} is 6:
+        broadcast ""
+        broadcast "<#00D4FF>&m───────────────────────────────────────────────"
+        broadcast "  <#00D4FF>&l✦ LES MONDES MINESTARS &8┃ <#FFFFFF>Explorez & Construisez !"
+        broadcast "  &7• &aSurvie 1.20+ &8» &fTéléportation aléatoire avec &e/rtp"
+        broadcast "  &7• &eSkyblock V9 &8» &fCréez votre île avec &e/is &fet minez les générateurs"
+        broadcast "  <#00D4FF>▸ &fVoyagez instantanément avec &b/menu &8(&7ou l'Étoile du Nether&8)"
+        broadcast "<#00D4FF>&m───────────────────────────────────────────────"
+        broadcast ""
+        loop all players:
+            send action bar "<#00D4FF>&l✦ NAVIGATION &8» &b/menu &fpour changer de monde !" to loop-player
+            play sound "block.note_block.chime" at pitch 1.3 to loop-player
+        set {autobc_index} to 7
+
+    # 7. RÉCOMPENSES & TITRES
+    else if {autobc_index} is 7:
+        broadcast ""
+        broadcast "<#ECCC68>&m───────────────────────────────────────────────"
+        broadcast "  <#ECCC68>&l✦ CADEAUX & PROGRESSION &8┃ <#FFFFFF>Chaque Jour !"
+        broadcast "  &7• &e/daily &8» &fRécupérez votre cadeau quotidien (Jackpot au Jour 7)"
+        broadcast "  &7• &e/tags &8» &fÉquipez un badge de chat stylisé"
+        broadcast "  &7• &e/box &8» &fOuvrez vos caisses au Spawn"
+        broadcast "<#ECCC68>&m───────────────────────────────────────────────"
+        broadcast ""
+        loop all players:
+            send action bar "<#ECCC68>&l✦ CADEAUX &8» &e/daily &7disponible chaque jour !" to loop-player
+            play sound "block.note_block.chime" at pitch 1.7 to loop-player
+        set {autobc_index} to 8
+
+    # 8. SÉCURITÉ & SUPPORT
+    else:
+        broadcast ""
+        broadcast "<#FF6B81>&m───────────────────────────────────────────────"
+        broadcast "  <#FF6B81>&l✦ SÉCURITÉ & SUPPORT &8┃ <#FFFFFF>Une question ou un problème ?"
+        broadcast "  &7Signalez discrètement un joueur ou un bug à l'équipe Staff :"
+        broadcast "  <#FF6B81>▸ &fCommande : &e/report <pseudo> <raison>"
+        broadcast "  &7Les candidatures et tickets d'aide se passent sur le &b/discord&7."
+        broadcast "<#FF6B81>&m───────────────────────────────────────────────"
+        broadcast ""
+        loop all players:
+            send action bar "<#FF6B81>&l✦ SUPPORT &8» &e/report <pseudo> <raison>" to loop-player
+            play sound "block.note_block.bell" at pitch 1.2 to loop-player
+        set {autobc_index} to 1
+
+# ==================== COMMANDES JOUEURS (/boutique, /discord, /vocal) ====================
+
+command /boutique:
+    aliases: /store, /buy, /shopweb, /webshop
+    trigger:
+        send "" to player
+        send "<#FFA502>&l✦ BOUTIQUE OFFICIELLE MINESTARS ✦" to player
+        send "&7Découvrez nos offres, grades VIP/MVP/STAR et avantages :" to player
+        send "<#FFA502>▸ Lien Web : <#FFA502>&nhttps://minestars.craftingstore.net" to player
+        send "" to player
+        play sound "entity.player.levelup" at pitch 1.2 to player
+
+command /discord:
+    aliases: /dc, /discordlink, /serveurdiscord
+    trigger:
+        send "" to player
+        send "<#70A1FF>&l✦ DISCORD OFFICIEL MINESTARS ✦" to player
+        send "&7Rejoignez la communauté, salons vocaux et annonces :" to player
+        send "<#70A1FF>▸ Lien d'invitation : <#70A1FF>&ndiscord.gg/minestars" to player
+        send "" to player
+        play sound "block.note_block.chime" at pitch 1.5 to player
+
+command /vocal:
+    aliases: /voice, /voicechat, /micro
+    trigger:
+        send "" to player
+        send "<#A55EEA>&l✦ CHAT VOCAL DE PROXIMITÉ (Simple Voice Chat) ✦" to player
+        send "&7• Appuyez sur &e'V' &7pour ouvrir les réglages du micro." to player
+        send "&7• Parlez naturellement avec les joueurs autour de vous !" to player
+        send "&7• Le mod est disponible sur CurseForge & Modrinth (1.20-1.21+)." to player
+        send "" to player
+        play sound "entity.experience_orb.pickup" to player
+
+command /autobroadcast [<text>]:
+    aliases: /autobc, /annonceauto
+    permission: op
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        send "{@prefix}&aDiffusion immédiate de la prochaine annonce..." to player
+        triggerAutoBroadcast()

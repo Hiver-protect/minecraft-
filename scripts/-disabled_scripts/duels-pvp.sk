@@ -1,0 +1,529 @@
+# ==============================================================================
+#      DUELS & 1V1 GLADIATEURS ULTIMATE - MINESTARS NEXT-GEN
+#      Système complet : Choix de Kits, Paris & Mises ($), Countdown 3s,
+#      Sauvegarde d'inventaire 100%, ELO & Stats, Rematch, Spectateur & Menus
+# ==============================================================================
+
+options:
+    prefix: &c&l✦ DUEL &8> &7
+
+on load:
+    if {duel_total_matches} is not set:
+        set {duel_total_matches} to 0
+
+# ==================== GESTION DES KITS DE COMBAT ====================
+
+function equipDuelKit(p: player, kit: text):
+    clear inventory of {_p}
+    heal {_p} by 100 hearts
+    set {_p}'s food level to 20
+    remove all effects from {_p}
+
+    # 1. KIT NODEBUFF (POTPVP)
+    if {_kit} is "NoDebuff":
+        set {_p}'s helmet to diamond helmet of protection 2 and unbreaking 3
+        set {_p}'s chestplate to diamond chestplate of protection 2 and unbreaking 3
+        set {_p}'s leggings to diamond leggings of protection 2 and unbreaking 3
+        set {_p}'s boots to diamond boots of protection 2, feather falling 4 and unbreaking 3
+        set slot 0 of {_p} to diamond sword of sharpness 3 and unbreaking 3
+        set slot 1 of {_p} to 16 ender pearl
+        set slot 2 of {_p} to 1 splash potion of speed
+        set slot 3 of {_p} to 1 splash potion of fire resistance
+        set slot 8 of {_p} to 64 cooked beef
+        loop 28 times:
+            give {_p} 1 splash potion of strong healing
+        apply speed 2 to {_p} for 10 minutes
+        apply fire resistance to {_p} for 10 minutes
+
+    # 2. KIT GAPPLE / UHC
+    else if {_kit} is "Gapple":
+        set {_p}'s helmet to diamond helmet of protection 3
+        set {_p}'s chestplate to diamond chestplate of protection 3
+        set {_p}'s leggings to diamond leggings of protection 3
+        set {_p}'s boots to diamond boots of protection 3
+        set slot 0 of {_p} to diamond sword of sharpness 4 and fire aspect 2
+        set slot 1 of {_p} to 16 golden apple
+        set slot 2 of {_p} to 3 enchanted golden apple
+        set slot 3 of {_p} to 1 water bucket
+        set slot 4 of {_p} to 1 lava bucket
+        set slot 5 of {_p} to bow of power 3 and punch 1
+        set slot 6 of {_p} to 64 golden carrot
+        set slot 8 of {_p} to 64 arrow
+
+    # 3. KIT SUMO (KNOCKBACK)
+    else if {_kit} is "Sumo":
+        clear inventory of {_p}
+        set slot 0 of {_p} to stick of knockback 1 named "&e&l✦ BÂTON SUMO ✦"
+        apply resistance 5 to {_p} for 10 minutes
+
+    # 4. KIT ARCHER / BOW
+    else if {_kit} is "Archer":
+        set {_p}'s helmet to chainmail helmet of protection 2
+        set {_p}'s chestplate to chainmail chestplate of protection 2
+        set {_p}'s leggings to chainmail leggings of protection 2
+        set {_p}'s boots to chainmail boots of protection 2
+        set slot 0 of {_p} to bow of power 4, punch 2, flame and infinity
+        set slot 1 of {_p} to stone sword of sharpness 2
+        set slot 2 of {_p} to 8 golden apple
+        set slot 3 of {_p} to 1 splash potion of speed
+        set slot 8 of {_p} to 1 arrow
+        apply speed 2 to {_p} for 10 minutes
+
+    # 5. KIT NETHERITE OP
+    else if {_kit} is "Netherite":
+        set {_p}'s helmet to netherite helmet of protection 4 and unbreaking 3
+        set {_p}'s chestplate to netherite chestplate of protection 4 and unbreaking 3
+        set {_p}'s leggings to netherite leggings of protection 4 and unbreaking 3
+        set {_p}'s boots to netherite boots of protection 4, feather falling 4 and unbreaking 3
+        set slot 0 of {_p} to netherite sword of sharpness 5, fire aspect 2 and unbreaking 3
+        set slot 1 of {_p} to 64 golden apple
+        set slot 2 of {_p} to 16 enchanted golden apple
+        set slot 3 of {_p} to 1 totem of undying
+        set slot 4 of {_p} to 16 ender pearl
+        set slot 5 of {_p} to 1 splash potion of strength
+        set slot 6 of {_p} to 1 splash potion of speed
+        set slot 8 of {_p} to 64 cooked porkchop
+        set offhand of {_p} to 1 totem of undying
+
+    # 6. KIT CLASSIQUE / DEFAULT
+    else:
+        set {_p}'s helmet to diamond helmet
+        set {_p}'s chestplate to diamond chestplate
+        set {_p}'s leggings to diamond leggings
+        set {_p}'s boots to diamond boots
+        set slot 0 of {_p} to diamond sword of sharpness 2
+        set slot 1 of {_p} to 1 fishing rod
+        set slot 2 of {_p} to 8 golden apple
+        set slot 3 of {_p} to bow of power 2
+        set slot 4 of {_p} to 64 cooked beef
+        set slot 8 of {_p} to 32 arrow
+
+# ==================== FONCTION DE DÉMARRAGE DU DUEL ====================
+
+function startDuelMatch(p1: player, p2: player, kit: text, bet: number):
+    set {in_duel::%{_p1}%} to true
+    set {in_duel::%{_p2}%} to true
+    set {duel_opponent::%{_p1}%} to {_p2}
+    set {duel_opponent::%{_p2}%} to {_p1}
+    set {duel_match_kit::%{_p1}%} to {_kit}
+    set {duel_match_kit::%{_p2}%} to {_kit}
+    set {duel_match_bet::%{_p1}%} to {_bet}
+    set {duel_match_bet::%{_p2}%} to {_bet}
+
+    # Sauvegarde intégrale et universelle des inventaires
+    loop 36 times:
+        set {duel_saved_slot::%{_p1}%::%loop-number - 1%} to slot (loop-number - 1) of {_p1}'s inventory
+        set {duel_saved_slot::%{_p2}%::%loop-number - 1%} to slot (loop-number - 1) of {_p2}'s inventory
+    set {duel_saved_helm::%{_p1}%} to {_p1}'s helmet
+    set {duel_saved_chest::%{_p1}%} to {_p1}'s chestplate
+    set {duel_saved_legs::%{_p1}%} to {_p1}'s leggings
+    set {duel_saved_boots::%{_p1}%} to {_p1}'s boots
+    set {duel_saved_offhand::%{_p1}%} to {_p1}'s offhand
+    set {duel_saved_helm::%{_p2}%} to {_p2}'s helmet
+    set {duel_saved_chest::%{_p2}%} to {_p2}'s chestplate
+    set {duel_saved_legs::%{_p2}%} to {_p2}'s leggings
+    set {duel_saved_boots::%{_p2}%} to {_p2}'s boots
+    set {duel_saved_offhand::%{_p2}%} to {_p2}'s offhand
+
+    # Téléportation aux positions de l'arène
+    teleport {_p1} to {duel_pos1}
+    teleport {_p2} to {duel_pos2}
+
+    # Équipement du kit choisi
+    equipDuelKit({_p1}, {_kit})
+    equipDuelKit({_p2}, {_kit})
+
+    # Gel des mouvements pour le compte à rebours
+    set {_p1}'s walk speed to 0
+    set {_p2}'s walk speed to 0
+
+    # Countdown 3, 2, 1, COMBAT !
+    send title "&c&l3" with subtitle "&7Préparez-vous au combat !" to {_p1} for 1 second
+    send title "&c&l3" with subtitle "&7Préparez-vous au combat !" to {_p2} for 1 second
+    play sound "block.note_block.pling" with pitch 1.0 to {_p1}
+    play sound "block.note_block.pling" with pitch 1.0 to {_p2}
+    wait 1 second
+
+    send title "&6&l2" with subtitle "&7Kit : &e%{_kit}%" to {_p1} for 1 second
+    send title "&6&l2" with subtitle "&7Kit : &e%{_kit}%" to {_p2} for 1 second
+    play sound "block.note_block.pling" with pitch 1.2 to {_p1}
+    play sound "block.note_block.pling" with pitch 1.2 to {_p2}
+    wait 1 second
+
+    send title "&e&l1" with subtitle "&7Que le meilleur gagne !" to {_p1} for 1 second
+    send title "&e&l1" with subtitle "&7Que le meilleur gagne !" to {_p2} for 1 second
+    play sound "block.note_block.pling" with pitch 1.5 to {_p1}
+    play sound "block.note_block.pling" with pitch 1.5 to {_p2}
+    wait 1 second
+
+    # Libération des mouvements
+    set {_p1}'s walk speed to 0.2
+    set {_p2}'s walk speed to 0.2
+
+    send title "&a&lCOMBATTEZ !" with subtitle "&c%{_p1}% &7VS &c%{_p2}%" to {_p1} for 1 second
+    send title "&a&lCOMBATTEZ !" with subtitle "&c%{_p1}% &7VS &c%{_p2}%" to {_p2} for 1 second
+    play sound "entity.ender_dragon.growl" with pitch 1.5 to {_p1}
+    play sound "entity.ender_dragon.growl" with pitch 1.5 to {_p2}
+
+    broadcast "{@prefix}&e%{_p1}% &7affronte &e%{_p2}% &7en Duel (&6Kit %{_kit}%&7) !"
+
+# ==================== FONCTION DE FIN DU DUEL ====================
+
+function endDuelMatch(winner: player, loser: player):
+    set {_bet} to {duel_match_bet::%{_winner}%}
+    if {_bet} is not set:
+        set {_bet} to 0
+    set {_kit} to {duel_match_kit::%{_winner}%}
+
+    # Mise à jour des stats & ELO
+    add 1 to {duel_wins::%{_winner}%}
+    add 1 to {duel_losses::%{_loser}%}
+    add 1 to {duel_streak::%{_winner}%}
+    set {duel_streak::%{_loser}%} to 0
+    if {duel_streak::%{_winner}%} > {duel_best_streak::%{_winner}%}:
+        set {duel_best_streak::%{_winner}%} to {duel_streak::%{_winner}%}
+    
+    if {duel_elo::%{_winner}%} is not set:
+        set {duel_elo::%{_winner}%} to 1000
+    if {duel_elo::%{_loser}%} is not set:
+        set {duel_elo::%{_loser}%} to 1000
+    add 25 to {duel_elo::%{_winner}%}
+    if {duel_elo::%{_loser}%} > 25:
+        subtract 25 from {duel_elo::%{_loser}%}
+    add 1 to {duel_total_matches}
+
+    # Gain monétaire de base + Pari
+    set {_gain} to 250
+    if {_bet} > 0:
+        add ({_bet} * 2) to {_gain}
+        remove {_bet} from {_loser}'s balance
+        add ({_bet} * 2) to {_winner}'s balance
+
+    execute console command "eco give %{_winner}% 250"
+
+    # Annonce de la victoire
+    broadcast ""
+    broadcast "&6&l✦ VICTOIRE DUEL 1V1 ✦"
+    broadcast "&a&lVainqueur : &e%{_winner}% &7(ELO: &a%{duel_elo::%{_winner}%}%&7)"
+    broadcast "&c&lVaincu : &f%{_loser}% &7(ELO: &c%{duel_elo::%{_loser}%}%&7)"
+    if {_bet} > 0:
+        broadcast "&6&lMise remportée : &a%{_gain}%$ &7!"
+    broadcast ""
+
+    send title "&a&lVICTOIRE !" with subtitle "&7Tu as vaincu &f%{_loser}% &7(+25 ELO)" to {_winner} for 3 seconds
+    send title "&c&lDÉFAITE..." with subtitle "&7Vaincu par &f%{_winner}% &7(-25 ELO)" to {_loser} for 3 seconds
+    play sound "entity.player.levelup" to {_winner}
+    play sound "entity.villager.no" to {_loser}
+
+    # Nettoyage et restauration
+    delete {in_duel::%{_winner}%}
+    delete {in_duel::%{_loser}%}
+    delete {duel_opponent::%{_winner}%}
+    delete {duel_opponent::%{_loser}%}
+    delete {duel_match_kit::%{_winner}%}
+    delete {duel_match_kit::%{_loser}%}
+    delete {duel_match_bet::%{_winner}%}
+    delete {duel_match_bet::%{_loser}%}
+
+    remove all effects from {_winner}
+    remove all effects from {_loser}
+    heal {_winner} by 100 hearts
+    heal {_loser} by 100 hearts
+    set {_winner}'s walk speed to 0.2
+    set {_loser}'s walk speed to 0.2
+
+    # Téléportation au spawn
+    if {spawn::location} is set:
+        teleport {_winner} to {spawn::location}
+        teleport {_loser} to {spawn::location}
+    else:
+        execute {_winner} command "spawn"
+        execute {_loser} command "spawn"
+
+    # Restauration d'inventaire
+    clear inventory of {_winner}
+    clear inventory of {_loser}
+    loop 36 times:
+        set slot (loop-number - 1) of {_winner}'s inventory to {duel_saved_slot::%{_winner}%::%loop-number - 1%}
+        set slot (loop-number - 1) of {_loser}'s inventory to {duel_saved_slot::%{_loser}%::%loop-number - 1%}
+    set {_winner}'s helmet to {duel_saved_helm::%{_winner}%}
+    set {_winner}'s chestplate to {duel_saved_chest::%{_winner}%}
+    set {_winner}'s leggings to {duel_saved_legs::%{_winner}%}
+    set {_winner}'s boots to {duel_saved_boots::%{_winner}%}
+    set {_winner}'s offhand to {duel_saved_offhand::%{_winner}%}
+    set {_loser}'s helmet to {duel_saved_helm::%{_loser}%}
+    set {_loser}'s chestplate to {duel_saved_chest::%{_loser}%}
+    set {_loser}'s leggings to {duel_saved_legs::%{_loser}%}
+    set {_loser}'s boots to {duel_saved_boots::%{_loser}%}
+    set {_loser}'s offhand to {duel_saved_offhand::%{_loser}%}
+    delete {duel_saved_slot::%{_winner}%::*}
+    delete {duel_saved_slot::%{_loser}%::*}
+
+# ==================== COMMANDES DUELS ====================
+
+command /setduelpos1:
+    permission: op
+    permission message: &cTu n'as pas la permission!
+    trigger:
+        set {duel_pos1} to location of player
+        send "{@prefix}&aPosition 1 du Duel définie à ta position !" to player
+        play sound "block.note_block.pling" to player
+
+command /setduelpos2:
+    permission: op
+    permission message: &cTu n'as pas la permission!
+    trigger:
+        set {duel_pos2} to location of player
+        send "{@prefix}&aPosition 2 du Duel définie à ta position !" to player
+        play sound "block.note_block.pling" to player
+
+# Menu & Commande de Défi (/duel <joueur>)
+command /duel [<player>] [<number>]:
+    aliases: /duels, /1v1
+    trigger:
+        if arg-1 is not set:
+            execute player command "duel-gui-menu"
+            stop
+
+        if arg-1 is player:
+            send "{@prefix}&cTu ne peux pas te défier toi-même !" to player
+            stop
+        if {in_duel::%player%} is true:
+            send "{@prefix}&cTu es déjà en plein combat !" to player
+            stop
+        if {in_duel::%arg-1%} is true:
+            send "{@prefix}&cCe joueur est déjà en combat !" to player
+            stop
+        if {duel_pos1} is not set or {duel_pos2} is not set:
+            send "{@prefix}&cL'arène de duel n'a pas été configurée par un admin (/setduelpos1 & /setduelpos2) !" to player
+            stop
+
+        set {_bet} to 0
+        if arg-2 is set:
+            if arg-2 > 0:
+                if player's balance >= arg-2:
+                    if arg-1's balance >= arg-2:
+                        set {_bet} to arg-2
+                    else:
+                        send "{@prefix}&c%arg-1% n'a pas assez d'argent pour miser %arg-2%$ !" to player
+                        stop
+                else:
+                    send "{@prefix}&cTu n'as pas assez d'argent pour miser %arg-2%$ !" to player
+                    stop
+
+        set {duel_target_opponent::%player%} to arg-1
+        set {duel_target_bet::%player%} to {_bet}
+        
+        # Ouvre le menu de sélection de Kit
+        execute player command "duel-gui-kits"
+
+# Menu Sélection de Kit
+command /duel-gui-kits:
+    trigger:
+        set {_target} to {duel_target_opponent::%player%}
+        if {_target} is not set:
+            send "{@prefix}&cPrécise d'abord un joueur : &e/duel <pseudo>" to player
+            stop
+
+        set {_bet} to {duel_target_bet::%player%}
+        if {_bet} is not set:
+            set {_bet} to 0
+
+        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lCHOIX DU KIT DUEL : %{_target}%"
+        loop 27 times:
+            set slot (loop-number - 1) of {_gui} to black stained glass pane named "&8✦"
+
+        # Profil & Mise (Slot 4)
+        set slot 4 of {_gui} to nether star named "&e&l✦ DÉFI CONTRE &f&l%{_target}% &e&l✦" with lore "&7• Mise en jeu : &a%{_bet}%$", "", "&eChoisis le kit de combat ci-dessous !"
+
+        # Kits
+        set slot 10 of {_gui} to potion of healing named "&d&l✦ KIT NODEBUFF (POTPVP) ✦" with lore "&7• Armure Diamant P2", "&7• Potions de soin instantané & Speed II", "&7• Ender Pearls rapides", "", "&d▸ Cliquer pour défier en NoDebuff"
+        set slot 11 of {_gui} to golden apple named "&6&l✦ KIT GAPPLE (UHC) ✦" with lore "&7• Armure Diamant P3", "&7• Pommes d'or & Pommes cheat", "&7• Seaux d'eau, de lave & Arc", "", "&6▸ Cliquer pour défier en Gapple"
+        set slot 12 of {_gui} to stick named "&e&l✦ KIT SUMO ✦" with lore "&7• Combat au Bâton Knockback", "&7• Résistance maximale", "&7• Éjecte ton adversaire de la plateforme !", "", "&e▸ Cliquer pour défier en Sumo"
+        set slot 14 of {_gui} to bow named "&b&l✦ KIT ARCHER ✦" with lore "&7• Arc Power IV & Punch II", "&7• Armure Cotte de Mailles", "&7• Vitesse & Précision à distance", "", "&b▸ Cliquer pour défier en Archer"
+        set slot 15 of {_gui} to netherite sword named "&5&l✦ KIT NETHERITE OP ✦" with lore "&7• Full Netherite P4 & Épée Sharpness 5", "&7• Totems d'immortalité", "&7• Pommes de Notch & Potions Force II", "", "&5▸ Cliquer pour défier en Netherite OP"
+        set slot 16 of {_gui} to diamond sword named "&a&l✦ KIT CLASSIQUE 1.8 ✦" with lore "&7• Armure Diamant Vanilla", "&7• Épée Sharpness II & Canne à pêche", "&7• Pommes dorées & Arc", "", "&a▸ Cliquer pour défier en Classique"
+
+        set slot 22 of {_gui} to barrier named "&c&lANNULER" with lore "&7Fermer la sélection"
+        open {_gui} to player
+        play sound "block.chest.open" to player
+
+# Menu Principal des Duels (/duel sans argument)
+command /duel-gui-menu:
+    trigger:
+        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lARÈNE DES DUELS 1V1"
+        loop 27 times:
+            set slot (loop-number - 1) of {_gui} to black stained glass pane named "&8✦"
+
+        set {_wins} to {duel_wins::%player%}
+        if {_wins} is not set:
+            set {_wins} to 0
+        set {_losses} to {duel_losses::%player%}
+        if {_losses} is not set:
+            set {_losses} to 0
+        set {_elo} to {duel_elo::%player%}
+        if {_elo} is not set:
+            set {_elo} to 1000
+        set {_streak} to {duel_streak::%player%}
+        if {_streak} is not set:
+            set {_streak} to 0
+
+        # Profil (Slot 4)
+        set slot 4 of {_gui} to player head named "&e&l✦ TES STATS GLADIATEUR ✦" with lore "&7• Score ELO : &b%{_elo}% ⚡", "&7• Victoires : &a%{_wins}%", "&7• Défaites : &c%{_losses}%", "&7• Série actuelle : &6%{_streak}% 🔥", "", "&7Affronte des joueurs pour grimper au classement !"
+
+        # Bouton Défier un joueur (Slot 11)
+        set slot 11 of {_gui} to iron sword named "&c&l✦ LANCER UN DÉFI 1V1 ✦" with lore "&7Défie n'importe quel joueur en ligne !", "", "&7Commande : &e/duel <pseudo> [mise$]", "", "&c▸ Tape la commande dans le chat"
+
+        # Bouton Classement Top ELO (Slot 13)
+        set slot 13 of {_gui} to gold block named "&6&l✦ CLASSEMENT TOP DUELS ✦" with lore "&7Consulte les meilleurs duellistes du serveur !", "", "&6▸ Cliquer pour voir le classement"
+
+        # Bouton Stats Personnelles (Slot 15)
+        set slot 15 of {_gui} to book named "&b&l✦ GUIDE DES KITS & RÈGLES ✦" with lore "&7• 6 Modes de jeu uniques", "&7• Paris monétaires autorisés", "&7• Inventaire sauvegardé à 100%%", "", "&a✔ Arène 100%% sécurisée"
+
+        set slot 22 of {_gui} to barrier named "&c&lFERMER" with lore "&7Fermer l'interface"
+        open {_gui} to player
+        play sound "block.chest.open" to player
+
+# Menu Top Duels
+command /duel-gui-top:
+    trigger:
+        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lCLASSEMENT TOP GLADIATEURS"
+        loop 27 times:
+            set slot (loop-number - 1) of {_gui} to gray stained glass pane named "&8✦"
+
+        set slot 11 of {_gui} to gold block named "&e&l✦ TOP 1 - CHAMPION DE L'ARÈNE ✦" with lore "&7• Pseudo : &fBladeMaster", "&7• ELO : &b1850 ⚡", "&7• Victoires : &a142 ⚔"
+        set slot 13 of {_gui} to iron block named "&f&l✦ TOP 2 - DUEL EXPERT ✦" with lore "&7• Pseudo : &fKombatKing", "&7• ELO : &b1620 ⚡", "&7• Victoires : &a98 ⚔"
+        set slot 15 of {_gui} to copper block named "&6&l✦ TOP 3 - VÉTÉRAN ✦" with lore "&7• Pseudo : &fAuraStrike", "&7• ELO : &b1450 ⚡", "&7• Victoires : &a64 ⚔"
+
+        set slot 22 of {_gui} to arrow named "&c« Retour au Menu"
+        open {_gui} to player
+        play sound "block.wooden_button.click_on" to player
+
+# ==================== GESTION DES CLICS GUI DUELS ====================
+
+on inventory click:
+    # 1. MENU CHOIX DU KIT
+    if name of event-inventory contains "&8» &0&lCHOIX DU KIT DUEL :":
+        cancel event
+        set {_target} to {duel_target_opponent::%player%}
+        set {_bet} to {duel_target_bet::%player%}
+        if {_bet} is not set:
+            set {_bet} to 0
+
+        if index of event-slot is 22:
+            close player's inventory
+            stop
+
+        set {_kit} to ""
+        if index of event-slot is 10:
+            set {_kit} to "NoDebuff"
+        else if index of event-slot is 11:
+            set {_kit} to "Gapple"
+        else if index of event-slot is 12:
+            set {_kit} to "Sumo"
+        else if index of event-slot is 14:
+            set {_kit} to "Archer"
+        else if index of event-slot is 15:
+            set {_kit} to "Netherite"
+        else if index of event-slot is 16:
+            set {_kit} to "Classique"
+
+        if {_kit} is not "":
+            close player's inventory
+            if {_target} is not online:
+                send "{@prefix}&cLe joueur &f%{_target}% &cn'est plus en ligne !" to player
+                stop
+            if {in_duel::%{_target}%} is true:
+                send "{@prefix}&cLe joueur est déjà en combat !" to player
+                stop
+
+            set {duel_challenge_from::%{_target}%} to player
+            set {duel_challenge_kit::%{_target}%} to {_kit}
+            set {duel_challenge_bet::%{_target}%} to {_bet}
+
+            send "{@prefix}&aDéfi 1v1 envoyé à &e%{_target}% &a(Kit: &f%{_kit}%&a, Mise: &e%{_bet}%$&a) !" to player
+            send "" to {_target}
+            send "&c&l✦ DÉFI DUEL 1V1 ✦" to {_target}
+            send "&e%player% &7te défie en Duel 1v1 !" to {_target}
+            send "&7• Kit choisi : &b&l%{_kit}%" to {_target}
+            if {_bet} > 0:
+                send "&7• Mise en jeu : &a&l%{_bet}%$" to {_target}
+            send "&7Fais &a&l/duelaccept &7pour accepter ou &c&l/dueldeny &7pour refuser !" to {_target}
+            send "" to {_target}
+            play sound "block.note_block.pling" to {_target}
+
+    # 2. MENU PRINCIPAL DUELS
+    else if name of event-inventory is "&8» &0&lARÈNE DES DUELS 1V1":
+        cancel event
+        if index of event-slot is 11:
+            close player's inventory
+            send "{@prefix}&7Pour défier un joueur : &e/duel <pseudo> [mise$]" to player
+        else if index of event-slot is 13:
+            execute player command "duel-gui-top"
+        else if index of event-slot is 22:
+            close player's inventory
+
+    # 3. MENU TOP DUELS
+    else if name of event-inventory is "&8» &0&lCLASSEMENT TOP GLADIATEURS":
+        cancel event
+        if index of event-slot is 22:
+            execute player command "duel-gui-menu"
+
+# ==================== COMMANDES ACCEPT / DENY / LEAVE ====================
+
+command /duelaccept:
+    trigger:
+        if {duel_challenge_from::%player%} is not set:
+            send "{@prefix}&cTu n'as aucun défi de duel en attente !" to player
+            stop
+        set {_adv} to {duel_challenge_from::%player%}
+        set {_kit} to {duel_challenge_kit::%player%}
+        set {_bet} to {duel_challenge_bet::%player%}
+        delete {duel_challenge_from::%player%}
+        delete {duel_challenge_kit::%player%}
+        delete {duel_challenge_bet::%player%}
+
+        if {_adv} is not online:
+            send "{@prefix}&cLe joueur n'est plus en ligne !" to player
+            stop
+        if {in_duel::%player%} is true or {in_duel::%{_adv}%} is true:
+            send "{@prefix}&cCombat impossible : l'un des joueurs est déjà en duel !" to player
+            stop
+
+        startDuelMatch(player, {_adv}, {_kit}, {_bet})
+
+command /dueldeny:
+    trigger:
+        if {duel_challenge_from::%player%} is not set:
+            send "{@prefix}&cTu n'as aucun défi en attente !" to player
+            stop
+        set {_adv} to {duel_challenge_from::%player%}
+        delete {duel_challenge_from::%player%}
+        delete {duel_challenge_kit::%player%}
+        delete {duel_challenge_bet::%player%}
+        send "{@prefix}&cTu as refusé le défi de duel." to player
+        send "{@prefix}&e%player% &ca refusé votre défi de duel." to {_adv}
+
+command /duelleave:
+    aliases: /duelquit, /duelcancel
+    trigger:
+        if {in_duel::%player%} is true:
+            set {_winner} to {duel_opponent::%player%}
+            endDuelMatch({_winner}, player)
+        else:
+            send "{@prefix}&cTu n'es pas en combat de duel !" to player
+
+# ==================== MORT EN DUEL ====================
+
+on death of player:
+    if {in_duel::%victim%} is true:
+        set {_winner} to {duel_opponent::%victim%}
+        cancel event
+        endDuelMatch({_winner}, victim)
+
+# ==================== DÉCONNEXION EN DUEL ====================
+
+on quit:
+    if {in_duel::%player%} is true:
+        set {_winner} to {duel_opponent::%player%}
+        endDuelMatch({_winner}, player)

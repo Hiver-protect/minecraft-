@@ -1,0 +1,278 @@
+# ==============================================================================
+#      SPAWN & LOBBY - HAUTE PERFORMANCE (0 TPS LOSS, 100% OPTIMISÉ)
+#      - Fast-Path : 0 calcul de distance dans les mondes Survie & Skyblock
+#      - Ambiance propre : Ciel dégagé & nuit sans aucun impact CPU
+#      - Protections complètes : Anti-casse, anti-pose, anti-mobs, anti-dégâts
+#      - Interactions autorisées : Ender Chests & Établis au spawn
+# ==============================================================================
+
+options:
+    prefix: &b&l✦ SPAWN &8> &7
+
+# ==================== CONFIGURATION DU POINT DE SPAWN ====================
+
+command /setspawn:
+    permission: op
+    permission message: &cTu n'as pas la permission!
+    trigger:
+        set {spawn::location} to location of player
+        set {spawn::world} to "%world of player%"
+        set {spawn::x} to x-coordinate of player
+        set {spawn::y} to y-coordinate of player
+        set {spawn::z} to z-coordinate of player
+        set {spawn::yaw} to yaw of player
+        set {spawn::pitch} to pitch of player
+        
+        # Configuration du Monde du Spawn (Verrouillage Heure, Monstres & Météo)
+        # gamerule doMobSpawning false
+        # gamerule doDaylightCycle false
+        set time of world "%{spawn::world}%" to 18:00
+        set weather of world "%{spawn::world}%" to sunny
+        execute console command "mv entity-spawn-config modify %{spawn::world}% monster set spawn false"
+        
+        loop all entities in world "%{spawn::world}%":
+            if loop-entity is a monster or a phantom or a slime or a magma cube:
+                delete loop-entity
+        
+        send "" to player
+        send "{@prefix}&aSpawn principal défini avec succès!" to player
+        send "&7• Position : &f%{spawn::location}%" to player
+        send "&7• Ambiance : &bNuit étoilée &7& &aCiel dégagé verrouillés" to player
+        send "&7• Monstres & Phantoms : &cTotalement désactivés" to player
+        send "&7• Protections du lobby actives" to player
+        send "" to player
+
+command /spawn:
+    aliases: /hub, /lobby
+    trigger:
+        set {_isStaff} to false
+        if player is op:
+            set {_isStaff} to true
+        else if {rank::%uuid of player%} is "Admin" or "Modo":
+            set {_isStaff} to true
+        else if player has permission "minestars.staff":
+            set {_isStaff} to true
+
+        set {_r} to {rank::%uuid of player%} ? "Joueur"
+        if {_isStaff} is false:
+            set player's flight mode to false
+
+        if {spawn::location} is set:
+            teleport player to {spawn::location}
+            send "{@prefix}&7Téléporté au spawn principal !" to player
+            play sound "entity.experience_orb.pickup" to player
+        else if {spawn::world} is set:
+            set {_targetLoc} to location({spawn::x}, {spawn::y}, {spawn::z}, world "%{spawn::world}%", {spawn::yaw}, {spawn::pitch})
+            teleport player to {_targetLoc}
+            send "{@prefix}&7Téléporté au spawn principal !" to player
+            play sound "entity.experience_orb.pickup" to player
+        else:
+            send "&cLe spawn n'est pas encore défini ! Un admin doit faire /setspawn" to player
+
+# ==================== AMBIANCE & SÉCURITÉ AU SPAWN ====================
+
+on load:
+    if {spawn::world} is set:
+        # gamerule doMobSpawning false
+        # gamerule doDaylightCycle false
+        set time of world "%{spawn::world}%" to 18:00
+        set weather of world "%{spawn::world}%" to sunny
+        execute console command "mv entity-spawn-config modify %{spawn::world}% monster set spawn false"
+        loop all entities in world "%{spawn::world}%":
+            if loop-entity is a monster or a phantom or a slime or a magma cube:
+                delete loop-entity
+
+command /fixspawn:
+    aliases: /cleansnow, /nightspawn
+    permission: op
+    permission message: &cTu n'as pas la permission!
+    trigger:
+        if {spawn::world} is set:
+            # gamerule doMobSpawning false
+            # gamerule doDaylightCycle false
+            set time of world "%{spawn::world}%" to 18:00
+            set weather of world "%{spawn::world}%" to sunny
+            execute console command "mv entity-spawn-config modify %{spawn::world}% monster set spawn false"
+            set {_k} to 0
+            loop all entities in world "%{spawn::world}%":
+                if loop-entity is a monster or a phantom or a slime or a magma cube:
+                    delete loop-entity
+                    add 1 to {_k}
+            send "{@prefix}&aNuit étoilée & ciel dégagé verrouillés ! &e(%{_k}% monstres purgés)" to player
+        else:
+            send "{@prefix}&cLe monde du spawn n'est pas configuré ! Fais &e/setspawn" to player
+        play sound "entity.player.levelup" to player
+
+command /dayspawn:
+    permission: op
+    permission message: &cTu n'as pas la permission!
+    trigger:
+        if {spawn::world} is set:
+            # gamerule doMobSpawning false
+            # gamerule doDaylightCycle false
+            set time of world "%{spawn::world}%" to 06:00
+            set weather of world "%{spawn::world}%" to sunny
+            send "{@prefix}&aJour ensoleillé verrouillé au Spawn !" to player
+        else:
+            send "{@prefix}&cLe monde du spawn n'est pas configuré ! Fais &e/setspawn" to player
+        play sound "entity.player.levelup" to player
+
+# Blocage absolu de l'apparition de monstres au Spawn
+on spawn:
+    if {spawn::world} is set:
+        if "%event-world%" is {spawn::world}:
+            if event-entity is a monster or a phantom or a slime or a magma cube or a creeper or a zombie or a skeleton or a spider or a witch or an enderman or a drowned or a stray:
+                cancel event
+                stop
+        if {spawn::location} is set:
+            if distance between event-location and {spawn::location} <= 250:
+                if event-entity is a monster or a phantom or a slime or a magma cube or a creeper or a zombie or a skeleton or a spider or a witch or an enderman or a drowned or a stray:
+                    cancel event
+                    stop
+
+# Blocage de la météo pluvieuse au spawn
+on weather change:
+    if {spawn::world} is set:
+        if "%event-world%" is {spawn::world}:
+            cancel event
+            set weather of event-world to sunny
+
+# ==================== GESTION DES CONNEXIONS & SPAWN ====================
+
+on join:
+    wait 3 ticks
+    if {spawn::location} is set:
+        teleport player to {spawn::location}
+    else if {spawn::world} is set:
+        set {_targetLoc} to location({spawn::x}, {spawn::y}, {spawn::z}, world "%{spawn::world}%", {spawn::yaw}, {spawn::pitch})
+        teleport player to {_targetLoc}
+
+on respawn:
+    wait 2 ticks
+    set {_u} to uuid of player
+    # Si le joueur est mort en Skyblock ou en Survie, laisser le respawn naturel du monde (lit / spawn monde)
+    if {last_death_world::%{_u}%} is set:
+        if "%{last_death_world::%{_u}%}%" contains "skyblock":
+            stop
+        if "%{last_death_world::%{_u}%}%" contains "survie" or "world":
+            stop
+    if "%world of player%" contains "skyblock":
+        stop
+    if "%world of player%" contains "survie" or "world":
+        stop
+    if {spawn::location} is set:
+        teleport player to {spawn::location}
+
+# ==================== PROTECTIONS SPAWN HAUTES PERFORMANCES ====================
+
+# 1. Protection Anti-Dégâts Spawn (Rayon 50 blocs uniquement)
+on damage of player:
+    if {spawn::world} is set:
+        if {spawn::location} is set:
+            if "%world of victim%" is {spawn::world}:
+                if distance between victim and {spawn::location} <= 50:
+                    cancel event
+                    if y-coordinate of victim is less than 0:
+                        teleport victim to {spawn::location}
+                        play sound "entity.enderman.teleport" to victim
+
+# 2. Protection Anti-Casse
+on break:
+    if {spawn::world} is set:
+        if "%world of event-block%" is not {spawn::world}:
+            stop
+        if {spawn::location} is set:
+            if distance between event-block and {spawn::location} > 250:
+                stop
+        
+        if player is not op:
+            if "Admin,Modo,Resp,Fondateur" does not contain {rank::%uuid of player%}:
+                if player does not have permission "minestars.staff" or "spawn.build":
+                    cancel event
+                    send action bar "&c⚠ Protection Spawn : Seul le Staff peut modifier les blocs !" to player
+                    play sound "block.chest.locked" to player
+
+# 3. Protection Anti-Pose
+on place:
+    if {spawn::world} is set:
+        if "%world of event-block%" is not {spawn::world}:
+            stop
+        if {spawn::location} is set:
+            if distance between event-block and {spawn::location} > 250:
+                stop
+        
+        if player is not op:
+            if "Admin,Modo,Resp,Fondateur" does not contain {rank::%uuid of player%}:
+                if player does not have permission "minestars.staff" or "spawn.build":
+                    cancel event
+                    send action bar "&c⚠ Protection Spawn : Seul le Staff peut modifier les blocs !" to player
+                    play sound "block.chest.locked" to player
+
+# 4. Protection Seaux
+on bucket empty:
+    if {spawn::world} is set:
+        if "%world of event-block%" is not {spawn::world}:
+            stop
+        if {spawn::location} is set:
+            if distance between event-block and {spawn::location} > 250:
+                stop
+        if player is not op:
+            if "Admin,Modo,Resp,Fondateur" does not contain {rank::%uuid of player%}:
+                cancel event
+
+on bucket fill:
+    if {spawn::world} is set:
+        if "%world of event-block%" is not {spawn::world}:
+            stop
+        if {spawn::location} is set:
+            if distance between event-block and {spawn::location} > 250:
+                stop
+        if player is not op:
+            if "Admin,Modo,Resp,Fondateur" does not contain {rank::%uuid of player%}:
+                cancel event
+
+# 5. Protection Interactions (Autorisation Ender Chests & Établis)
+on right click:
+    if player's tool is nether star or compass:
+        stop
+    
+    if {spawn::world} is set:
+        if "%world of player%" is not {spawn::world}:
+            stop
+        if {spawn::location} is set:
+            if distance between player and {spawn::location} > 250:
+                stop
+        
+        if player is not op:
+            if "Admin,Modo,Resp,Fondateur" does not contain {rank::%uuid of player%}:
+                if player does not have permission "minestars.staff" or "spawn.build":
+                    if event-block is set:
+                        set {_b} to "%event-block%"
+                        # Autorisation explicite des Ender Chests et Établis
+                        if {_b} contains "ender":
+                            stop
+                        if {_b} contains "crafting_table" or "crafting table" or "workbench" or "stonecutter" or "grindstone":
+                            stop
+                        
+                        if {_b} contains "trapdoor" or "door" or "gate" or "button" or "lever" or "chest" or "barrel" or "shulker" or "hopper" or "dropper" or "dispenser" or "furnace" or "smoker" or "anvil" or "lectern" or "bell" or "beacon" or "repeater" or "comparator" or "frame" or "pot" or "brewing" or "bed" or "campfire" or "candle" or "cake" or "anchor" or "cauldron" or "crafter":
+                            cancel event
+                            send action bar "&c⚠ Protection Spawn : Les interactions sont désactivées !" to player
+                    else if "%event-entity%" contains "armor_stand" or "item_frame" or "glow_item_frame" or "painting" or "minecart" or "boat":
+                        cancel event
+
+# 6. Protection Faim & Explosion
+on food level change:
+    if {spawn::world} is set:
+        if "%world of player%" is {spawn::world}:
+            cancel event
+            set food level of player to 20
+
+on explode:
+    if {spawn::world} is set:
+        if "%world of event-location%" is {spawn::world}:
+            cancel event
+
+on burn:
+    if {spawn::world} is set:
+        if "%world of event-block%" is {spawn::world}:
+            cancel event

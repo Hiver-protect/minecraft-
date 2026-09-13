@@ -1,0 +1,202 @@
+# ==============================================================================
+#           MINESTARS - SYSTÈME DE REDÉMARRAGE AUTOMATIQUE TOUTES LES 5 HEURES
+#           Compte à rebours 18000s (5h), Annonces Progressives, Titles, Sons,
+#           Sauvegarde Intégrale (save-all) & Commandes Staff de Contrôle
+# ==============================================================================
+
+options:
+    prefix: &c&l✦ REBOOT &8> &7
+    total_seconds: 18000 # 5 Heures = 18000 Secondes (5 * 3600)
+
+# ==================== INITIALISATION DU COMPTEUR ====================
+
+on skript start:
+    set {restart_timer_seconds} to {@total_seconds}
+    set {restart_is_paused} to false
+
+on load:
+    if {restart_timer_seconds} is not set:
+        set {restart_timer_seconds} to {@total_seconds}
+    else if {restart_timer_seconds} <= 60:
+        set {restart_timer_seconds} to {@total_seconds}
+    set {restart_is_paused} to false
+
+# ==================== DÉCOMPTE CHAQUE SECONDE ====================
+
+every 1 second:
+    if {restart_is_paused} is not true:
+        if {restart_timer_seconds} > 0:
+            subtract 1 from {restart_timer_seconds}
+            
+            # --- Alertes à 1h, 30m, 15m, 10m, 5m, 3m, 2m, 1m ---
+            if {restart_timer_seconds} is 3600: # 1 heure
+                broadcast ""
+                broadcast "{@prefix}&6Le serveur redémarrera dans &e1 heure &6pour maintenance et optimisation."
+                broadcast ""
+                play sound "block.note_block.pling" to all players
+
+            else if {restart_timer_seconds} is 1800: # 30 min
+                broadcast ""
+                broadcast "{@prefix}&6Le serveur redémarrera dans &e30 minutes &6pour maintenance et optimisation."
+                broadcast ""
+                play sound "block.note_block.pling" to all players
+
+            else if {restart_timer_seconds} is 900: # 15 min
+                broadcast ""
+                broadcast "{@prefix}&6Le serveur redémarrera dans &e15 minutes &6pour maintenance."
+                broadcast ""
+                play sound "block.note_block.pling" to all players
+
+            else if {restart_timer_seconds} is 600: # 10 min
+                broadcast ""
+                broadcast "{@prefix}&6Le serveur redémarrera dans &e10 minutes &6!"
+                broadcast ""
+                play sound "block.note_block.pling" to all players
+
+            else if {restart_timer_seconds} is 300: # 5 min
+                broadcast ""
+                broadcast "{@prefix}&cAttention : Redémarrage automatique du serveur dans &e5 minutes &c!"
+                broadcast "{@prefix}&7Pensez à terminer vos activités en cours."
+                broadcast ""
+                play sound "block.note_block.pling" to all players
+
+            else if {restart_timer_seconds} is 180: # 3 min
+                broadcast "{@prefix}&cRedémarrage automatique dans &e3 minutes &c!"
+                play sound "block.note_block.pling" to all players
+
+            else if {restart_timer_seconds} is 120: # 2 min
+                broadcast "{@prefix}&cRedémarrage automatique dans &e2 minutes &c!"
+                play sound "block.note_block.pling" to all players
+
+            else if {restart_timer_seconds} is 60: # 1 min
+                broadcast ""
+                broadcast "{@prefix}&4&l⚠ ATTENTION : &cRedémarrage automatique dans &e1 MINUTE &c!"
+                broadcast "{@prefix}&7Sauvegarde intégrale des données mondes en cours..."
+                broadcast ""
+                execute console command "save-all"
+                play sound "block.note_block.pling" to all players
+
+            else if {restart_timer_seconds} is 30: # 30s
+                broadcast "{@prefix}&cRedémarrage automatique dans &e30 secondes &c!"
+                play sound "block.note_block.pling" to all players
+
+            else if {restart_timer_seconds} is 15: # 15s
+                broadcast "{@prefix}&cRedémarrage automatique dans &e15 secondes &c!"
+                play sound "block.note_block.pling" to all players
+
+            else if {restart_timer_seconds} is 10: # 10s
+                broadcast "{@prefix}&cRedémarrage automatique dans &e10 secondes &c!"
+                play sound "block.note_block.pling" to all players
+
+            else if {restart_timer_seconds} is 5: # 5s
+                broadcast "{@prefix}&cRedémarrage automatique dans &e5 secondes &c!"
+                play sound "block.note_block.pling" to all players
+
+            else if {restart_timer_seconds} is 4: # 4s
+                broadcast "{@prefix}&cRedémarrage automatique dans &e4 secondes &c!"
+                play sound "block.note_block.pling" to all players
+
+            else if {restart_timer_seconds} is 3: # 3s
+                broadcast "{@prefix}&cRedémarrage automatique dans &e3 secondes &c!"
+                play sound "block.note_block.pling" to all players
+
+            else if {restart_timer_seconds} is 2: # 2s
+                broadcast "{@prefix}&cRedémarrage automatique dans &e2 secondes &c!"
+                play sound "block.note_block.pling" to all players
+
+            else if {restart_timer_seconds} is 1: # 1s
+                broadcast "{@prefix}&cRedémarrage imminent dans &e&l1 SECONDE &c!"
+                play sound "block.note_block.pling" to all players
+
+            # --- Exécution du redémarrage à 0s ---
+            else if {restart_timer_seconds} <= 0:
+                set {restart_timer_seconds} to {@total_seconds}
+                broadcast ""
+                broadcast "{@prefix}&4&lREDÉMARRAGE DU SERVEUR EN COURS..."
+                broadcast "{@prefix}&aReconnexion possible dans moins de 60 secondes !"
+                broadcast ""
+                
+                # 1. Sauvegarde finale complète
+                execute console command "save-all"
+                
+                # 2. Expulsion propre de tous les joueurs
+                loop all players:
+                    kick loop-player due to "&c&l✦ MINESTARS - REDÉMARRAGE ✦%nl%%nl%&7Le serveur redémarre pour optimisation (Cycle 5h).%nl%%nl%&a✔ Toutes vos données et inventaires sont sauvegardés !%nl%&e▸ Reconnexion possible dans 1 minute."
+                
+                wait 1 second
+                
+                # 3. Arrêt propre (Pterodactyl redémarre le conteneur automatiquement)
+                execute console command "stop"
+
+# ==================== COMMANDES DE CONTRÔLE STAFF ====================
+
+command /autorestart [<text>] [<number>]:
+    aliases: /nextrestart, /reboot, /restarttimer
+    trigger:
+        # Affichage du temps restant pour tout le monde
+        if arg-1 is not set:
+            if {restart_is_paused} is true:
+                send "{@prefix}&eLe redémarrage automatique est actuellement en &cPAUSE&e." to player
+                stop
+            set {_sec} to {restart_timer_seconds}
+            set {_hours} to floor({_sec} / 3600)
+            set {_remSec} to {_sec} - ({_hours} * 3600)
+            set {_mins} to floor({_remSec} / 60)
+            set {_finalSec} to {_remSec} - ({_mins} * 60)
+            send "" to player
+            send "&c&l✦ MINESTARS - PROCHAIN REDÉMARRAGE ✦" to player
+            send "&8&m────────────────────────────────────────" to player
+            send "&7• Temps restant : &e%{_hours}%h %{_mins}%m %{_finalSec}%s" to player
+            send "&7• Fréquence : &fToutes les 5 heures (Sauvegarde & Optimisation)" to player
+            send "&8&m────────────────────────────────────────" to player
+            play sound "block.note_block.pling" to player
+            stop
+
+        # Commandes Staff (Permission OP)
+        if player is not op:
+            send "&cTu n'as pas la permission d'administrer le redémarrage !" to player
+            stop
+
+        # 1. Forcer le redémarrage immédiat (décompte 10s)
+        if arg-1 is "now" or "force":
+            set {restart_timer_seconds} to 10
+            set {restart_is_paused} to false
+            broadcast ""
+            broadcast "{@prefix}&4&l[ADMIN] &cUn redémarrage d'urgence a été lancé par &e%player% &c(Dans 10s) !"
+            broadcast ""
+
+        # 2. Définir un temps en minutes (/autorestart set <minutes>)
+        else if arg-1 is "set" or "time":
+            if arg-2 is not set:
+                send "{@prefix}&cUtilisation : &e/autorestart set <minutes>" to player
+                stop
+            set {restart_timer_seconds} to arg-2 * 60
+            set {restart_is_paused} to false
+            broadcast "{@prefix}&6Le temps avant le prochain redémarrage a été réglé à &e%arg-2% minutes &6par &f%player%&6."
+
+        # 3. Mettre en pause (/autorestart pause)
+        else if arg-1 is "pause" or "stop" or "cancel":
+            set {restart_is_paused} to true
+            broadcast "{@prefix}&cLe redémarrage automatique a été suspendu par &f%player%&c."
+
+        # 4. Reprendre (/autorestart resume)
+        else if arg-1 is "resume" or "unpause":
+            set {restart_is_paused} to false
+            broadcast "{@prefix}&aLe redémarrage automatique a été repris par &f%player%&a."
+
+        # 5. Réinitialiser à 5 heures (/autorestart reset)
+        else if arg-1 is "reset":
+            set {restart_timer_seconds} to {@total_seconds}
+            set {restart_is_paused} to false
+            send "{@prefix}&aLe compteur a été réinitialisé à &e5 heures &a!" to player
+
+        else:
+            send "" to player
+            send "&c&l✦ AIDE COMMANDES REDÉMARRAGE ✦" to player
+            send "&e/autorestart &7: Affiche le temps restant" to player
+            send "&e/autorestart now &7: Lance le décompte 10 secondes" to player
+            send "&e/autorestart set <min> &7: Règle le temps en minutes" to player
+            send "&e/autorestart pause &7: Suspend le redémarrage" to player
+            send "&e/autorestart resume &7: Reprend le compte à rebours" to player
+            send "&e/autorestart reset &7: Remet le timer à 5h" to player
+            send "" to player

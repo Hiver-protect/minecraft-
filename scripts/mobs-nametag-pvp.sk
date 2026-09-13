@@ -1,0 +1,232 @@
+# ==============================================================================
+#                 MINESTARS - SYSTÈME DE MOBS ÉVOLUÉ & COMBAT RPG
+#                 - Monstres Champions / Élites Rares (+PV, +Gains $, Particules)
+#                 - Barre de Vie Dynamique Colorée (Vert > Jaune > Rouge)
+#                 - Action Bar & Nametags Temporaires de Combat 100% Propres
+# ==============================================================================
+
+# ==================== FONCTION DE TRADUCTION ====================
+
+function getFormattedMobName(e: entity) :: text:
+    set {_t} to "%type of {_e}%"
+    
+    # 1. Monstres
+    if {_t} is "zombie":
+        return "&eZombie"
+    else if {_t} is "skeleton":
+        return "&eSquelette"
+    else if {_t} is "creeper":
+        return "&aCreeper"
+    else if {_t} is "spider":
+        return "&eAraignée"
+    else if {_t} is "cave_spider":
+        return "&cAraignée des Cavernes"
+    else if {_t} is "enderman":
+        return "&dEnderman"
+    else if {_t} is "witch":
+        return "&5Sorcière"
+    else if {_t} is "blaze":
+        return "&6Blaze"
+    else if {_t} is "wither_skeleton":
+        return "&7Squelette Wither"
+    else if {_t} is "zombified_piglin" or "pig_zombie":
+        return "&6Piglin Zombie"
+    else if {_t} is "piglin":
+        return "&6Piglin"
+    else if {_t} is "piglin_brute":
+        return "&4Piglin Brute"
+    else if {_t} is "hoglin":
+        return "&6Hoglin"
+    else if {_t} is "zoglin":
+        return "&2Zoglin"
+    else if {_t} is "drowned":
+        return "&3Noyé"
+    else if {_t} is "husk":
+        return "&eMomie"
+    else if {_t} is "stray":
+        return "&fVagabond"
+    else if {_t} is "phantom":
+        return "&bFantôme"
+    else if {_t} is "pillager":
+        return "&fPillard"
+    else if {_t} is "vindicator":
+        return "&cVindicateur"
+    else if {_t} is "evoker":
+        return "&eÉvocateur"
+    else if {_t} is "ravager":
+        return "&cRavageur"
+    else if {_t} is "vex":
+        return "&8Ombre du Sculk"
+    else if {_t} is "slime":
+        return "&aSlime"
+    else if {_t} is "magma_cube":
+        return "&cMagma Cube"
+    else if {_t} is "ghast":
+        return "&fGhast"
+    else if {_t} is "shulker":
+        return "&dShulker"
+    else if {_t} is "guardian":
+        return "&bGardien"
+    else if {_t} is "elder_guardian":
+        return "&3Grand Gardien"
+    else if {_t} is "wither":
+        return "&8&lWither"
+    else if {_t} is "ender_dragon":
+        return "&5&lDragon de l'Ender"
+    else if {_t} is "warden":
+        return "&4&lWarden Titan"
+        
+    # 2. Animaux & Mobs Pacifiques
+    else if {_t} is "cow":
+        return "&aVache"
+    else if {_t} is "pig":
+        return "&aCochon"
+    else if {_t} is "sheep":
+        return "&aMouton"
+    else if {_t} is "chicken":
+        return "&aPoulet"
+    else if {_t} is "horse":
+        return "&eCheval"
+    else if {_t} is "donkey":
+        return "&eÂne"
+    else if {_t} is "mule":
+        return "&eMule"
+    else if {_t} is "llama":
+        return "&eLama"
+    else if {_t} is "wolf":
+        return "&aLoup"
+    else if {_t} is "cat":
+        return "&aChat"
+    else if {_t} is "fox":
+        return "&6Renard"
+    else if {_t} is "rabbit":
+        return "&aLapin"
+    else if {_t} is "bat":
+        return "&7Chauve-souris"
+    else if {_t} is "parrot":
+        return "&bPerroquet"
+    else if {_t} is "squid":
+        return "&3Poulpe"
+    else if {_t} is "glow_squid":
+        return "&bPoulpe Lumineux"
+    else if {_t} is "dolphin":
+        return "&bDauphin"
+    else if {_t} is "turtle":
+        return "&2Tortue"
+    else if {_t} is "polar_bear":
+        return "&fOurs Polaire"
+    else if {_t} is "panda":
+        return "&fPanda"
+    else if {_t} is "bee":
+        return "&eAbeille"
+    else if {_t} is "iron_golem":
+        return "&fGolem de Fer"
+    else if {_t} is "snow_golem":
+        return "&fBonhomme de Neige"
+    else if {_t} is "villager":
+        return "&aVillageois"
+    else if {_t} is "wandering_trader":
+        return "&bMarchand Ambulant"
+    else if {_t} is "frog":
+        return "&aGrenouille"
+    else if {_t} is "camel":
+        return "&eChameau"
+    else if {_t} is "sniffer":
+        return "&cRenifleur"
+    else if {_t} is "armadillo":
+        return "&6Tatou"
+    else if {_t} is "allay":
+        return "&bAllay"
+    else:
+        return "&f%{_t}%"
+
+# ==================== GESTION DES MONSTRES ÉLITES / CHAMPIONS (5%) ====================
+
+on spawn of monster:
+    if event-entity is not a player or an armor stand:
+        set {_t} to "%type of event-entity%"
+        if {_t} is "zombie" or "skeleton" or "creeper" or "spider" or "enderman" or "drowned" or "husk":
+            chance of 5%: # 5% de chance d'être un monstre Élite
+                set {is_elite::%uuid of event-entity%} to true
+                set max health of event-entity to (max health of event-entity * 1.5)
+                set health of event-entity to max health of event-entity
+                apply speed 1 to event-entity for 999 days
+
+# ==================== COMBAT & BARRE DE VIE DYNAMIQUE ====================
+
+on damage:
+    # Optimisation extrême : On ne calcule QUE si un vrai joueur attaque un monstre ou un boss
+    if attacker is a player:
+        if victim is not a player or an armor stand:
+            set {_t} to "%type of victim%"
+            if {_t} is "warden":
+                stop
+                
+            set {_name} to getFormattedMobName(victim)
+            set {_hp} to round(health of victim - damage)
+            if {_hp} < 0:
+                set {_hp} to 0
+            set {_max} to round(max health of victim)
+            
+            # Couleur dynamique selon la vie restante
+            set {_hpColor} to "&a"
+            if {_hp} <= ({_max} * 0.3):
+                set {_hpColor} to "&c"
+            else if {_hp} <= ({_max} * 0.6):
+                set {_hpColor} to "&e"
+                
+            # Préfixe si c'est un Monstre Élite
+            set {_u} to uuid of victim
+            set {_prefix} to ""
+            if {is_elite::%{_u}%} is true:
+                set {_prefix} to "&6&l✦ ÉLITE &8┃ "
+                
+            # 1. Action Bar pour le joueur attaquant (Ultra rapide, 0 TPS loss)
+            send action bar "%{_prefix}%%{_name}% &8┃ %{_hpColor}%%{_hp}%&7/&a%{_max}% ❤ &7(-%damage%❤)" to attacker
+            play sound "entity.player.attack.crit" at victim for attacker
+            
+            # 2. Boss Wither / Dragon
+            if {_t} is "wither" or "ender_dragon":
+                set custom name of victim to "&4&l☠ %{_name}% &8┃ %{_hpColor}%%{_hp}%&7/&a%{_max}%❤"
+            else if {_t} is "zombie" or "skeleton" or "creeper" or "spider" or "enderman" or "drowned" or "husk" or "piglin_brute" or "ravager":
+                # 3. Nametag uniquement sur les vrais monstres hostiles
+                set custom name of victim to "%{_prefix}%%{_name}% &8┃ %{_hpColor}%%{_hp}%&7/&a%{_max}%❤"
+
+# ==================== MORT DES MONSTRES ÉLITES & RÉCOMPENSES ====================
+
+on death of monster:
+    set {_u} to uuid of victim
+    if {is_elite::%{_u}%} is true:
+        delete {is_elite::%{_u}%}
+        drop 1 of diamond at victim's location
+        drop 4 of gold ingot at victim's location
+        spawn 50 of xp at victim's location
+        if attacker is a player:
+            set {_bonus} to random integer between 50 and 150
+            execute console command "eco give %attacker% %{_bonus}%"
+            send "&6&l✦ MONSTRE ÉLITE ÉLIMINÉ ! &a+%{_bonus}%$ &7et des diamants récoltés !" to attacker
+            play sound "entity.player.levelup" to attacker
+
+# ==================== NETTOYAGE AU RECHARGEMENT ====================
+
+on script load:
+    wait 5 ticks
+    loop all living entities:
+        if loop-entity is not a player or an armor stand:
+            set {_t} to "%type of loop-entity%"
+            if {_t} is not "warden" or "wither" or "ender_dragon":
+                reset custom name of loop-entity
+
+command /clearmobnames:
+    aliases: /fixmobs, /refreshmobs, /cleartags
+    permission: op
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        set {_c} to 0
+        loop all living entities:
+            if loop-entity is not a player or an armor stand:
+                set {_t} to "%type of loop-entity%"
+                if {_t} is not "warden" or "wither" or "ender_dragon":
+                    reset custom name of loop-entity
+                    add 1 to {_c}
+        send "&a✔ %{_c}% mobs nettoyés !" to player

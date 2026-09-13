@@ -1,0 +1,1961 @@
+# ==============================================================================
+#           MINESTARS - ARSENAL & ÉQUIPEMENTS MYTHIQUES SUPRÊMES (MENU UNIFIÉ)
+#           - 20 Armes Légendaires avec Compétences Actives, Passifs & Effets Kill
+#           - 6 Sets d'Armures Complets avec Effets d'Ensemble 4/4 & Auras
+#           - 5 Outils Mythiques (Pioche 3x3, Pioche Auto-Smelt, Hache, Pelle 3x3, Canne)
+#           - 1 Bouclier Divin de l'Aegis
+#           - 8 Reliques & Artefacts Mythiques
+#           - MENU VITRINE APERÇU 54 SLOTS ULTRA-STYLÉ AVEC 5 ONGLETS DYNAMIQUES
+# ==============================================================================
+
+options:
+    prefix: &6&l✦ ARSENAL &8> &7
+
+# ==================== FABRICATION DES ARMES CUSTOMS ====================
+
+# ==================== FABRICATION DES ARMES CUSTOMS (STYLE HYPIXEL / RPG) ====================
+
+function getCustomWeapon(type: text) :: item:
+    # 1. Lame Stellaire
+    if {_type} is "star":
+        set {_i} to 1 of netherite sword named "&d&l✦ LAME STELLAIRE ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &d860 &8| &7Rareté: &d&lMYTHIQUE"
+        set line 3 of lore of {_i} to "&7Dégâts: &c+14.0 🗡 &8| &7Force: &c+35 ❁"
+        set line 4 of lore of {_i} to "&7Critique: &9+25%% ☣ &8| &7Dég. Crit: &9+65%% ☠"
+        set line 5 of lore of {_i} to "&7Vitesse: &e+1.8 ⚡ &8| &b+15%% Vitesse ✦"
+        set line 6 of lore of {_i} to "&8&m─────────────────────────"
+        set line 7 of lore of {_i} to "&6Capacité : Rayon Stellaire &e&l[CLIC DROIT]"
+        set line 8 of lore of {_i} to "&7Projette un rayon foudroyant infligeant &c4❤"
+        set line 9 of lore of {_i} to "&7à toutes les entités traversées en ligne droite."
+        set line 10 of lore of {_i} to "&8Temps de recharge: &a10s"
+        set line 11 of lore of {_i} to " "
+        set line 12 of lore of {_i} to "&bPassif : Vitesse Céleste"
+        set line 13 of lore of {_i} to "&7Confère un bonus permanent de &b+15%% Vitesse&7."
+        set line 14 of lore of {_i} to "&8&m─────────────────────────"
+        set line 15 of lore of {_i} to "&d&l✦ ÉPÉE MYTHIQUE MINESTARS ✦"
+        enchant {_i} with sharpness 5
+        enchant {_i} with unbreaking 3
+        set custom model data of {_i} to 10001
+        return {_i}
+        
+    # 2. Hache Tellurique
+    else if {_type} is "titan":
+        set {_i} to 1 of netherite axe named "&6&l✦ HACHE TELLURIQUE ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &6820 &8| &7Rareté: &6&lLÉGENDAIRE"
+        set line 3 of lore of {_i} to "&7Dégâts: &c+16.0 🗡 &8| &7Force: &c+50 ❁"
+        set line 4 of lore of {_i} to "&7Critique: &9+15%% ☣ &8| &7Dég. Crit: &9+80%% ☠"
+        set line 5 of lore of {_i} to "&7Vitesse: &e+0.9 ⚡ &8| &6Anti-Knockback 🛡"
+        set line 6 of lore of {_i} to "&8&m─────────────────────────"
+        set line 7 of lore of {_i} to "&6Capacité : Fracas Sismique &e&l[CLIC DROIT]"
+        set line 8 of lore of {_i} to "&7Déclenche un séisme repoussant les cibles"
+        set line 9 of lore of {_i} to "&7dans un rayon de 7 blocs en leur infligeant &c5❤&7."
+        set line 10 of lore of {_i} to "&8Temps de recharge: &a12s"
+        set line 11 of lore of {_i} to " "
+        set line 12 of lore of {_i} to "&cPassif : Étourdissement"
+        set line 13 of lore of {_i} to "&720%% de chance d'étourdir et paralyser la cible 1.5s."
+        set line 14 of lore of {_i} to "&8&m─────────────────────────"
+        set line 15 of lore of {_i} to "&6&l✦ HACHE LÉGENDAIRE MINESTARS ✦"
+        enchant {_i} with sharpness 5
+        enchant {_i} with unbreaking 3
+        set custom model data of {_i} to 10002
+        return {_i}
+
+    # 3. Faux de la Faucheuse
+    else if {_type} is "scythe":
+        set {_i} to 1 of netherite hoe named "&5&l✦ FAUX DE LA FAUCHEUSE ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &5880 &8| &7Rareté: &5&lMYTHIQUE"
+        set line 3 of lore of {_i} to "&7Dégâts: &c+13.5 🗡 &8| &7Force: &c+30 ❁"
+        set line 4 of lore of {_i} to "&7Vol de Vie: &c+20%% 🩸 &8| &5Siphon d'Âmes"
+        set line 5 of lore of {_i} to "&8&m─────────────────────────"
+        set line 6 of lore of {_i} to "&6Capacité : Siphon d'Âmes &e&l[CLIC DROIT]"
+        set line 7 of lore of {_i} to "&7Aspire la force vitale des ennemis proches"
+        set line 8 of lore of {_i} to "&7infligeant &54❤ &7et vous restaurant la même santé."
+        set line 9 of lore of {_i} to "&8Temps de recharge: &a12s"
+        set line 10 of lore of {_i} to " "
+        set line 11 of lore of {_i} to "&8Passif : Décomposition"
+        set line 12 of lore of {_i} to "&7Chaque coup applique &8Wither II &7pendant 4 secondes."
+        set line 13 of lore of {_i} to "&8&m─────────────────────────"
+        set line 14 of lore of {_i} to "&5&l✦ FAUX MYTHIQUE MINESTARS ✦"
+        enchant {_i} with sharpness 5
+        enchant {_i} with unbreaking 3
+        set custom model data of {_i} to 10003
+        return {_i}
+
+    # 4. Marteau de Thor
+    else if {_type} is "hammer":
+        set {_i} to 1 of netherite axe named "&e&l✦ MARTEAU DE THOR ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &e920 &8| &7Rareté: &e&lDIVINE"
+        set line 3 of lore of {_i} to "&7Dégâts: &c+17.0 🗡 &8| &7Force: &c+60 ❁"
+        set line 4 of lore of {_i} to "&7Foudre: &eNiveau III ⚡ &8| &7Fracas de Zone"
+        set line 5 of lore of {_i} to "&8&m─────────────────────────"
+        set line 6 of lore of {_i} to "&6Capacité : Colère du Ciel &e&l[CLIC DROIT]"
+        set line 7 of lore of {_i} to "&7Invoque 3 éclairs célestes sur les ennemis"
+        set line 8 of lore of {_i} to "&7dans un rayon de 10 blocs avec explosion sonore."
+        set line 9 of lore of {_i} to "&8Temps de recharge: &a15s"
+        set line 10 of lore of {_i} to "&8&m─────────────────────────"
+        set line 11 of lore of {_i} to "&e&l✦ MARTEAU DIVIN MINESTARS ✦"
+        enchant {_i} with sharpness 5
+        enchant {_i} with unbreaking 3
+        set custom model data of {_i} to 10004
+        return {_i}
+
+    # 5. Katana du Vent
+    else if {_type} is "katana":
+        set {_i} to 1 of diamond sword named "&a&l✦ KATANA DU VENT ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &a790 &8| &7Rareté: &a&lLÉGENDAIRE"
+        set line 3 of lore of {_i} to "&7Dégâts: &c+12.5 🗡 &8| &7Vitesse d'Attaque: &e+2.2 ⚡"
+        set line 4 of lore of {_i} to "&7Vitesse: &b+25%% ✦ &8| &aEsquive: +15%%"
+        set line 5 of lore of {_i} to "&8&m─────────────────────────"
+        set line 6 of lore of {_i} to "&6Capacité : Ruée Tempétueuse &e&l[CLIC DROIT]"
+        set line 7 of lore of {_i} to "&7Effectue un bond fulgurant tranchant tout ennemi"
+        set line 8 of lore of {_i} to "&7sur la trajectoire avec des dégâts critiques."
+        set line 9 of lore of {_i} to "&8Temps de recharge: &a8s"
+        set line 10 of lore of {_i} to " "
+        set line 11 of lore of {_i} to "&aPassif : Danse du Zéphyr"
+        set line 12 of lore of {_i} to "&7Confère &bVitesse II &7permanente au porteur."
+        set line 13 of lore of {_i} to "&8&m─────────────────────────"
+        set line 14 of lore of {_i} to "&a&l✦ KATANA LÉGENDAIRE MINESTARS ✦"
+        enchant {_i} with sharpness 5
+        enchant {_i} with unbreaking 3
+        set custom model data of {_i} to 10005
+        return {_i}
+
+    # 6. Lame Glaciaire
+    else if {_type} is "frost":
+        set {_i} to 1 of diamond sword named "&b&l✦ LAME GLACIAIRE ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &b810 &8| &7Rareté: &b&lLÉGENDAIRE"
+        set line 3 of lore of {_i} to "&7Dégâts: &c+13.0 🗡 &8| &7Gel: &bNiveau III ❄"
+        set line 4 of lore of {_i} to "&7Critique: &9+20%% ☣ &8| &7Dég. Crit: &9+50%% ☠"
+        set line 5 of lore of {_i} to "&8&m─────────────────────────"
+        set line 6 of lore of {_i} to "&6Capacité : Gelée Boréale &e&l[CLIC DROIT]"
+        set line 7 of lore of {_i} to "&7Émet une onde de froid extrême paralysant tous"
+        set line 8 of lore of {_i} to "&7les monstres et joueurs dans 8 blocs pendant 3s."
+        set line 9 of lore of {_i} to "&8Temps de recharge: &a10s"
+        set line 10 of lore of {_i} to " "
+        set line 11 of lore of {_i} to "&3Passif : Morsure du Froid"
+        set line 12 of lore of {_i} to "&7Chaque coup inflige &3Lenteur II &7et fatigue de minage."
+        set line 13 of lore of {_i} to "&8&m─────────────────────────"
+        set line 14 of lore of {_i} to "&b&l✦ ÉPÉE LÉGENDAIRE MINESTARS ✦"
+        enchant {_i} with sharpness 5
+        enchant {_i} with unbreaking 3
+        set custom model data of {_i} to 10006
+        return {_i}
+
+    # 7. Épée Vampirique
+    else if {_type} is "vampire":
+        set {_i} to 1 of netherite sword named "&4&l✦ ÉPÉE VAMPIRIQUE ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &4870 &8| &7Rareté: &4&lMYTHIQUE"
+        set line 3 of lore of {_i} to "&7Dégâts: &c+14.0 🗡 &8| &7Vol de Vie: &c+25%% 🩸"
+        set line 4 of lore of {_i} to "&7Force: &c+40 ❁ &8| &7Critique: &9+30%% ☣"
+        set line 5 of lore of {_i} to "&8&m─────────────────────────"
+        set line 6 of lore of {_i} to "&6Capacité : Festin Sanglant &e&l[CLIC DROIT]"
+        set line 7 of lore of {_i} to "&7Active la frénésie vampirique : &c+50%% Vol de Vie"
+        set line 8 of lore of {_i} to "&7et &e+25%% Vitesse d'attaque &7pendant 6 secondes."
+        set line 9 of lore of {_i} to "&8Temps de recharge: &a15s"
+        set line 10 of lore of {_i} to "&8&m─────────────────────────"
+        set line 11 of lore of {_i} to "&4&l✦ ÉPÉE MYTHIQUE MINESTARS ✦"
+        enchant {_i} with sharpness 5
+        enchant {_i} with unbreaking 3
+        set custom model data of {_i} to 10007
+        return {_i}
+
+    # 8. Hache Infernale
+    else if {_type} is "inferno":
+        set {_i} to 1 of netherite axe named "&c&l✦ HACHE INFERNALE ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &c830 &8| &7Rareté: &c&lLÉGENDAIRE"
+        set line 3 of lore of {_i} to "&7Dégâts: &c+15.5 🗡 &8| &7Flammes: &6Niveau V 🔥"
+        set line 4 of lore of {_i} to "&7Force: &c+45 ❁ &8| &7Dég. Feu: &c+35%%"
+        set line 5 of lore of {_i} to "&8&m─────────────────────────"
+        set line 6 of lore of {_i} to "&6Capacité : Geysers de Magma &e&l[CLIC DROIT]"
+        set line 7 of lore of {_i} to "&7Fait jaillir des colonnes de lave sous les cibles"
+        set line 8 of lore of {_i} to "&7dans un rayon de 8 blocs avec embrasement."
+        set line 9 of lore of {_i} to "&8Temps de recharge: &a12s"
+        set line 10 of lore of {_i} to "&8&m─────────────────────────"
+        set line 11 of lore of {_i} to "&c&l✦ HACHE LÉGENDAIRE MINESTARS ✦"
+        enchant {_i} with sharpness 5
+        enchant {_i} with fire aspect 2
+        enchant {_i} with unbreaking 3
+        set custom model data of {_i} to 10008
+        return {_i}
+
+    # 9. Lame du Dragon
+    else if {_type} is "dragon":
+        set {_i} to 1 of netherite sword named "&5&l✦ LAME DU DRAGON ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &5890 &8| &7Rareté: &5&lMYTHIQUE"
+        set line 3 of lore of {_i} to "&7Dégâts: &c+15.0 🗡 &8| &7Magie Draconique: &5+40 ✦"
+        set line 4 of lore of {_i} to "&7Critique: &9+25%% ☣ &8| &7Dég. Crit: &9+75%% ☠"
+        set line 5 of lore of {_i} to "&8&m─────────────────────────"
+        set line 6 of lore of {_i} to "&6Capacité : Souffle du Dragon &e&l[CLIC DROIT]"
+        set line 7 of lore of {_i} to "&7Crache un souffle violet draconique persistant"
+        set line 8 of lore of {_i} to "&7corrodant l'armure et la vie des cibles."
+        set line 9 of lore of {_i} to "&8Temps de recharge: &a12s"
+        set line 10 of lore of {_i} to "&8&m─────────────────────────"
+        set line 11 of lore of {_i} to "&5&l✦ ÉPÉE MYTHIQUE MINESTARS ✦"
+        enchant {_i} with sharpness 5
+        enchant {_i} with knockback 2
+        enchant {_i} with unbreaking 3
+        set custom model data of {_i} to 10009
+        return {_i}
+
+    # 10. Lame du Sculk (Warden)
+    else if {_type} is "sculk":
+        set {_i} to 1 of netherite sword named "&3&l✦ LAME DU SCULK ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &3950 &8| &7Rareté: &3&lTITANESQUE"
+        set line 3 of lore of {_i} to "&7Dégâts: &c+16.5 🗡 &8| &7Pénétration d'Armure: &3+25%% ☬"
+        set line 4 of lore of {_i} to "&7Énergie Sonique: &3+100 ✦ &8| &7Butin: &aIII"
+        set line 5 of lore of {_i} to "&8&m─────────────────────────"
+        set line 6 of lore of {_i} to "&6Capacité : Cri Sonique du Titan &e&l[CLIC DROIT]"
+        set line 7 of lore of {_i} to "&7Déchaîne le Sonic Boom du Warden à distance,"
+        set line 8 of lore of {_i} to "&7ignorant totalement boucliers et protections (&c6❤&7)."
+        set line 9 of lore of {_i} to "&8Temps de recharge: &a14s"
+        set line 10 of lore of {_i} to "&8&m─────────────────────────"
+        set line 11 of lore of {_i} to "&3&l✦ ARME DU TITAN WARDEN ✦"
+        enchant {_i} with sharpness 5
+        enchant {_i} with looting 3
+        enchant {_i} with unbreaking 3
+        set custom model data of {_i} to 10010
+        return {_i}
+
+    # 11. Dague Toxique
+    else if {_type} is "venom":
+        set {_i} to 1 of diamond sword named "&2&l✦ DAGUE TOXIQUE ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &2760 &8| &7Rareté: &2&lÉPIQUE"
+        set line 3 of lore of {_i} to "&7Dégâts: &c+11.5 🗡 &8| &7Poison Mortel: &2Niveau IV ☠"
+        set line 4 of lore of {_i} to "&7Vitesse: &e+2.0 ⚡ &8| &aChances Coup Fatal: +10%%"
+        set line 5 of lore of {_i} to "&8&m─────────────────────────"
+        set line 6 of lore of {_i} to "&6Capacité : Nuage Corrosif &e&l[CLIC DROIT]"
+        set line 7 of lore of {_i} to "&7Libère une nappe de poison paralysant infligeant"
+        set line 8 of lore of {_i} to "&2Poison II &7et &2Nausée &7aux ennemis dans 6 blocs."
+        set line 9 of lore of {_i} to "&8Temps de recharge: &a10s"
+        set line 10 of lore of {_i} to "&8&m─────────────────────────"
+        set line 11 of lore of {_i} to "&2&l✦ DAGUE ÉPIQUE MINESTARS ✦"
+        enchant {_i} with sharpness 5
+        enchant {_i} with unbreaking 3
+        set custom model data of {_i} to 10011
+        return {_i}
+
+    # 12. Épée du Chaos
+    else if {_type} is "chaos":
+        set {_i} to 1 of netherite sword named "&1&l✦ ÉPÉE DU CHAOS ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &1910 &8| &7Rareté: &1&lDIVINE"
+        set line 3 of lore of {_i} to "&7Dégâts: &c+15.5 🗡 &8| &7Double Frappe: &1+20%% ☬"
+        set line 4 of lore of {_i} to "&7Distorsion: &1+30%% &8| &7Force: &c+45 ❁"
+        set line 5 of lore of {_i} to "&8&m─────────────────────────"
+        set line 6 of lore of {_i} to "&6Capacité : Faille Temporelle &e&l[CLIC DROIT]"
+        set line 7 of lore of {_i} to "&7Ouvre une brèche dimensionnelle propulsant les"
+        set line 8 of lore of {_i} to "&7ennemis dans les airs avec désorientation totale."
+        set line 9 of lore of {_i} to "&8Temps de recharge: &a15s"
+        set line 10 of lore of {_i} to "&8&m─────────────────────────"
+        set line 11 of lore of {_i} to "&1&l✦ ÉPÉE DIVINE MINESTARS ✦"
+        enchant {_i} with sharpness 5
+        enchant {_i} with unbreaking 3
+        set custom model data of {_i} to 10012
+        return {_i}
+
+    # 13. Lame de l'Infini
+    else if {_type} is "infinity":
+        set {_i} to 1 of netherite sword named "&6&l✦ LAME DE L'INFINI ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &61000 &8| &7Rareté: &6&lTRANSCENDANTE"
+        set line 3 of lore of {_i} to "&7Dégâts: &c+18.0 🗡 &8| &7Force: &c+75 ❁"
+        set line 4 of lore of {_i} to "&7Critique: &9+35%% ☣ &8| &7Dég. Crit: &9+100%% ☠"
+        set line 5 of lore of {_i} to "&7Vitesse: &e+2.0 ⚡ &8| &dPuissance Cosmique: +150 ✦"
+        set line 6 of lore of {_i} to "&8&m─────────────────────────"
+        set line 7 of lore of {_i} to "&6Capacité : Singularité Cosmique &e&l[CLIC DROIT]"
+        set line 8 of lore of {_i} to "&7Fige le temps et paralyse tous les ennemis"
+        set line 9 of lore of {_i} to "&7dans 12 blocs pendant 3.5 secondes."
+        set line 10 of lore of {_i} to "&8Temps de recharge: &a15s"
+        set line 11 of lore of {_i} to "&8&m─────────────────────────"
+        set line 12 of lore of {_i} to "&6&l✦ ARME SUPRÊME TRANSCENDANTE ✦"
+        enchant {_i} with sharpness 6
+        enchant {_i} with unbreaking 3
+        set custom model data of {_i} to 10013
+        return {_i}
+
+    # 14. Arc du Phénix
+    else if {_type} is "phoenix_bow":
+        set {_i} to 1 of bow named "&c&l✦ ARC DU PHÉNIX ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &c840 &8| &7Rareté: &c&lLÉGENDAIRE"
+        set line 3 of lore of {_i} to "&7Dégâts à Distance: &c+30 🏹 &8| &6Flammes Solaires"
+        set line 4 of lore of {_i} to "&7Chances Coup Critique: &9+30%% ☣"
+        set line 5 of lore of {_i} to "&8&m─────────────────────────"
+        set line 6 of lore of {_i} to "&cPassif : Flèches de Braises"
+        set line 7 of lore of {_i} to "&7Tire des flèches solaires qui explosent en"
+        set line 8 of lore of {_i} to "&7flammes à l'impact en ignorant la gravité."
+        set line 9 of lore of {_i} to "&8&m─────────────────────────"
+        set line 10 of lore of {_i} to "&c&l✦ ARC LÉGENDAIRE MINESTARS ✦"
+        enchant {_i} with power 5
+        enchant {_i} with flame 1
+        enchant {_i} with infinity 1
+        enchant {_i} with unbreaking 3
+        set custom model data of {_i} to 10014
+        return {_i}
+
+    # 15. Arc de Gravité
+    else if {_type} is "gravity_bow":
+        set {_i} to 1 of bow named "&5&l✦ ARC DE GRAVITÉ ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &5860 &8| &7Rareté: &5&lMYTHIQUE"
+        set line 3 of lore of {_i} to "&7Dégâts à Distance: &c+32 🏹 &8| &5Trou Noir"
+        set line 4 of lore of {_i} to "&7Force d'Attraction: &5Niveau V ☬"
+        set line 5 of lore of {_i} to "&8&m─────────────────────────"
+        set line 6 of lore of {_i} to "&5Passif : Vortex Gravitationnel"
+        set line 7 of lore of {_i} to "&7Chaque flèche crée un mini trou noir aspirant"
+        set line 8 of lore of {_i} to "&7toutes les cibles dans un rayon de 6 blocs."
+        set line 9 of lore of {_i} to "&8&m─────────────────────────"
+        set line 10 of lore of {_i} to "&5&l✦ ARC MYTHIQUE MINESTARS ✦"
+        enchant {_i} with power 5
+        enchant {_i} with unbreaking 3
+        set custom model data of {_i} to 10015
+        return {_i}
+
+    # 16. Arc du Dragon
+    else if {_type} is "dragon_bow":
+        set {_i} to 1 of bow named "&5&l✦ ARC DU DRAGON ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &5890 &8| &7Rareté: &5&lMYTHIQUE"
+        set line 3 of lore of {_i} to "&7Dégâts à Distance: &c+35 🏹 &8| &5Détonation Violette"
+        set line 4 of lore of {_i} to "&7Recul: &f+50%% 🛡 &8| &5Énergie Draconique"
+        set line 5 of lore of {_i} to "&8&m─────────────────────────"
+        set line 6 of lore of {_i} to "&5Passif : Flèches Draconiques"
+        set line 7 of lore of {_i} to "&7Projette des salves violettes qui explosent"
+        set line 8 of lore of {_i} to "&7en infligeant des dégâts magiques de zone."
+        set line 9 of lore of {_i} to "&8&m─────────────────────────"
+        set line 10 of lore of {_i} to "&5&l✦ ARC MYTHIQUE MINESTARS ✦"
+        enchant {_i} with power 5
+        enchant {_i} with punch 2
+        enchant {_i} with unbreaking 3
+        set custom model data of {_i} to 10016
+        return {_i}
+
+    # 17. Arbalète Explosive
+    else if {_type} is "crossbow":
+        set {_i} to 1 of crossbow named "&6&l✦ ARBALÈTE EXPLOSIVE ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &6810 &8| &7Rareté: &6&lLÉGENDAIRE"
+        set line 3 of lore of {_i} to "&7Dégâts: &c+28 🏹 &8| &6Recharge Rapide: &eIII ⚡"
+        set line 4 of lore of {_i} to "&7Tirs Multiples: &63 Projectiles 💥"
+        set line 5 of lore of {_i} to "&8&m─────────────────────────"
+        set line 6 of lore of {_i} to "&6Passif : Salve Explosive"
+        set line 7 of lore of {_i} to "&7Tire 3 carreaux simultanés déclenchant une"
+        set line 8 of lore of {_i} to "&7triple déflagration à l'impact."
+        set line 9 of lore of {_i} to "&8&m─────────────────────────"
+        set line 10 of lore of {_i} to "&6&l✦ ARBALÈTE LÉGENDAIRE MINESTARS ✦"
+        enchant {_i} with quick charge 3
+        enchant {_i} with multishot 1
+        enchant {_i} with unbreaking 3
+        set custom model data of {_i} to 10017
+        return {_i}
+
+    # 18. Trident des Abysses
+    else if {_type} is "abyss":
+        set {_i} to 1 of trident named "&b&l✦ TRIDENT DES ABYSSES ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &b840 &8| &7Rareté: &b&lLÉGENDAIRE"
+        set line 3 of lore of {_i} to "&7Dégâts: &c+14.0 🗡 &8| &7Fidélité: &bNiveau III ⚓"
+        set line 4 of lore of {_i} to "&7Puissance Marine: &b+40%% contre monstres aquatiques"
+        set line 5 of lore of {_i} to "&8&m─────────────────────────"
+        set line 6 of lore of {_i} to "&6Capacité : Foudre Marine &e&l[CLIC DROIT]"
+        set line 7 of lore of {_i} to "&7Invoque un torrent d'eau et la foudre céleste"
+        set line 8 of lore of {_i} to "&7sur la position ciblée avec dégâts accrus."
+        set line 9 of lore of {_i} to "&8Temps de recharge: &a12s"
+        set line 10 of lore of {_i} to "&8&m─────────────────────────"
+        set line 11 of lore of {_i} to "&b&l✦ TRIDENT LÉGENDAIRE MINESTARS ✦"
+        enchant {_i} with impaling 5
+        enchant {_i} with loyalty 3
+        enchant {_i} with unbreaking 3
+        set custom model data of {_i} to 10018
+        return {_i}
+
+    # 19. Bâton de Tempête
+    else if {_type} is "wand":
+        set {_i} to 1 of blaze rod named "&e&l✦ BÂTON DE TEMPÊTE ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &e880 &8| &7Rareté: &e&lMYTHIQUE"
+        set line 3 of lore of {_i} to "&7Puissance Magique: &e+95 ✦ &8| &7Électrocution"
+        set line 4 of lore of {_i} to "&7Résistance Magique: &e+25%% 🛡"
+        set line 5 of lore of {_i} to "&8&m─────────────────────────"
+        set line 6 of lore of {_i} to "&6Capacité : Orbe Électrique &e&l[CLIC DROIT]"
+        set line 7 of lore of {_i} to "&7Projette un orbe foudroyant rebondissant"
+        set line 8 of lore of {_i} to "&7entre les ennemis avec chaîne d'éclairs."
+        set line 9 of lore of {_i} to "&8Temps de recharge: &a8s"
+        set line 10 of lore of {_i} to "&8&m─────────────────────────"
+        set line 11 of lore of {_i} to "&e&l✦ ARTEFACT MAGIQUE MINESTARS ✦"
+        enchant {_i} with unbreaking 3
+        set custom model data of {_i} to 10019
+        return {_i}
+
+    # 20. Dague de l'Ombre
+    else if {_type} is "shadow":
+        set {_i} to 1 of diamond sword named "&8&l✦ DAGUE DE L'OMBRE ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &8750 &8| &7Rareté: &8&lÉPIQUE"
+        set line 3 of lore of {_i} to "&7Dégâts: &c+12.0 🗡 &8| &7Attaque Sournoise: &8+50%% ☠"
+        set line 4 of lore of {_i} to "&7Vitesse: &b+20%% ✦ &8| &8Invisibilité"
+        set line 5 of lore of {_i} to "&8&m─────────────────────────"
+        set line 6 of lore of {_i} to "&6Capacité : Pas de l'Ombre &e&l[CLIC DROIT]"
+        set line 7 of lore of {_i} to "&7Téléporte 6 blocs en avant instantanément"
+        set line 8 of lore of {_i} to "&7en devenant invisible pendant 2.5 secondes."
+        set line 9 of lore of {_i} to "&8Temps de recharge: &a8s"
+        set line 10 of lore of {_i} to "&8&m─────────────────────────"
+        set line 11 of lore of {_i} to "&8&l✦ DAGUE ÉPIQUE MINESTARS ✦"
+        enchant {_i} with sharpness 4
+        enchant {_i} with unbreaking 3
+        set custom model data of {_i} to 10020
+        return {_i}
+
+# ==================== FABRICATION DES OUTILS & BOUCLIERS (STYLE HYPIXEL / RPG) ====================
+
+function getCustomTool(type: text) :: item:
+    # 1. Pioche Stellaire 3x3
+    if {_type} is "pickaxe":
+        set {_i} to 1 of netherite pickaxe named "&e&l✦ PIOCHE DU TITAN 3X3 ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &e930 &8| &7Rareté: &e&lDIVINE"
+        set line 3 of lore of {_i} to "&7Vitesse de Minage: &e+280 ⛏ &8| &6Fortune: IV"
+        set line 4 of lore of {_i} to "&7Efficacité: &fVI &8| &7Solidité: &fIII"
+        set line 5 of lore of {_i} to "&8&m─────────────────────────"
+        set line 6 of lore of {_i} to "&eCapacité : Excavatron Sismique 3x3"
+        set line 7 of lore of {_i} to "&7Mine une zone cubique de &e3x3 blocs &7en un seul"
+        set line 8 of lore of {_i} to "&7coup instantané (pierres et minerais)."
+        set line 9 of lore of {_i} to "&8&m─────────────────────────"
+        set line 10 of lore of {_i} to "&e&l✦ OUTIL DIVIN MINESTARS ✦"
+        enchant {_i} with efficiency 6
+        enchant {_i} with fortune 4
+        enchant {_i} with unbreaking 3
+        set custom model data of {_i} to 20001
+        return {_i}
+
+    # 2. Pioche Céleste Auto-Smelt
+    else if {_type} is "smelt_pickaxe":
+        set {_i} to 1 of netherite pickaxe named "&6&l✦ PIOCHE AUTO-SMELT ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &6860 &8| &7Rareté: &6&lLÉGENDAIRE"
+        set line 3 of lore of {_i} to "&7Vitesse de Minage: &e+240 ⛏ &8| &6Forge Magique"
+        set line 4 of lore of {_i} to "&7Efficacité: &fVI &8| &6Fortune: III"
+        set line 5 of lore of {_i} to "&8&m─────────────────────────"
+        set line 6 of lore of {_i} to "&6Passif : Fusion Immédiate"
+        set line 7 of lore of {_i} to "&7Cuit automatiquement tout minerai miné en"
+        set line 8 of lore of {_i} to "&7lingot pur avec &e+25%% de pépites bonus&7."
+        set line 9 of lore of {_i} to "&8&m─────────────────────────"
+        set line 10 of lore of {_i} to "&6&l✦ OUTIL LÉGENDAIRE MINESTARS ✦"
+        enchant {_i} with efficiency 6
+        enchant {_i} with fortune 3
+        enchant {_i} with unbreaking 3
+        set custom model data of {_i} to 20002
+        return {_i}
+
+    # 3. Hache Sylvestre Suprême
+    else if {_type} is "axe":
+        set {_i} to 1 of netherite axe named "&a&l✦ HACHE SYLVESTRE SUPRÊME ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &a850 &8| &7Rareté: &a&lLÉGENDAIRE"
+        set line 3 of lore of {_i} to "&7Vitesse d'Abattage: &a+260 🪓 &8| &aBûcheron"
+        set line 4 of lore of {_i} to "&7Efficacité: &fVI &8| &7Solidité: &fIII"
+        set line 5 of lore of {_i} to "&8&m─────────────────────────"
+        set line 6 of lore of {_i} to "&aPassif : Abattage d'Arbre Complet"
+        set line 7 of lore of {_i} to "&7Abat la totalité du tronc d'arbre et ses"
+        set line 8 of lore of {_i} to "&7branches en coupant simplement la base."
+        set line 9 of lore of {_i} to "&8&m─────────────────────────"
+        set line 10 of lore of {_i} to "&a&l✦ OUTIL LÉGENDAIRE MINESTARS ✦"
+        enchant {_i} with efficiency 6
+        enchant {_i} with unbreaking 3
+        set custom model data of {_i} to 20003
+        return {_i}
+
+    # 4. Pelle du Colosse 3x3
+    else if {_type} is "shovel":
+        set {_i} to 1 of netherite shovel named "&6&l✦ PELLE DU COLOSSE 3X3 ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &6840 &8| &7Rareté: &6&lLÉGENDAIRE"
+        set line 3 of lore of {_i} to "&7Vitesse d'Excavation: &6+250 🪚 &8| &6Zone 3x3"
+        set line 4 of lore of {_i} to "&7Efficacité: &fVI &8| &7Solidité: &fIII"
+        set line 5 of lore of {_i} to "&8&m─────────────────────────"
+        set line 6 of lore of {_i} to "&6Passif : Terrassement 3x3"
+        set line 7 of lore of {_i} to "&7Déblaie instantanément sable, terre et gravier"
+        set line 8 of lore of {_i} to "&7sur une surface de &e3x3 blocs&7."
+        set line 9 of lore of {_i} to "&8&m─────────────────────────"
+        set line 10 of lore of {_i} to "&6&l✦ OUTIL LÉGENDAIRE MINESTARS ✦"
+        enchant {_i} with efficiency 6
+        enchant {_i} with unbreaking 3
+        set custom model data of {_i} to 20004
+        return {_i}
+
+    # 5. Canne des Profondeurs
+    else if {_type} is "rod":
+        set {_i} to 1 of fishing rod named "&b&l✦ CANNE DES PROFONDEURS ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &b820 &8| &7Rareté: &b&lLÉGENDAIRE"
+        set line 3 of lore of {_i} to "&7Chance de la Mer: &bIII 🐟 &8| &7Appât: &bIII"
+        set line 4 of lore of {_i} to "&7Bonus Trésor: &e+25%% de reliques & pépites"
+        set line 5 of lore of {_i} to "&8&m─────────────────────────"
+        set line 6 of lore of {_i} to "&bPassif : Pêche Miraculeuse"
+        set line 7 of lore of {_i} to "&7Temps de morsure ultra rapide avec 20%%"
+        set line 8 of lore of {_i} to "&7de chance de pêcher des diamants et pépites d'or."
+        set line 9 of lore of {_i} to "&8&m─────────────────────────"
+        set line 10 of lore of {_i} to "&b&l✦ OUTIL LÉGENDAIRE MINESTARS ✦"
+        enchant {_i} with lure 3
+        enchant {_i} with luck of the sea 3
+        enchant {_i} with unbreaking 3
+        set custom model data of {_i} to 20005
+        return {_i}
+
+    # 6. Bouclier de l'Aegis
+    else if {_type} is "shield":
+        set {_i} to 1 of shield named "&e&l✦ BOUCLIER DE L'AEGIS ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &e910 &8| &7Rareté: &e&lDIVINE"
+        set line 3 of lore of {_i} to "&7Défense au Blocage: &a100%% 🛡 &8| &eContre-Coup"
+        set line 4 of lore of {_i} to "&7Résistance aux Projectiles: &e+50%%"
+        set line 5 of lore of {_i} to "&8&m─────────────────────────"
+        set line 6 of lore of {_i} to "&ePassif : Riposte Céleste"
+        set line 7 of lore of {_i} to "&7Bloquer une attaque repousse violemment l'attaquant"
+        set line 8 of lore of {_i} to "&7et lui inflige une onde de choc sismique."
+        set line 9 of lore of {_i} to "&8&m─────────────────────────"
+        set line 10 of lore of {_i} to "&e&l✦ BOUCLIER DIVIN MINESTARS ✦"
+        enchant {_i} with unbreaking 3
+        enchant {_i} with mending 1
+        set custom model data of {_i} to 20006
+        return {_i}
+
+# ==================== FABRICATION DES ARMURES CUSTOMS (STYLE HYPIXEL / RPG) ====================
+
+function getCustomArmor(set: text, piece: text) :: item:
+    # 1. SET DU TITAN (Netherite - Tank & Résistance)
+    if {_set} is "titan":
+        if {_piece} is "helmet":
+            set {_i} to 1 of netherite helmet named "&6&l✦ CASQUE DU TITAN ✦"
+            set line 1 of lore of {_i} to "&8&m─────────────────────────"
+            set line 2 of lore of {_i} to "&7Gear Score: &6720 &8| &7Pièce: &fCasque"
+            set line 3 of lore of {_i} to "&7Santé: &a+60 ❤ &8| &7Défense: &a+90 ❈"
+            set line 4 of lore of {_i} to "&8&m─────────────────────────"
+            set line 5 of lore of {_i} to "&6Bonus de Set Complet (4/4) : Peau de Pierre"
+            set line 6 of lore of {_i} to "&7Confère &6Résistance I &7permanente et annule"
+            set line 7 of lore of {_i} to "&7complètement le recul en combat."
+            set line 8 of lore of {_i} to "&8&m─────────────────────────"
+            set line 9 of lore of {_i} to "&6&l✦ ARMURE LÉGENDAIRE TITAN ✦"
+            enchant {_i} with protection 4
+            enchant {_i} with unbreaking 3
+            return {_i}
+        else if {_piece} is "chestplate":
+            set {_i} to 1 of netherite chestplate named "&6&l✦ PLASTRON DU TITAN ✦"
+            set line 1 of lore of {_i} to "&8&m─────────────────────────"
+            set line 2 of lore of {_i} to "&7Gear Score: &6780 &8| &7Pièce: &fPlastron"
+            set line 3 of lore of {_i} to "&7Santé: &a+120 ❤ &8| &7Défense: &a+160 ❈"
+            set line 4 of lore of {_i} to "&8&m─────────────────────────"
+            set line 5 of lore of {_i} to "&eCapacité : Peau de Pierre &e&l[CLIC DROIT]"
+            set line 6 of lore of {_i} to "&7Réduit tous les dégâts subis de &e-35%% &7pendant 6s."
+            set line 7 of lore of {_i} to "&8Temps de recharge: &a30s"
+            set line 8 of lore of {_i} to " "
+            set line 9 of lore of {_i} to "&6Bonus de Set (4/4) : &6Résistance I & Anti-Knockback"
+            set line 10 of lore of {_i} to "&8&m─────────────────────────"
+            set line 11 of lore of {_i} to "&6&l✦ ARMURE LÉGENDAIRE TITAN ✦"
+            enchant {_i} with protection 4
+            enchant {_i} with unbreaking 3
+            return {_i}
+        else if {_piece} is "leggings":
+            set {_i} to 1 of netherite leggings named "&6&l✦ JAMBIÈRES DU TITAN ✦"
+            set line 1 of lore of {_i} to "&8&m─────────────────────────"
+            set line 2 of lore of {_i} to "&7Gear Score: &6750 &8| &7Pièce: &fJambières"
+            set line 3 of lore of {_i} to "&7Santé: &a+100 ❤ &8| &7Défense: &a+130 ❈"
+            set line 4 of lore of {_i} to "&8&m─────────────────────────"
+            set line 5 of lore of {_i} to "&6Bonus de Set (4/4) : &6Résistance I & Anti-Knockback"
+            set line 6 of lore of {_i} to "&8&m─────────────────────────"
+            set line 7 of lore of {_i} to "&6&l✦ ARMURE LÉGENDAIRE TITAN ✦"
+            enchant {_i} with protection 4
+            enchant {_i} with unbreaking 3
+            return {_i}
+        else if {_piece} is "boots":
+            set {_i} to 1 of netherite boots named "&6&l✦ BOTTES DU TITAN ✦"
+            set line 1 of lore of {_i} to "&8&m─────────────────────────"
+            set line 2 of lore of {_i} to "&7Gear Score: &6710 &8| &7Pièce: &fBottes"
+            set line 3 of lore of {_i} to "&7Santé: &a+50 ❤ &8| &7Défense: &a+80 ❈"
+            set line 4 of lore of {_i} to "&7Chute Amortie: &fIV 🪂"
+            set line 5 of lore of {_i} to "&8&m─────────────────────────"
+            set line 6 of lore of {_i} to "&6Bonus de Set (4/4) : &6Résistance I & Anti-Knockback"
+            set line 7 of lore of {_i} to "&8&m─────────────────────────"
+            set line 8 of lore of {_i} to "&6&l✦ ARMURE LÉGENDAIRE TITAN ✦"
+            enchant {_i} with protection 4
+            enchant {_i} with feather falling 4
+            enchant {_i} with unbreaking 3
+            return {_i}
+
+    # 2. SET DU PHÉNIX (Feu & Solaire)
+    else if {_set} is "phoenix":
+        if {_piece} is "helmet":
+            set {_i} to 1 of golden helmet named "&c&l✦ CASQUE DU PHÉNIX ✦"
+            set line 1 of lore of {_i} to "&8&m─────────────────────────"
+            set line 2 of lore of {_i} to "&7Gear Score: &c710 &8| &7Pièce: &fCasque"
+            set line 3 of lore of {_i} to "&7Santé: &a+55 ❤ &8| &7Défense: &a+75 ❈"
+            set line 4 of lore of {_i} to "&8&m─────────────────────────"
+            set line 5 of lore of {_i} to "&cBonus de Set Complet (4/4) : Renaissance"
+            set line 6 of lore of {_i} to "&7Octroie &cRégénération I &7permanente et une"
+            set line 7 of lore of {_i} to "&7immunité totale aux flammes et à la lave."
+            set line 8 of lore of {_i} to "&8&m─────────────────────────"
+            set line 9 of lore of {_i} to "&c&l✦ ARMURE LÉGENDAIRE PHÉNIX ✦"
+            enchant {_i} with protection 4
+            enchant {_i} with unbreaking 3
+            return {_i}
+        else if {_piece} is "chestplate":
+            set {_i} to 1 of golden chestplate named "&c&l✦ PLASTRON DU PHÉNIX ✦"
+            set line 1 of lore of {_i} to "&8&m─────────────────────────"
+            set line 2 of lore of {_i} to "&7Gear Score: &c770 &8| &7Pièce: &fPlastron"
+            set line 3 of lore of {_i} to "&7Santé: &a+110 ❤ &8| &7Défense: &a+140 ❈"
+            set line 4 of lore of {_i} to "&8&m─────────────────────────"
+            set line 5 of lore of {_i} to "&eCapacité : Aura Solaire &e&l[CLIC DROIT]"
+            set line 6 of lore of {_i} to "&7Repousse et brûle tous les ennemis proches"
+            set line 7 of lore of {_i} to "&7en leur infligeant &c4❤ &7de dégâts solaires."
+            set line 8 of lore of {_i} to "&8Temps de recharge: &a25s"
+            set line 9 of lore of {_i} to " "
+            set line 10 of lore of {_i} to "&cBonus de Set (4/4) : &cRégénération I & Immunité Feu"
+            set line 11 of lore of {_i} to "&8&m─────────────────────────"
+            set line 12 of lore of {_i} to "&c&l✦ ARMURE LÉGENDAIRE PHÉNIX ✦"
+            enchant {_i} with protection 4
+            enchant {_i} with fire protection 4
+            enchant {_i} with unbreaking 3
+            return {_i}
+        else if {_piece} is "leggings":
+            set {_i} to 1 of golden leggings named "&c&l✦ JAMBIÈRES DU PHÉNIX ✦"
+            set line 1 of lore of {_i} to "&8&m─────────────────────────"
+            set line 2 of lore of {_i} to "&7Gear Score: &c740 &8| &7Pièce: &fJambières"
+            set line 3 of lore of {_i} to "&7Santé: &a+90 ❤ &8| &7Défense: &a+115 ❈"
+            set line 4 of lore of {_i} to "&8&m─────────────────────────"
+            set line 5 of lore of {_i} to "&cBonus de Set (4/4) : &cRégénération I & Immunité Feu"
+            set line 6 of lore of {_i} to "&8&m─────────────────────────"
+            set line 7 of lore of {_i} to "&c&l✦ ARMURE LÉGENDAIRE PHÉNIX ✦"
+            enchant {_i} with protection 4
+            enchant {_i} with unbreaking 3
+            return {_i}
+        else if {_piece} is "boots":
+            set {_i} to 1 of golden boots named "&c&l✦ BOTTES DU PHÉNIX ✦"
+            set line 1 of lore of {_i} to "&8&m─────────────────────────"
+            set line 2 of lore of {_i} to "&7Gear Score: &c700 &8| &7Pièce: &fBottes"
+            set line 3 of lore of {_i} to "&7Santé: &a+45 ❤ &8| &7Défense: &a+70 ❈"
+            set line 4 of lore of {_i} to "&8&m─────────────────────────"
+            set line 5 of lore of {_i} to "&cBonus de Set (4/4) : &cRégénération I & Immunité Feu"
+            set line 6 of lore of {_i} to "&8&m─────────────────────────"
+            set line 7 of lore of {_i} to "&c&l✦ ARMURE LÉGENDAIRE PHÉNIX ✦"
+            enchant {_i} with protection 4
+            enchant {_i} with feather falling 4
+            enchant {_i} with unbreaking 3
+            return {_i}
+
+    # 3. SET DE L'OMBRE (Vitesse & Esquive)
+    else if {_set} is "shadow":
+        if {_piece} is "helmet":
+            set {_i} to 1 of chainmail helmet named "&8&l✦ CAPUCHON DE L'OMBRE ✦"
+            set line 1 of lore of {_i} to "&8&m─────────────────────────"
+            set line 2 of lore of {_i} to "&7Gear Score: &8690 &8| &7Pièce: &fCasque"
+            set line 3 of lore of {_i} to "&7Vitesse: &b+15%% ✦ &8| &7Esquive: &8+8%% ☬"
+            set line 4 of lore of {_i} to "&8&m─────────────────────────"
+            set line 5 of lore of {_i} to "&8Bonus de Set Complet (4/4) : Maître Assassin"
+            set line 6 of lore of {_i} to "&7Confère &bVitesse II &7permanente et &8+25%% d'Esquive"
+            set line 7 of lore of {_i} to "&7sur toutes les attaques de mêlée subies."
+            set line 8 of lore of {_i} to "&8&m─────────────────────────"
+            set line 9 of lore of {_i} to "&8&l✦ ARMURE LÉGENDAIRE OMBRE ✦"
+            enchant {_i} with protection 4
+            enchant {_i} with unbreaking 3
+            return {_i}
+        else if {_piece} is "chestplate":
+            set {_i} to 1 of chainmail chestplate named "&8&l✦ TUNIQUE DE L'OMBRE ✦"
+            set line 1 of lore of {_i} to "&8&m─────────────────────────"
+            set line 2 of lore of {_i} to "&7Gear Score: &8750 &8| &7Pièce: &fPlastron"
+            set line 3 of lore of {_i} to "&7Santé: &a+80 ❤ &8| &7Défense: &a+100 ❈"
+            set line 4 of lore of {_i} to "&8&m─────────────────────────"
+            set line 5 of lore of {_i} to "&eCapacité : Voile d'Ombre &e&l[CLIC DROIT]"
+            set line 6 of lore of {_i} to "&7Invisibilité totale & 100%% Esquive pendant 4s."
+            set line 7 of lore of {_i} to "&8Temps de recharge: &a20s"
+            set line 8 of lore of {_i} to " "
+            set line 9 of lore of {_i} to "&8Bonus de Set (4/4) : &8Vitesse II & 25%% Esquive"
+            set line 10 of lore of {_i} to "&8&m─────────────────────────"
+            set line 11 of lore of {_i} to "&8&l✦ ARMURE LÉGENDAIRE OMBRE ✦"
+            enchant {_i} with protection 4
+            enchant {_i} with unbreaking 3
+            return {_i}
+        else if {_piece} is "leggings":
+            set {_i} to 1 of chainmail leggings named "&8&l✦ JAMBIÈRES DE L'OMBRE ✦"
+            set line 1 of lore of {_i} to "&8&m─────────────────────────"
+            set line 2 of lore of {_i} to "&7Gear Score: &8720 &8| &7Pièce: &fJambières"
+            set line 3 of lore of {_i} to "&7Vitesse: &b+10%% ✦ &8| &7Esquive: &8+8%% ☬"
+            set line 4 of lore of {_i} to "&8&m─────────────────────────"
+            set line 5 of lore of {_i} to "&8Bonus de Set (4/4) : &8Vitesse II & 25%% Esquive"
+            set line 6 of lore of {_i} to "&8&m─────────────────────────"
+            set line 7 of lore of {_i} to "&8&l✦ ARMURE LÉGENDAIRE OMBRE ✦"
+            enchant {_i} with protection 4
+            enchant {_i} with unbreaking 3
+            return {_i}
+        else if {_piece} is "boots":
+            set {_i} to 1 of chainmail boots named "&8&l✦ BOTTES DE L'OMBRE ✦"
+            set line 1 of lore of {_i} to "&8&m─────────────────────────"
+            set line 2 of lore of {_i} to "&7Gear Score: &8680 &8| &7Pièce: &fBottes"
+            set line 3 of lore of {_i} to "&7Vitesse: &b+10%% ✦ &8| &7Pas Silencieux"
+            set line 4 of lore of {_i} to "&8&m─────────────────────────"
+            set line 5 of lore of {_i} to "&8Bonus de Set (4/4) : &8Vitesse II & 25%% Esquive"
+            set line 6 of lore of {_i} to "&8&m─────────────────────────"
+            set line 7 of lore of {_i} to "&8&l✦ ARMURE LÉGENDAIRE OMBRE ✦"
+            enchant {_i} with protection 4
+            enchant {_i} with feather falling 4
+            enchant {_i} with unbreaking 3
+            return {_i}
+
+    # 4. SET CÉLESTE (Émeraude / Diamant - Soin & Gains)
+    else if {_set} is "celestial":
+        if {_piece} is "helmet":
+            set {_i} to 1 of diamond helmet named "&a&l✦ COURONNE CÉLESTE ✦"
+            set line 1 of lore of {_i} to "&8&m─────────────────────────"
+            set line 2 of lore of {_i} to "&7Gear Score: &a810 &8| &7Pièce: &fCasque"
+            set line 3 of lore of {_i} to "&7Santé: &a+70 ❤ &8| &a+30%% Gains XP & $"
+            set line 4 of lore of {_i} to "&8&m─────────────────────────"
+            set line 5 of lore of {_i} to "&aBonus de Set Complet (4/4) : Bénédiction Céleste"
+            set line 6 of lore of {_i} to "&7Augmente de &a+50%% tous les gains d'XP & d'Argent"
+            set line 7 of lore of {_i} to "&7et confère un bonus permanent de &aSaut Amélioré II&7."
+            set line 8 of lore of {_i} to "&8&m─────────────────────────"
+            set line 9 of lore of {_i} to "&a&l✦ ARMURE MYTHIQUE CÉLESTE ✦"
+            enchant {_i} with protection 4
+            enchant {_i} with unbreaking 3
+            return {_i}
+        else if {_piece} is "chestplate":
+            set {_i} to 1 of diamond chestplate named "&a&l✦ PLASTRON CÉLESTE ✦"
+            set line 1 of lore of {_i} to "&8&m─────────────────────────"
+            set line 2 of lore of {_i} to "&7Gear Score: &a880 &8| &7Pièce: &fPlastron"
+            set line 3 of lore of {_i} to "&7Santé: &a+130 ❤ &8| &7Défense: &a+150 ❈"
+            set line 4 of lore of {_i} to "&8&m─────────────────────────"
+            set line 5 of lore of {_i} to "&eCapacité : Barrière Divine &e&l[CLIC DROIT]"
+            set line 6 of lore of {_i} to "&7Déploie un dôme céleste absorbant &a6❤ &7et soigne"
+            set line 7 of lore of {_i} to "&7tous les alliés dans 10 blocs."
+            set line 8 of lore of {_i} to "&8Temps de recharge: &a25s"
+            set line 9 of lore of {_i} to " "
+            set line 10 of lore of {_i} to "&aBonus de Set (4/4) : &a+50%% Gains & Saut Amélioré"
+            set line 11 of lore of {_i} to "&8&m─────────────────────────"
+            set line 12 of lore of {_i} to "&a&l✦ ARMURE MYTHIQUE CÉLESTE ✦"
+            enchant {_i} with protection 4
+            enchant {_i} with unbreaking 3
+            return {_i}
+        else if {_piece} is "leggings":
+            set {_i} to 1 of diamond leggings named "&a&l✦ JAMBIÈRES CÉLESTES ✦"
+            set line 1 of lore of {_i} to "&8&m─────────────────────────"
+            set line 2 of lore of {_i} to "&7Gear Score: &a840 &8| &7Pièce: &fJambières"
+            set line 3 of lore of {_i} to "&7Santé: &a+105 ❤ &8| &7Défense: &a+125 ❈"
+            set line 4 of lore of {_i} to "&8&m─────────────────────────"
+            set line 5 of lore of {_i} to "&aBonus de Set (4/4) : &a+50%% Gains & Saut Amélioré"
+            set line 6 of lore of {_i} to "&8&m─────────────────────────"
+            set line 7 of lore of {_i} to "&a&l✦ ARMURE MYTHIQUE CÉLESTE ✦"
+            enchant {_i} with protection 4
+            enchant {_i} with unbreaking 3
+            return {_i}
+        else if {_piece} is "boots":
+            set {_i} to 1 of diamond boots named "&a&l✦ BOTTES CÉLESTES ✦"
+            set line 1 of lore of {_i} to "&8&m─────────────────────────"
+            set line 2 of lore of {_i} to "&7Gear Score: &a800 &8| &7Pièce: &fBottes"
+            set line 3 of lore of {_i} to "&7Santé: &a+60 ❤ &8| &7Défense: &a+75 ❈"
+            set line 4 of lore of {_i} to "&7Saut Amélioré: &aII &8| &7Chute Amortie: &fIV"
+            set line 5 of lore of {_i} to "&8&m─────────────────────────"
+            set line 6 of lore of {_i} to "&aBonus de Set (4/4) : &a+50%% Gains & Saut Amélioré"
+            set line 7 of lore of {_i} to "&8&m─────────────────────────"
+            set line 8 of lore of {_i} to "&a&l✦ ARMURE MYTHIQUE CÉLESTE ✦"
+            enchant {_i} with protection 4
+            enchant {_i} with feather falling 4
+            enchant {_i} with unbreaking 3
+            return {_i}
+
+    # 5. SET DU DRAGON SUPRÊME
+    else if {_set} is "dragon":
+        if {_piece} is "helmet":
+            set {_i} to 1 of netherite helmet named "&5&l✦ CORNES DU DRAGON ✦"
+            set line 1 of lore of {_i} to "&8&m─────────────────────────"
+            set line 2 of lore of {_i} to "&7Gear Score: &5870 &8| &7Pièce: &fCasque"
+            set line 3 of lore of {_i} to "&7Santé: &a+80 ❤ &8| &7Défense: &a+110 ❈"
+            set line 4 of lore of {_i} to "&7Vision Nocturne: &5Infinie 👁"
+            set line 5 of lore of {_i} to "&8&m─────────────────────────"
+            set line 6 of lore of {_i} to "&5Bonus de Set Complet (4/4) : Puissance Draconique"
+            set line 7 of lore of {_i} to "&7Octroie &5Force I &7permanente et immunité"
+            set line 8 of lore of {_i} to "&7aux effets de cécité et d'obscurité."
+            set line 9 of lore of {_i} to "&8&m─────────────────────────"
+            set line 10 of lore of {_i} to "&5&l✦ ARMURE MYTHIQUE DRAGON ✦"
+            enchant {_i} with protection 4
+            enchant {_i} with unbreaking 3
+            return {_i}
+        else if {_piece} is "chestplate":
+            set {_i} to 1 of netherite chestplate named "&5&l✦ CUIRASSE DU DRAGON ✦"
+            set line 1 of lore of {_i} to "&8&m─────────────────────────"
+            set line 2 of lore of {_i} to "&7Gear Score: &5930 &8| &7Pièce: &fPlastron"
+            set line 3 of lore of {_i} to "&7Santé: &a+150 ❤ &8| &7Défense: &a+180 ❈"
+            set line 4 of lore of {_i} to "&8&m─────────────────────────"
+            set line 5 of lore of {_i} to "&eCapacité : Rugissement Draconique &e&l[CLIC DROIT]"
+            set line 6 of lore of {_i} to "&7Déclenche une onde de choc repoussant les monstres"
+            set line 7 of lore of {_i} to "&7et confère &5Force II &7pendant 8 secondes."
+            set line 8 of lore of {_i} to "&8Temps de recharge: &a30s"
+            set line 9 of lore of {_i} to " "
+            set line 10 of lore of {_i} to "&5Bonus de Set (4/4) : &5Force I & Vision Nocturne"
+            set line 11 of lore of {_i} to "&8&m─────────────────────────"
+            set line 12 of lore of {_i} to "&5&l✦ ARMURE MYTHIQUE DRAGON ✦"
+            enchant {_i} with protection 4
+            enchant {_i} with unbreaking 3
+            return {_i}
+        else if {_piece} is "leggings":
+            set {_i} to 1 of netherite leggings named "&5&l✦ ÉCAILLES DU DRAGON ✦"
+            set line 1 of lore of {_i} to "&8&m─────────────────────────"
+            set line 2 of lore of {_i} to "&7Gear Score: &5900 &8| &7Pièce: &fJambières"
+            set line 3 of lore of {_i} to "&7Santé: &a+120 ❤ &8| &7Défense: &a+145 ❈"
+            set line 4 of lore of {_i} to "&8&m─────────────────────────"
+            set line 5 of lore of {_i} to "&5Bonus de Set (4/4) : &5Force I & Vision Nocturne"
+            set line 6 of lore of {_i} to "&8&m─────────────────────────"
+            set line 7 of lore of {_i} to "&5&l✦ ARMURE MYTHIQUE DRAGON ✦"
+            enchant {_i} with protection 4
+            enchant {_i} with unbreaking 3
+            return {_i}
+        else if {_piece} is "boots":
+            set {_i} to 1 of netherite boots named "&5&l✦ GRIFFES DU DRAGON ✦"
+            set line 1 of lore of {_i} to "&8&m─────────────────────────"
+            set line 2 of lore of {_i} to "&7Gear Score: &5860 &8| &7Pièce: &fBottes"
+            set line 3 of lore of {_i} to "&7Santé: &a+70 ❤ &8| &7Défense: &a+95 ❈"
+            set line 4 of lore of {_i} to "&7Vitesse: &b+10%% ✦ &8| &7Chute Amortie: &fIV"
+            set line 5 of lore of {_i} to "&8&m─────────────────────────"
+            set line 6 of lore of {_i} to "&5Bonus de Set (4/4) : &5Force I & Vision Nocturne"
+            set line 7 of lore of {_i} to "&8&m─────────────────────────"
+            set line 8 of lore of {_i} to "&5&l✦ ARMURE MYTHIQUE DRAGON ✦"
+            enchant {_i} with protection 4
+            enchant {_i} with feather falling 4
+            enchant {_i} with unbreaking 3
+            return {_i}
+
+    # 6. SET DU NÉANT OBSCUR
+    else if {_set} is "void":
+        if {_piece} is "helmet":
+            set {_i} to 1 of netherite helmet named "&8&l✦ MASQUE DU NÉANT ✦"
+            set line 1 of lore of {_i} to "&8&m─────────────────────────"
+            set line 2 of lore of {_i} to "&7Gear Score: &8850 &8| &7Pièce: &fCasque"
+            set line 3 of lore of {_i} to "&7Santé: &a+75 ❤ &8| &7Défense: &a+100 ❈"
+            set line 4 of lore of {_i} to "&8&m─────────────────────────"
+            set line 5 of lore of {_i} to "&8Bonus de Set Complet (4/4) : Corps du Néant"
+            set line 6 of lore of {_i} to "&7Confère &8Résistance I &7permanente et une"
+            set line 7 of lore of {_i} to "&7immunité intégrale aux explosions et chutes."
+            set line 8 of lore of {_i} to "&8&m─────────────────────────"
+            set line 9 of lore of {_i} to "&8&l✦ ARMURE MYTHIQUE NÉANT ✦"
+            enchant {_i} with protection 4
+            enchant {_i} with unbreaking 3
+            return {_i}
+        else if {_piece} is "chestplate":
+            set {_i} to 1 of netherite chestplate named "&8&l✦ ARMATURE DU NÉANT ✦"
+            set line 1 of lore of {_i} to "&8&m─────────────────────────"
+            set line 2 of lore of {_i} to "&7Gear Score: &8910 &8| &7Pièce: &fPlastron"
+            set line 3 of lore of {_i} to "&7Santé: &a+140 ❤ &8| &7Défense: &a+170 ❈"
+            set line 4 of lore of {_i} to "&8&m─────────────────────────"
+            set line 5 of lore of {_i} to "&eCapacité : Éclipse du Néant &e&l[CLIC DROIT]"
+            set line 6 of lore of {_i} to "&7Aveugle les ennemis dans 8 blocs et confère une"
+            set line 7 of lore of {_i} to "&8Invulnérabilité totale &7pendant 3 secondes."
+            set line 8 of lore of {_i} to "&8Temps de recharge: &a35s"
+            set line 9 of lore of {_i} to " "
+            set line 10 of lore of {_i} to "&8Bonus de Set (4/4) : &8Résistance I & Anti-Explosions"
+            set line 11 of lore of {_i} to "&8&m─────────────────────────"
+            set line 12 of lore of {_i} to "&8&l✦ ARMURE MYTHIQUE NÉANT ✦"
+            enchant {_i} with protection 4
+            enchant {_i} with unbreaking 3
+            return {_i}
+        else if {_piece} is "leggings":
+            set {_i} to 1 of netherite leggings named "&8&l✦ GREVIÈRES DU NÉANT ✦"
+            set line 1 of lore of {_i} to "&8&m─────────────────────────"
+            set line 2 of lore of {_i} to "&7Gear Score: &8880 &8| &7Pièce: &fJambières"
+            set line 3 of lore of {_i} to "&7Santé: &a+110 ❤ &8| &7Défense: &a+135 ❈"
+            set line 4 of lore of {_i} to "&8&m─────────────────────────"
+            set line 5 of lore of {_i} to "&8Bonus de Set (4/4) : &8Résistance I & Anti-Explosions"
+            set line 6 of lore of {_i} to "&8&m─────────────────────────"
+            set line 7 of lore of {_i} to "&8&l✦ ARMURE MYTHIQUE NÉANT ✦"
+            enchant {_i} with protection 4
+            enchant {_i} with unbreaking 3
+            return {_i}
+        else if {_piece} is "boots":
+            set {_i} to 1 of netherite boots named "&8&l✦ PAS DU NÉANT ✦"
+            set line 1 of lore of {_i} to "&8&m─────────────────────────"
+            set line 2 of lore of {_i} to "&7Gear Score: &8840 &8| &7Pièce: &fBottes"
+            set line 3 of lore of {_i} to "&7Santé: &a+65 ❤ &8| &7Défense: &a+90 ❈"
+            set line 4 of lore of {_i} to "&7Pas Silencieux &8| &7Chute Amortie: &fIV"
+            set line 5 of lore of {_i} to "&8&m─────────────────────────"
+            set line 6 of lore of {_i} to "&8Bonus de Set (4/4) : &8Résistance I & Anti-Explosions"
+            set line 7 of lore of {_i} to "&8&m─────────────────────────"
+            set line 8 of lore of {_i} to "&8&l✦ ARMURE MYTHIQUE NÉANT ✦"
+            enchant {_i} with protection 4
+            enchant {_i} with feather falling 4
+            enchant {_i} with unbreaking 3
+            return {_i}
+
+# ==================== FABRICATION DES ARTEFACTS & RELIQUES (STYLE HYPIXEL / RPG) ====================
+
+function getCustomRelic(type: text) :: item:
+    # 1. Cœur du Titan
+    if {_type} is "heart":
+        set {_i} to 1 of nether star named "&6&l✦ CŒUR DU TITAN ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &6890 &8| &7Rareté: &6&lLÉGENDAIRE"
+        set line 3 of lore of {_i} to "&7Emplacement: &fMain Secondaire &8| &7Santé: &a+4❤"
+        set line 4 of lore of {_i} to "&8&m─────────────────────────"
+        set line 5 of lore of {_i} to "&6Passif : Vitalité Colossale"
+        set line 6 of lore of {_i} to "&7Confère un bouclier permanent de &6+4 Cœurs d'Absorption"
+        set line 7 of lore of {_i} to "&7qui se régénèrent en continu."
+        set line 8 of lore of {_i} to "&8&m─────────────────────────"
+        set line 9 of lore of {_i} to "&6&l✦ ARTEFACT LÉGENDAIRE MINESTARS ✦"
+        set custom model data of {_i} to 30001
+        return {_i}
+
+    # 2. Amulette des Vents
+    else if {_type} is "wind":
+        set {_i} to 1 of feather named "&a&l✦ AMULETTE DES VENTS ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &a830 &8| &7Rareté: &a&lLÉGENDAIRE"
+        set line 3 of lore of {_i} to "&7Emplacement: &fMain Secondaire &8| &7Vitesse: &b+30%% ✦"
+        set line 4 of lore of {_i} to "&8&m─────────────────────────"
+        set line 5 of lore of {_i} to "&aPassif : Célérité Suprême"
+        set line 6 of lore of {_i} to "&7Octroie &bVitesse II &7permanente et annule"
+        set line 7 of lore of {_i} to "&7intégralement tous les dégâts de chute."
+        set line 8 of lore of {_i} to "&8&m─────────────────────────"
+        set line 9 of lore of {_i} to "&a&l✦ ARTEFACT LÉGENDAIRE MINESTARS ✦"
+        enchant {_i} with unbreaking 1
+        set custom model data of {_i} to 30002
+        return {_i}
+
+    # 3. Anneau des Enfers
+    else if {_type} is "ring":
+        set {_i} to 1 of magma cream named "&c&l✦ ANNEAU DES ENFERS ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &c870 &8| &7Rareté: &c&lMYTHIQUE"
+        set line 3 of lore of {_i} to "&7Emplacement: &fMain Secondaire &8| &cÉpines Magmatiques"
+        set line 4 of lore of {_i} to "&8&m─────────────────────────"
+        set line 5 of lore of {_i} to "&cPassif : Épines Ardentes"
+        set line 6 of lore of {_i} to "&7Enflamme et repousse instantanément tout agresseur"
+        set line 7 of lore of {_i} to "&7en lui renvoyant 30%% des dégâts reçus."
+        set line 8 of lore of {_i} to "&8&m─────────────────────────"
+        set line 9 of lore of {_i} to "&c&l✦ ARTEFACT MYTHIQUE MINESTARS ✦"
+        enchant {_i} with unbreaking 1
+        set custom model data of {_i} to 30003
+        return {_i}
+
+    # 4. Totem Ancestral Renforcé
+    else if {_type} is "totem":
+        set {_i} to 1 of totem of undying named "&e&l✦ TOTEM ANCESTRAL ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &e950 &8| &7Rareté: &e&lDIVIN"
+        set line 3 of lore of {_i} to "&7Emplacement: &fMain Secondaire &8| &eRésurrection Majeure"
+        set line 4 of lore of {_i} to "&8&m─────────────────────────"
+        set line 5 of lore of {_i} to "&ePassif : Renaissance Héroïque"
+        set line 6 of lore of {_i} to "&7En cas de coup fatal, vous ressuscite avec"
+        set line 7 of lore of {_i} to "&eRégénération III&7, &cForce II &7et &eAbsorption IV&7."
+        set line 8 of lore of {_i} to "&8&m─────────────────────────"
+        set line 9 of lore of {_i} to "&e&l✦ TOTEM DIVIN MINESTARS ✦"
+        enchant {_i} with unbreaking 3
+        set custom model data of {_i} to 30004
+        return {_i}
+
+    # 5. Ailes Célestes
+    else if {_type} is "wings":
+        set {_i} to 1 of elytra named "&d&l✦ AILES CÉLESTES ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &d900 &8| &7Rareté: &d&lMYTHIQUE"
+        set line 3 of lore of {_i} to "&7Emplacement: &fPlastron &8| &dVol Perpétuel ✦"
+        set line 4 of lore of {_i} to "&8&m─────────────────────────"
+        set line 5 of lore of {_i} to "&dPassif : Vol Éthéré"
+        set line 6 of lore of {_i} to "&7Solidité infinie avec traînée scintillante de"
+        set line 7 of lore of {_i} to "&7poussière d'étoiles célestes en vol."
+        set line 8 of lore of {_i} to "&8&m─────────────────────────"
+        set line 9 of lore of {_i} to "&d&l✦ ÉLYTRE MYTHIQUE MINESTARS ✦"
+        enchant {_i} with unbreaking 3
+        enchant {_i} with mending 1
+        set custom model data of {_i} to 30005
+        return {_i}
+
+    # 6. Élytre du Phénix
+    else if {_type} is "phoenix_wings":
+        set {_i} to 1 of elytra named "&c&l✦ AILES DU PHÉNIX ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &c860 &8| &7Rareté: &c&lLÉGENDAIRE"
+        set line 3 of lore of {_i} to "&7Emplacement: &fPlastron &8| &cPropulsion Solaire"
+        set line 4 of lore of {_i} to "&8&m─────────────────────────"
+        set line 5 of lore of {_i} to "&cPassif : Traînée de Braises"
+        set line 6 of lore of {_i} to "&7Propulse le joueur vers l'avant et laisse une"
+        set line 7 of lore of {_i} to "&7traînée de flammes purificatrices."
+        set line 8 of lore of {_i} to "&8&m─────────────────────────"
+        set line 9 of lore of {_i} to "&c&l✦ ÉLYTRE LÉGENDAIRE MINESTARS ✦"
+        enchant {_i} with unbreaking 3
+        enchant {_i} with mending 1
+        set custom model data of {_i} to 30006
+        return {_i}
+
+    # 7. Orbe de Vitalité
+    else if {_type} is "orb":
+        set {_i} to 1 of heart of the sea named "&b&l✦ ORBE DE VITALITÉ ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &b850 &8| &7Rareté: &b&lLÉGENDAIRE"
+        set line 3 of lore of {_i} to "&7Emplacement: &fMain Secondaire &8| &bSauvetage Vital"
+        set line 4 of lore of {_i} to "&8&m─────────────────────────"
+        set line 5 of lore of {_i} to "&bPassif : Survie Miraculeuse"
+        set line 6 of lore of {_i} to "&7Déclenche automatiquement &bRégénération II &7et"
+        set line 7 of lore of {_i} to "&bRésistance I &7dès que vos PV tombent sous 30%%."
+        set line 8 of lore of {_i} to "&8&m─────────────────────────"
+        set line 9 of lore of {_i} to "&b&l✦ ARTEFACT LÉGENDAIRE MINESTARS ✦"
+        set custom model data of {_i} to 30007
+        return {_i}
+
+    # 8. Gemme Sanglante
+    else if {_type} is "gem":
+        set {_i} to 1 of red dye named "&4&l✦ GEMME SANGLANTE ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Gear Score: &4880 &8| &7Rareté: &4&lMYTHIQUE"
+        set line 3 of lore of {_i} to "&7Emplacement: &fMain Secondaire &8| &cVol de Vie: +10%% 🩸"
+        set line 4 of lore of {_i} to "&8&m─────────────────────────"
+        set line 5 of lore of {_i} to "&4Passif : Soif de Sang Globale"
+        set line 6 of lore of {_i} to "&7Ajoute &c+10%% de Vol de Vie &7supplémentaire"
+        set line 7 of lore of {_i} to "&7sur toutes vos armes de mêlée et à distance."
+        set line 8 of lore of {_i} to "&8&m─────────────────────────"
+        set line 9 of lore of {_i} to "&4&l✦ ARTEFACT MYTHIQUE MINESTARS ✦"
+        enchant {_i} with unbreaking 1
+        set custom model data of {_i} to 30008
+        return {_i}
+
+# ==================== BONUS DE SETS D'ARMURES 4/4 ACTIFS ====================
+
+every 3 seconds:
+    loop all players:
+        set {_h} to name of loop-player's helmet
+        set {_c} to name of loop-player's chestplate
+        set {_l} to name of loop-player's leggings
+        set {_b} to name of loop-player's boots
+        set {_u} to uuid of loop-player
+        
+        # 1. Set Titan 4/4
+        if {_h} contains "TITAN":
+            if {_c} contains "TITAN":
+                if {_l} contains "TITAN":
+                    if {_b} contains "TITAN":
+                        apply resistance 1 to loop-player for 4 seconds
+                        if {set_active_titan::%{_u}%} is not set:
+                            set {set_active_titan::%{_u}%} to true
+                            send title "&6&l✦ SET DU TITAN COMPLET ✦" with subtitle "&eRésistance & Anti-Knockback activés !" to loop-player for 3 seconds
+                            play sound "block.anvil.use" to loop-player
+        else:
+            delete {set_active_titan::%{_u}%}
+                        
+        # 2. Set Phénix 4/4
+        if {_h} contains "PHÉNIX":
+            if {_c} contains "PHÉNIX":
+                if {_l} contains "PHÉNIX":
+                    if {_b} contains "PHÉNIX":
+                        apply regeneration 1 to loop-player for 4 seconds
+                        apply fire resistance 1 to loop-player for 4 seconds
+                        if {set_active_phoenix::%{_u}%} is not set:
+                            set {set_active_phoenix::%{_u}%} to true
+                            send title "&c&l✦ SET DU PHÉNIX COMPLET ✦" with subtitle "&eRégénération & Immunité Feu activées !" to loop-player for 3 seconds
+                            play sound "entity.blaze.shoot" to loop-player
+        else:
+            delete {set_active_phoenix::%{_u}%}
+
+        # 3. Set Ombre 4/4
+        if {_h} contains "OMBRE":
+            if {_c} contains "OMBRE":
+                if {_l} contains "OMBRE":
+                    if {_b} contains "OMBRE":
+                        apply speed 2 to loop-player for 4 seconds
+                        if {set_active_shadow::%{_u}%} is not set:
+                            set {set_active_shadow::%{_u}%} to true
+                            send title "&8&l✦ SET DE L'OMBRE COMPLET ✦" with subtitle "&7Vitesse II & 25%% Esquive activées !" to loop-player for 3 seconds
+                            play sound "entity.enderman.teleport" to loop-player
+        else:
+            delete {set_active_shadow::%{_u}%}
+
+        # 4. Set Céleste 4/4
+        if {_h} contains "CÉLESTE":
+            if {_c} contains "CÉLESTE":
+                if {_l} contains "CÉLESTE":
+                    if {_b} contains "CÉLESTE":
+                        apply jump boost 1 to loop-player for 4 seconds
+                        if {set_active_celestial::%{_u}%} is not set:
+                            set {set_active_celestial::%{_u}%} to true
+                            send title "&a&l✦ SET CÉLESTE COMPLET ✦" with subtitle "&f+50%% Gains & Saut amélioré activés !" to loop-player for 3 seconds
+                            play sound "entity.player.levelup" to loop-player
+        else:
+            delete {set_active_celestial::%{_u}%}
+
+        # 5. Set Dragon 4/4
+        if {_h} contains "DRAGON":
+            if {_c} contains "DRAGON":
+                if {_l} contains "DRAGON":
+                    if {_b} contains "DRAGON":
+                        apply strength 1 to loop-player for 4 seconds
+                        apply night vision 1 to loop-player for 10 seconds
+                        if {set_active_dragon::%{_u}%} is not set:
+                            set {set_active_dragon::%{_u}%} to true
+                            send title "&5&l✦ SET DU DRAGON COMPLET ✦" with subtitle "&dForce I & Vision Nocturne activées !" to loop-player for 3 seconds
+                            play sound "entity.ender_dragon.growl" to loop-player
+        else:
+            delete {set_active_dragon::%{_u}%}
+
+        # 6. Set Néant 4/4
+        if {_h} contains "NÉANT":
+            if {_c} contains "NÉANT":
+                if {_l} contains "NÉANT":
+                    if {_b} contains "NÉANT":
+                        apply resistance 1 to loop-player for 4 seconds
+                        if {set_active_void::%{_u}%} is not set:
+                            set {set_active_void::%{_u}%} to true
+                            send title "&8&l✦ SET DU NÉANT COMPLET ✦" with subtitle "&7Résistance I & Anti-Explosions activés !" to loop-player for 3 seconds
+                            play sound "entity.wither.ambient" to loop-player
+        else:
+            delete {set_active_void::%{_u}%}
+
+        # Main secondaire Artefacts
+        set {_off} to name of loop-player's offhand tool
+        if {_off} contains "CŒUR DU TITAN":
+            apply absorption 2 to loop-player for 4 seconds
+        else if {_off} contains "AMULETTE DES VENTS":
+            apply speed 2 to loop-player for 4 seconds
+
+# ==================== MINAGE 3X3, AUTO-SMELT & OUTILS MYTHIQUES ====================
+
+on break:
+    set {_item} to player's tool
+    set {_name} to name of {_item}
+    
+    # 1. Pioche du Titan (Minage 3x3)
+    if {_name} contains "PIOCHE DU TITAN":
+        if event-block is stone, deepslate, granite, diorite, andesite, cobblestone, netherrack, end stone, coal ore, iron ore, copper ore, gold ore, redstone ore, lapis ore, diamond ore or emerald ore:
+            loop blocks in radius 1 around event-block:
+                if loop-block is not event-block:
+                    if loop-block is stone, deepslate, granite, diorite, andesite, cobblestone, netherrack, end stone, coal ore, iron ore, copper ore, gold ore, redstone ore, lapis ore, diamond ore or emerald ore:
+                        break loop-block naturally using {_item}
+            play sound "block.stone.break" at event-block for player
+
+    # 2. Pioche Auto-Smelt (Cuisson Instantanée)
+    else if {_name} contains "AUTO-SMELT":
+        if event-block is raw iron block or iron ore or deepslate iron ore:
+            cancel event
+            set event-block to air
+            drop 1 of iron ingot at event-location
+            spawn 2 of xp at player
+            play sound "block.fire.extinguish" at event-location for player
+        else if event-block is raw gold block or gold ore or deepslate gold ore or nether gold ore:
+            cancel event
+            set event-block to air
+            drop 1 of gold ingot at event-location
+            spawn 3 of xp at player
+            play sound "block.fire.extinguish" at event-location for player
+        else if event-block is raw copper block or copper ore or deepslate copper ore:
+            cancel event
+            set event-block to air
+            drop 1 of copper ingot at event-location
+            play sound "block.fire.extinguish" at event-location for player
+
+    # 3. Pelle du Colosse (Excavation 3x3)
+    else if {_name} contains "PELLE DU COLOSSE":
+        if event-block is dirt, grass block, coarse dirt, rooted dirt, mud, sand, red sand, gravel or clay:
+            loop blocks in radius 1 around event-block:
+                if loop-block is not event-block:
+                    if loop-block is dirt, grass block, coarse dirt, rooted dirt, mud, sand, red sand, gravel or clay:
+                        break loop-block naturally using {_item}
+            play sound "block.gravel.break" at event-block for player
+
+    # 4. Hache Sylvestre (Abattage d'arbres)
+    else if {_name} contains "HACHE SYLVESTRE":
+        if event-block is oak log, birch log, spruce log, jungle log, acacia log, dark oak log, mangrove log or cherry log:
+            loop blocks in radius 3 around event-block:
+                if loop-block is oak log, birch log, spruce log, jungle log, acacia log, dark oak log, mangrove log or cherry log:
+                    break loop-block naturally using {_item}
+            play sound "block.wood.break" at event-block for player
+
+# Pêche avec la Canne des Profondeurs
+on fishing:
+    if fish state is caught fish:
+        if name of player's tool contains "CANNE DES PROFONDEURS":
+            if chance of 20%:
+                give 1 of diamond to player
+                play sound "entity.player.levelup" at player for player
+                send action bar "&b💎 Trésor des Abysses pêché : +1 Diamant !" to player
+            else if chance of 33%:
+                give 2 of gold ingot to player
+                send action bar "&6🪙 Trésor des Abysses pêché : +2 Lingots d'Or !" to player
+
+# ==================== COMPÉTENCES ACTIVES & SORTS ====================
+
+on right click:
+    set {_item} to player's tool
+    set {_name} to name of {_item}
+    set {_u} to uuid of player
+    
+    # 1. Lame Stellaire
+    if {_name} contains "LAME STELLAIRE":
+        if {cd_star::%{_u}%} is set:
+            set {_diff} to difference between {cd_star::%{_u}%} and now
+            if {_diff} < 10 seconds:
+                set {_left} to difference between {_diff} and 10 seconds
+                send action bar "&c⏳ Rayon Stellaire disponible dans %{_left}% !" to player
+                stop
+        set {cd_star::%{_u}%} to now
+        play sound "entity.player.attack.sweep" at player for all players
+        play sound "entity.warden.sonic_boom" at player for all players
+        loop 10 times:
+            set {_loc} to location (loop-number * 1.5) meters in front of player
+            play sound "entity.firework_rocket.blast" at {_loc} for all players
+            loop entities in radius 2 around {_loc}:
+                if loop-entity is not player:
+                    damage loop-entity by 7
+        send action bar "&d✨ Rayon Stellaire déclenché !" to player
+
+    # 2. Hache Tellurique
+    else if {_name} contains "HACHE TELLURIQUE":
+        if {cd_titan::%{_u}%} is set:
+            set {_diff} to difference between {cd_titan::%{_u}%} and now
+            if {_diff} < 12 seconds:
+                set {_left} to difference between {_diff} and 12 seconds
+                send action bar "&c⏳ Fracas Sismique disponible dans %{_left}% !" to player
+                stop
+        set {cd_titan::%{_u}%} to now
+        play sound "entity.generic.explode" at player for all players
+        loop entities in radius 6 around player:
+            if loop-entity is not player:
+                push loop-entity upwards at speed 0.7
+                push loop-entity (vector from player to loop-entity) at speed 1.3
+                damage loop-entity by 6
+        send action bar "&6💥 Fracas Sismique déclenché !" to player
+
+    # 3. Faux de la Faucheuse
+    else if {_name} contains "FAUX DE LA FAUCHEUSE":
+        if {cd_scythe::%{_u}%} is set:
+            set {_diff} to difference between {cd_scythe::%{_u}%} and now
+            if {_diff} < 12 seconds:
+                set {_left} to difference between {_diff} and 12 seconds
+                send action bar "&c⏳ Siphon d'Âmes disponible dans %{_left}% !" to player
+                stop
+        set {cd_scythe::%{_u}%} to now
+        play sound "entity.wither.shoot" at player for all players
+        set {_stolen} to 0
+        loop entities in radius 6 around player:
+            if loop-entity is not player:
+                damage loop-entity by 4
+                apply wither 2 to loop-entity for 4 seconds
+                add 2 to {_stolen}
+        if {_stolen} > 0:
+            heal player by ({_stolen} / 2)
+            play sound "entity.player.levelup" at player for player
+            send action bar "&5💀 Siphon d'Âmes : +%{_stolen}/2%❤ volés !" to player
+
+    # 4. Marteau de Thor
+    else if {_name} contains "MARTEAU DE THOR":
+        if {cd_hammer::%{_u}%} is set:
+            set {_diff} to difference between {cd_hammer::%{_u}%} and now
+            if {_diff} < 15 seconds:
+                set {_left} to difference between {_diff} and 15 seconds
+                send action bar "&c⏳ Frappe Céleste disponible dans %{_left}% !" to player
+                stop
+        set {cd_hammer::%{_u}%} to now
+        set {_targetBlock} to targeted block of player
+        if {_targetBlock} is set:
+            strike lightning effect at {_targetBlock}
+            play sound "entity.lightning_bolt.thunder" at {_targetBlock} for all players
+            loop entities in radius 5 around {_targetBlock}:
+                if loop-entity is not player:
+                    damage loop-entity by 8
+                    apply slowness 3 to loop-entity for 2 seconds
+            send action bar "&e⚡ Frappe Céleste invoquée !" to player
+
+    # 5. Katana du Vent
+    else if {_name} contains "KATANA DU VENT":
+        if {cd_katana::%{_u}%} is set:
+            set {_diff} to difference between {cd_katana::%{_u}%} and now
+            if {_diff} < 8 seconds:
+                set {_left} to difference between {_diff} and 8 seconds
+                send action bar "&c⏳ Ruée du Vent disponible dans %{_left}% !" to player
+                stop
+        set {cd_katana::%{_u}%} to now
+        push player forward at speed 1.8
+        play sound "entity.player.attack.sweep" at player for all players
+        loop entities in radius 3 around player:
+            if loop-entity is not player:
+                damage loop-entity by 6
+        send action bar "&a💨 Ruée Tranchante du Vent !" to player
+
+    # 6. Lame Glaciaire
+    else if {_name} contains "LAME GLACIAIRE":
+        if {cd_frost::%{_u}%} is set:
+            set {_diff} to difference between {cd_frost::%{_u}%} and now
+            if {_diff} < 10 seconds:
+                set {_left} to difference between {_diff} and 10 seconds
+                send action bar "&c⏳ Gelée Boréale disponible dans %{_left}% !" to player
+                stop
+        set {cd_frost::%{_u}%} to now
+        play sound "block.glass.break" at player for all players
+        loop entities in radius 8 around player:
+            if loop-entity is not player:
+                apply slowness 4 to loop-entity for 4 seconds
+                damage loop-entity by 5
+        send action bar "&b❄ Gelée Boréale activée !" to player
+
+    # 7. Épée Vampirique
+    else if {_name} contains "ÉPÉE VAMPIRIQUE":
+        if {cd_vampire::%{_u}%} is set:
+            set {_diff} to difference between {cd_vampire::%{_u}%} and now
+            if {_diff} < 15 seconds:
+                set {_left} to difference between {_diff} and 15 seconds
+                send action bar "&c⏳ Festin de Sang disponible dans %{_left}% !" to player
+                stop
+        set {cd_vampire::%{_u}%} to now
+        apply strength 1 to player for 6 seconds
+        heal player by 3
+        play sound "entity.wither.ambient" at player for all players
+        send action bar "&4🩸 Festin de Sang : Force & Vol de vie amplifiés !" to player
+
+    # 8. Hache Infernale
+    else if {_name} contains "HACHE INFERNALE":
+        if {cd_inferno::%{_u}%} is set:
+            set {_diff} to difference between {cd_inferno::%{_u}%} and now
+            if {_diff} < 12 seconds:
+                set {_left} to difference between {_diff} and 12 seconds
+                send action bar "&c⏳ Geysers de Lave disponible dans %{_left}% !" to player
+                stop
+        set {cd_inferno::%{_u}%} to now
+        play sound "entity.blaze.shoot" at player for all players
+        loop entities in radius 7 around player:
+            if loop-entity is not player:
+                ignite loop-entity for 6 seconds
+                damage loop-entity by 7
+        send action bar "&c🔥 Geysers de Lave déclenchés !" to player
+
+    # 9. Lame du Dragon
+    else if {_name} contains "LAME DU DRAGON":
+        if {cd_dragon::%{_u}%} is set:
+            set {_diff} to difference between {cd_dragon::%{_u}%} and now
+            if {_diff} < 12 seconds:
+                set {_left} to difference between {_diff} and 12 seconds
+                send action bar "&c⏳ Souffle du Dragon disponible dans %{_left}% !" to player
+                stop
+        set {cd_dragon::%{_u}%} to now
+        play sound "entity.ender_dragon.growl" at player for all players
+        loop 8 times:
+            set {_loc} to location (loop-number * 1.5) meters in front of player
+            loop entities in radius 3 around {_loc}:
+                if loop-entity is not player:
+                    damage loop-entity by 8
+                    ignite loop-entity for 4 seconds
+        send action bar "&5🐉 Souffle du Dragon déchaîné !" to player
+
+    # 10. Lame du Sculk (Warden Cri)
+    else if {_name} contains "LAME DU SCULK":
+        if {cd_sculk::%{_u}%} is set:
+            set {_diff} to difference between {cd_sculk::%{_u}%} and now
+            if {_diff} < 14 seconds:
+                set {_left} to difference between {_diff} and 14 seconds
+                send action bar "&c⏳ Cri Sonique disponible dans %{_left}% !" to player
+                stop
+        set {cd_sculk::%{_u}%} to now
+        play sound "entity.warden.sonic_boom" at player for all players
+        loop entities in radius 8 around player:
+            if loop-entity is not player:
+                damage loop-entity by 9
+                push loop-entity (vector from player to loop-entity) at speed 1.5
+        send action bar "&3🔊 Cri Sonique du Warden !" to player
+
+    # 11. Dague Toxique
+    else if {_name} contains "DAGUE TOXIQUE":
+        if {cd_venom::%{_u}%} is set:
+            set {_diff} to difference between {cd_venom::%{_u}%} and now
+            if {_diff} < 10 seconds:
+                set {_left} to difference between {_diff} and 10 seconds
+                send action bar "&c⏳ Nuage Toxique disponible dans %{_left}% !" to player
+                stop
+        set {cd_venom::%{_u}%} to now
+        play sound "block.brewing_stand.brew" at player for all players
+        loop entities in radius 6 around player:
+            if loop-entity is not player:
+                apply poison 2 to loop-entity for 6 seconds
+                apply blindness 1 to loop-entity for 4 seconds
+                damage loop-entity by 4
+        send action bar "&2🧪 Nuage Toxique libéré !" to player
+
+    # 12. Épée du Chaos
+    else if {_name} contains "ÉPÉE DU CHAOS":
+        if {cd_chaos::%{_u}%} is set:
+            set {_diff} to difference between {cd_chaos::%{_u}%} and now
+            if {_diff} < 15 seconds:
+                set {_left} to difference between {_diff} and 15 seconds
+                send action bar "&c⏳ Faille Temporelle disponible dans %{_left}% !" to player
+                stop
+        set {cd_chaos::%{_u}%} to now
+        play sound "entity.enderman.teleport" at player for all players
+        loop entities in radius 7 around player:
+            if loop-entity is not player:
+                push loop-entity upwards at speed 1.5
+                apply slowness 3 to loop-entity for 4 seconds
+                damage loop-entity by 7
+        send action bar "&1🌀 Faille Temporelle ouverte !" to player
+
+    # 13. Lame de l'Infini
+    else if {_name} contains "LAME DE L'INFINI":
+        if {cd_infinity::%{_u}%} is set:
+            set {_diff} to difference between {cd_infinity::%{_u}%} and now
+            if {_diff} < 15 seconds:
+                set {_left} to difference between {_diff} and 15 seconds
+                send action bar "&c⏳ Singularité disponible dans %{_left}% !" to player
+                stop
+        set {cd_infinity::%{_u}%} to now
+        play sound "block.beacon.activate" at player for all players
+        play sound "entity.elder_guardian.curse" at player for all players
+        loop entities in radius 8 around player:
+            if loop-entity is not player:
+                apply slowness 10 to loop-entity for 3 seconds
+                apply blindness 1 to loop-entity for 3 seconds
+                damage loop-entity by 8
+        send action bar "&6🌌 Singularité Cosmique : Temps gelé !" to player
+
+    # 14. Bâton de Tempête
+    else if {_name} contains "BÂTON DE TEMPÊTE":
+        if {cd_wand::%{_u}%} is set:
+            set {_diff} to difference between {cd_wand::%{_u}%} and now
+            if {_diff} < 8 seconds:
+                set {_left} to difference between {_diff} and 8 seconds
+                send action bar "&c⏳ Orbe Électrique disponible dans %{_left}% !" to player
+                stop
+        set {cd_wand::%{_u}%} to now
+        play sound "entity.lightning_bolt.thunder" at player for all players
+        set {_targetBlock} to targeted block of player
+        if {_targetBlock} is set:
+            strike lightning effect at {_targetBlock}
+            loop entities in radius 5 around {_targetBlock}:
+                if loop-entity is not player:
+                    damage loop-entity by 7
+        send action bar "&e⚡ Orbe Électrique foudroyante !" to player
+
+    # 15. Trident des Abysses
+    else if {_name} contains "TRIDENT DES ABYSSES":
+        if {cd_abyss::%{_u}%} is set:
+            set {_diff} to difference between {cd_abyss::%{_u}%} and now
+            if {_diff} < 12 seconds:
+                set {_left} to difference between {_diff} and 12 seconds
+                send action bar "&c⏳ Foudre Marine disponible dans %{_left}% !" to player
+                stop
+        set {cd_abyss::%{_u}%} to now
+        set {_targetBlock} to targeted block of player
+        if {_targetBlock} is set:
+            strike lightning effect at {_targetBlock}
+            play sound "entity.lightning_bolt.thunder" at {_targetBlock} for all players
+            loop entities in radius 4 around {_targetBlock}:
+                if loop-entity is not player:
+                    damage loop-entity by 8
+            send action bar "&b⚡ Foudre Marine invoquée !" to player
+
+    # 16. Dague de l'Ombre
+    else if {_name} contains "DAGUE DE L'OMBRE":
+        if {cd_shadow::%{_u}%} is set:
+            set {_diff} to difference between {cd_shadow::%{_u}%} and now
+            if {_diff} < 8 seconds:
+                set {_left} to difference between {_diff} and 8 seconds
+                send action bar "&c⏳ Pas de l'Ombre disponible dans %{_left}% !" to player
+                stop
+        set {cd_shadow::%{_u}%} to now
+        set {_dest} to location 6 meters in front of player
+        teleport player to {_dest}
+        apply invisibility 1 to player for 2 seconds
+        play sound "entity.enderman.teleport" at player for all players
+        send action bar "&8👤 Pas de l'Ombre activé !" to player
+
+    # 17. Plastron du Titan
+    else if {_name} contains "PLASTRON DU TITAN":
+        if {cd_armor_titan::%{_u}%} is set:
+            set {_diff} to difference between {cd_armor_titan::%{_u}%} and now
+            if {_diff} < 30 seconds:
+                set {_left} to difference between {_diff} and 30 seconds
+                send action bar "&c⏳ Peau de Pierre disponible dans %{_left}% !" to player
+                stop
+        set {cd_armor_titan::%{_u}%} to now
+        apply resistance 2 to player for 6 seconds
+        play sound "block.anvil.use" at player for all players
+        send action bar "&6🛡 Peau de Pierre activée (-35%% de dégâts) !" to player
+
+    # 18. Plastron du Phénix
+    else if {_name} contains "PLASTRON DU PHÉNIX":
+        if {cd_armor_phoenix::%{_u}%} is set:
+            set {_diff} to difference between {cd_armor_phoenix::%{_u}%} and now
+            if {_diff} < 25 seconds:
+                set {_left} to difference between {_diff} and 25 seconds
+                send action bar "&c⏳ Aura Solaire disponible dans %{_left}% !" to player
+                stop
+        set {cd_armor_phoenix::%{_u}%} to now
+        play sound "entity.blaze.shoot" at player for all players
+        loop entities in radius 6 around player:
+            if loop-entity is not player:
+                ignite loop-entity for 5 seconds
+                push loop-entity (vector from player to loop-entity) at speed 1.2
+        send action bar "&c🔥 Aura Solaire enflammée !" to player
+
+    # 19. Tunique de l'Ombre
+    else if {_name} contains "TUNIQUE DE L'OMBRE":
+        if {cd_armor_shadow::%{_u}%} is set:
+            set {_diff} to difference between {cd_armor_shadow::%{_u}%} and now
+            if {_diff} < 20 seconds:
+                set {_left} to difference between {_diff} and 20 seconds
+                send action bar "&c⏳ Voile d'Ombre disponible dans %{_left}% !" to player
+                stop
+        set {cd_armor_shadow::%{_u}%} to now
+        apply invisibility 1 to player for 4 seconds
+        apply speed 2 to player for 4 seconds
+        play sound "entity.enderman.teleport" at player for all players
+        send action bar "&8👤 Voile d'Ombre activé !" to player
+
+    # 20. Plastron Céleste
+    else if {_name} contains "PLASTRON CÉLESTE":
+        if {cd_armor_celestial::%{_u}%} is set:
+            set {_diff} to difference between {cd_armor_celestial::%{_u}%} and now
+            if {_diff} < 25 seconds:
+                set {_left} to difference between {_diff} and 25 seconds
+                send action bar "&c⏳ Barrière Divine disponible dans %{_left}% !" to player
+                stop
+        set {cd_armor_celestial::%{_u}%} to now
+        apply absorption 2 to player for 10 seconds
+        heal player by 4
+        play sound "entity.player.levelup" at player for all players
+        send action bar "&a✨ Barrière Divine activée (+4❤ Soin & Absorption) !" to player
+
+    # 21. Cuirasse du Dragon
+    else if {_name} contains "CUIRASSE DU DRAGON":
+        if {cd_armor_dragon::%{_u}%} is set:
+            set {_diff} to difference between {cd_armor_dragon::%{_u}%} and now
+            if {_diff} < 30 seconds:
+                set {_left} to difference between {_diff} and 30 seconds
+                send action bar "&c⏳ Rugissement disponible dans %{_left}% !" to player
+                stop
+        set {cd_armor_dragon::%{_u}%} to now
+        apply strength 2 to player for 8 seconds
+        play sound "entity.ender_dragon.growl" at player for all players
+        loop entities in radius 6 around player:
+            if loop-entity is not player:
+                push loop-entity (vector from player to loop-entity) at speed 1.4
+        send action bar "&5🐉 Rugissement Draconique (+Force II) !" to player
+
+    # 22. Armature du Néant
+    else if {_name} contains "ARMATURE DU NÉANT":
+        if {cd_armor_void::%{_u}%} is set:
+            set {_diff} to difference between {cd_armor_void::%{_u}%} and now
+            if {_diff} < 35 seconds:
+                set {_left} to difference between {_diff} and 35 seconds
+                send action bar "&c⏳ Éclipse du Néant disponible dans %{_left}% !" to player
+                stop
+        set {cd_armor_void::%{_u}%} to now
+        apply resistance 4 to player for 3 seconds
+        play sound "entity.wither.ambient" at player for all players
+        loop entities in radius 7 around player:
+            if loop-entity is not player:
+                apply blindness 1 to loop-entity for 4 seconds
+        send action bar "&8🌌 Éclipse du Néant : Immunité 3s & Aveuglement !" to player
+
+# ==================== PASSIFS DE COMBAT, BOUCLIERS & EFFETS KILL ====================
+
+on damage:
+    # 1. Passifs des Armes & Reliques Attaquant
+    if attacker is a player:
+        set {_name} to name of attacker's tool
+        
+        # Vol de vie Épée Vampirique
+        if {_name} contains "ÉPÉE VAMPIRIQUE":
+            heal attacker by (damage * 0.15)
+            
+        # Lame Glaciaire
+        if {_name} contains "LAME GLACIAIRE":
+            apply slowness 2 to victim for 2 seconds
+
+        # Faux de la Faucheuse Wither
+        if {_name} contains "FAUX DE LA FAUCHEUSE":
+            apply wither 1 to victim for 3 seconds
+
+        # Dague Toxique Poison
+        if {_name} contains "DAGUE TOXIQUE":
+            apply poison 1 to victim for 3 seconds
+            
+        # Hache Tellurique Étourdissement (20%)
+        if {_name} contains "HACHE TELLURIQUE":
+            if chance of 20%:
+                apply slowness 4 to victim for 2 seconds
+                play sound "block.anvil.land" at victim for attacker
+                send action bar "&6⚡ Ennemi étourdi !" to attacker
+
+        # Relique Gemme Sanglante en main secondaire
+        if name of attacker's offhand tool contains "GEMME SANGLANTE":
+            heal attacker by (damage * 0.10)
+
+        # Arcs & Arbalètes Customs
+        if damage cause is projectile:
+            if "%attacker's tool%" contains "ARC DU PHÉNIX":
+                ignite victim for 6 seconds
+                set damage to damage * 1.25
+            else if "%attacker's tool%" contains "ARC DE GRAVITÉ":
+                push victim (vector from victim to attacker) at speed 0.8
+            else if "%attacker's tool%" contains "ARC DU DRAGON":
+                create a safe explosion of force 2 at victim
+                set damage to damage * 1.35
+            else if "%attacker's tool%" contains "ARBALÈTE EXPLOSIVE":
+                create a safe explosion of force 1.5 at victim
+                set damage to damage * 1.3
+
+    # 2. Passifs des Armures & Bouclier Victime
+    if victim is a player:
+        # Bouclier de l'Aegis
+        if victim is blocking:
+            if name of victim's offhand tool contains "BOUCLIER DE L'AEGIS":
+                if attacker is set:
+                    push attacker (vector from victim to attacker) at speed 1.4
+                    play sound "item.shield.block" at victim for all players
+                    send action bar "&e🛡 Contre-Attaque Sismique de l'Aegis !" to victim
+
+        # Set de l'Ombre : 25% d'esquive
+        if name of victim's helmet contains "OMBRE":
+            if name of victim's chestplate contains "OMBRE":
+                if name of victim's leggings contains "OMBRE":
+                    if name of victim's boots contains "OMBRE":
+                        if chance of 25%:
+                            cancel event
+                            play sound "entity.enderman.teleport" at victim for victim
+                            send action bar "&8👤 Attaque esquivée (Set Ombre) !" to victim
+                            stop
+
+        # Set du Phénix : Immunité Feu/Lave
+        if damage cause is fire, burning or lava:
+            if name of victim's chestplate contains "PHÉNIX":
+                cancel event
+                stop
+
+        # Relique Anneau des Enfers en main secondaire
+        if name of victim's offhand tool contains "ANNEAU DES ENFERS":
+            if attacker is set:
+                ignite attacker for 4 seconds
+
+        # Relique Orbe de Vitalité (Sauvetage Vital < 30% PV)
+        if name of victim's offhand tool contains "ORBE DE VITALITÉ":
+            if (victim's health / victim's max health) < 0.3:
+                apply regeneration 2 to victim for 5 seconds
+                send action bar "&b💙 Sauvetage Vital déclenché !" to victim
+
+# Effet Sonore et Récompense lors des Kills
+on death:
+    if attacker is a player:
+        set {_tool} to name of attacker's tool
+        if {_tool} contains "LAME" or "HACHE" or "FAUX" or "MARTEAU" or "KATANA" or "ARC" or "TRIDENT" or "DAGUE":
+            play sound "entity.experience_orb.pickup" at attacker for attacker
+            send action bar "&a⚔ Ennemi éliminé avec %{_tool}% &a!" to attacker
+
+# ==================== FONCTION D'OUVERTURE DU GRAND MENU UNIFIÉ ====================
+
+function openArsenalMenu(p: player, category: text):
+    set {_gui} to a new chest inventory with 6 rows named "&8» &0&lMINESTARS &8- &6&lARSENAL UNIFIÉ"
+    
+    # Bordures décoratives
+    loop 54 times:
+        set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
+
+    # Ligne 1 : Onglets de Catégories (Slots 0, 2, 4, 6, 8)
+    if {_category} is "weapons":
+        set slot 0 of {_gui} to 1 of diamond sword named "&e&l▶ ⚔️ ARMES MYTHIQUES ◀" with lore "&a✓ Onglet Actif" and "&7Découvre les 20 armes légendaires."
+    else:
+        set slot 0 of {_gui} to 1 of iron sword named "&f⚔️ Armes Mythiques" with lore "&e▸ Clique pour afficher les armes"
+
+    if {_category} is "armors":
+        set slot 2 of {_gui} to 1 of netherite chestplate named "&e&l▶ 🛡️ ARMURES COMPLÈTES ◀" with lore "&a✓ Onglet Actif" and "&7Découvre les 6 sets d'armures."
+    else:
+        set slot 2 of {_gui} to 1 of iron chestplate named "&f🛡️ Armures Complètes" with lore "&e▸ Clique pour afficher les armures"
+
+    if {_category} is "tools":
+        set slot 4 of {_gui} to 1 of netherite pickaxe named "&e&l▶ ⛏️ OUTILS & BOUCLIERS ◀" with lore "&a✓ Onglet Actif" and "&7Pioche 3x3, Auto-Smelt, Hache & Bouclier."
+    else:
+        set slot 4 of {_gui} to 1 of iron pickaxe named "&f⛏️ Outils & Boucliers" with lore "&e▸ Clique pour afficher les outils"
+
+    if {_category} is "relics":
+        set slot 6 of {_gui} to 1 of nether star named "&e&l▶ 🔮 RELIQUES & ARTEFACTS ◀" with lore "&a✓ Onglet Actif" and "&7Découvre les 8 talismans magiques."
+    else:
+        set slot 6 of {_gui} to 1 of heart of the sea named "&f🔮 Reliques & Artefacts" with lore "&e▸ Clique pour afficher les reliques"
+
+    if {_category} is "all":
+        set slot 8 of {_gui} to 1 of beacon named "&e&l▶ 👑 ARSENAL GLOBAL ◀" with lore "&a✓ Onglet Actif" and "&7Vue d'ensemble de tous les équipements."
+    else:
+        set slot 8 of {_gui} to 1 of beacon named "&f👑 Vue Globale" with lore "&e▸ Clique pour afficher tout l'arsenal"
+
+    # ================= CONTENU SELON L'ONGLET =================
+    
+    # --- ONGLET 1 : ARMES ---
+    if {_category} is "weapons":
+        set slot 10 of {_gui} to getCustomWeapon("star")
+        set slot 11 of {_gui} to getCustomWeapon("titan")
+        set slot 12 of {_gui} to getCustomWeapon("scythe")
+        set slot 13 of {_gui} to getCustomWeapon("hammer")
+        set slot 14 of {_gui} to getCustomWeapon("katana")
+        set slot 15 of {_gui} to getCustomWeapon("frost")
+        set slot 16 of {_gui} to getCustomWeapon("vampire")
+        
+        set slot 19 of {_gui} to getCustomWeapon("inferno")
+        set slot 20 of {_gui} to getCustomWeapon("dragon")
+        set slot 21 of {_gui} to getCustomWeapon("sculk")
+        set slot 22 of {_gui} to getCustomWeapon("venom")
+        set slot 23 of {_gui} to getCustomWeapon("chaos")
+        set slot 24 of {_gui} to getCustomWeapon("infinity")
+        set slot 25 of {_gui} to getCustomWeapon("wand")
+
+        set slot 28 of {_gui} to getCustomWeapon("phoenix_bow")
+        set slot 29 of {_gui} to getCustomWeapon("gravity_bow")
+        set slot 30 of {_gui} to getCustomWeapon("dragon_bow")
+        set slot 31 of {_gui} to getCustomWeapon("crossbow")
+        set slot 32 of {_gui} to getCustomWeapon("abyss")
+        set slot 33 of {_gui} to getCustomWeapon("shadow")
+
+    # --- ONGLET 2 : ARMURES ---
+    else if {_category} is "armors":
+        # Titan (Slots 10, 11, 12, 13)
+        set slot 10 of {_gui} to getCustomArmor("titan", "helmet")
+        set slot 11 of {_gui} to getCustomArmor("titan", "chestplate")
+        set slot 12 of {_gui} to getCustomArmor("titan", "leggings")
+        set slot 13 of {_gui} to getCustomArmor("titan", "boots")
+        
+        # Phénix (Slots 14, 15, 16, 19)
+        set slot 14 of {_gui} to getCustomArmor("phoenix", "helmet")
+        set slot 15 of {_gui} to getCustomArmor("phoenix", "chestplate")
+        set slot 16 of {_gui} to getCustomArmor("phoenix", "leggings")
+        set slot 19 of {_gui} to getCustomArmor("phoenix", "boots")
+        
+        # Ombre (Slots 20, 21, 22, 23)
+        set slot 20 of {_gui} to getCustomArmor("shadow", "helmet")
+        set slot 21 of {_gui} to getCustomArmor("shadow", "chestplate")
+        set slot 22 of {_gui} to getCustomArmor("shadow", "leggings")
+        set slot 23 of {_gui} to getCustomArmor("shadow", "boots")
+
+        # Céleste (Slots 28, 29, 30, 31)
+        set slot 28 of {_gui} to getCustomArmor("celestial", "helmet")
+        set slot 29 of {_gui} to getCustomArmor("celestial", "chestplate")
+        set slot 30 of {_gui} to getCustomArmor("celestial", "leggings")
+        set slot 31 of {_gui} to getCustomArmor("celestial", "boots")
+
+        # Dragon (Slots 32, 33, 34, 35)
+        set slot 32 of {_gui} to getCustomArmor("dragon", "helmet")
+        set slot 33 of {_gui} to getCustomArmor("dragon", "chestplate")
+        set slot 34 of {_gui} to getCustomArmor("dragon", "leggings")
+        set slot 35 of {_gui} to getCustomArmor("dragon", "boots")
+
+        # Néant (Slots 38, 39, 40, 41)
+        set slot 38 of {_gui} to getCustomArmor("void", "helmet")
+        set slot 39 of {_gui} to getCustomArmor("void", "chestplate")
+        set slot 40 of {_gui} to getCustomArmor("void", "leggings")
+        set slot 41 of {_gui} to getCustomArmor("void", "boots")
+
+    # --- ONGLET 3 : OUTILS & BOUCLIERS ---
+    else if {_category} is "tools":
+        set slot 19 of {_gui} to getCustomTool("pickaxe")
+        set slot 20 of {_gui} to getCustomTool("smelt_pickaxe")
+        set slot 21 of {_gui} to getCustomTool("axe")
+        set slot 22 of {_gui} to getCustomTool("shovel")
+        set slot 23 of {_gui} to getCustomTool("rod")
+        set slot 24 of {_gui} to getCustomTool("shield")
+
+    # --- ONGLET 4 : RELIQUES & ARTEFACTS ---
+    else if {_category} is "relics":
+        set slot 19 of {_gui} to getCustomRelic("heart")
+        set slot 20 of {_gui} to getCustomRelic("wind")
+        set slot 21 of {_gui} to getCustomRelic("ring")
+        set slot 22 of {_gui} to getCustomRelic("totem")
+        set slot 23 of {_gui} to getCustomRelic("wings")
+        set slot 24 of {_gui} to getCustomRelic("phoenix_wings")
+        set slot 25 of {_gui} to getCustomRelic("orb")
+        set slot 26 of {_gui} to getCustomRelic("gem")
+
+    # --- ONGLET 5 : VUE GLOBALE ARSENAL ---
+    else:
+        # Armes phares (Ligne 2)
+        set slot 10 of {_gui} to getCustomWeapon("star")
+        set slot 11 of {_gui} to getCustomWeapon("titan")
+        set slot 12 of {_gui} to getCustomWeapon("scythe")
+        set slot 13 of {_gui} to getCustomWeapon("hammer")
+        set slot 14 of {_gui} to getCustomWeapon("katana")
+        set slot 15 of {_gui} to getCustomWeapon("frost")
+        set slot 16 of {_gui} to getCustomWeapon("infinity")
+
+        # Outils & Armures phares (Ligne 3)
+        set slot 19 of {_gui} to getCustomTool("pickaxe")
+        set slot 20 of {_gui} to getCustomTool("smelt_pickaxe")
+        set slot 21 of {_gui} to getCustomTool("shield")
+        set slot 22 of {_gui} to getCustomWeapon("sculk")
+        set slot 23 of {_gui} to getCustomWeapon("dragon_bow")
+        set slot 24 of {_gui} to getCustomWeapon("abyss")
+        set slot 25 of {_gui} to getCustomWeapon("wand")
+
+        # Sets Plastrons (Ligne 4)
+        set slot 28 of {_gui} to getCustomArmor("titan", "chestplate")
+        set slot 29 of {_gui} to getCustomArmor("phoenix", "chestplate")
+        set slot 30 of {_gui} to getCustomArmor("shadow", "chestplate")
+        set slot 31 of {_gui} to getCustomArmor("celestial", "chestplate")
+        set slot 32 of {_gui} to getCustomArmor("dragon", "chestplate")
+        set slot 33 of {_gui} to getCustomArmor("void", "chestplate")
+
+        # Reliques (Ligne 5)
+        set slot 37 of {_gui} to getCustomRelic("heart")
+        set slot 38 of {_gui} to getCustomRelic("wind")
+        set slot 39 of {_gui} to getCustomRelic("ring")
+        set slot 40 of {_gui} to getCustomRelic("totem")
+        set slot 41 of {_gui} to getCustomRelic("wings")
+        set slot 42 of {_gui} to getCustomRelic("phoenix_wings")
+        set slot 43 of {_gui} to getCustomRelic("orb")
+
+    # Bouton Fermer (Slot 49)
+    set slot 49 of {_gui} to 1 of barrier named "&c&l✦ FERMER LE MENU ✦" with lore "&7Fermer l'Arsenal Minestars"
+
+    open {_gui} to {_p}
+    play sound "block.chest.open" to {_p}
+
+# ==================== COMMANDE GLOBALE UNIQUE ====================
+
+command /equipements [<text>]:
+    aliases: /menu, /arsenal, /armes, /armures, /weapons, /armors, /custom, /stuff, /relique, /reliques, /outils, /tools
+    trigger:
+        set {_cat} to arg-1 ? "all"
+        if {_cat} is "arme" or "armes" or "weapon" or "weapons":
+            set {_cat} to "weapons"
+        else if {_cat} is "armure" or "armures" or "armor" or "armors":
+            set {_cat} to "armors"
+        else if {_cat} is "outil" or "outils" or "tool" or "tools":
+            set {_cat} to "tools"
+        else if {_cat} is "relique" or "reliques" or "relic" or "relics":
+            set {_cat} to "relics"
+        else:
+            set {_cat} to "all"
+        openArsenalMenu(player, {_cat})
+
+# ==================== GESTION DES CLICS DU MENU (VITRINE SÉCURISÉE) ====================
+
+on inventory click:
+    if name of event-inventory is "&8» &0&lMINESTARS &8- &6&lARSENAL UNIFIÉ":
+        cancel event
+        set {_s} to index of event-slot
+        
+        # Clic sur Fermer (49)
+        if {_s} is 49:
+            close player's inventory
+            play sound "block.chest.close" to player
+            stop
+
+        # Changement d'Onglets (Ligne 1 : 0, 2, 4, 6, 8)
+        if {_s} is 0:
+            openArsenalMenu(player, "weapons")
+            play sound "ui.button.click" to player
+            stop
+        else if {_s} is 2:
+            openArsenalMenu(player, "armors")
+            play sound "ui.button.click" to player
+            stop
+        else if {_s} is 4:
+            openArsenalMenu(player, "tools")
+            play sound "ui.button.click" to player
+            stop
+        else if {_s} is 6:
+            openArsenalMenu(player, "relics")
+            play sound "ui.button.click" to player
+            stop
+        else if {_s} is 8:
+            openArsenalMenu(player, "all")
+            play sound "ui.button.click" to player
+            stop
+
+        # Interaction avec un Item (Aperçu uniquement - Aucun give)
+        set {_clicked} to event-item
+        if {_clicked} is set:
+            if {_clicked} is not gray stained glass pane:
+                play sound "entity.experience_orb.pickup" to player
+                send action bar "&6✦ %name of {_clicked}% &7(Aperçu de l'Arsenal)" to player
+
+# ==================== COMMANDES ADMIN GIVE ====================
+
+command /giveweapon [<player>] [<text>]:
+    aliases: /givecustomweapon
+    permission: op
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation : &e/giveweapon <joueur> <star|titan|scythe|hammer|katana|frost|vampire|inferno|dragon|sculk|venom|chaos|infinity|wand|phoenix_bow|gravity_bow|dragon_bow|crossbow|abyss|shadow>" to player
+            stop
+            
+        set {_t} to arg-2 ? "star"
+        set {_item} to getCustomWeapon({_t})
+        if {_item} is set:
+            give {_item} to arg-1
+            send "{@prefix}&aArme &e[%{_t}%]&a donnée à &f%arg-1% &a!" to player
+            send "{@prefix}&aTu as reçu une &6Arme Légendaire &a!" to arg-1
+            play sound "entity.player.levelup" to arg-1
+        else:
+            send "{@prefix}&cArme inconnue !" to player
+
+command /givetool [<player>] [<text>]:
+    aliases: /givecustomtool
+    permission: op
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation : &e/givetool <joueur> <pickaxe|smelt_pickaxe|axe|shovel|rod|shield>" to player
+            stop
+            
+        set {_t} to arg-2 ? "pickaxe"
+        set {_item} to getCustomTool({_t})
+        if {_item} is set:
+            give {_item} to arg-1
+            send "{@prefix}&aOutil &e[%{_t}%]&a donné à &f%arg-1% &a!" to player
+            send "{@prefix}&aTu as reçu un &6Outil Légendaire &a!" to arg-1
+            play sound "entity.player.levelup" to arg-1
+        else:
+            send "{@prefix}&cOutil inconnu !" to player
+
+command /givearmor [<player>] [<text>] [<text>]:
+    aliases: /givecustomarmor
+    permission: op
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation : &e/givearmor <joueur> <titan|phoenix|shadow|celestial|dragon|void> <all|helmet|chestplate|leggings|boots>" to player
+            stop
+            
+        set {_set} to arg-2 ? "titan"
+        set {_piece} to arg-3 ? "all"
+        
+        if {_piece} is "all":
+            give getCustomArmor({_set}, "helmet") to arg-1
+            give getCustomArmor({_set}, "chestplate") to arg-1
+            give getCustomArmor({_set}, "leggings") to arg-1
+            give getCustomArmor({_set}, "boots") to arg-1
+            send "{@prefix}&aSet complet &e[%{_set}%]&a donné à &f%arg-1% &a!" to player
+            send "{@prefix}&aTu as reçu un &6Set d'Armure Légendaire &a!" to arg-1
+            play sound "entity.player.levelup" to arg-1
+        else:
+            set {_item} to getCustomArmor({_set}, {_piece})
+            if {_item} is set:
+                give {_item} to arg-1
+                send "{@prefix}&aPièce &e[%{_set}% - %{_piece}%]&a donnée à &f%arg-1% &a!" to player
+                play sound "entity.player.levelup" to arg-1
+            else:
+                send "{@prefix}&cPièce inconnue !" to player
+
+command /giverelic [<player>] [<text>]:
+    aliases: /givecustomrelic, /giverelique
+    permission: op
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation : &e/giverelic <joueur> <heart|wind|ring|totem|wings|phoenix_wings|orb|gem>" to player
+            stop
+            
+        set {_t} to arg-2 ? "heart"
+        set {_item} to getCustomRelic({_t})
+        if {_item} is set:
+            give {_item} to arg-1
+            send "{@prefix}&aRelique &e[%{_t}%]&a donnée à &f%arg-1% &a!" to player
+            send "{@prefix}&aTu as reçu un &dArtefact Mythique &a!" to arg-1
+            play sound "entity.player.levelup" to arg-1
+        else:
+            send "{@prefix}&cRelique inconnue !" to player

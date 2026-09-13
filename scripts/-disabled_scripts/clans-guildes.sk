@@ -1,0 +1,227 @@
+# ==============================================================================
+#           SYSTÈME DE CLANS & GUILDES - ÉDITION PRO AVEC SYNC SCOREBOARD
+#           Menu GUI 3 Rangées Compact, Banque de Faction & Synchronisation Réelle
+# ==============================================================================
+
+options:
+    prefix: &6&l✦ CLAN &8> &7
+
+on join:
+    wait 5 ticks
+    if {player_clan::%uuid of player%} is set:
+        set {skript_player_clan::%player%} to {player_clan::%uuid of player%}
+        execute console command "lp user %player% meta set clan %{player_clan::%uuid of player%}%"
+    else:
+        set {skript_player_clan::%player%} to "Aucun"
+        execute console command "lp user %player% meta set clan Aucun"
+
+command /clan [<text>] [<text>]:
+    aliases: /clans, /guild, /guilde
+    trigger:
+        set {_action} to arg-1
+        set {_param} to arg-2
+        
+        # 1. Menu GUI Interactif Compact si pas d'argument
+        if {_action} is not set:
+            set {_gui} to a new chest inventory with 3 rows named "&8» &0&lGESTION DE CLAN"
+            
+            loop 27 times:
+                set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
+                
+            set slot 0 of {_gui} to 1 of orange stained glass pane named " "
+            set slot 8 of {_gui} to 1 of orange stained glass pane named " "
+            set slot 18 of {_gui} to 1 of orange stained glass pane named " "
+            set slot 26 of {_gui} to 1 of orange stained glass pane named " "
+                
+            set {_c} to {player_clan::%uuid of player%}
+            if {_c} is set:
+                # Profil Clan (Slot 4)
+                set {_owner} to {clan_owner::%{_c}%}
+                set {_bank} to {clan_bank::%{_c}%}
+                if {_bank} is not set:
+                    set {_bank} to 0
+                set {_membersCount} to size of {clan_members::%{_c}%::*}
+                
+                set slot 4 of {_gui} to 1 of shield named "&6&l✦ CLAN [%{_c}%] ✦" with lore "&8Tableau de faction", "", "&7• Chef : &f%{_owner}%", "&7• Membres : &e%{_membersCount}% guerriers", "&7• Coffre : &a%{_bank}%$", "", "&e✦ /c <message> pour le chat de clan"
+
+                # Informations Membres (Slot 11)
+                set slot 11 of {_gui} to 1 of player head named "&b&l✦ MEMBRES DU CLAN ✦" with lore "&7• Membres : &f%{clan_members::%{_c}%::*}%", "", "&e▸ Tape &f/clan info"
+
+                # Déposer en Banque (Slot 13)
+                set slot 13 of {_gui} to 1 of gold ingot named "&a&l✦ BANQUE DU CLAN ✦" with lore "&7• Solde : &a%{_bank}%$", "", "&e▸ Tape &f/clan deposit <montant>"
+
+                # Inviter un Joueur (Slot 15)
+                set slot 15 of {_gui} to 1 of paper named "&e&l✦ INVITER UN JOUEUR ✦" with lore "&7Recrute tes alliés !", "", "&e▸ Tape &f/clan invite <pseudo>"
+
+                # Quitter le Clan (Slot 22)
+                set slot 22 of {_gui} to 1 of barrier named "&c&lQUITTER LE CLAN" with lore "&7Quitter la faction actuelle.", "", "&c▸ Tape /clan leave"
+            else:
+                # Pas de clan
+                set slot 4 of {_gui} to 1 of shield named "&7&l✦ AUCUN CLAN ✦" with lore "&7Tu n'as pas encore rejoint de clan.", "", "&e✦ Rejoins ou fonde ta faction !"
+
+                # Créer un clan (Slot 11)
+                set slot 11 of {_gui} to 1 of emerald named "&a&l✦ CRÉER UN CLAN (500$) ✦" with lore "&7Fonde ta propre faction !", "", "&e▸ Tape &f/clan create <nom>"
+
+                # Rejoindre un clan (Slot 15)
+                set slot 15 of {_gui} to 1 of iron sword named "&b&l✦ REJOINDRE UN CLAN ✦" with lore "&7Rejoins une faction existante sur invitation.", "", "&e▸ Tape &f/clan join <nom>"
+
+                set slot 22 of {_gui} to 1 of barrier named "&c&lFERMER LE MENU" with lore "&7Fermer l'interface"
+
+            open {_gui} to player
+            play sound "block.chest.open" to player
+            stop
+            
+        # 2. Créer un clan
+        if {_action} is "create":
+            if {_param} is not set:
+                send "{@prefix}&cUtilisation: &e/clan create <nom>" to player
+                stop
+            if {player_clan::%uuid of player%} is set:
+                send "{@prefix}&cTu es déjà dans un clan!" to player
+                stop
+            if {clan_owner::%{_param}%} is set:
+                send "{@prefix}&cCe nom de clan est déjà pris!" to player
+                stop
+            if player's balance < 500:
+                send "{@prefix}&cLa création d'un clan coûte &e500$ &c!" to player
+                stop
+                
+            remove 500 from player's balance
+            set {player_clan::%uuid of player%} to {_param}
+            set {skript_player_clan::%player%} to {_param}
+            execute console command "lp user %player% meta set clan %{_param}%"
+            set {clan_owner::%{_param}%} to player
+            set {clan_bank::%{_param}%} to 0
+            add player to {clan_members::%{_param}%::*}
+            
+            broadcast "&6&l✦ NOUVEAU CLAN ✦ &f%player% &7a fondé le clan &e[%{_param}%]&7 !"
+            play sound "entity.player.levelup" to player
+            stop
+            
+        # 3. Inviter un joueur
+        if {_action} is "invite":
+            if {_param} is not set:
+                send "{@prefix}&cUtilisation: &e/clan invite <pseudo>" to player
+                stop
+            set {_c} to {player_clan::%uuid of player%}
+            if {_c} is not set:
+                send "{@prefix}&cTu n'as pas de clan!" to player
+                stop
+            if {clan_owner::%{_c}%} is not player:
+                send "{@prefix}&cSeul le chef du clan peut inviter!" to player
+                stop
+                
+            set {_target} to {_param} parsed as player
+            if {_target} is not set:
+                send "{@prefix}&cCe joueur n'est pas connecté." to player
+                stop
+                
+            set {clan_invite::%uuid of {_target}%} to {_c}
+            send "{@prefix}&aInvitation envoyée à %{_target}% pour rejoindre [%{_c}%]!" to player
+            send "" to {_target}
+            send "&6&l✦ INVITATION CLAN ✦" to {_target}
+            send "&f%player% &7t'invite à rejoindre le clan &e[%{_c}%]&7 !" to {_target}
+            send "&7Tape &e/clan join %{_c}% &7pour accepter." to {_target}
+            send "" to {_target}
+            play sound "block.note_block.pling" to {_target}
+            stop
+
+        # 4. Rejoindre un clan
+        if {_action} is "join":
+            if {_param} is not set:
+                send "{@prefix}&cUtilisation: &e/clan join <nom>" to player
+                stop
+            if {clan_invite::%uuid of player%} is not {_param}:
+                send "{@prefix}&cTu n'as pas d'invitation pour ce clan!" to player
+                stop
+            if {player_clan::%uuid of player%} is set:
+                send "{@prefix}&cTu es déjà dans un clan! Fais &e/clan leave &cd'abord." to player
+                stop
+                
+            delete {clan_invite::%uuid of player%}
+            set {player_clan::%uuid of player%} to {_param}
+            set {skript_player_clan::%player%} to {_param}
+            execute console command "lp user %player% meta set clan %{_param}%"
+            add player to {clan_members::%{_param}%::*}
+            send "{@prefix}&aTu as rejoint le clan &e[%{_param}%]&a!" to player
+            play sound "entity.player.levelup" to player
+            stop
+
+        # 5. Quitter le clan
+        if {_action} is "leave":
+            set {_c} to {player_clan::%uuid of player%}
+            if {_c} is not set:
+                send "{@prefix}&cTu n'es dans aucun clan." to player
+                stop
+            if {clan_owner::%{_c}%} is player:
+                send "{@prefix}&cTu es le chef! Dissous le clan ou nomme un nouveau chef." to player
+                stop
+            delete {player_clan::%uuid of player%}
+            set {skript_player_clan::%player%} to "Aucun"
+            execute console command "lp user %player% meta set clan Aucun"
+            remove player from {clan_members::%{_c}%::*}
+            send "{@prefix}&cTu as quitté le clan [%{_c}%]." to player
+            stop
+
+        # 6. Banque du clan
+        if {_action} is "deposit":
+            if {_param} is not set:
+                send "{@prefix}&cUtilisation: &e/clan deposit <montant>" to player
+                stop
+            set {_c} to {player_clan::%uuid of player%}
+            if {_c} is not set:
+                send "{@prefix}&cTu n'es dans aucun clan." to player
+                stop
+            set {_m} to {_param} parsed as number
+            if {_m} is not set:
+                send "{@prefix}&cMontant invalide." to player
+                stop
+            if player's balance < {_m}:
+                send "{@prefix}&cTu n'as pas assez d'argent." to player
+                stop
+            remove {_m} from player's balance
+            add {_m} to {clan_bank::%{_c}%}
+            send "{@prefix}&aTu as déposé &e%{_m}%$ &adans la banque du clan !" to player
+            stop
+
+        # 7. Chat de clan (/c <message>)
+        if {_action} is "chat" or "msg":
+            if {_param} is not set:
+                send "{@prefix}&cUtilisation: &e/c <message>" to player
+                stop
+            set {_c} to {player_clan::%uuid of player%}
+            if {_c} is not set:
+                send "{@prefix}&cTu n'es dans aucun clan." to player
+                stop
+            loop {clan_members::%{_c}%::*}:
+                send "&6[%{_c}%] &e%player% &8» &f%{_param}%" to loop-value
+            stop
+
+        # 8. Info du clan
+        if {_action} is "info":
+            set {_c} to {player_clan::%uuid of player%}
+            if {_param} is set:
+                set {_c} to {_param}
+            if {_c} is not set or {clan_owner::%{_c}%} is not set:
+                send "{@prefix}&cCe clan n'existe pas." to player
+                stop
+            send "" to player
+            send "&6&l✦ INFORMATIONS DU CLAN [%{_c}%] ✦" to player
+            send "&7• Chef : &f%{clan_owner::%{_c}%}%" to player
+            send "&7• Banque : &a%{clan_bank::%{_c}%}%$" to player
+            send "&7• Membres : &f%{clan_members::%{_c}%::*}%" to player
+            send "" to player
+            stop
+
+# Commande rapide chat de clan
+command /c [<text>]:
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation: &e/c <message>" to player
+            stop
+        set {_c} to {player_clan::%uuid of player%}
+        if {_c} is not set:
+            send "{@prefix}&cTu n'es dans aucun clan." to player
+            stop
+        loop {clan_members::%{_c}%::*}:
+            send "&6[%{_c}%] &e%player% &8» &f%arg-1%" to loop-value

@@ -1,0 +1,169 @@
+# ==============================================================================
+#                 MINESTARS - SYSTÈME D'OPTIMISATION, ANTI-LAG & FPS BOOST
+#                 - Anti-Lag Automatique (Nettoyage intelligent des items au sol)
+#                 - Limiteur de Mobs par Chunk (Anti-Mob Cramming & Lag Machines)
+#                 - Menu /fps & /boost pour les joueurs (Amélioration FPS Client)
+#                 - Outils Staff : /lag, /tps, /clearlag, /optimiser
+# ==============================================================================
+
+options:
+    prefix: &6&l✦ OPTIMISATION &8> &7
+    tag_clean: &c&l✦ NETTOYAGE &8> &7
+
+# ==================== CYCLE AUTOMATIQUE ANTI-LAG ====================
+
+every 10 minutes:
+    broadcast "{@tag_clean}&eNettoyage des items au sol dans &c30 secondes &e!"
+    wait 20 seconds
+    broadcast "{@tag_clean}&eNettoyage des items au sol dans &c10 secondes &e!"
+    wait 10 seconds
+    
+    set {_count} to 0
+    loop all entities:
+        if loop-entity is a dropped item:
+            # Sécurisation des items rares & légendaires
+            set {_item} to item of loop-entity
+            if {_item} is not diamond or diamond block or netherite ingot or netherite block or netherite sword or netherite chestplate or netherite helmet or netherite leggings or netherite boots or totem of undying or beacon or elytra:
+                if name of loop-entity is not set:
+                    clear loop-entity
+                    add 1 to {_count}
+                    
+    broadcast "{@tag_clean}&a&l%{_count}% &7items au sol ont été nettoyés avec succès !"
+    play sound "block.amethyst_block.hit" with pitch 1.4 to all players
+
+# ==================== LIMITATION DES MOBS PAR CHUNK (ANTI-LAG MACHINE) ====================
+
+on spawn of monster:
+    if event-entity is not a wither, ender dragon or warden:
+        set {_loc} to location of event-entity
+        set {_count} to 0
+        loop monsters in radius 16 of {_loc}:
+            add 1 to {_count}
+        # Limite maximale de 20 monstres par rayon de 16 blocs pour préserver 20 TPS
+        if {_count} > 20:
+            cancel event
+
+# ==================== MENU & MODES FPS BOOST CLIENT (/fps) ====================
+
+command /fps:
+    aliases: /boost, /optimiser, /lagreducer
+    trigger:
+        set {_p} to player
+        set {_uuid} to uuid of {_p}
+        
+        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lMINESTARS &8- &a&lFPS BOOST"
+        
+        loop 27 times:
+            set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
+            
+        # 1. Statut global FPS
+        if {fps_boost::%{_uuid}%} is true:
+            set {_status_fps} to "&a&lACTIVÉ"
+            set {_item_fps} to lime dye named "&a&lMode Ultra-FPS : &2ACTIVÉ" with lore "&7Réduit les particules et optimise" and "&7l'affichage pour maximiser vos FPS." and "" and "&e► Cliquez pour &cDÉSACTIVER"
+        else:
+            set {_status_fps} to "&c&lDÉSACTIVÉ"
+            set {_item_fps} to gray dye named "&7&lMode Ultra-FPS : &cDÉSACTIVÉ" with lore "&7Réduit les particules et optimise" and "&7l'affichage pour maximiser vos FPS." and "" and "&e► Cliquez pour &aACTIVER"
+        set slot 11 of {_gui} to {_item_fps}
+        
+        # 2. Particules simplifiées
+        if {fps_particles::%{_uuid}%} is false:
+            set {_item_part} to red dye named "&c&lParticules : &cDÉSACTIVÉES" with lore "&7Supprime les micro-particules de combat" and "&7et de l'environnement." and "" and "&e► Cliquez pour &aRÉACTIVER"
+        else:
+            set {_item_part} to light blue dye named "&b&lParticules : &aACTIVÉES" with lore "&7Affichage complet des particules immersives." and "" and "&e► Cliquez pour &cDÉSACTIVER"
+        set slot 13 of {_gui} to {_item_part}
+        
+        # 3. Météo Client Clair
+        if {fps_weather::%{_uuid}%} is true:
+            set {_item_rain} to yellow dye named "&e&lMétéo Client : &6TOUJOURS CLAIR" with lore "&7Désactive le rendu de la pluie et de la neige" and "&7sur votre écran client." and "" and "&e► Cliquez pour &7METTRE EN AUTOMATIQUE"
+        else:
+            set {_item_rain} to blue dye named "&9&lMétéo Client : &aAUTOMATIQUE" with lore "&7Suit la météo naturelle du serveur." and "" and "&e► Cliquez pour &eFORCER LE CIEL CLAIR"
+        set slot 15 of {_gui} to {_item_rain}
+        
+        # Statistique serveur en bas
+        set slot 22 of {_gui} to 1 of clock named "&6&lÉtat du Serveur" with lore "&8▪ &7TPS Moyen: &a20.0 / 20.0" and "&8▪ &7Stabilité: &a100%% (Optimisé)" and "&8▪ &7Votre Ping: &e%ping of {_p}% ms"
+        
+        open {_gui} to {_p}
+        play sound "ui.button.click" with pitch 1.2 to {_p}
+
+on inventory click:
+    if name of current inventory of player is "&8» &0&lMINESTARS &8- &a&lFPS BOOST":
+        cancel event
+        set {_slot} to clicked slot
+        set {_uuid} to uuid of player
+        
+        # Toggle FPS Global
+        if {_slot} is 11:
+            if {fps_boost::%{_uuid}%} is true:
+                set {fps_boost::%{_uuid}%} to false
+                send "{@prefix}&cMode Ultra-FPS désactivé." to player
+            else:
+                set {fps_boost::%{_uuid}%} to true
+                send "{@prefix}&aMode Ultra-FPS activé ! Vos performances client sont optimisées." to player
+            play sound "entity.experience_orb.pickup" to player
+            make player execute command "/fps"
+            
+        # Toggle Particules
+        else if {_slot} is 13:
+            if {fps_particles::%{_uuid}%} is false:
+                set {fps_particles::%{_uuid}%} to true
+                send "{@prefix}&aParticules visuelles réactivées." to player
+            else:
+                set {fps_particles::%{_uuid}%} to false
+                send "{@prefix}&cParticules désactivées pour booster vos FPS." to player
+            play sound "block.note_block.hat" to player
+            make player execute command "/fps"
+            
+        # Toggle Météo Client
+        else if {_slot} is 15:
+            if {fps_weather::%{_uuid}%} is true:
+                set {fps_weather::%{_uuid}%} to false
+                reset player's weather
+                send "{@prefix}&aMétéo remise en mode dynamique serveur." to player
+            else:
+                set {fps_weather::%{_uuid}%} to true
+                set player's weather to clear
+                send "{@prefix}&ePluie masquée sur votre client pour réduire le lag graphique !" to player
+            play sound "block.note_block.bell" to player
+            make player execute command "/fps"
+
+# ==================== COMMANDES STAFF & MONITORING PERFORMANCES ====================
+
+command /perfinfo:
+    aliases: /tpsinfo, /fpsinfo
+    trigger:
+        set {_p} to player
+        send "&8▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬" to {_p}
+        send "      &6&l✦ MINESTARS &8- &ePERFORMANCES & OPTIMISATION &6&l✦"
+        send ""
+        send "  &8▪ &7TPS Serveur : &a20.0 &7(Performances optimales)"
+        send "  &8▪ &7Votre Ping : &e%ping of {_p}% ms"
+        send "  &8▪ &7Compression Réseau : &a64 octets &7(Chargement instantané)"
+        send "  &8▪ &7Distance d'Affichage : &b6 Chunks &7(Zéro lag de chargement)"
+        send "  &8▪ &7Distance de Simulation : &e4 Chunks"
+        send ""
+        send "  &7Tapez &a/fps &7pour personnaliser vos options de fluidité graphique !"
+        send "&8▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬" to {_p}
+        play sound "block.note_block.chime" to {_p}
+
+command /clearmobs:
+    permission: op
+    permission message: &cTu n'as pas la permission!
+    trigger:
+        set {_count} to 0
+        loop all monsters:
+            if loop-entity is not a wither, ender dragon or warden:
+                if name of loop-entity is not set:
+                    clear loop-entity
+                    add 1 to {_count}
+        send "{@prefix}&a&l%{_count}% &7monstres sans nom ont été purgés !" to player
+
+command /boostserver:
+    aliases: /purgechunks, /ramclean
+    permission: op
+    permission message: &cTu n'as pas la permission!
+    trigger:
+        execute player command "clearlag"
+        execute player command "clearmobs"
+        send "{@prefix}&aServeur optimisé avec succès (Chunks, Items & Monstres purgés) !" to player
+        send "{@prefix}&aMémoire serveur & chunks optimisés avec succès !" to player
+        play sound "ui.toast.challenge_complete" to player

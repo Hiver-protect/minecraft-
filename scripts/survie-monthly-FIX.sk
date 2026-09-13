@@ -1,0 +1,376 @@
+# ==============================================================================
+#            MINESTARS - MONDE SURVIE & GESTION DES HOMES
+#            Dashboard Moderne, RTP Sécurisé, Système TPA & Homes Visuels
+# ==============================================================================
+
+options:
+    prefix: &a&l✦ SURVIE &8> &7
+
+on load:
+    if {survie_last_reset} is not set:
+        set {survie_last_reset} to now
+
+command /survireset:
+    permission: op
+    permission message: &cTu n'as pas la permission!
+    trigger:
+        set {survie_last_reset} to now
+        broadcast ""
+        broadcast "&a&l✦ MONDE SURVIE RESET ✦"
+        broadcast "&7Le monde Survie a été réinitialisé pour une nouvelle saison de 30 jours!"
+        broadcast ""
+        play sound "ui.toast.challenge_complete" to all players
+
+command /setsurviespawn:
+    permission: op
+    permission message: &cTu n'as pas la permission!
+    trigger:
+        set {survie_spawn} to location of player
+        send "{@prefix}&aPoint de spawn du monde Survie défini à votre position !" to player
+        play sound "block.note_block.pling" to player
+
+# ==================== TABLEAU DE BORD DU MONDE SURVIE ====================
+
+command /survie [<text>]:
+    aliases: /survival, /surv
+    trigger:
+        if arg-1 is "tp" or "spawn":
+            set {_w} to world "survie"
+            if {_w} is not set:
+                set {_w} to "survie" parsed as world
+            if {_w} is not set:
+                set {_w} to world "world"
+            if {survie_spawn} is set:
+                teleport player to {survie_spawn}
+            else:
+                teleport player to spawn of {_w}
+            send "{@prefix}&aTéléporté au spawn du monde Survie !" to player
+            play sound "entity.experience_orb.pickup" to player
+            stop
+
+        set {_gui} to a new chest inventory with 4 rows named "&8» &0&lMINESTARS &8- &a&lSURVIE"
+        loop 36 times:
+            set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
+
+        # Cadre décoratif Vert Lime
+        set slot 0 of {_gui} to 1 of lime stained glass pane named " "
+        set slot 8 of {_gui} to 1 of lime stained glass pane named " "
+        set slot 27 of {_gui} to 1 of lime stained glass pane named " "
+        set slot 35 of {_gui} to 1 of lime stained glass pane named " "
+
+        # Profil & Infos Saison (Slot 4)
+        set {_diff} to difference between {survie_last_reset} and now
+        set slot 4 of {_gui} to 1 of player head named "&a&l✦ MONDE SURVIE SAISONNIÈRE ✦" with lore "&8&m─────────────────────────" and "&7• Mode de jeu : &fSurvie Vanilla & Économie" and "&7• Ancienneté du monde : &e%{_diff}% / 30 jours" and "&7• Protection RTP : &aActive (Anti-chute)" and "&8&m─────────────────────────" and "&e▸ Choisis une option de navigation ci-dessous :"
+
+        # 1. RTP (Slot 10)
+        set slot 10 of {_gui} to 1 of compass named "&6&l✦ TÉLÉPORTATION ALÉATOIRE (RTP) ✦" with lore "&8&m─────────────────────────" and "&7Téléporte-toi instantanément dans la nature." and "&7Protection anti-dégâts de chute incluse !" and "&8&m─────────────────────────" and "&a▸ Cliquer pour lancer la téléportation (/rtp)"
+
+        # 2. Homes (Slot 12)
+        set {_hCount} to size of {survie_homes::%uuid of player%::*}
+        set {_u} to uuid of player
+        set {_r} to {rank::%{_u}%} ? "Joueur"
+        set {_maxHomes} to 2
+        if player is op:
+            set {_maxHomes} to 100
+        else if {_r} is "Star":
+            set {_maxHomes} to 10
+        else if {_r} is "MVP":
+            set {_maxHomes} to 5
+        else if {_r} is "VIP":
+            set {_maxHomes} to 3
+        else if {_r} is "Fondateur" or "Admin" or "Resp" or "Modo" or "Helper" or "Build":
+            set {_maxHomes} to 100
+            
+        set slot 12 of {_gui} to 1 of red bed named "&c&l✦ MES HOMES & RÉSIDENCES ✦" with lore "&8&m─────────────────────────" and "&7Gère tes points de sauvegarde." and "&7• Maisons créées : &e%{_hCount}% / %{_maxHomes}%" and "&7• Grade : &e%{_r}%" and "&8&m─────────────────────────" and "&e▸ Cliquer pour ouvrir le menu (/homes)"
+
+        # 3. Kit Départ (Slot 14)
+        set slot 14 of {_gui} to 1 of chest named "&e&l✦ KIT DE DÉPART QUOTIDIEN ✦" with lore "&8&m─────────────────────────" and "&7Outils en fer, vivres et torches." and "&7Disponible toutes les 24 heures." and "&8&m─────────────────────────" and "&e▸ Cliquer pour récupérer ton kit (/kit)"
+
+        # 4. TPA (Slot 16)
+        set slot 16 of {_gui} to 1 of ender eye named "&b&l✦ TÉLÉPORTATION TPA ✦" with lore "&8&m─────────────────────────" and "&7Rejoins tes amis en un instant." and "&7Tape en jeu : &f/tpa <pseudo>" and "&8&m─────────────────────────" and "&b▸ /tpa <joueur>"
+
+        # 5. Spawn Survie (Slot 20)
+        set slot 20 of {_gui} to 1 of oak door named "&f&l✦ POINT DE DÉPART SURVIE ✦" with lore "&8&m─────────────────────────" and "&7Retourne au point central de la Survie." and "&8&m─────────────────────────" and "&a▸ Cliquer pour te téléporter (/survie tp)"
+
+        # 6. Back (Slot 22)
+        set slot 22 of {_gui} to 1 of totem of undying named "&d&l✦ RETOUR DE MORT (/back) ✦" with lore "&8&m─────────────────────────" and "&7Retourne à ta dernière position de décès." and "&8&m─────────────────────────" and "&d▸ Cliquer pour retourner sur les lieux (/back)"
+
+        # 7. Spawn Hub (Slot 24)
+        set slot 24 of {_gui} to 1 of beacon named "&e&l✦ RETOUR AU SPAWN HUB ✦" with lore "&8&m─────────────────────────" and "&7Retourne au hub principal du serveur." and "&8&m─────────────────────────" and "&e▸ Cliquer pour rejoindre le Hub (/spawn)"
+
+        # Fermer (Slot 31)
+        set slot 31 of {_gui} to 1 of barrier named "&c&l✦ FERMER ✦" with lore "&7Fermer l'interface"
+
+        open {_gui} to player
+        play sound "block.chest.open" to player
+
+# ==================== RTP SÉCURISÉ ====================
+
+command /rtp:
+    aliases: /wild, /randomtp
+    trigger:
+        set {_w} to world "survie"
+        if {_w} is not set:
+            set {_w} to "survie" parsed as world
+        if {_w} is not set:
+            set {_w} to world of player
+            
+        send "{@prefix}&7Recherche d'un emplacement sécurisé..." to player
+        play sound "block.beacon.ambient" to player
+
+        set {_x} to random integer between -3000 and 3000
+        set {_z} to random integer between -3000 and 3000
+        
+        set {_loc} to location({_x}, 120, {_z}, {_w})
+        teleport player to {_loc}
+        execute console command "effect give %player% resistance 10 4 true"
+        execute console command "effect give %player% slow_falling 10 0 true"
+        
+        send "" to player
+        send "{@prefix}&a&lTÉLÉPORTATION RÉUSSIE !" to player
+        send "&7Coordonnées : &eX: %{_x}%, Z: %{_z}%" to player
+        send "&7(Protection contre les dégâts activée pendant 10s)" to player
+        send "" to player
+        play sound "entity.enderman.teleport" to player
+
+# ==================== GESTION DES HOMES ====================
+
+command /sethome [<text>]:
+    trigger:
+        set {_wname} to "%world of player%"
+        if {spawn::world} is set:
+            if {_wname} is {spawn::world}:
+                send "{@prefix}&cTu ne peux pas poser de maison au Spawn Hub ! Rejoins la Survie &e(/survie)&c." to player
+                stop
+        if {_wname} contains "skyblock":
+            send "{@prefix}&cTu ne peux pas poser de maison survie en Skyblock ! Utilise &e/is sethome&c." to player
+            stop
+            
+        set {_name} to arg-1 ? "maison"
+        set {_count} to size of {survie_homes::%uuid of player%::*}
+        
+        # Calcul de la limite de homes selon le grade
+        set {_u} to uuid of player
+        set {_r} to {rank::%{_u}%} ? "Joueur"
+        set {_maxHomes} to 2
+        if player is op:
+            set {_maxHomes} to 100
+        else if {_r} is "Fondateur" or "Admin" or "Resp" or "Modo" or "Helper" or "Build":
+            set {_maxHomes} to 100
+        else if {_r} is "Star":
+            set {_maxHomes} to 10
+        else if {_r} is "MVP":
+            set {_maxHomes} to 5
+        else if {_r} is "VIP":
+            set {_maxHomes} to 3
+
+        if {_count} >= {_maxHomes}:
+            if {survie_homes::%uuid of player%::%{_name}%} is not set:
+                send "{@prefix}&cTu as atteint ta limite de &e%{_maxHomes}% résidences &c(Grade &e%{_r}%&c) ! &7(/grades pour plus de homes)" to player
+                play sound "entity.villager.no" to player
+                stop
+                
+        set {survie_homes::%uuid of player%::%{_name}%} to location of player
+        send "{@prefix}&aMaison '&f%{_name}%&a' enregistrée avec succès &7(&e%{_count} + 1%/%{_maxHomes}%&7) !" to player
+        play sound "block.note_block.pling" to player
+
+command /home [<text>]:
+    trigger:
+        set {_name} to arg-1 ? "maison"
+        if {survie_homes::%uuid of player%::%{_name}%} is not set:
+            send "{@prefix}&cCette maison n'existe pas ! Fais &e/homes &cpour afficher tes résidences." to player
+            play sound "entity.villager.no" to player
+            stop
+            
+        teleport player to {survie_homes::%uuid of player%::%{_name}%}
+        send "{@prefix}&aTéléporté à ta maison '&f%{_name}%&a' !" to player
+        play sound "entity.enderman.teleport" to player
+
+command /delhome [<text>]:
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation : &e/delhome <nom>" to player
+            stop
+        if {survie_homes::%uuid of player%::%arg-1%} is not set:
+            send "{@prefix}&cCette maison n'existe pas." to player
+            stop
+        delete {survie_homes::%uuid of player%::%arg-1%}
+        send "{@prefix}&aMaison '&f%arg-1%&a' supprimée." to player
+        play sound "block.wooden_button.click_off" to player
+
+command /homes:
+    trigger:
+        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lMINESTARS &8- &c&lMES HOMES"
+        loop 27 times:
+            set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
+
+        set {_slot} to 11
+        loop {survie_homes::%uuid of player%::*}:
+            set {_loc} to loop-value
+            set {_x} to round(x-coordinate of {_loc})
+            set {_y} to round(y-coordinate of {_loc})
+            set {_z} to round(z-coordinate of {_loc})
+            set slot {_slot} of {_gui} to 1 of red bed named "&e&l✦ %loop-index% ✦" with lore "&8&m─────────────────────────" and "&7• Coordonnées : &eX: %{_x}% Y: %{_y}% Z: %{_z}%" and "&8&m─────────────────────────" and "&a▸ Clic Gauche : Se téléporter" and "&c▸ Clic Droit : Supprimer ce home"
+            add 2 to {_slot}
+            if {_slot} > 15:
+                stop loop
+
+        set slot 22 of {_gui} to 1 of arrow named "&c« Retour au menu Survie"
+        open {_gui} to player
+        play sound "block.chest.open" to player
+
+# ==================== SYSTÈME TPA ====================
+
+command /tpa [<player>]:
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation : &e/tpa <pseudo>" to player
+            stop
+        if arg-1 is player:
+            send "{@prefix}&cTu ne peux pas te signaler toi-même !" to player
+            stop
+        set {tpa_request::%arg-1%} to player
+        send "{@prefix}&7Demande de téléportation envoyée à &e%arg-1%&7." to player
+        send "" to arg-1
+        send "&b&l✦ TÉLÉPORTATION TPA ✦" to arg-1
+        send "&e%player% &7souhaite se téléporter à vous." to arg-1
+        send "&7Tapez &a&l/tpaccept &7pour accepter ou &c&l/tpdeny &7pour refuser !" to arg-1
+        send "" to arg-1
+        play sound "block.note_block.pling" to arg-1
+
+command /tpaccept:
+    trigger:
+        if {tpa_request::%player%} is not set:
+            send "{@prefix}&cTu n'as aucune demande de téléportation en attente." to player
+            stop
+        set {_target} to {tpa_request::%player%}
+        delete {tpa_request::%player%}
+        if {_target} is online:
+            teleport {_target} to location of player
+            send "{@prefix}&aTéléportation acceptée !" to player
+            send "{@prefix}&aTéléporté à &e%player%&a !" to {_target}
+            play sound "entity.enderman.teleport" to {_target}
+        else:
+            send "{@prefix}&cLe joueur s'est déconnecté." to player
+
+command /tpdeny:
+    trigger:
+        if {tpa_request::%player%} is not set:
+            send "{@prefix}&cTu n'as aucune demande de téléportation en attente." to player
+            stop
+        set {_target} to {tpa_request::%player%}
+        delete {tpa_request::%player%}
+        send "{@prefix}&cTéléportation refusée." to player
+        if {_target} is online:
+            send "{@prefix}&c%player% a refusé votre demande de téléportation." to {_target}
+
+# ==================== RETOUR DE MORT (/back) ====================
+
+on death of player:
+    set {_wname} to "%world of victim%"
+    if {_wname} contains "survie" or "world":
+        set {last_death_loc::%uuid of victim%} to location of victim
+        send "{@prefix}&aTon stuff et ton expérience sont conservés ! &7(Tape &e/back &7pour retourner sur place)" to victim
+
+command /back:
+    trigger:
+        if {last_death_loc::%uuid of player%} is not set:
+            send "{@prefix}&cTu n'as aucun point de mort enregistré." to player
+            play sound "entity.villager.no" to player
+            stop
+        teleport player to {last_death_loc::%uuid of player%}
+        delete {last_death_loc::%uuid of player%}
+        send "{@prefix}&aTéléporté à ton dernier point de mort !" to player
+        play sound "entity.enderman.teleport" to player
+
+# ==================== KIT DE SURVIE ====================
+
+command /kit:
+    aliases: /kits, /starter
+    trigger:
+        if {kit_last_claim::%uuid of player%} is set:
+            set {_diff} to difference between {kit_last_claim::%uuid of player%} and now
+            if {_diff} is less than 24 hours:
+                set {_left} to difference between {_diff} and 24 hours
+                send "{@prefix}&cTu as déjà récupéré ton kit ! Reviens dans &e%{_left}%&c." to player
+                play sound "entity.villager.no" to player
+                stop
+                
+        set {kit_last_claim::%uuid of player%} to now
+        give 1 iron pickaxe to player
+        give 1 iron axe to player
+        give 1 iron shovel to player
+        give 32 cooked beef to player
+        give 32 torch to player
+        give 1 water bucket to player
+        give 16 oak logs to player
+        send "" to player
+        send "{@prefix}&a&lKIT DE DÉPART RÉCUPÉRÉ !" to player
+        send "&7Outils en fer, nourriture et matériaux ajoutés à ton inventaire." to player
+        send "" to player
+        play sound "entity.player.levelup" to player
+
+# ==================== CLIC SUR LES MENUS ====================
+
+on inventory click:
+    if name of event-inventory is "&8» &0&lMINESTARS &8- &a&lSURVIE":
+        cancel event
+        
+        # 1. RTP (Slot 10)
+        if index of event-slot is 10:
+            close player's inventory
+            execute player command "rtp"
+
+        # 2. Homes (Slot 12)
+        else if index of event-slot is 12:
+            close player's inventory
+            execute player command "homes"
+
+        # 3. Kit (Slot 14)
+        else if index of event-slot is 14:
+            close player's inventory
+            execute player command "kit"
+
+        # 4. Spawn Survie (Slot 20)
+        else if index of event-slot is 20:
+            close player's inventory
+            execute player command "survie tp"
+
+        # 5. Back (Slot 22)
+        else if index of event-slot is 22:
+            close player's inventory
+            execute player command "back"
+
+        # 6. Spawn Hub (Slot 24)
+        else if index of event-slot is 24:
+            close player's inventory
+            execute player command "spawn"
+
+        # Fermer (Slot 31)
+        else if index of event-slot is 31:
+            close player's inventory
+            play sound "block.chest.close" to player
+
+    else if name of event-inventory is "&8» &0&lMINESTARS &8- &c&lMES HOMES":
+        cancel event
+        
+        if index of event-slot is 22:
+            close player's inventory
+            execute player command "survie"
+            stop
+            
+        set {_name} to uncolored name of event-slot
+        replace all "✦ " with "" in {_name}
+        replace all " ✦" with "" in {_name}
+        
+        if {survie_homes::%uuid of player%::%{_name}%} is set:
+            if click type is right mouse button or right mouse button with shift:
+                delete {survie_homes::%uuid of player%::%{_name}%}
+                close player's inventory
+                send "{@prefix}&aMaison '&f%{_name}%&a' supprimée avec succès !" to player
+                play sound "block.wooden_button.click_off" to player
+            else:
+                close player's inventory
+                teleport player to {survie_homes::%uuid of player%::%{_name}%}
+                send "{@prefix}&aTéléporté à ta maison '&f%{_name}%&a' !" to player
+                play sound "entity.enderman.teleport" to player

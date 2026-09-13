@@ -1,0 +1,3343 @@
+# ==============================================================================
+#           MINESTARS - GRAND QUIZ & CHAT JEUX ULTIMATE (609+ QUESTIONS)
+#           - Thèmes : Québec & Expressions, Gaming, Cinéma, Anime/Manga, Géographie,
+#             Sciences, Culture G, Histoire, Pop Culture, Musique, Sport, Tech, Énigmes
+#           - Animations : Particules Totem & Feux d'artifice, Titre de Victoire,
+#             Séries de Victoires (Win Streaks) & /quiz top
+# ==============================================================================
+
+options:
+    prefix: &e&l✦ CHAT JEUX &8> &7
+    border: <#00D4FF>&m───────────────────────────────────────────────
+
+on load:
+    set {quiz_active} to false
+
+every 8 minutes:
+    if number of all players >= 1:
+        startChatGame()
+
+function startChatGame():
+    if {quiz_active} is true:
+        stop
+        
+    set {quiz_active} to true
+    set {quiz_start_time} to now
+    set {quiz_alt2} to ""
+    set {quiz_alt3} to ""
+    set {quiz_reward_money} to random integer between 35 and 70
+    set {quiz_reward_xp} to random integer between 20 and 40
+    
+    # Choix entre Trivia ou Dynamique (Calcul, Anagrammes, Speed-Type)
+    set {_rollType} to random integer between 1 and 11
+    
+    # 1. CALCUL MENTAL RAPIDE DYNAMIQUE
+    if {_rollType} is 9:
+        set {quiz_category} to "🧮 CALCUL MENTAL"
+        set {_op} to random integer between 1 and 4
+        if {_op} is 1:
+            set {_n1} to random integer between 18 and 149
+            set {_n2} to random integer between 18 and 149
+            set {_res} to {_n1} + {_n2}
+            set {quiz_question} to "Calculez rapidement : &e%{_n1}% + %{_n2}% &f= ?"
+            set {quiz_answer} to "%{_res}%"
+            set {quiz_alt} to "%{_res}%"
+        else if {_op} is 2:
+            set {_n1} to random integer between 75 and 250
+            set {_n2} to random integer between 15 and 70
+            set {_res} to {_n1} - {_n2}
+            set {quiz_question} to "Calculez rapidement : &e%{_n1}% - %{_n2}% &f= ?"
+            set {quiz_answer} to "%{_res}%"
+            set {quiz_alt} to "%{_res}%"
+        else if {_op} is 3:
+            set {_n1} to random integer between 7 and 15
+            set {_n2} to random integer between 6 and 14
+            set {_res} to {_n1} * {_n2}
+            set {quiz_question} to "Calculez rapidement : &e%{_n1}% x %{_n2}% &f= ?"
+            set {quiz_answer} to "%{_res}%"
+            set {quiz_alt} to "%{_res}%"
+        else:
+            set {_n1} to random integer between 5 and 12
+            set {_n2} to random integer between 4 and 9
+            set {_n3} to random integer between 10 and 35
+            set {_res} to ({_n1} * {_n2}) + {_n3}
+            set {quiz_question} to "Calculez rapidement : &e(%{_n1}% x %{_n2}%) + %{_n3}% &f= ?"
+            set {quiz_answer} to "%{_res}%"
+            set {quiz_alt} to "%{_res}%"
+
+    # 2. ANAGRAMMES & MOTS MÊLÉS
+    else if {_rollType} is 10:
+        set {quiz_category} to "🔤 ANAGRAMME & MOT MYSTÈRE"
+        set {_anId} to random integer between 1 and 20
+        if {_anId} is 1:
+            set {quiz_question} to "Remettez les lettres dans l''ordre : &eD - M - I - N - A - A - T"
+            set {quiz_answer} to "diamant"
+            set {quiz_alt} to "diamant"
+        else if {_anId} is 2:
+            set {quiz_question} to "Remettez les lettres dans l''ordre : &eE - R - E - D - N"
+            set {quiz_answer} to "ender"
+            set {quiz_alt} to "ender"
+        else if {_anId} is 3:
+            set {quiz_question} to "Remettez les lettres dans l''ordre : &eH - E - T - N - R - E"
+            set {quiz_answer} to "nether"
+            set {quiz_alt} to "nether"
+        else if {_anId} is 4:
+            set {quiz_question} to "Remettez les lettres dans l''ordre : &eT - R - S - A - N - I - M - E - S"
+            set {quiz_answer} to "minestars"
+            set {quiz_alt} to "minestars"
+        else if {_anId} is 5:
+            set {quiz_question} to "Remettez les lettres dans l''ordre : &eB - S - C - K - Y - L - O"
+            set {quiz_answer} to "skyblock"
+            set {quiz_alt} to "skyblock"
+        else if {_anId} is 6:
+            set {quiz_question} to "Remettez les lettres dans l''ordre : &eC - R - P - E - E - E"
+            set {quiz_answer} to "creeper"
+            set {quiz_alt} to "creeper"
+        else if {_anId} is 7:
+            set {quiz_question} to "Remettez les lettres dans l''ordre : &eD - A - W - E - R - N"
+            set {quiz_answer} to "warden"
+            set {quiz_alt} to "warden"
+        else if {_anId} is 8:
+            set {quiz_question} to "Remettez les lettres dans l''ordre : &eO - B - U - L - E - I - R - T"
+            set {quiz_answer} to "bouclier"
+            set {quiz_alt} to "bouclier"
+        else if {_anId} is 9:
+            set {quiz_question} to "Remettez les lettres dans l''ordre : &eE - M - E - A - D - E - U - R"
+            set {quiz_answer} to "emeraude"
+            set {quiz_alt} to "emeraude"
+        else if {_anId} is 10:
+            set {quiz_question} to "Remettez les lettres dans l''ordre : &eP - K - C - I - A - X - E"
+            set {quiz_answer} to "pickaxe"
+            set {quiz_alt} to "pioche"
+        else if {_anId} is 11:
+            set {quiz_question} to "Remettez les lettres dans l''ordre : &eF - R - I - E - O - X"
+            set {quiz_answer} to "firefox"
+            set {quiz_alt} to "firefox"
+        else if {_anId} is 12:
+            set {quiz_question} to "Remettez les lettres dans l''ordre : &eP - T - N - Y - H - O"
+            set {quiz_answer} to "python"
+            set {quiz_alt} to "python"
+        else if {_anId} is 13:
+            set {quiz_question} to "Remettez les lettres dans l''ordre : &eA - R - A - G - N - I - E"
+            set {quiz_answer} to "araignee"
+            set {quiz_alt} to "araignee"
+        else if {_anId} is 14:
+            set {quiz_question} to "Remettez les lettres dans l''ordre : &eE - X - P - L - O - S - I - O - N"
+            set {quiz_answer} to "explosion"
+            set {quiz_alt} to "explosion"
+        else if {_anId} is 15:
+            set {quiz_question} to "Remettez les lettres dans l''ordre : &eG - A - L - A - X - I - E"
+            set {quiz_answer} to "galaxie"
+            set {quiz_alt} to "galaxie"
+        else if {_anId} is 16:
+            set {quiz_question} to "Remettez les lettres dans l''ordre : &eC - H - V - A - L - E - I - R"
+            set {quiz_answer} to "chevalier"
+            set {quiz_alt} to "chevalier"
+        else if {_anId} is 17:
+            set {quiz_question} to "Remettez les lettres dans l''ordre : &eF - O - R - T - R - E - S - S - E"
+            set {quiz_answer} to "forteresse"
+            set {quiz_alt} to "forteresse"
+        else if {_anId} is 18:
+            set {quiz_question} to "Remettez les lettres dans l''ordre : &eA - N - T - I - G - R - A - V - I - T - Y"
+            set {quiz_answer} to "antigravity"
+            set {quiz_alt} to "antigravity"
+        else if {_anId} is 19:
+            set {quiz_question} to "Remettez les lettres dans l''ordre : &eS - A - N - C - T - U - A - I - R - E"
+            set {quiz_answer} to "sanctuaire"
+            set {quiz_alt} to "sanctuaire"
+        else:
+            set {quiz_question} to "Remettez les lettres dans l''ordre : &eL - E - G - E - N - D - E"
+            set {quiz_answer} to "legende"
+            set {quiz_alt} to "legende"
+
+    # 3. SPEED-TYPE & SÉCURITÉ
+    else if {_rollType} is 11:
+        set {quiz_category} to "⚡ SPEED-TYPE RAPIDE"
+        set {_c1} to random integer between 1000 and 9999
+        set {quiz_question} to "Soyez le plus rapide a reecrire ce code : &e&lSTAR-%{_c1}%"
+        set {quiz_answer} to "star-%{_c1}%"
+        set {quiz_alt} to "STAR-%{_c1}%"
+
+    # 4. GRAND TRIVIA MULTI-THÈMES (609 QUESTIONS)
+    else:
+        set {_tId} to random integer between 1 and 609
+        if {_tId} is 1:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel est le nom du célèbre plombier moustachu de Nintendo ?"
+            set {quiz_answer} to "mario"
+            set {quiz_alt} to "super mario"
+        else if {_tId} is 2:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans quel jeu vidéo explore-t-on le royaume d'Hyrule incarnant Link ?"
+            set {quiz_answer} to "zelda"
+            set {quiz_alt} to "the legend of zelda"
+        else if {_tId} is 3:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel Pokémon jaune emblématique lance des attaques électriques ?"
+            set {quiz_answer} to "pikachu"
+            set {quiz_alt} to "pikachu"
+        else if {_tId} is 4:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel studio a développé 'The Witcher 3' et 'Cyberpunk 2077' ?"
+            set {quiz_answer} to "cd projekt"
+            set {quiz_alt} to "cd projekt red"
+        else if {_tId} is 5:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel jeu Battle Royale mondialement connu est développé par Epic Games ?"
+            set {quiz_answer} to "fortnite"
+            set {quiz_alt} to "fortnite battle royale"
+        else if {_tId} is 6:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel hérisson bleu ultra-rapide est la mascotte historique de SEGA ?"
+            set {quiz_answer} to "sonic"
+            set {quiz_alt} to "sonic the hedgehog"
+        else if {_tId} is 7:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans quelle ville fictive inspirée de Los Angeles se déroule GTA V ?"
+            set {quiz_answer} to "los santos"
+            set {quiz_alt} to "los santos"
+        else if {_tId} is 8:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel jeu de tir tactique oppose Terroristes et Anti-Terroristes en 5v5 ?"
+            set {quiz_answer} to "counter strike"
+            set {quiz_alt} to "cs"
+        else if {_tId} is 9:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel studio suédois est le créateur original du jeu Minecraft ?"
+            set {quiz_answer} to "mojang"
+            set {quiz_alt} to "mojang studios"
+        else if {_tId} is 10:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel jeu de survie préhistorique avec des dinosaures s'appelle '...: Survival Evolved' ?"
+            set {quiz_answer} to "ark"
+            set {quiz_alt} to "ark survival evolved"
+        else if {_tId} is 11:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Comment s'appelle le puissant guerrier spartiate héros de God of War ?"
+            set {quiz_answer} to "kratos"
+            set {quiz_alt} to "kratos"
+        else if {_tId} is 12:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans quel jeu d'imposteurs spatiaux doit-on accomplir des tâches sans se faire éliminer ?"
+            set {quiz_answer} to "among us"
+            set {quiz_alt} to "amongus"
+        else if {_tId} is 13:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel singe lanceur de tonneaux est le rival historique de Mario chez Nintendo ?"
+            set {quiz_answer} to "donkey kong"
+            set {quiz_alt} to "donkey kong"
+        else if {_tId} is 14:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel jeu de cartes à collectionner virtuel a été créé par Blizzard dans l'univers Warcraft ?"
+            set {quiz_answer} to "hearthstone"
+            set {quiz_alt} to "hearthstone"
+        else if {_tId} is 15:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel est le prénom du frère de Mario vêtu d'une casquette verte ?"
+            set {quiz_answer} to "luigi"
+            set {quiz_alt} to "luigi"
+        else if {_tId} is 16:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quelle héroïne archéologue et aventurière est l'héroïne de Tomb Raider ?"
+            set {quiz_answer} to "lara croft"
+            set {quiz_alt} to "lara croft"
+        else if {_tId} is 17:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel FPS futuriste de Bungie met en scène le Master Chief et Cortana ?"
+            set {quiz_answer} to "halo"
+            set {quiz_alt} to "halo combat evolved"
+        else if {_tId} is 18:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans Pokémon, quel objet sphérique rouge et blanc sert à capturer les créatures ?"
+            set {quiz_answer} to "pokeball"
+            set {quiz_alt} to "poke ball"
+        else if {_tId} is 19:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel célèbre jeu de simulation de football est désormais nommé 'EA Sports FC' ?"
+            set {quiz_answer} to "fifa"
+            set {quiz_alt} to "ea fc"
+        else if {_tId} is 20:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel jeu de construction et de survie en 2D est souvent surnommé le 'Minecraft 2D' ?"
+            set {quiz_answer} to "terraria"
+            set {quiz_alt} to "terraria"
+        else if {_tId} is 21:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Comment s'appelle la princesse du Royaume Champignon souvent kidnappée par Bowser ?"
+            set {quiz_answer} to "peach"
+            set {quiz_alt} to "princesse peach"
+        else if {_tId} is 22:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel jeu de rythme en réalité virtuelle utilise deux sabres laser pour trancher des cubes ?"
+            set {quiz_answer} to "beat saber"
+            set {quiz_alt} to "beat saber"
+        else if {_tId} is 23:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans League of Legends, comment appelle-t-on le grand monstre violet de la rivière ?"
+            set {quiz_answer} to "baron nashor"
+            set {quiz_alt} to "nashor"
+        else if {_tId} is 24:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel jeu vidéo de combat de Nintendo réunit Mario, Pikachu, Link et d'autres héros ?"
+            set {quiz_answer} to "super smash bros"
+            set {quiz_alt} to "smash bros"
+        else if {_tId} is 25:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans quel jeu de tir joue-t-on des héros comme Tracer, Reaper et Reinhardt ?"
+            set {quiz_answer} to "overwatch"
+            set {quiz_alt} to "overwatch 2"
+        else if {_tId} is 26:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel dragon violet cracheur de feu a pour compagnon la libellule Sparx ?"
+            set {quiz_answer} to "spyro"
+            set {quiz_alt} to "spyro"
+        else if {_tId} is 27:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel jeu d'action et infiltration met en scène l'Agent 47 au crâne chauve et cravate rouge ?"
+            set {quiz_answer} to "hitman"
+            set {quiz_alt} to "hitman"
+        else if {_tId} is 28:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans Skyrim, quel mot prononce-t-on pour le cri 'Fus ... Dah' ?"
+            set {quiz_answer} to "ro"
+            set {quiz_alt} to "fus ro dah"
+        else if {_tId} is 29:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel jeu de football avec des voitures propulsées par fusées est développé par Psyonix ?"
+            set {quiz_answer} to "rocket league"
+            set {quiz_alt} to "rocket league"
+        else if {_tId} is 30:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans quel jeu post-apocalyptique suit-on Joel et Ellie infectés par le Cordyceps ?"
+            set {quiz_answer} to "the last of us"
+            set {quiz_alt} to "tlou"
+        else if {_tId} is 31:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel est le nom du protagoniste hors-la-loi dans Red Dead Redemption 2 ?"
+            set {quiz_answer} to "arthur morgan"
+            set {quiz_alt} to "arthur"
+        else if {_tId} is 32:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel jeu de rôle médiéval fantastique ultra-difficile a été créé par FromSoftware en 2022 ?"
+            set {quiz_answer} to "elden ring"
+            set {quiz_alt} to "elden ring"
+        else if {_tId} is 33:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel est le nom de la console hybride portable et salon sortie par Nintendo en 2017 ?"
+            set {quiz_answer} to "switch"
+            set {quiz_alt} to "nintendo switch"
+        else if {_tId} is 34:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans Pac-Man, de quelle couleur sont les petits fantômes effrayés lorsqu'on mange une super-pastille ?"
+            set {quiz_answer} to "bleu"
+            set {quiz_alt} to "bleue"
+        else if {_tId} is 35:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel studio français a développé 'Rayman', 'Assassin's Creed' et 'Far Cry' ?"
+            set {quiz_answer} to "ubisoft"
+            set {quiz_alt} to "ubisoft"
+        else if {_tId} is 36:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans quel jeu explore-t-on les fonds marins à bord du Cyclops sur la planète 4546B ?"
+            set {quiz_answer} to "subnautica"
+            set {quiz_alt} to "subnautica"
+        else if {_tId} is 37:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel célèbre créateur a conçu la franchise Metal Gear et Death Stranding ?"
+            set {quiz_answer} to "hideo kojima"
+            set {quiz_alt} to "kojima"
+        else if {_tId} is 38:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Comment s'appelle le dinosaure vert fidèle monture de Mario ?"
+            set {quiz_answer} to "yoshi"
+            set {quiz_alt} to "yoshi"
+        else if {_tId} is 39:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel MOBA de Valve est la suite d'un célèbre mod de Warcraft III ?"
+            set {quiz_answer} to "dota 2"
+            set {quiz_alt} to "dota"
+        else if {_tId} is 40:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel personnage en forme de boule rose absorbe les pouvoirs de ses ennemis chez Nintendo ?"
+            set {quiz_answer} to "kirby"
+            set {quiz_alt} to "kirby"
+        else if {_tId} is 41:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel FPS tactique gratuit de Riot Games oppose des agents aux pouvoirs uniques ?"
+            set {quiz_answer} to "valorant"
+            set {quiz_alt} to "valorant"
+        else if {_tId} is 42:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel est le surnom du créateur original de Minecraft, Markus Persson ?"
+            set {quiz_answer} to "notch"
+            set {quiz_alt} to "notch"
+        else if {_tId} is 43:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quelle arme emblématique de la saga Half-Life permet de manipuler les objets à distance ?"
+            set {quiz_answer} to "gravity gun"
+            set {quiz_alt} to "pistolet anti gravite"
+        else if {_tId} is 44:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel est le nom du renard à deux queues meilleur ami de Sonic ?"
+            set {quiz_answer} to "tails"
+            set {quiz_alt} to "miles tails prower"
+        else if {_tId} is 45:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans quel jeu de craft spatial explore-t-on 18 trillions de planètes générées procéduralement ?"
+            set {quiz_answer} to "no man's sky"
+            set {quiz_alt} to "no mans sky"
+        else if {_tId} is 46:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel guerrier masqué de Mortal Kombat utilise une chaîne et crie 'Get over here !' ?"
+            set {quiz_answer} to "scorpion"
+            set {quiz_alt} to "scorpion"
+        else if {_tId} is 47:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel jeu vidéo indé créé par Toby Fox met en scène Sans le squelette ?"
+            set {quiz_answer} to "undertale"
+            set {quiz_alt} to "undertale"
+        else if {_tId} is 48:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans quel jeu de combat de Capcom s'affrontent Ryu, Ken et Chun-Li ?"
+            set {quiz_answer} to "street fighter"
+            set {quiz_alt} to "street fighter"
+        else if {_tId} is 49:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel est le nom de l'androïde détective dans Detroit Become Human ?"
+            set {quiz_answer} to "connor"
+            set {quiz_alt} to "connor"
+        else if {_tId} is 50:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans quel jeu de survie nordique explore-t-on le 10ème monde viking ?"
+            set {quiz_answer} to "valheim"
+            set {quiz_alt} to "valheim"
+        else if {_tId} is 51:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Comment s'appelle la ville sous-marine dystopique du premier jeu BioShock ?"
+            set {quiz_answer} to "rapture"
+            set {quiz_alt} to "rapture"
+        else if {_tId} is 52:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel jeu de rythme cubique en ligne permet de sauter au tempo sur des niveaux d'obstacles ?"
+            set {quiz_answer} to "geometry dash"
+            set {quiz_alt} to "geometry dash"
+        else if {_tId} is 53:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel est le nom du Pokémon légendaire psy numéro 150 créé en laboratoire ?"
+            set {quiz_answer} to "mewtwo"
+            set {quiz_alt} to "mewtwo"
+        else if {_tId} is 54:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans quel jeu multijoueur s'affronte-t-on en petits bonshommes haricots colorés ?"
+            set {quiz_answer} to "fall guys"
+            set {quiz_alt} to "fall guys"
+        else if {_tId} is 55:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel est le nom de l'assassin florentin de la Renaissance dans Assassin's Creed II ?"
+            set {quiz_answer} to "ezio"
+            set {quiz_alt} to "ezio auditore"
+        else if {_tId} is 56:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel marsupial orange tournoyant adore les pommes Wumpa sur PlayStation ?"
+            set {quiz_answer} to "crash bandicoot"
+            set {quiz_alt} to "crash"
+        else if {_tId} is 57:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quelle école de magie et sorcellerie est fréquentée par Harry Potter ?"
+            set {quiz_answer} to "poudlard"
+            set {quiz_alt} to "hogwarts"
+        else if {_tId} is 58:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel super-héros milliardaire en armure rouge et or est incarné par Robert Downey Jr. ?"
+            set {quiz_answer} to "iron man"
+            set {quiz_alt} to "tony stark"
+        else if {_tId} is 59:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Qui est le père biologique de Luke Skywalker dans Star Wars ?"
+            set {quiz_answer} to "dark vador"
+            set {quiz_alt} to "darth vader"
+        else if {_tId} is 60:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Sur quelle planète luxuriante vivent les Na'vi dans Avatar de James Cameron ?"
+            set {quiz_answer} to "pandora"
+            set {quiz_alt} to "pandore"
+        else if {_tId} is 61:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quelle série phénomène de Netflix met en scène Eleven et le Monde à l'Envers ?"
+            set {quiz_answer} to "stranger things"
+            set {quiz_alt} to "stranger things"
+        else if {_tId} is 62:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel célèbre paquebot coule tragiquement après avoir heurté un iceberg dans le film de 1997 ?"
+            set {quiz_answer} to "titanic"
+            set {quiz_alt} to "le titanic"
+        else if {_tId} is 63:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel titan violet rassemble les 6 Pierres d'Infinité dans Avengers Endgame ?"
+            set {quiz_answer} to "thanos"
+            set {quiz_alt} to "thanos"
+        else if {_tId} is 64:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel agent secret britannique du MI6 a pour matricule le chiffre 007 ?"
+            set {quiz_answer} to "james bond"
+            set {quiz_alt} to "007"
+        else if {_tId} is 65:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel objet magique unique forgé par Sauron doit être détruit au Mordor ?"
+            set {quiz_answer} to "l'anneau unique"
+            set {quiz_alt} to "l'anneau"
+        else if {_tId} is 66:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel détective légendaire vit au 221B Baker Street à Londres avec le Dr Watson ?"
+            set {quiz_answer} to "sherlock holmes"
+            set {quiz_alt} to "sherlock"
+        else if {_tId} is 67:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Dans Le Roi Lion, quel est le prénom du lionceau prince de la Terre des Lions ?"
+            set {quiz_answer} to "simba"
+            set {quiz_alt} to "simba"
+        else if {_tId} is 68:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel super-héros masqué veille sur la ville de Gotham City la nuit ?"
+            set {quiz_answer} to "batman"
+            set {quiz_alt} to "bruce wayne"
+        else if {_tId} is 69:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Comment s'appelle le petit bonhomme en pain d'épices dans Shrek ?"
+            set {quiz_answer} to "ptit biscuit"
+            set {quiz_alt} to "ti biscuit"
+        else if {_tId} is 70:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel dinosaure géant carnivore est la vedette du parc dans Jurassic Park ?"
+            set {quiz_answer} to "t-rex"
+            set {quiz_alt} to "tyrannosaure"
+        else if {_tId} is 71:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Dans Pirates des Caraïbes, quel capitaine commande le Black Pearl et adore le rhum ?"
+            set {quiz_answer} to "jack sparrow"
+            set {quiz_alt} to "capitaine jack sparrow"
+        else if {_tId} is 72:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel archer habile au chapeau vert vole aux riches pour donner aux pauvres ?"
+            set {quiz_answer} to "robin des bois"
+            set {quiz_alt} to "robin hood"
+        else if {_tId} is 73:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Dans Retour vers le Futur, quelle voiture modifiée voyage dans le temps à 88 mph ?"
+            set {quiz_answer} to "delorean"
+            set {quiz_alt} to "de lorean"
+        else if {_tId} is 74:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel héros de Marvel grimpe aux murs après avoir été mordu par une araignée radioactive ?"
+            set {quiz_answer} to "spider-man"
+            set {quiz_alt} to "spiderman"
+        else if {_tId} is 75:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel sorcier gris puis blanc guide la Communauté de l'Anneau ?"
+            set {quiz_answer} to "gandalf"
+            set {quiz_alt} to "gandalf le gris"
+        else if {_tId} is 76:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quelle poupée possédée et terrifiante porte une salopette dans Child's Play ?"
+            set {quiz_answer} to "chucky"
+            set {quiz_alt} to "chucky"
+        else if {_tId} is 77:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Dans Matrix, quelle pilule de couleur Neo choisit-il pour découvrir la vérité ?"
+            set {quiz_answer} to "rouge"
+            set {quiz_alt} to "la pilule rouge"
+        else if {_tId} is 78:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Comment s'appelle le clown maléfique créé par Stephen King dans 'Ça' ?"
+            set {quiz_answer} to "grippe-sou"
+            set {quiz_alt} to "pennywise"
+        else if {_tId} is 79:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Dans Star Wars, quelle petite créature verte âgée de 900 ans dit 'Que la Force soit avec toi' ?"
+            set {quiz_answer} to "yoda"
+            set {quiz_alt} to "maitre yoda"
+        else if {_tId} is 80:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel ogre tout vert vit dans un marais avec son ami l'Âne ?"
+            set {quiz_answer} to "shrek"
+            set {quiz_alt} to "shrek"
+        else if {_tId} is 81:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Dans quel film d'animation Pixar un vieux monsieur fait-il voler sa maison avec des ballons ?"
+            set {quiz_answer} to "la-haut"
+            set {quiz_alt} to "up"
+        else if {_tId} is 82:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel dieu nordique du tonnerre manie le marteau Mjolnir dans Marvel ?"
+            set {quiz_answer} to "thor"
+            set {quiz_alt} to "thor"
+        else if {_tId} is 83:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Dans Interstellar, quel phénomène spatial traverse l'équipage pour atteindre une autre galaxie ?"
+            set {quiz_answer} to "trou de ver"
+            set {quiz_alt} to "trou noir"
+        else if {_tId} is 84:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel est le nom du dragon noir aux yeux verts dressé par Harold dans Dragons ?"
+            set {quiz_answer} to "krokmou"
+            set {quiz_alt} to "crokmou"
+        else if {_tId} is 85:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Dans quelle série coréenne sur Netflix des joueurs fauchés jouent-ils à 'Un, deux, trois, soleil' ?"
+            set {quiz_answer} to "squid game"
+            set {quiz_alt} to "squid game"
+        else if {_tId} is 86:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Comment s'appelle le bras droit de Dark Vador et Empereur Galactique ?"
+            set {quiz_answer} to "palpatine"
+            set {quiz_alt} to "empereur palpatine"
+        else if {_tId} is 87:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel poisson-clown orange recherche son fils dans un film Pixar culte ?"
+            set {quiz_answer} to "marin"
+            set {quiz_alt} to "nemo"
+        else if {_tId} is 88:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Dans quelle ville française se déroule le festival international du film chaque mois de mai ?"
+            set {quiz_answer} to "cannes"
+            set {quiz_alt} to "cannes"
+        else if {_tId} is 89:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel super-héros aquatique gouverne le royaume de l'Atlantide ?"
+            set {quiz_answer} to "aquaman"
+            set {quiz_alt} to "aquaman"
+        else if {_tId} is 90:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Dans Game of Thrones, comment s'appelle la Mère des Dragons aux cheveux d'argent ?"
+            set {quiz_answer} to "daenerys"
+            set {quiz_alt} to "daenerys targaryen"
+        else if {_tId} is 91:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel monstre géant japonais de 100 mètres détruit Tokyo et tire un souffle atomique ?"
+            set {quiz_answer} to "godzilla"
+            set {quiz_alt} to "godzilla"
+        else if {_tId} is 92:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel grand singe géant escalade l'Empire State Building à New York ?"
+            set {quiz_answer} to "king kong"
+            set {quiz_alt} to "kong"
+        else if {_tId} is 93:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Dans quel film d'animation Disney chante-t-on 'Libérée, Délivrée' ?"
+            set {quiz_answer} to "la reine des neiges"
+            set {quiz_alt} to "frozen"
+        else if {_tId} is 94:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel super-héros extraterrestre originaire de Krypton craint la kryptonite ?"
+            set {quiz_answer} to "superman"
+            set {quiz_alt} to "clark kent"
+        else if {_tId} is 95:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Dans Breaking Bad, sous quel pseudonyme de chimiste Walter White vend-il sa meth bleue ?"
+            set {quiz_answer} to "heisenberg"
+            set {quiz_alt} to "heisenberg"
+        else if {_tId} is 96:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Dans Cars, quel est le numéro de course rouge et jaune de Flash McQueen ?"
+            set {quiz_answer} to "95"
+            set {quiz_alt} to "95"
+        else if {_tId} is 97:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel méchant au masque blanc terrorise les adolescents avec un couteau dans Halloween ?"
+            set {quiz_answer} to "michael myers"
+            set {quiz_alt} to "michael myers"
+        else if {_tId} is 98:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel petit extraterrestre adore les sucreries et dit 'Téléphone maison' ?"
+            set {quiz_answer} to "et"
+            set {quiz_alt} to "e.t."
+        else if {_tId} is 99:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Dans Toy Story, quel cosmonaute en plastique répète 'Vers l'infini et au-delà' ?"
+            set {quiz_answer} to "buzz l'eclair"
+            set {quiz_alt} to "buzz"
+        else if {_tId} is 100:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quel pirate au chapeau de paille rêve de trouver le trésor du One Piece ?"
+            set {quiz_answer} to "luffy"
+            set {quiz_alt} to "monkey d luffy"
+        else if {_tId} is 101:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quel ninja blond de Konoha abrite le démon renard à 9 queues Kyûbi ?"
+            set {quiz_answer} to "naruto"
+            set {quiz_alt} to "naruto uzumaki"
+        else if {_tId} is 102:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quelle vague d'énergie bleue est l'attaque signature de Sangoku dans Dragon Ball ?"
+            set {quiz_answer} to "kamehameha"
+            set {quiz_alt} to "kamehameha"
+        else if {_tId} is 103:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quel pourfendeur de démons protège sa sœur Nezuko transformée en démon ?"
+            set {quiz_answer} to "tanjiro"
+            set {quiz_alt} to "tanjiro kamado"
+        else if {_tId} is 104:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Dans quel anime l'humanité survit-elle derrière les murs Maria, Rose et Sina ?"
+            set {quiz_answer} to "l'attaque des titans"
+            set {quiz_alt} to "snk"
+        else if {_tId} is 105:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quel carnet magique permet de tuer en écrivant un nom dans l'anime éponyme ?"
+            set {quiz_answer} to "death note"
+            set {quiz_alt} to "death note"
+        else if {_tId} is 106:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quel super-héros chauve bat tous ses ennemis en un seul coup de poing dans One Punch Man ?"
+            set {quiz_answer} to "saitama"
+            set {quiz_alt} to "saitama"
+        else if {_tId} is 107:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Comment s'appelle l'épéiste aux cheveux verts qui combat avec trois sabres dans One Piece ?"
+            set {quiz_answer} to "zoro"
+            set {quiz_alt} to "roronoa zoro"
+        else if {_tId} is 108:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quel exorciste ultra-puissant aux yeux bleus bandés est professeur dans Jujutsu Kaisen ?"
+            set {quiz_answer} to "gojo"
+            set {quiz_alt} to "satoru gojo"
+        else if {_tId} is 109:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quel alchimiste d'État au bras de métal cherche la pierre philosophale avec son frère Alphonse ?"
+            set {quiz_answer} to "edward elric"
+            set {quiz_alt} to "edward"
+        else if {_tId} is 110:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Comment s'appelle le dieu de la mort (Shinigami) qui adore les pommes dans Death Note ?"
+            set {quiz_answer} to "ryuk"
+            set {quiz_alt} to "ryuk"
+        else if {_tId} is 111:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quel est le prénom du rival prince des Saiyans de Sangoku portant des gants blancs ?"
+            set {quiz_answer} to "vegeta"
+            set {quiz_alt} to "vegeta"
+        else if {_tId} is 112:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Dans My Hero Academia, quel lycéen né sans Alter hérite du One For All ?"
+            set {quiz_answer} to "deku"
+            set {quiz_alt} to "izuku midoriya"
+        else if {_tId} is 113:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Dans Naruto, quel maître ninja masqué lit des livres coquins et maîtrise le Chidori ?"
+            set {quiz_answer} to "kakashi"
+            set {quiz_alt} to "kakashi hatake"
+        else if {_tId} is 114:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quel Titan colossal et cuirassé détruit le mur Maria au début de SNK ?"
+            set {quiz_answer} to "titan colossal"
+            set {quiz_alt} to "colossal"
+        else if {_tId} is 115:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quel est le nom du bateau pirate originel de l'équipage du Chapeau de Paille avant le Sunny ?"
+            set {quiz_answer} to "going merry"
+            set {quiz_alt} to "vogue merry"
+        else if {_tId} is 116:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Dans Bleach, quel lycéen aux cheveux orange devient Shinigami remplaçant ?"
+            set {quiz_answer} to "ichigo"
+            set {quiz_alt} to "ichigo kurosaki"
+        else if {_tId} is 117:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quel dragon divin exauce les vœux quand on réunit les 7 boules de cristal ?"
+            set {quiz_answer} to "shenron"
+            set {quiz_alt} to "shenron"
+        else if {_tId} is 118:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Comment s'appelle l'ami d'enfance aux cheveux blancs de Gon utilisant des éclairs ?"
+            set {quiz_answer} to "killua"
+            set {quiz_alt} to "kirua"
+        else if {_tId} is 119:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quel cuisinier séducteur aux jambes enflammées fait partie de l'équipage de Luffy ?"
+            set {quiz_answer} to "sanji"
+            set {quiz_alt} to "sanji"
+        else if {_tId} is 120:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Dans Fairy Tail, quel mage de feu est élevé par le dragon Ignir ?"
+            set {quiz_answer} to "natsu"
+            set {quiz_alt} to "natsu dragneel"
+        else if {_tId} is 121:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Dans quel anime virtuel des joueurs sont-ils piégés dans le château flottant de l'Aincrad ?"
+            set {quiz_answer} to "sword art online"
+            set {quiz_alt} to "sao"
+        else if {_tId} is 122:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quel jeune orphelin rêve de devenir l'Empereur-Mage dans Black Clover sans magie ?"
+            set {quiz_answer} to "asta"
+            set {quiz_alt} to "asta"
+        else if {_tId} is 123:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Comment s'appelle l'homme le plus fort du monde armé d'un bisento dans One Piece ?"
+            set {quiz_answer} to "barbe blanche"
+            set {quiz_alt} to "whitebeard"
+        else if {_tId} is 124:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Dans Naruto, quel membre déserteur des Uchiwa massacra son propre clan par amour ?"
+            set {quiz_answer} to "itachi"
+            set {quiz_alt} to "itachi uchiwa"
+        else if {_tId} is 125:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quel médecin renne au nez bleu adore la barbe à papa dans One Piece ?"
+            set {quiz_answer} to "chopper"
+            set {quiz_alt} to "tony tony chopper"
+        else if {_tId} is 126:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quel lycéen de Tokyo absorbe un doigt maudit de Sukuna dans Jujutsu Kaisen ?"
+            set {quiz_answer} to "yuji itadori"
+            set {quiz_alt} to "itadori"
+        else if {_tId} is 127:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Dans Dragon Ball Z, qui élimine Cell parfait avec un Kamehameha à une main ?"
+            set {quiz_answer} to "gohan"
+            set {quiz_alt} to "sangohan"
+        else if {_tId} is 128:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quel roi des malédictions à 4 bras est scellé dans le corps de Yuji ?"
+            set {quiz_answer} to "sukuna"
+            set {quiz_alt} to "ryomen sukuna"
+        else if {_tId} is 129:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quel pirate roux a donné son chapeau de paille à Luffy au début de l'histoire ?"
+            set {quiz_answer} to "shanks"
+            set {quiz_alt} to "shanks le roux"
+        else if {_tId} is 130:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Dans Blue Lock, quel sport collectif tente-t-on de révolutionner avec le meilleur attaquant ?"
+            set {quiz_answer} to "football"
+            set {quiz_alt} to "foot"
+        else if {_tId} is 131:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quel rival aux cheveux noirs et sharingan est le rival éternel de Naruto ?"
+            set {quiz_answer} to "sasuke"
+            set {quiz_alt} to "sasuke uchiwa"
+        else if {_tId} is 132:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Comment s'appelle l'androïde du futur aux cheveux violets fils de Vegeta et Bulma ?"
+            set {quiz_answer} to "trunks"
+            set {quiz_alt} to "trunks"
+        else if {_tId} is 133:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Dans Chainsaw Man, quel jeune homme fusionne avec le démon tronçonneuse Pochita ?"
+            set {quiz_answer} to "denji"
+            set {quiz_alt} to "denji"
+        else if {_tId} is 134:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Dans Berserk, quel guerrier solitaire manie la gigantesque épée Dragon Slayer ?"
+            set {quiz_answer} to "guts"
+            set {quiz_alt} to "guts"
+        else if {_tId} is 135:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quel frère de Luffy possédait le pouvoir du feu (Mera Mera no Mi) avant Sabo ?"
+            set {quiz_answer} to "ace"
+            set {quiz_alt} to "portgas d ace"
+        else if {_tId} is 136:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Dans Tokyo Ghoul, quel étudiant devient demi-goule après une greffe d'organe ?"
+            set {quiz_answer} to "kaneki"
+            set {quiz_alt} to "ken kaneki"
+        else if {_tId} is 137:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quel démon renard légendaire à neuf queues est scellé dans le ventre de Naruto ?"
+            set {quiz_answer} to "kyubi"
+            set {quiz_alt} to "kurama"
+        else if {_tId} is 138:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quelle est la capitale officielle de la France ?"
+            set {quiz_answer} to "paris"
+            set {quiz_alt} to "paris"
+        else if {_tId} is 139:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quel est le plus grand océan de notre planète en superficie ?"
+            set {quiz_answer} to "pacifique"
+            set {quiz_alt} to "ocean pacifique"
+        else if {_tId} is 140:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quelle est la capitale ultra-moderne du Japon ?"
+            set {quiz_answer} to "tokyo"
+            set {quiz_alt} to "tokyo"
+        else if {_tId} is 141:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quel est le plus haut sommet du monde culminant à 8848 mètres dans l'Himalaya ?"
+            set {quiz_answer} to "everest"
+            set {quiz_alt} to "mont everest"
+        else if {_tId} is 142:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Sur quel continent immense se trouvent le Maroc, l'Égypte et le Kenya ?"
+            set {quiz_answer} to "afrique"
+            set {quiz_alt} to "l'afrique"
+        else if {_tId} is 143:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quelle est la capitale administrative du Canada ?"
+            set {quiz_answer} to "ottawa"
+            set {quiz_alt} to "ottawa"
+        else if {_tId} is 144:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quel pays européen a la forme géographique reconnaissable d'une botte ?"
+            set {quiz_answer} to "italie"
+            set {quiz_alt} to "l'italie"
+        else if {_tId} is 145:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quel fleuve géant d'Amérique du Sud possède le plus grand débit au monde ?"
+            set {quiz_answer} to "amazone"
+            set {quiz_alt} to "l'amazone"
+        else if {_tId} is 146:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Dans quelle mégapole américaine se dresse la Statue de la Liberté ?"
+            set {quiz_answer} to "new york"
+            set {quiz_alt} to "new york city"
+        else if {_tId} is 147:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quelle est la monnaie commune utilisée par la majorité des pays de l'Union Européenne ?"
+            set {quiz_answer} to "euro"
+            set {quiz_alt} to "l'euro"
+        else if {_tId} is 148:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quelle est la capitale de l'Australie (ce n'est ni Sydney ni Melbourne) ?"
+            set {quiz_answer} to "canberra"
+            set {quiz_alt} to "canberra"
+        else if {_tId} is 149:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quel est le plus grand pays du monde en superficie terrestre ?"
+            set {quiz_answer} to "russie"
+            set {quiz_alt} to "la russie"
+        else if {_tId} is 150:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quel désert chaud de sable est le plus vaste du monde en Afrique du Nord ?"
+            set {quiz_answer} to "sahara"
+            set {quiz_alt} to "le sahara"
+        else if {_tId} is 151:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quelle est la capitale de l'Espagne réputée pour sa Plaza Mayor ?"
+            set {quiz_answer} to "madrid"
+            set {quiz_alt} to "madrid"
+        else if {_tId} is 152:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quel grand fleuve égyptien de 6600 km se jette dans la mer Méditerranée ?"
+            set {quiz_answer} to "le nil"
+            set {quiz_alt} to "nil"
+        else if {_tId} is 153:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quelle ville italienne est célèbre pour ses canaux et ses gondoles romantiques ?"
+            set {quiz_answer} to "venise"
+            set {quiz_alt} to "venise"
+        else if {_tId} is 154:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quel pays détient le drapeau blanc avec un rond rouge symbolisant le soleil levant ?"
+            set {quiz_answer} to "japon"
+            set {quiz_alt} to "le japon"
+        else if {_tId} is 155:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quelle est la capitale historique du Royaume-Uni où coule la Tamise ?"
+            set {quiz_answer} to "londres"
+            set {quiz_alt} to "london"
+        else if {_tId} is 156:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quel est le pays le plus peuplé du monde avec l'Inde ?"
+            set {quiz_answer} to "chine"
+            set {quiz_alt} to "la chine"
+        else if {_tId} is 157:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Dans quel pays peut-on visiter les grandes pyramides de Gizeh ?"
+            set {quiz_answer} to "egypte"
+            set {quiz_alt} to "l'egypte"
+        else if {_tId} is 158:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quelle est la capitale de l'Allemagne réunifiée depuis la chute du Mur ?"
+            set {quiz_answer} to "berlin"
+            set {quiz_alt} to "berlin"
+        else if {_tId} is 159:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quelle est la plus grande île du monde couverte de glace et rattachée au Danemark ?"
+            set {quiz_answer} to "groenland"
+            set {quiz_alt} to "greenland"
+        else if {_tId} is 160:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quelle est la capitale de l'Italie abritant le Colisée antique ?"
+            set {quiz_answer} to "rome"
+            set {quiz_alt} to "rome"
+        else if {_tId} is 161:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quel océan sépare l'Europe du continent américain ?"
+            set {quiz_answer} to "atlantique"
+            set {quiz_alt} to "ocean atlantique"
+        else if {_tId} is 162:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quel pays d'Amérique du Sud est le seul à avoir pour langue officielle le portugais ?"
+            set {quiz_answer} to "bresil"
+            set {quiz_alt} to "le bresil"
+        else if {_tId} is 163:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quelle est la capitale de la Belgique réputée pour sa Grand-Place ?"
+            set {quiz_answer} to "bruxelles"
+            set {quiz_alt} to "brussels"
+        else if {_tId} is 164:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quel célèbre volcan italien surplombe la ville de Naples et a détruit Pompéi ?"
+            set {quiz_answer} to "vesuve"
+            set {quiz_alt} to "le vesuve"
+        else if {_tId} is 165:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quelle est la capitale de la Suisse (siège du gouvernement fédéral) ?"
+            set {quiz_answer} to "berne"
+            set {quiz_alt} to "bern"
+        else if {_tId} is 166:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quel monument indien en marbre blanc d'Agra est un mausolée d'amour ?"
+            set {quiz_answer} to "taj mahal"
+            set {quiz_alt} to "le taj mahal"
+        else if {_tId} is 167:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quelle est la capitale du Portugal au bord de l'océan Atlantique ?"
+            set {quiz_answer} to "lisbonne"
+            set {quiz_alt} to "lisboa"
+        else if {_tId} is 168:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quelle est la capitale de la Russie connue pour sa place Rouge et le Kremlin ?"
+            set {quiz_answer} to "moscou"
+            set {quiz_alt} to "moscow"
+        else if {_tId} is 169:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quelle est la capitale de la Grèce berceau de la démocratie et de l'Acropole ?"
+            set {quiz_answer} to "athenes"
+            set {quiz_alt} to "athens"
+        else if {_tId} is 170:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quelle est la capitale de la Corée du Sud célèbre pour la K-Pop ?"
+            set {quiz_answer} to "seoul"
+            set {quiz_alt} to "seoul"
+        else if {_tId} is 171:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quelle est la capitale des Pays-Bas réputée pour ses canaux et ses vélos ?"
+            set {quiz_answer} to "amsterdam"
+            set {quiz_alt} to "amsterdam"
+        else if {_tId} is 172:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quel pays a pour symbole la feuille d'érable sur son drapeau bicolore ?"
+            set {quiz_answer} to "canada"
+            set {quiz_alt} to "le canada"
+        else if {_tId} is 173:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quelle est la capitale de l'Irlande réputée pour la fête de la Saint-Patrick ?"
+            set {quiz_answer} to "dublin"
+            set {quiz_alt} to "dublin"
+        else if {_tId} is 174:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quelle est la capitale de la Suède bordée par la mer Baltique ?"
+            set {quiz_answer} to "stockholm"
+            set {quiz_alt} to "stockholm"
+        else if {_tId} is 175:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quel pays d'Afrique du Nord a pour capitale Alger ?"
+            set {quiz_answer} to "algerie"
+            set {quiz_alt} to "l'algerie"
+        else if {_tId} is 176:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quelle est la capitale du Maroc réputée pour la Tour Hassan ?"
+            set {quiz_answer} to "rabat"
+            set {quiz_alt} to "rabat"
+        else if {_tId} is 177:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quelle est la capitale de la Chine abritant la Cité Interdite ?"
+            set {quiz_answer} to "pekin"
+            set {quiz_alt} to "beijing"
+        else if {_tId} is 178:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quelle est la formule chimique moléculaire de l'eau pure ?"
+            set {quiz_answer} to "h2o"
+            set {quiz_alt} to "h2o"
+        else if {_tId} is 179:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quelle planète du système solaire est surnommée la 'Planète Rouge' ?"
+            set {quiz_answer} to "mars"
+            set {quiz_alt} to "mars"
+        else if {_tId} is 180:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quelle est la plus grande planète gazeuse de notre système solaire ?"
+            set {quiz_answer} to "jupiter"
+            set {quiz_alt} to "jupiter"
+        else if {_tId} is 181:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quel métal précieux inoxydable a pour symbole chimique 'Au' ?"
+            set {quiz_answer} to "or"
+            set {quiz_alt} to "l'or"
+        else if {_tId} is 182:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Combien de pattes possède une araignée adulte (arachnide) ?"
+            set {quiz_answer} to "8"
+            set {quiz_alt} to "huit"
+        else if {_tId} is 183:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quelle étoile brillante se trouve au centre exact de notre système solaire ?"
+            set {quiz_answer} to "soleil"
+            set {quiz_alt} to "le soleil"
+        else if {_tId} is 184:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quel est le symbole chimique de l'élément Fer dans le tableau périodique ?"
+            set {quiz_answer} to "fe"
+            set {quiz_alt} to "fe"
+        else if {_tId} is 185:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Combien de jours compte une année solaire classique non bissextile ?"
+            set {quiz_answer} to "365"
+            set {quiz_alt} to "365 jours"
+        else if {_tId} is 186:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quel gaz essentiel respirons-nous pour vivre dans l'air atmosphérique ?"
+            set {quiz_answer} to "oxygene"
+            set {quiz_alt} to "o2"
+        else if {_tId} is 187:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quel scientifique a découvert la loi universelle de la gravitation grâce à une pomme ?"
+            set {quiz_answer} to "isaac newton"
+            set {quiz_alt} to "newton"
+        else if {_tId} is 188:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quel est le plus grand mammifère vivant sur Terre atteignant 30 mètres de long ?"
+            set {quiz_answer} to "baleine bleue"
+            set {quiz_alt} to "la baleine bleue"
+        else if {_tId} is 189:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quelle planète spectaculaire est entourée de magnifiques anneaux de glace ?"
+            set {quiz_answer} to "saturne"
+            set {quiz_alt} to "saturne"
+        else if {_tId} is 190:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quel organe vital humain pompe le sang et bat environ 70 fois par minute ?"
+            set {quiz_answer} to "coeur"
+            set {quiz_alt} to "le coeur"
+        else if {_tId} is 191:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quelle force invisible attire les objets vers le centre de la Terre ?"
+            set {quiz_answer} to "gravite"
+            set {quiz_alt} to "la pesanteur"
+        else if {_tId} is 192:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quel oiseau palmé de l'hémisphère sud ne vole pas mais nage à grande vitesse ?"
+            set {quiz_answer} to "manchot"
+            set {quiz_alt} to "le manchot"
+        else if {_tId} is 193:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "À quelle température en degrés Celsius l'eau pure commence-t-elle à geler ?"
+            set {quiz_answer} to "0"
+            set {quiz_alt} to "zero"
+        else if {_tId} is 194:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quelle planète du système solaire est la plus proche du Soleil ?"
+            set {quiz_answer} to "mercure"
+            set {quiz_alt} to "mercure"
+        else if {_tId} is 195:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quel est le symbole chimique de l'élément Argent ?"
+            set {quiz_answer} to "ag"
+            set {quiz_alt} to "ag"
+        else if {_tId} is 196:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Combien de cœurs possède une pieuvre sous l'eau ?"
+            set {quiz_answer} to "3"
+            set {quiz_alt} to "trois"
+        else if {_tId} is 197:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quel célèbre physicien a formulé la théorie de la relativité restreinte (E=mc²) ?"
+            set {quiz_answer} to "albert einstein"
+            set {quiz_alt} to "einstein"
+        else if {_tId} is 198:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quel est le seul satellite naturel en orbite autour de la Terre ?"
+            set {quiz_answer} to "la lune"
+            set {quiz_alt} to "lune"
+        else if {_tId} is 199:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quel phénomène lumineux céleste aux voiles verts observe-t-on près des pôles ?"
+            set {quiz_answer} to "aurore boreale"
+            set {quiz_alt} to "aurore polaire"
+        else if {_tId} is 200:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quel est le minéral naturel le plus dur et résistant sur l'échelle de Mohs (10/10) ?"
+            set {quiz_answer} to "diamant"
+            set {quiz_alt} to "le diamant"
+        else if {_tId} is 201:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Comment appelle-t-on un animal dont le régime alimentaire est composé uniquement de plantes ?"
+            set {quiz_answer} to "herbivore"
+            set {quiz_alt} to "herbivore"
+        else if {_tId} is 202:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quel gaz noble inerte et très léger fait voler les ballons de baudruche ?"
+            set {quiz_answer} to "helium"
+            set {quiz_alt} to "l'helium"
+        else if {_tId} is 203:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Combien d'os compte le squelette d'un corps humain adulte ?"
+            set {quiz_answer} to "206"
+            set {quiz_alt} to "206 os"
+        else if {_tId} is 204:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quel reptile à sang froid change de couleur pour se camoufler dans la végétation ?"
+            set {quiz_answer} to "cameleon"
+            set {quiz_alt} to "le cameleon"
+        else if {_tId} is 205:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "À quelle température en degrés Celsius l'eau pure bout-elle au niveau de la mer ?"
+            set {quiz_answer} to "100"
+            set {quiz_alt} to "cent"
+        else if {_tId} is 206:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quel oiseau nocturne et silencieux peut pivoter sa tête jusqu'à 270 degrés ?"
+            set {quiz_answer} to "chouette"
+            set {quiz_alt} to "hibou"
+        else if {_tId} is 207:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quelle molécule en double hélice porte le code génétique de tous les êtres vivants ?"
+            set {quiz_answer} to "adn"
+            set {quiz_alt} to "l'adn"
+        else if {_tId} is 208:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Combien de dents permanentes compte un humain adulte avec les dents de sagesse ?"
+            set {quiz_answer} to "32"
+            set {quiz_alt} to "trente-deux"
+        else if {_tId} is 209:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quel est le plus grand félin sauvage carnivore sur Terre ?"
+            set {quiz_answer} to "tigre"
+            set {quiz_alt} to "le tigre"
+        else if {_tId} is 210:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quel mammifère marin très intelligent utilise l'écholocalisation pour chasser ?"
+            set {quiz_answer} to "dauphin"
+            set {quiz_alt} to "le dauphin"
+        else if {_tId} is 211:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quel organe humain permet de filtrer les toxines et de produire la bile ?"
+            set {quiz_answer} to "foie"
+            set {quiz_alt} to "le foie"
+        else if {_tId} is 212:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quelle couche gazeuse de l'atmosphère nous protège des rayons ultraviolets du Soleil ?"
+            set {quiz_answer} to "couche d'ozone"
+            set {quiz_alt} to "ozone"
+        else if {_tId} is 213:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quel arbre produit des glands qui nourrissent les écureuils en forêt ?"
+            set {quiz_answer} to "chene"
+            set {quiz_alt} to "le chene"
+        else if {_tId} is 214:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quelle substance verte permet aux plantes de réaliser la photosynthèse ?"
+            set {quiz_answer} to "chlorophylle"
+            set {quiz_alt} to "la chlorophylle"
+        else if {_tId} is 215:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Combien de couleurs distinctes composent un arc-en-ciel traditionnel ?"
+            set {quiz_answer} to "7"
+            set {quiz_alt} to "sept"
+        else if {_tId} is 216:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Quel célèbre tableau de Léonard de Vinci représente une femme au sourire mystérieux ?"
+            set {quiz_answer} to "la joconde"
+            set {quiz_alt} to "mona lisa"
+        else if {_tId} is 217:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Combien de faces possède un dé à jouer cubique standard ?"
+            set {quiz_answer} to "6"
+            set {quiz_alt} to "six"
+        else if {_tId} is 218:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "En quelle année a eu lieu la Révolution Française avec la prise de la Bastille ?"
+            set {quiz_answer} to "1789"
+            set {quiz_alt} to "1789"
+        else if {_tId} is 219:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Quel jeu de stratégie millénaire se joue sur un plateau de 64 cases avec 32 pièces ?"
+            set {quiz_answer} to "echecs"
+            set {quiz_alt} to "les echecs"
+        else if {_tId} is 220:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Quelle langue romane est la plus parlée au Brésil ?"
+            set {quiz_answer} to "portugais"
+            set {quiz_alt} to "le portugais"
+        else if {_tId} is 221:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Combien de secondes y a-t-il dans une minute entière ?"
+            set {quiz_answer} to "60"
+            set {quiz_alt} to "soixante"
+        else if {_tId} is 222:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Quel souverain français était surnommé le 'Roi Soleil' à Versailles ?"
+            set {quiz_answer} to "louis xiv"
+            set {quiz_alt} to "louis 14"
+        else if {_tId} is 223:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Quelle fête d'origine celtique célèbre les citrouilles et déguisements le 31 octobre ?"
+            set {quiz_answer} to "halloween"
+            set {quiz_alt} to "halloween"
+        else if {_tId} is 224:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Combien d'anneaux entrelacés composent le drapeau olympique officiel ?"
+            set {quiz_answer} to "5"
+            set {quiz_alt} to "cinq"
+        else if {_tId} is 225:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Quel général et empereur français a été exilé sur l'île de Sainte-Hélène ?"
+            set {quiz_answer} to "napoleon"
+            set {quiz_alt} to "napoleon bonaparte"
+        else if {_tId} is 226:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Quel écrivain français a écrit Les Misérables et Notre-Dame de Paris ?"
+            set {quiz_answer} to "victor hugo"
+            set {quiz_alt} to "victor hugo"
+        else if {_tId} is 227:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Combien de cartes composent un jeu de cartes standard sans les jokers ?"
+            set {quiz_answer} to "52"
+            set {quiz_alt} to "52 cartes"
+        else if {_tId} is 228:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Quel peintre néerlandais post-impressionniste s'est coupé l'oreille gauche ?"
+            set {quiz_answer} to "vincent van gogh"
+            set {quiz_alt} to "van gogh"
+        else if {_tId} is 229:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "En quelle année l'homme a-t-il marché sur la Lune pour la première fois avec Apollo 11 ?"
+            set {quiz_answer} to "1969"
+            set {quiz_alt} to "1969"
+        else if {_tId} is 230:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Quel mur érigé en 1961 séparait la capitale allemande en deux avant sa chute en 1989 ?"
+            set {quiz_answer} to "mur de berlin"
+            set {quiz_alt} to "le mur de berlin"
+        else if {_tId} is 231:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Combien de joueurs composent une équipe de football sur le terrain de match ?"
+            set {quiz_answer} to "11"
+            set {quiz_alt} to "onze"
+        else if {_tId} is 232:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Quel célèbre monument parisien en fer forgé de 330 mètres a été conçu pour l'Expo 1889 ?"
+            set {quiz_answer} to "tour eiffel"
+            set {quiz_alt} to "la tour eiffel"
+        else if {_tId} is 233:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Combien d'heures s'écoulent dans une journée terrestre complète ?"
+            set {quiz_answer} to "24"
+            set {quiz_alt} to "vingt-quatre"
+        else if {_tId} is 234:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "En quelle année s'est terminée la Première Guerre Mondiale avec l'Armistice du 11 novembre ?"
+            set {quiz_answer} to "1918"
+            set {quiz_alt} to "1918"
+        else if {_tId} is 235:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Combien de blocs d'obsidienne au minimum faut-il pour un portail du Nether fonctionnel ?"
+            set {quiz_answer} to "10"
+            set {quiz_alt} to "10 blocs"
+        else if {_tId} is 236:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel mob hostile vert et silencieux siffle avant d'exploser ?"
+            set {quiz_answer} to "creeper"
+            set {quiz_alt} to "le creeper"
+        else if {_tId} is 237:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Combien de lingots de fer faut-il pour fabriquer une enclume complète ?"
+            set {quiz_answer} to "31"
+            set {quiz_alt} to "31 lingots"
+        else if {_tId} is 238:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel monstre aveugle et surpuissant vit terré dans l'Ancient City du Deep Dark ?"
+            set {quiz_answer} to "warden"
+            set {quiz_alt} to "le warden"
+        else if {_tId} is 239:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quelle potion permet de voir parfaitement dans l'obscurité et sous l'eau ?"
+            set {quiz_answer} to "vision nocturne"
+            set {quiz_alt} to "night vision"
+        else if {_tId} is 240:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel minerai rare trouvé dans le Nether permet d'améliorer l'équipement en diamant ?"
+            set {quiz_answer} to "netherite"
+            set {quiz_alt} to "debris antiques"
+        else if {_tId} is 241:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Combien de morceaux de canne à sucre faut-il pour fabriquer 3 feuilles de papier ?"
+            set {quiz_answer} to "3"
+            set {quiz_alt} to "trois"
+        else if {_tId} is 242:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel mob neutre à longs bras se téléporte et craint le contact de l'eau ?"
+            set {quiz_answer} to "enderman"
+            set {quiz_alt} to "l'enderman"
+        else if {_tId} is 243:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel item légendaire avec des ailes permet de planer dans les airs ?"
+            set {quiz_answer} to "elytra"
+            set {quiz_alt} to "les elytres"
+        else if {_tId} is 244:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Combien d'yeux de l'Ender au maximum faut-il pour allumer un portail de l'End ?"
+            set {quiz_answer} to "12"
+            set {quiz_alt} to "12 yeux"
+        else if {_tId} is 245:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quelle nourriture dorée régénère instantanément de la vie et confère de l'absorption ?"
+            set {quiz_answer} to "pomme d'or"
+            set {quiz_alt} to "pomme doree"
+        else if {_tId} is 246:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel outil est indispensable pour extraire des blocs d'obsidienne sans les détruire ?"
+            set {quiz_answer} to "pioche en diamant"
+            set {quiz_alt} to "pioche diamant"
+        else if {_tId} is 247:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quelle créature volante attaque les joueurs insomniaques qui ne dorment pas depuis 3 jours ?"
+            set {quiz_answer} to "phantom"
+            set {quiz_alt} to "le phantom"
+        else if {_tId} is 248:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel bloc utilitaire permet de faire cuire des minerais deux fois plus vite qu'un four ?"
+            set {quiz_answer} to "haut fourneau"
+            set {quiz_alt} to "blast furnace"
+        else if {_tId} is 249:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Combien de têtes de Wither Squelette faut-il pour invoquer le boss Wither ?"
+            set {quiz_answer} to "3"
+            set {quiz_alt} to "trois"
+        else if {_tId} is 250:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quelle commande permet d'ouvrir le menu principal de navigation sur MineStars ?"
+            set {quiz_answer} to "/menu"
+            set {quiz_alt} to "menu"
+        else if {_tId} is 251:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel animal rose peut-on équiper d'une selle et chevaucher avec une carotte sur un bâton ?"
+            set {quiz_answer} to "cochon"
+            set {quiz_alt} to "le cochon"
+        else if {_tId} is 252:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quelle matière blanche et liquide s'obtient en faisant un clic droit sur une vache avec un seau ?"
+            set {quiz_answer} to "lait"
+            set {quiz_alt} to "le lait"
+        else if {_tId} is 253:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel objet magique empêche la mort immédiate lorsqu'il est tenu en main secondaire ?"
+            set {quiz_answer} to "totem"
+            set {quiz_alt} to "totem d'immortalite"
+        else if {_tId} is 254:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Combien de planches de bois faut-il assembler pour concevoir une table de craft ?"
+            set {quiz_answer} to "4"
+            set {quiz_alt} to "quatre"
+        else if {_tId} is 255:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel boss ailé cracheur de souffle violet règne sur l'île principale de l'End ?"
+            set {quiz_answer} to "ender dragon"
+            set {quiz_alt} to "le dragon"
+        else if {_tId} is 256:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel golem protecteur constitué de fer défend les villageois contre les zombies ?"
+            set {quiz_answer} to "iron golem"
+            set {quiz_alt} to "golem de fer"
+        else if {_tId} is 257:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Combien de lingots d'or faut-il pour fabriquer une pomme d'or classique ?"
+            set {quiz_answer} to "8"
+            set {quiz_alt} to "huit"
+        else if {_tId} is 258:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel bloc glissant et transparent fond lorsqu'il est placé près d'une torche chaude ?"
+            set {quiz_answer} to "glace"
+            set {quiz_alt} to "la glace"
+        else if {_tId} is 259:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Dans quelle dimension infernale trouve-t-on des forteresses et des lacs de lave ?"
+            set {quiz_answer} to "le nether"
+            set {quiz_alt} to "nether"
+        else if {_tId} is 260:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel item enchanté lancé au loin permet de se téléporter à son point d'impact ?"
+            set {quiz_answer} to "ender pearl"
+            set {quiz_alt} to "perle de l'ender"
+        else if {_tId} is 261:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel poisson carnivore gonflable empoisonne le joueur quand on s'en approche ?"
+            set {quiz_answer} to "poisson globe"
+            set {quiz_alt} to "pufferfish"
+        else if {_tId} is 262:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Combien de verres faut-il pour fabriquer 3 fioles d'alchimie vides ?"
+            set {quiz_answer} to "3"
+            set {quiz_alt} to "trois"
+        else if {_tId} is 263:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quelle plante explosive verte pousse sur le sable dans le désert ?"
+            set {quiz_answer} to "cactus"
+            set {quiz_alt} to "le cactus"
+        else if {_tId} is 264:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel villageois habillé de bleu se promène avec deux lamas marchands ?"
+            set {quiz_answer} to "marchand ambulant"
+            set {quiz_alt} to "wandering trader"
+        else if {_tId} is 265:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quelle arme d'hast sous-marine peut être enchantée avec Riptide pour voler sous la pluie ?"
+            set {quiz_answer} to "trident"
+            set {quiz_alt} to "le trident"
+        else if {_tId} is 266:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel bloc musical permet de jouer des mélodies et notes lorsqu'on clique dessus ?"
+            set {quiz_answer} to "note block"
+            set {quiz_alt} to "bloc musical"
+        else if {_tId} is 267:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel minerai rouge conduit l'énergie et permet de créer des circuits automatiques ?"
+            set {quiz_answer} to "redstone"
+            set {quiz_alt} to "la redstone"
+        else if {_tId} is 268:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel livre d'enchantement pour bottes permet de marcher sur l'eau en créant de la glace ?"
+            set {quiz_answer} to "frost walker"
+            set {quiz_alt} to "semelles givrantes"
+        else if {_tId} is 269:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Combien de niveaux d'expérience au maximum peut consommer une table d'enchantement pleine ?"
+            set {quiz_answer} to "30"
+            set {quiz_alt} to "niveau 30"
+        else if {_tId} is 270:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel monstre aquatique noyé armé d'un trident attaque la nuit dans les rivières ?"
+            set {quiz_answer} to "drowned"
+            set {quiz_alt} to "le noye"
+        else if {_tId} is 271:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quelle commande permet d'obtenir ou de fabriquer le Pass Vol en Skyblock ?"
+            set {quiz_answer} to "/is fly"
+            set {quiz_alt} to "is fly"
+        else if {_tId} is 272:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel cristal rose entouré de verre recharge la vie de l'Ender Dragon sur les piliers d'obsidienne ?"
+            set {quiz_answer} to "cristal de l'end"
+            set {quiz_alt} to "end crystal"
+        else if {_tId} is 273:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Combien de bâtons de Blaze faut-il pour obtenir 2 poudres de Blaze ?"
+            set {quiz_answer} to "1"
+            set {quiz_alt} to "un"
+        else if {_tId} is 274:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel bloc rebondissant vert amortit complètement les dégâts de chute ?"
+            set {quiz_answer} to "slime block"
+            set {quiz_alt} to "bloc de slime"
+        else if {_tId} is 275:
+            set {quiz_category} to "🎵 MUSIQUE & POP"
+            set {quiz_question} to "Quel chanteur de pop américain était surnommé le 'Roi de la Pop' ?"
+            set {quiz_answer} to "michael jackson"
+            set {quiz_alt} to "michael jackson"
+        else if {_tId} is 276:
+            set {quiz_category} to "🎵 MUSIQUE & POP"
+            set {quiz_question} to "Quel groupe de rock britannique légendaire chantait 'Bohemian Rhapsody' ?"
+            set {quiz_answer} to "queen"
+            set {quiz_alt} to "queen"
+        else if {_tId} is 277:
+            set {quiz_category} to "🎵 MUSIQUE & POP"
+            set {quiz_question} to "Quel DJ suédois a composé les tubes 'Wake Me Up' et 'Levels' ?"
+            set {quiz_answer} to "avicii"
+            set {quiz_alt} to "avicii"
+        else if {_tId} is 278:
+            set {quiz_category} to "🎵 MUSIQUE & POP"
+            set {quiz_question} to "Combien de cordes possède une guitare acoustique standard ?"
+            set {quiz_answer} to "6"
+            set {quiz_alt} to "six"
+        else if {_tId} is 279:
+            set {quiz_category} to "🎵 MUSIQUE & POP"
+            set {quiz_question} to "Quel groupe de pop suédois des années 70 chantait 'Dancing Queen' et 'Mamma Mia' ?"
+            set {quiz_answer} to "abba"
+            set {quiz_alt} to "abba"
+        else if {_tId} is 280:
+            set {quiz_category} to "🎵 MUSIQUE & POP"
+            set {quiz_question} to "Quel rappeur américain a pour vrai nom Marshall Mathers ?"
+            set {quiz_answer} to "eminem"
+            set {quiz_alt} to "eminem"
+        else if {_tId} is 281:
+            set {quiz_category} to "🎵 MUSIQUE & POP"
+            set {quiz_question} to "Quel instrument de musique à touches noires et blanches possède 88 touches ?"
+            set {quiz_answer} to "piano"
+            set {quiz_alt} to "le piano"
+        else if {_tId} is 282:
+            set {quiz_category} to "🎵 MUSIQUE & POP"
+            set {quiz_question} to "Quel groupe de rock anglais composé de John, Paul, George et Ringo a chanté 'Hey Jude' ?"
+            set {quiz_answer} to "les beatles"
+            set {quiz_alt} to "the beatles"
+        else if {_tId} is 283:
+            set {quiz_category} to "🎵 MUSIQUE & POP"
+            set {quiz_question} to "Quel chanteur canadien interprète 'Blinding Lights' et 'Starboy' ?"
+            set {quiz_answer} to "the weeknd"
+            set {quiz_alt} to "the weeknd"
+        else if {_tId} is 284:
+            set {quiz_category} to "🎵 MUSIQUE & POP"
+            set {quiz_question} to "Quelle chanteuse américaine a sorti les albums '1989' et 'Red' ?"
+            set {quiz_answer} to "taylor swift"
+            set {quiz_alt} to "taylor swift"
+        else if {_tId} is 285:
+            set {quiz_category} to "🎵 MUSIQUE & POP"
+            set {quiz_question} to "Quel instrument à vent en cuivre possède 3 pistons et se joue avec une embouchure ?"
+            set {quiz_answer} to "trompette"
+            set {quiz_alt} to "la trompette"
+        else if {_tId} is 286:
+            set {quiz_category} to "🎵 MUSIQUE & POP"
+            set {quiz_question} to "Quel compositeur sourd de génie a composé la 9ème Symphonie et l'Hymne à la Joie ?"
+            set {quiz_answer} to "beethoven"
+            set {quiz_alt} to "ludwig van beethoven"
+        else if {_tId} is 287:
+            set {quiz_category} to "🎵 MUSIQUE & POP"
+            set {quiz_question} to "Quel festival de musique californien réunit des célébrités chaque printemps ?"
+            set {quiz_answer} to "coachella"
+            set {quiz_alt} to "coachella"
+        else if {_tId} is 288:
+            set {quiz_category} to "🎵 MUSIQUE & POP"
+            set {quiz_question} to "Quelle chanteuse barbadienne a chanté 'Diamonds' et 'Umbrella' ?"
+            set {quiz_answer} to "rihanna"
+            set {quiz_alt} to "rihanna"
+        else if {_tId} is 289:
+            set {quiz_category} to "🎵 MUSIQUE & POP"
+            set {quiz_question} to "Quel instrument à percussion se joue avec des baguettes sur des toms et cymbales ?"
+            set {quiz_answer} to "batterie"
+            set {quiz_alt} to "la batterie"
+        else if {_tId} is 290:
+            set {quiz_category} to "🎵 MUSIQUE & POP"
+            set {quiz_question} to "Quel rappeur marseillais fait le signe des deux mains et chante 'En bande organisée' ?"
+            set {quiz_answer} to "jul"
+            set {quiz_alt} to "jul"
+        else if {_tId} is 291:
+            set {quiz_category} to "🎵 MUSIQUE & POP"
+            set {quiz_question} to "Quel groupe de rock australien a composé 'Highway to Hell' et 'Back in Black' ?"
+            set {quiz_answer} to "acdc"
+            set {quiz_alt} to "ac/dc"
+        else if {_tId} is 292:
+            set {quiz_category} to "🎵 MUSIQUE & POP"
+            set {quiz_question} to "Quelle chanteuse britannique à la voix puissante interprète 'Rolling in the Deep' et 'Hello' ?"
+            set {quiz_answer} to "adele"
+            set {quiz_alt} to "adele"
+        else if {_tId} is 293:
+            set {quiz_category} to "🎵 MUSIQUE & POP"
+            set {quiz_question} to "Quel instrument à cordes frottées est le plus petit et le plus aigu de la famille ?"
+            set {quiz_answer} to "violon"
+            set {quiz_alt} to "le violon"
+        else if {_tId} is 294:
+            set {quiz_category} to "🎵 MUSIQUE & POP"
+            set {quiz_question} to "Quel festival de musique électronique a lieu chaque été à Boom en Belgique ?"
+            set {quiz_answer} to "tomorrowland"
+            set {quiz_alt} to "tomorrowland"
+        else if {_tId} is 295:
+            set {quiz_category} to "⚽ SPORT"
+            set {quiz_question} to "Combien de temps dure un match de football standard en temps réglementaire (en minutes) ?"
+            set {quiz_answer} to "90"
+            set {quiz_alt} to "90 minutes"
+        else if {_tId} is 296:
+            set {quiz_category} to "⚽ SPORT"
+            set {quiz_question} to "Quel joueur de football argentin a remporté 8 Ballons d'Or et la Coupe du Monde 2022 ?"
+            set {quiz_answer} to "messi"
+            set {quiz_alt} to "lionel messi"
+        else if {_tId} is 297:
+            set {quiz_category} to "⚽ SPORT"
+            set {quiz_question} to "Quel footballeur portugais au numéro 7 crie 'Siuuu' après avoir marqué ?"
+            set {quiz_answer} to "cristiano ronaldo"
+            set {quiz_alt} to "cr7"
+        else if {_tId} is 298:
+            set {quiz_category} to "⚽ SPORT"
+            set {quiz_question} to "Combien de points rapporte un panier classique réussi au-delà de la ligne extérieure en basket ?"
+            set {quiz_answer} to "3"
+            set {quiz_alt} to "trois points"
+        else if {_tId} is 299:
+            set {quiz_category} to "⚽ SPORT"
+            set {quiz_question} to "Quel sprinteur jamaïcain détient le record du monde du 100m en 9,58 secondes ?"
+            set {quiz_answer} to "usain bolt"
+            set {quiz_alt} to "bolt"
+        else if {_tId} is 300:
+            set {quiz_category} to "⚽ SPORT"
+            set {quiz_question} to "Sur quelle surface en terre battue ocre se joue le tournoi de Roland-Garros ?"
+            set {quiz_answer} to "terre battue"
+            set {quiz_alt} to "terre battue"
+        else if {_tId} is 301:
+            set {quiz_category} to "⚽ SPORT"
+            set {quiz_question} to "Combien de joueurs composent une équipe de basketball sur le terrain ?"
+            set {quiz_answer} to "5"
+            set {quiz_alt} to "cinq"
+        else if {_tId} is 302:
+            set {quiz_category} to "⚽ SPORT"
+            set {quiz_question} to "Quel pilote de F1 néerlandais a remporté plusieurs titres mondiaux avec Red Bull ?"
+            set {quiz_answer} to "max verstappen"
+            set {quiz_alt} to "verstappen"
+        else if {_tId} is 303:
+            set {quiz_category} to "⚽ SPORT"
+            set {quiz_question} to "Quel art martial japonais de combat pieds-poings utilise des ceintures de couleur ?"
+            set {quiz_answer} to "karate"
+            set {quiz_alt} to "le karate"
+        else if {_tId} is 304:
+            set {quiz_category} to "⚽ SPORT"
+            set {quiz_question} to "Combien de joueurs composent une équipe de rugby à XV ?"
+            set {quiz_answer} to "15"
+            set {quiz_alt} to "quinze"
+        else if {_tId} is 305:
+            set {quiz_category} to "⚽ SPORT"
+            set {quiz_question} to "Quel tournoi de tennis sur gazon se déroule chaque été à Londres ?"
+            set {quiz_answer} to "wimbledon"
+            set {quiz_alt} to "wimbledon"
+        else if {_tId} is 306:
+            set {quiz_category} to "⚽ SPORT"
+            set {quiz_question} to "Quel basketteur légendaire des Chicago Bulls portait le mythique numéro 23 ?"
+            set {quiz_answer} to "michael jordan"
+            set {quiz_alt} to "jordan"
+        else if {_tId} is 307:
+            set {quiz_category} to "⚽ SPORT"
+            set {quiz_question} to "Quelle est la couleur du maillot porté par le leader du Tour de France cycliste ?"
+            set {quiz_answer} to "jaune"
+            set {quiz_alt} to "le maillot jaune"
+        else if {_tId} is 308:
+            set {quiz_category} to "⚽ SPORT"
+            set {quiz_question} to "Dans quel pays sont nés les Jeux Olympiques antiques ?"
+            set {quiz_answer} to "grece"
+            set {quiz_alt} to "la grece"
+        else if {_tId} is 309:
+            set {quiz_category} to "⚽ SPORT"
+            set {quiz_question} to "Quel nageur américain a remporté 23 médailles d'or olympiques dans sa carrière ?"
+            set {quiz_answer} to "michael phelps"
+            set {quiz_alt} to "phelps"
+        else if {_tId} is 310:
+            set {quiz_category} to "⚽ SPORT"
+            set {quiz_question} to "Quel pays a remporté la Coupe du Monde de football en 2018 en Russie ?"
+            set {quiz_answer} to "france"
+            set {quiz_alt} to "la france"
+        else if {_tId} is 311:
+            set {quiz_category} to "⚽ SPORT"
+            set {quiz_question} to "Dans quelle ville se sont déroulés les Jeux Olympiques d'été 2024 ?"
+            set {quiz_answer} to "paris"
+            set {quiz_alt} to "paris"
+        else if {_tId} is 312:
+            set {quiz_category} to "⚽ SPORT"
+            set {quiz_question} to "Combien de quilles doit-on faire tomber au bowling avec une boule ?"
+            set {quiz_answer} to "10"
+            set {quiz_alt} to "dix quilles"
+        else if {_tId} is 313:
+            set {quiz_category} to "⚽ SPORT"
+            set {quiz_question} to "Quel joueur français de football au numéro 10 a signé au Real Madrid en 2024 ?"
+            set {quiz_answer} to "kylian mbappe"
+            set {quiz_alt} to "mbappe"
+        else if {_tId} is 314:
+            set {quiz_category} to "⚽ SPORT"
+            set {quiz_question} to "Quel sport de glisse se pratique sur une vague avec une planche ?"
+            set {quiz_answer} to "surf"
+            set {quiz_alt} to "le surf"
+        else if {_tId} is 315:
+            set {quiz_category} to "💻 TECH & WEB"
+            set {quiz_question} to "Quel système d'exploitation pour smartphone est développé par Google ?"
+            set {quiz_answer} to "android"
+            set {quiz_alt} to "android"
+        else if {_tId} is 316:
+            set {quiz_category} to "💻 TECH & WEB"
+            set {quiz_question} to "Quel milliardaire a fondé SpaceX et Tesla et racheté Twitter ?"
+            set {quiz_answer} to "elon musk"
+            set {quiz_alt} to "musk"
+        else if {_tId} is 317:
+            set {quiz_category} to "💻 TECH & WEB"
+            set {quiz_question} to "Quel navigateur web avec une boussole est le navigateur par défaut d'Apple ?"
+            set {quiz_answer} to "safari"
+            set {quiz_alt} to "safari"
+        else if {_tId} is 318:
+            set {quiz_category} to "💻 TECH & WEB"
+            set {quiz_question} to "Combien de bits compte un octet informatique (1 byte) ?"
+            set {quiz_answer} to "8"
+            set {quiz_alt} to "8 bits"
+        else if {_tId} is 319:
+            set {quiz_category} to "💻 TECH & WEB"
+            set {quiz_question} to "Quel langage de programmation au logo de tasse de café fait tourner Minecraft Java ?"
+            set {quiz_answer} to "java"
+            set {quiz_alt} to "le java"
+        else if {_tId} is 320:
+            set {quiz_category} to "💻 TECH & WEB"
+            set {quiz_question} to "Quel site de vidéos en ligne a pour slogan 'Broadcast Yourself' ?"
+            set {quiz_answer} to "youtube"
+            set {quiz_alt} to "youtube"
+        else if {_tId} is 321:
+            set {quiz_category} to "💻 TECH & WEB"
+            set {quiz_question} to "Quel est le moteur de recherche web le plus utilisé au monde ?"
+            set {quiz_answer} to "google"
+            set {quiz_alt} to "google"
+        else if {_tId} is 322:
+            set {quiz_category} to "💻 TECH & WEB"
+            set {quiz_question} to "Que signifie le 'W' répété 3 fois dans l'adresse des sites web (WWW) ?"
+            set {quiz_answer} to "world wide web"
+            set {quiz_alt} to "world wide web"
+        else if {_tId} is 323:
+            set {quiz_category} to "💻 TECH & WEB"
+            set {quiz_question} to "Quel assistant vocal intelligent d'Apple répond à 'Dis ...' ?"
+            set {quiz_answer} to "siri"
+            set {quiz_alt} to "siri"
+        else if {_tId} is 324:
+            set {quiz_category} to "💻 TECH & WEB"
+            set {quiz_question} to "Quelle plateforme de streaming en direct est très populaire chez les gamers ?"
+            set {quiz_answer} to "twitch"
+            set {quiz_alt} to "twitch"
+        else if {_tId} is 325:
+            set {quiz_category} to "💻 TECH & WEB"
+            set {quiz_question} to "Quel langage informatique est principalement utilisé pour structurer les pages web ?"
+            set {quiz_answer} to "html"
+            set {quiz_alt} to "html"
+        else if {_tId} is 326:
+            set {quiz_category} to "💻 TECH & WEB"
+            set {quiz_question} to "Quelle intelligence artificielle conversationnelle a été créée par OpenAI en 2022 ?"
+            set {quiz_answer} to "chatgpt"
+            set {quiz_alt} to "chat gpt"
+        else if {_tId} is 327:
+            set {quiz_category} to "💻 TECH & WEB"
+            set {quiz_question} to "Quelle touche du clavier permet d'annuler ou de quitter le plein écran sur PC ?"
+            set {quiz_answer} to "echap"
+            set {quiz_alt} to "escape"
+        else if {_tId} is 328:
+            set {quiz_category} to "💻 TECH & WEB"
+            set {quiz_question} to "Quel format d'image compressé universel se termine par .jpg ou .jpeg ?"
+            set {quiz_answer} to "jpeg"
+            set {quiz_alt} to "jpg"
+        else if {_tId} is 329:
+            set {quiz_category} to "💻 TECH & WEB"
+            set {quiz_question} to "Quel logiciel de communication vocale et textuelle est utilisé sur MineStars ?"
+            set {quiz_answer} to "discord"
+            set {quiz_alt} to "discord"
+        else if {_tId} is 330:
+            set {quiz_category} to "💻 TECH & WEB"
+            set {quiz_question} to "Quel composant d'ordinateur (GPU) calcule le rendu 3D et les graphismes des jeux ?"
+            set {quiz_answer} to "carte graphique"
+            set {quiz_alt} to "gpu"
+        else if {_tId} is 331:
+            set {quiz_category} to "💻 TECH & WEB"
+            set {quiz_question} to "Quel géant du commerce en ligne a été fondé par Jeff Bezos ?"
+            set {quiz_answer} to "amazon"
+            set {quiz_alt} to "amazon"
+        else if {_tId} is 332:
+            set {quiz_category} to "💻 TECH & WEB"
+            set {quiz_question} to "Quel format de fichier audio numérique est le plus universel ?"
+            set {quiz_answer} to "mp3"
+            set {quiz_alt} to "mp3"
+        else if {_tId} is 333:
+            set {quiz_category} to "💻 TECH & WEB"
+            set {quiz_question} to "Quelle entreprise fabrique la PlayStation et les capteurs photo ?"
+            set {quiz_answer} to "sony"
+            set {quiz_alt} to "sony"
+        else if {_tId} is 334:
+            set {quiz_category} to "💻 TECH & WEB"
+            set {quiz_question} to "Quel casque de réalité virtuelle autonome a été développé par Meta / Oculus ?"
+            set {quiz_answer} to "quest"
+            set {quiz_alt} to "meta quest"
+        else if {_tId} is 335:
+            set {quiz_category} to "🍕 GASTRONOMIE"
+            set {quiz_question} to "De quel pays la pizza Margherita et les spaghettis sont-ils originaires ?"
+            set {quiz_answer} to "italie"
+            set {quiz_alt} to "l'italie"
+        else if {_tId} is 336:
+            set {quiz_category} to "🍕 GASTRONOMIE"
+            set {quiz_question} to "Quel dessert français est composé de pâte feuilletée et de crème pâtissière en 3 couches ?"
+            set {quiz_answer} to "mille-feuille"
+            set {quiz_alt} to "mille feuille"
+        else if {_tId} is 337:
+            set {quiz_category} to "🍕 GASTRONOMIE"
+            set {quiz_question} to "Quel fruit rouge à pépins jaunes est le fruit vedette du printemps ?"
+            set {quiz_answer} to "fraise"
+            set {quiz_alt} to "la fraise"
+        else if {_tId} is 338:
+            set {quiz_category} to "🍕 GASTRONOMIE"
+            set {quiz_question} to "Quelle boisson chaude noire infusée est la plus bue au monde après l'eau ?"
+            set {quiz_answer} to "the"
+            set {quiz_alt} to "le the"
+        else if {_tId} is 339:
+            set {quiz_category} to "🍕 GASTRONOMIE"
+            set {quiz_question} to "Quel légume orange riche en carotène est adoré par les lapins ?"
+            set {quiz_answer} to "carotte"
+            set {quiz_alt} to "la carotte"
+        else if {_tId} is 340:
+            set {quiz_category} to "🍕 GASTRONOMIE"
+            set {quiz_question} to "Quel fromage rond à pâte molle et croûte fleurie est originaire de Normandie ?"
+            set {quiz_answer} to "camembert"
+            set {quiz_alt} to "le camembert"
+        else if {_tId} is 341:
+            set {quiz_category} to "🍕 GASTRONOMIE"
+            set {quiz_question} to "Quel aliment sucré est fabriqué à partir des fèves de cacao ?"
+            set {quiz_answer} to "chocolat"
+            set {quiz_alt} to "le chocolat"
+        else if {_tId} is 342:
+            set {quiz_category} to "🍕 GASTRONOMIE"
+            set {quiz_question} to "De quel pays le sushi et les nouilles ramen sont-ils originaires ?"
+            set {quiz_answer} to "japon"
+            set {quiz_alt} to "le japon"
+        else if {_tId} is 343:
+            set {quiz_category} to "🍕 GASTRONOMIE"
+            set {quiz_question} to "Quel liquide jaune doré est produit par les abeilles dans les ruches ?"
+            set {quiz_answer} to "miel"
+            set {quiz_alt} to "le miel"
+        else if {_tId} is 344:
+            set {quiz_category} to "🍕 GASTRONOMIE"
+            set {quiz_question} to "Quel plat traditionnel mexicain consiste en une galette de maïs pliée et garnie ?"
+            set {quiz_answer} to "taco"
+            set {quiz_alt} to "les tacos"
+        else if {_tId} is 345:
+            set {quiz_category} to "🍕 GASTRONOMIE"
+            set {quiz_question} to "Quelle épice précieuse de couleur jaune provient d'une fleur de crocus ?"
+            set {quiz_answer} to "safran"
+            set {quiz_alt} to "le safran"
+        else if {_tId} is 346:
+            set {quiz_category} to "🍕 GASTRONOMIE"
+            set {quiz_question} to "Quel fruit exotique jaune à couronne de feuilles pousse au ras du sol ?"
+            set {quiz_answer} to "ananas"
+            set {quiz_alt} to "l'ananas"
+        else if {_tId} is 347:
+            set {quiz_category} to "🍕 GASTRONOMIE"
+            set {quiz_question} to "Quelle sauce rouge à base de tomates et de vinaigre accompagne les frites ?"
+            set {quiz_answer} to "ketchup"
+            set {quiz_alt} to "le ketchup"
+        else if {_tId} is 348:
+            set {quiz_category} to "🍕 GASTRONOMIE"
+            set {quiz_question} to "Quel dessert italien au café et mascarpone est saupoudré de cacao amer ?"
+            set {quiz_answer} to "tiramisu"
+            set {quiz_alt} to "le tiramisu"
+        else if {_tId} is 349:
+            set {quiz_category} to "🍕 GASTRONOMIE"
+            set {quiz_question} to "Quel pain viennois courbé en croissant est typique du petit-déjeuner français ?"
+            set {quiz_answer} to "croissant"
+            set {quiz_alt} to "le croissant"
+        else if {_tId} is 350:
+            set {quiz_category} to "🍕 GASTRONOMIE"
+            set {quiz_question} to "Quel légume vert piquant en forme de petit arbre est riche en vitamines ?"
+            set {quiz_answer} to "brocoli"
+            set {quiz_alt} to "le brocoli"
+        else if {_tId} is 351:
+            set {quiz_category} to "🍕 GASTRONOMIE"
+            set {quiz_question} to "Quel agrume jaune acide est utilisé pour assaisonner le poisson ou en limonade ?"
+            set {quiz_answer} to "citron"
+            set {quiz_alt} to "le citron"
+        else if {_tId} is 352:
+            set {quiz_category} to "🍕 GASTRONOMIE"
+            set {quiz_question} to "Quel aliment blanc et friable s'obtient en battant des blancs d'œufs en neige avec du sucre ?"
+            set {quiz_answer} to "meringue"
+            set {quiz_alt} to "la meringue"
+        else if {_tId} is 353:
+            set {quiz_category} to "🍕 GASTRONOMIE"
+            set {quiz_question} to "De quelle plante herbacée provient le pop-corn lorsqu'il éclate à la chaleur ?"
+            set {quiz_answer} to "mais"
+            set {quiz_alt} to "le mais"
+        else if {_tId} is 354:
+            set {quiz_category} to "🍕 GASTRONOMIE"
+            set {quiz_question} to "Quel pain plat indien cuit au four tandoor est souvent fourré au fromage ?"
+            set {quiz_answer} to "naan"
+            set {quiz_alt} to "le naan"
+        else if {_tId} is 355:
+            set {quiz_category} to "🎲 ÉNIGME & LOGIQUE"
+            set {quiz_question} to "Qu'est-ce qui appartient à une personne mais que les autres utilisent plus souvent qu'elle ?"
+            set {quiz_answer} to "son prenom"
+            set {quiz_alt} to "son nom"
+        else if {_tId} is 356:
+            set {quiz_category} to "🎲 ÉNIGME & LOGIQUE"
+            set {quiz_question} to "Qu'est-ce qui monte et descend sans jamais bouger ?"
+            set {quiz_answer} to "escalier"
+            set {quiz_alt} to "l'escalier"
+        else if {_tId} is 357:
+            set {quiz_category} to "🎲 ÉNIGME & LOGIQUE"
+            set {quiz_question} to "Qu'est-ce qui a des dents mais ne mord jamais ?"
+            set {quiz_answer} to "peigne"
+            set {quiz_alt} to "un peigne"
+        else if {_tId} is 358:
+            set {quiz_category} to "🎲 ÉNIGME & LOGIQUE"
+            set {quiz_question} to "Plus on en retire, plus il devient grand. Qui est-ce ?"
+            set {quiz_answer} to "trou"
+            set {quiz_alt} to "un trou"
+        else if {_tId} is 359:
+            set {quiz_category} to "🎲 ÉNIGME & LOGIQUE"
+            set {quiz_question} to "Qu'est-ce qui a un cœur qui ne bat pas et des feuilles qui ne tombent pas ?"
+            set {quiz_answer} to "livre"
+            set {quiz_alt} to "un livre"
+        else if {_tId} is 360:
+            set {quiz_category} to "🎲 ÉNIGME & LOGIQUE"
+            set {quiz_question} to "Qu'est-ce qui est toujours devant vous mais qu'on ne peut jamais voir ?"
+            set {quiz_answer} to "futur"
+            set {quiz_alt} to "l'avenir"
+        else if {_tId} is 361:
+            set {quiz_category} to "🎲 ÉNIGME & LOGIQUE"
+            set {quiz_question} to "Qu'est-ce qui peut traverser une vitre sans la briser ?"
+            set {quiz_answer} to "lumiere"
+            set {quiz_alt} to "la lumiere"
+        else if {_tId} is 362:
+            set {quiz_category} to "🎲 ÉNIGME & LOGIQUE"
+            set {quiz_question} to "Quel mois de l'année ne compte que 28 ou 29 jours ?"
+            set {quiz_answer} to "fevrier"
+            set {quiz_alt} to "fevrier"
+        else if {_tId} is 363:
+            set {quiz_category} to "🎲 ÉNIGME & LOGIQUE"
+            set {quiz_question} to "Qu'est-ce qui devient plus humide à mesure qu'il sèche ?"
+            set {quiz_answer} to "serviette"
+            set {quiz_alt} to "une serviette"
+        else if {_tId} is 364:
+            set {quiz_category} to "🎲 ÉNIGME & LOGIQUE"
+            set {quiz_question} to "Quel animal porte sa maison sur son dos et avance lentement ?"
+            set {quiz_answer} to "escargot"
+            set {quiz_alt} to "la tortue"
+        else if {_tId} is 365:
+            set {quiz_category} to "🎲 ÉNIGME & LOGIQUE"
+            set {quiz_question} to "Quel oiseau noir intelligent peut imiter la voix humaine et vit en colonie ?"
+            set {quiz_answer} to "corbeau"
+            set {quiz_alt} to "la corneille"
+        else if {_tId} is 366:
+            set {quiz_category} to "🎲 ÉNIGME & LOGIQUE"
+            set {quiz_question} to "Quel mammifère d'Afrique possède le cou le plus long du règne animal ?"
+            set {quiz_answer} to "girafe"
+            set {quiz_alt} to "la girafe"
+        else if {_tId} is 367:
+            set {quiz_category} to "🎲 ÉNIGME & LOGIQUE"
+            set {quiz_question} to "Quel animal à rayures blanches et noires vit dans la savane africaine ?"
+            set {quiz_answer} to "zebre"
+            set {quiz_alt} to "le zebre"
+        else if {_tId} is 368:
+            set {quiz_category} to "🎲 ÉNIGME & LOGIQUE"
+            set {quiz_question} to "Quel oiseau rose se nourrit de petites crevettes qui lui donnent sa couleur ?"
+            set {quiz_answer} to "flamant rose"
+            set {quiz_alt} to "le flamant rose"
+        else if {_tId} is 369:
+            set {quiz_category} to "🎲 ÉNIGME & LOGIQUE"
+            set {quiz_question} to "Quel grand félin à crinière est surnommé le 'Roi des animaux' ?"
+            set {quiz_answer} to "lion"
+            set {quiz_alt} to "le lion"
+        else if {_tId} is 370:
+            set {quiz_category} to "🎲 ÉNIGME & LOGIQUE"
+            set {quiz_question} to "Quel marsupial australien saute avec son bébé dans sa poche ventrale ?"
+            set {quiz_answer} to "kangourou"
+            set {quiz_alt} to "le kangourou"
+        else if {_tId} is 371:
+            set {quiz_category} to "🎲 ÉNIGME & LOGIQUE"
+            set {quiz_question} to "Quel animal noir et blanc de Chine se nourrit quasi exclusivement de bambou ?"
+            set {quiz_answer} to "panda"
+            set {quiz_alt} to "le panda"
+        else if {_tId} is 372:
+            set {quiz_category} to "🎲 ÉNIGME & LOGIQUE"
+            set {quiz_question} to "Quel insecte travailleur produit du miel et pollinise les fleurs ?"
+            set {quiz_answer} to "abeille"
+            set {quiz_alt} to "l'abeille"
+        else if {_tId} is 373:
+            set {quiz_category} to "🎲 ÉNIGME & LOGIQUE"
+            set {quiz_question} to "Quel mammifère semi-aquatique construit des barrages de bois sur les rivières ?"
+            set {quiz_answer} to "castor"
+            set {quiz_alt} to "le castor"
+        else if {_tId} is 374:
+            set {quiz_category} to "🎲 ÉNIGME & LOGIQUE"
+            set {quiz_question} to "Quel rapace diurne à vue perçante est l'emblème national des États-Unis ?"
+            set {quiz_answer} to "aigle"
+            set {quiz_alt} to "le pygargue"
+        else if {_tId} is 375:
+            set {quiz_category} to "🏛️ HISTOIRE"
+            set {quiz_question} to "Quel roi de France a été guillotiné en 1793 pendant la Révolution ?"
+            set {quiz_answer} to "louis xvi"
+            set {quiz_alt} to "louis 16"
+        else if {_tId} is 376:
+            set {quiz_category} to "🏛️ HISTOIRE"
+            set {quiz_question} to "Quel peuple scandinave de navigateurs et guerriers a exploré l'Amérique avant Colomb ?"
+            set {quiz_answer} to "vikings"
+            set {quiz_alt} to "les vikings"
+        else if {_tId} is 377:
+            set {quiz_category} to "🏛️ HISTOIRE"
+            set {quiz_question} to "Quelle reine d'Égypte antique au nez célèbre a séduit Jules César et Marc Antoine ?"
+            set {quiz_answer} to "cleopatre"
+            set {quiz_alt} to "cleopatre"
+        else if {_tId} is 378:
+            set {quiz_category} to "🏛️ HISTOIRE"
+            set {quiz_question} to "Quel inventeur a déposé le brevet de la lampe à incandescence et du phonographe ?"
+            set {quiz_answer} to "thomas edison"
+            set {quiz_alt} to "edison"
+        else if {_tId} is 379:
+            set {quiz_category} to "🏛️ HISTOIRE"
+            set {quiz_question} to "En quelle année le Titanic a-t-il sombré dans l'océan Atlantique ?"
+            set {quiz_answer} to "1912"
+            set {quiz_alt} to "1912"
+        else if {_tId} is 380:
+            set {quiz_category} to "🏛️ HISTOIRE"
+            set {quiz_question} to "Quel célèbre mur antique en pierre a été construit en Angleterre par l'empereur romain ?"
+            set {quiz_answer} to "mur d'hadrien"
+            set {quiz_alt} to "hadrien"
+        else if {_tId} is 381:
+            set {quiz_category} to "🏛️ HISTOIRE"
+            set {quiz_question} to "Quel chef gaulois a déposé ses armes devant César à Alésia en 52 av. J.-C. ?"
+            set {quiz_answer} to "vercingetorix"
+            set {quiz_alt} to "vercingétorix"
+        else if {_tId} is 382:
+            set {quiz_category} to "🏛️ HISTOIRE"
+            set {quiz_question} to "Quelle peste mortelle a ravagé l'Europe au XIVe siècle (1347-1352) ?"
+            set {quiz_answer} to "peste noire"
+            set {quiz_alt} to "la peste noire"
+        else if {_tId} is 383:
+            set {quiz_category} to "🏛️ HISTOIRE"
+            set {quiz_question} to "Quel savant italien a défendu l'héliocentrisme et dit 'Et pourtant elle tourne' ?"
+            set {quiz_answer} to "galilee"
+            set {quiz_alt} to "galileo"
+        else if {_tId} is 384:
+            set {quiz_category} to "🏛️ HISTOIRE"
+            set {quiz_question} to "Quelle héroïne française a mené les troupes à Orléans avant d'être brûlée à Rouen ?"
+            set {quiz_answer} to "jeanne d'arc"
+            set {quiz_alt} to "jeanne d arc"
+        else if {_tId} is 385:
+            set {quiz_category} to "🏛️ HISTOIRE"
+            set {quiz_question} to "En quelle année s'est effondré l'Empire Romain d'Occident ?"
+            set {quiz_answer} to "476"
+            set {quiz_alt} to "476"
+        else if {_tId} is 386:
+            set {quiz_category} to "🏛️ HISTOIRE"
+            set {quiz_question} to "Quel président américain a aboli l'esclavage avant d'être assassiné au théâtre ?"
+            set {quiz_answer} to "abraham lincoln"
+            set {quiz_alt} to "lincoln"
+        else if {_tId} is 387:
+            set {quiz_category} to "🏛️ HISTOIRE"
+            set {quiz_question} to "Quel conquistador espagnol a mené la conquête de l'Empire Aztèque au Mexique ?"
+            set {quiz_answer} to "hernan cortes"
+            set {quiz_alt} to "cortes"
+        else if {_tId} is 388:
+            set {quiz_category} to "🏛️ HISTOIRE"
+            set {quiz_question} to "Quelle reine britannique a régné plus de 70 ans de 1952 à 2022 ?"
+            set {quiz_answer} to "elisabeth ii"
+            set {quiz_alt} to "elizabeth 2"
+        else if {_tId} is 389:
+            set {quiz_category} to "🏛️ HISTOIRE"
+            set {quiz_question} to "Quel traité signé en 1919 dans la galerie des Glaces a mis fin à la Première Guerre Mondiale ?"
+            set {quiz_answer} to "traite de versailles"
+            set {quiz_alt} to "versailles"
+        else if {_tId} is 390:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel acteur incarne Jack Dawson dans le film Titanic ?"
+            set {quiz_answer} to "leonardo dicaprio"
+            set {quiz_alt} to "dicaprio"
+        else if {_tId} is 391:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Dans Batman, quel est le vrai nom de Catwoman ?"
+            set {quiz_answer} to "selina kyle"
+            set {quiz_alt} to "selina"
+        else if {_tId} is 392:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel sorcier garde-chasse géant amène Harry Potter à Poudlard ?"
+            set {quiz_answer} to "hagrid"
+            set {quiz_alt} to "rubeus hagrid"
+        else if {_tId} is 393:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Dans Shrek, quel félin charmeur avec des bottes manie l'épée avec panache ?"
+            set {quiz_answer} to "le chat potte"
+            set {quiz_alt} to "chat potte"
+        else if {_tId} is 394:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel film de science-fiction met en scène les Na'vi et l'arbre des Âmes ?"
+            set {quiz_answer} to "avatar"
+            set {quiz_alt} to "avatar"
+        else if {_tId} is 395:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Dans Avengers, quel dieu de la malice et frère de Thor porte un casque à cornes ?"
+            set {quiz_answer} to "loki"
+            set {quiz_alt} to "loki"
+        else if {_tId} is 396:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel aventurier au chapeau feutre et au fouet craint par-dessus tout les serpents ?"
+            set {quiz_answer} to "indiana jones"
+            set {quiz_alt} to "indiana jones"
+        else if {_tId} is 397:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Dans Star Wars, de quelle planète désertique Luke Skywalker et Anakin sont-ils originaires ?"
+            set {quiz_answer} to "tatooine"
+            set {quiz_alt} to "tatooine"
+        else if {_tId} is 398:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel est le nom du cyborg assassin à l'accent autrichien incarné par Arnold Schwarzenegger ?"
+            set {quiz_answer} to "terminator"
+            set {quiz_alt} to "terminator"
+        else if {_tId} is 399:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Dans Harry Potter, quelle créature ailée mi-aigle mi-cheval s'appelle Buck ?"
+            set {quiz_answer} to "hippogriffe"
+            set {quiz_alt} to "l'hippogriffe"
+        else if {_tId} is 400:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel super-héros roi du Wakanda porte un costume noir en vibranium ?"
+            set {quiz_answer} to "black panther"
+            set {quiz_alt} to "t'challa"
+        else if {_tId} is 401:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Dans Jurassic Park, quel scientifique en chemise noire et lunettes de soleil parle de la théorie du chaos ?"
+            set {quiz_answer} to "ian malcolm"
+            set {quiz_alt} to "jeff goldblum"
+        else if {_tId} is 402:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel extraterrestre métamorphe noir baveux s'associe à Eddie Brock dans Marvel ?"
+            set {quiz_answer} to "venom"
+            set {quiz_alt} to "venom"
+        else if {_tId} is 403:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Dans Gladiator, quel général romain déchu devient gladiateur pour venger sa famille ?"
+            set {quiz_answer} to "maximus"
+            set {quiz_alt} to "maximus"
+        else if {_tId} is 404:
+            set {quiz_category} to "🎬 CINÉMA"
+            set {quiz_question} to "Quel film de Disney raconte l'histoire d'un pantin de bois rêvant de devenir un vrai petit garçon ?"
+            set {quiz_answer} to "pinocchio"
+            set {quiz_alt} to "pinocchio"
+        else if {_tId} is 405:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quel est le nom de l'attaque électrique foudroyante créée par Kakashi dans Naruto ?"
+            set {quiz_answer} to "chidori"
+            set {quiz_alt} to "les mille oiseaux"
+        else if {_tId} is 406:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Dans Dragon Ball, sur quel petit nuage magique jaune Sangoku se déplace-t-il ?"
+            set {quiz_answer} to "nuage magique"
+            set {quiz_alt} to "kinto un"
+        else if {_tId} is 407:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quel amiral de la Marine possède le pouvoir de la glace (Hie Hie no Mi) dans One Piece ?"
+            set {quiz_answer} to "aokiji"
+            set {quiz_alt} to "kuzan"
+        else if {_tId} is 408:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Dans Demon Slayer, quelle est la couleur de la lame du sabre Nichirin de Tanjiro ?"
+            set {quiz_answer} to "noir"
+            set {quiz_alt} to "noire"
+        else if {_tId} is 409:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quel chasseur de primes de l'espace pilote le vaisseau Swordfish II dans Cowboy Bebop ?"
+            set {quiz_answer} to "spike"
+            set {quiz_alt} to "spike spiegel"
+        else if {_tId} is 410:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Dans Death Note, qui est le successeur surdoué blond de L portant une peluche ?"
+            set {quiz_answer} to "near"
+            set {quiz_alt} to "near"
+        else if {_tId} is 411:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quel capitaine légendaire de l'escouade d'élite est maniaque de la propreté dans SNK ?"
+            set {quiz_answer} to "levi"
+            set {quiz_alt} to "livai"
+        else if {_tId} is 412:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Dans Jujutsu Kaisen, quel sort d'inversion permet de soigner les blessures graves ?"
+            set {quiz_answer} to "sort d'inversion"
+            set {quiz_alt} to "energie occulte inversee"
+        else if {_tId} is 413:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quel esprit renard légendaire à neuf queues est scellé dans Naruto ?"
+            set {quiz_answer} to "kyubi"
+            set {quiz_alt} to "kurama"
+        else if {_tId} is 414:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Dans One Piece, quel membre de l'équipage est une archéologue capable de faire pousser des bras partout ?"
+            set {quiz_answer} to "nico robin"
+            set {quiz_alt} to "robin"
+        else if {_tId} is 415:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quel chevalier pégase de bronze défend la réincarnation de la déesse Athéna ?"
+            set {quiz_answer} to "seiya"
+            set {quiz_alt} to "saint seiya"
+        else if {_tId} is 416:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Dans My Hero Academia, quel élève crée des explosions grâce à la sueur de ses paumes ?"
+            set {quiz_answer} to "bakugo"
+            set {quiz_alt} to "katsuki bakugo"
+        else if {_tId} is 417:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quel alchimiste de flammes militaire porte des gants brodés d'un cercle dans FMA ?"
+            set {quiz_answer} to "roy mustang"
+            set {quiz_alt} to "mustang"
+        else if {_tId} is 418:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Dans One Piece, quel est le surnom du sniper de l'équipage au long nez menteur ?"
+            set {quiz_answer} to "usopp"
+            set {quiz_alt} to "pipo"
+        else if {_tId} is 419:
+            set {quiz_category} to "⚡ ANIME/MANGA"
+            set {quiz_question} to "Quel jeune lycéen manie le pouvoir du Geass dans Code Geass ?"
+            set {quiz_answer} to "lelouch"
+            set {quiz_alt} to "zero"
+        else if {_tId} is 420:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans quel jeu vidéo construit-on des fermes à Stardew Valley ?"
+            set {quiz_answer} to "stardew valley"
+            set {quiz_alt} to "stardew valley"
+        else if {_tId} is 421:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel Pokémon de type Feu ressemble à un dragon ailé orange cracheur de flammes ?"
+            set {quiz_answer} to "dracaufeu"
+            set {quiz_alt} to "charizard"
+        else if {_tId} is 422:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel est le nom de l'agent féminin tireur d'élite dans Overwatch qui manie un fusil de sniper ?"
+            set {quiz_answer} to "fatale"
+            set {quiz_alt} to "widowmaker"
+        else if {_tId} is 423:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans quel jeu post-apocalyptique sort-on de l'Abri 101 ou 111 ?"
+            set {quiz_answer} to "fallout"
+            set {quiz_alt} to "fallout"
+        else if {_tId} is 424:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel fantôme rose pourchasse Pac-Man dans le labyrinthe ?"
+            set {quiz_answer} to "pinky"
+            set {quiz_alt} to "pinky"
+        else if {_tId} is 425:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans Minecraft, quelle structure fortifiée abrite les Shulkers et les Élytres dans l'End ?"
+            set {quiz_answer} to "end city"
+            set {quiz_alt} to "cite de l'end"
+        else if {_tId} is 426:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel jeu de plateforme met en scène un petit garçon dans un monde sombre monochrome ?"
+            set {quiz_answer} to "limbo"
+            set {quiz_alt} to "limbo"
+        else if {_tId} is 427:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans Apex Legends, quel robot éclaireur utilise un grappin et des tyroliennes ?"
+            set {quiz_answer} to "pathfinder"
+            set {quiz_alt} to "pathfinder"
+        else if {_tId} is 428:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel studio a créé Dark Souls et Bloodborne ?"
+            set {quiz_answer} to "fromsoftware"
+            set {quiz_alt} to "from software"
+        else if {_tId} is 429:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel est le nom de l'épée légendaire scellée dans le socle de pierre dans Zelda ?"
+            set {quiz_answer} to "master sword"
+            set {quiz_alt} to "epee de legende"
+        else if {_tId} is 430:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans quel jeu de cartes virtuelles combat-on avec des champions de Runeterra ?"
+            set {quiz_answer} to "legends of runeterra"
+            set {quiz_alt} to "lor"
+        else if {_tId} is 431:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel monstre squelette chevauche une araignée la nuit dans Minecraft ?"
+            set {quiz_answer} to "spider jockey"
+            set {quiz_alt} to "jockey"
+        else if {_tId} is 432:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans Cyberpunk 2077, quel rockerboy légendaire est incarné par Keanu Reeves ?"
+            set {quiz_answer} to "johnny silverhand"
+            set {quiz_alt} to "johnny"
+        else if {_tId} is 433:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel jeu de stratégie spatial oppose Terrans, Protoss et Zergs ?"
+            set {quiz_answer} to "starcraft"
+            set {quiz_alt} to "starcraft 2"
+        else if {_tId} is 434:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans quel jeu explore-t-on le manoir hanté avec un aspirateur à fantômes Ectoblast ?"
+            set {quiz_answer} to "luigi's mansion"
+            set {quiz_alt} to "luigis mansion"
+        else if {_tId} is 435:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quelle est la capitale officielle du Mexique ?"
+            set {quiz_answer} to "mexico"
+            set {quiz_alt} to "mexico city"
+        else if {_tId} is 436:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quel petit pays européen est réputé pour ses tulipes, moulins et fromages ?"
+            set {quiz_answer} to "pays-bas"
+            set {quiz_alt} to "la hollande"
+        else if {_tId} is 437:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quelle est la capitale de l'Islande connue pour ses geysers et volcans ?"
+            set {quiz_answer} to "reykjavik"
+            set {quiz_alt} to "reykjavik"
+        else if {_tId} is 438:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Dans quel pays se trouve le célèbre site inca perché du Machu Picchu ?"
+            set {quiz_answer} to "perou"
+            set {quiz_alt} to "le perou"
+        else if {_tId} is 439:
+            set {quiz_category} to "🌍 GÉOGRAPHIE"
+            set {quiz_question} to "Quelle est la plus haute cascade d'eau ininterrompue au monde au Venezuela (Salto Ángel) ?"
+            set {quiz_answer} to "salto angel"
+            set {quiz_alt} to "chutes du salto angel"
+        else if {_tId} is 440:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quel os du bras humain est situé entre l'épaule et le coude ?"
+            set {quiz_answer} to "humerus"
+            set {quiz_alt} to "l'humerus"
+        else if {_tId} is 441:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quel gaz à effet de serre est naturellement produit par la respiration et la combustion ?"
+            set {quiz_answer} to "co2"
+            set {quiz_alt} to "dioxyde de carbone"
+        else if {_tId} is 442:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Combien d'yeux possède une abeille ouvrière (yeux composés + ocelles) ?"
+            set {quiz_answer} to "5"
+            set {quiz_alt} to "cinq"
+        else if {_tId} is 443:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quelle est la distance approximative Terre-Soleil en millions de kilomètres ?"
+            set {quiz_answer} to "150"
+            set {quiz_alt} to "150 millions"
+        else if {_tId} is 444:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quel organe des poissons leur permet de respirer l'oxygène dissous dans l'eau ?"
+            set {quiz_answer} to "branchies"
+            set {quiz_alt} to "les branchies"
+        else if {_tId} is 445:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quel est le plus grand os du corps humain situé dans la cuisse ?"
+            set {quiz_answer} to "femur"
+            set {quiz_alt} to "le femur"
+        else if {_tId} is 446:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quel acide digestif très puissant est présent dans l'estomac humain ?"
+            set {quiz_answer} to "acide chlorhydrique"
+            set {quiz_alt} to "chlorhydrique"
+        else if {_tId} is 447:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quel métal précieux blanc très dense a pour symbole 'Pt' ?"
+            set {quiz_answer} to "platine"
+            set {quiz_alt} to "le platine"
+        else if {_tId} is 448:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Combien de pattes possède un crabe adulte sous l'eau (décapode) ?"
+            set {quiz_answer} to "10"
+            set {quiz_alt} to "dix"
+        else if {_tId} is 449:
+            set {quiz_category} to "🔬 SCIENCE"
+            set {quiz_question} to "Quelle est la force qui permet aux bateaux de flotter sur l'eau (Poussée d'...) ?"
+            set {quiz_answer} to "archimede"
+            set {quiz_alt} to "poussee d'archimede"
+        else if {_tId} is 450:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Quel est le nom de la fée qui accompagne Peter Pan au Pays Imaginaire ?"
+            set {quiz_answer} to "clochette"
+            set {quiz_alt} to "la fee clochette"
+        else if {_tId} is 451:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Combien de pattes possède un mille-pattes ordinaire (environ) ?"
+            set {quiz_answer} to "100"
+            set {quiz_alt} to "cent"
+        else if {_tId} is 452:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Quel détective belge créé par Agatha Christie a une moustache soignée ?"
+            set {quiz_answer} to "hercule poirot"
+            set {quiz_alt} to "poirot"
+        else if {_tId} is 453:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Quel est le plus grand mammifère terrestre marchant sur Terre ?"
+            set {quiz_answer} to "elephant"
+            set {quiz_alt} to "l'elephant d'afrique"
+        else if {_tId} is 454:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Quel héros de bande dessinée belge voyage avec son chien Milou et le capitaine Haddock ?"
+            set {quiz_answer} to "tintin"
+            set {quiz_alt} to "tintin"
+        else if {_tId} is 455:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Quel est le nom du célèbre vampire aristocrate de Transylvanie créé par Bram Stoker ?"
+            set {quiz_answer} to "dracula"
+            set {quiz_alt} to "le comte dracula"
+        else if {_tId} is 456:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Quel oiseau légendaire renaît toujours de ses propres cendres ?"
+            set {quiz_answer} to "phenix"
+            set {quiz_alt} to "le phenix"
+        else if {_tId} is 457:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Dans la mythologie grecque, quel monstre marin avait des serpents pour cheveux et pétrifiait d'un regard ?"
+            set {quiz_answer} to "meduse"
+            set {quiz_alt} to "la meduse"
+        else if {_tId} is 458:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Quel est le prénom de l'auteur de Sherlock Holmes, Sir Arthur ... Doyle ?"
+            set {quiz_answer} to "conan"
+            set {quiz_alt} to "arthur conan doyle"
+        else if {_tId} is 459:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Quel monument mégalithique circulaire mystérieux se trouve dans le Wiltshire en Angleterre ?"
+            set {quiz_answer} to "stonehenge"
+            set {quiz_alt} to "stonehenge"
+        else if {_tId} is 460:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Quel cheval ailé divin de la mythologie grecque est né du sang de Méduse ?"
+            set {quiz_answer} to "pegase"
+            set {quiz_alt} to "le pegase"
+        else if {_tId} is 461:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Quel célèbre scientifique a inventé la dynamite et créé les prix prestigieux éponymes ?"
+            set {quiz_answer} to "alfred nobel"
+            set {quiz_alt} to "nobel"
+        else if {_tId} is 462:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Dans Alice au Pays des Merveilles, quel félin rose et violet sourit mystérieusement et disparaît ?"
+            set {quiz_answer} to "chat du cheshire"
+            set {quiz_alt} to "cheshire"
+        else if {_tId} is 463:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Combien de jours y a-t-il dans une année bissextile ?"
+            set {quiz_answer} to "366"
+            set {quiz_alt} to "366 jours"
+        else if {_tId} is 464:
+            set {quiz_category} to "🧠 CULTURE G"
+            set {quiz_question} to "Quel monstre à corps de lion et tête humaine garde les pyramides de Gizeh ?"
+            set {quiz_answer} to "sphinx"
+            set {quiz_alt} to "le sphinx"
+        else if {_tId} is 465:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Combien de lingots d'or faut-il pour créer une horloge dans Minecraft ?"
+            set {quiz_answer} to "4"
+            set {quiz_alt} to "quatre"
+        else if {_tId} is 466:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel mob volant hostile tire des boules de feu explosives dans le Nether ?"
+            set {quiz_answer} to "ghast"
+            set {quiz_alt} to "le ghast"
+        else if {_tId} is 467:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quelle créature aquatique amicale mange du poisson et peut guider vers des trésors enfouis ?"
+            set {quiz_answer} to "dauphin"
+            set {quiz_alt} to "le dauphin"
+        else if {_tId} is 468:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Combien de minerais de cuivre brut faut-il fondre pour obtenir 1 lingot de cuivre ?"
+            set {quiz_answer} to "1"
+            set {quiz_alt} to "un"
+        else if {_tId} is 469:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel minerai jaune étincelant est adoré par les Piglins dans le Nether ?"
+            set {quiz_answer} to "or"
+            set {quiz_alt} to "l'or"
+        else if {_tId} is 470:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel oiseau bavard peut imiter les bruits des monstres environnants et aime les graines ?"
+            set {quiz_answer} to "perroquet"
+            set {quiz_alt} to "le perroquet"
+        else if {_tId} is 471:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quelle fleur rouge ou jaune peut être utilisée pour fabriquer du colorant en table de craft ?"
+            set {quiz_answer} to "rose"
+            set {quiz_alt} to "coquelicot"
+        else if {_tId} is 472:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel mob hostile aquatique à un œil laser protège les Monuments Sous-Marins ?"
+            set {quiz_answer} to "guardian"
+            set {quiz_alt} to "le gardien"
+        else if {_tId} is 473:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Combien de morceaux de bambou faut-il pour fabriquer 6 échafaudages avec 1 ficelle ?"
+            set {quiz_answer} to "6"
+            set {quiz_alt} to "six"
+        else if {_tId} is 474:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quelle potion concoctée avec de la crème de magma protège des brûlures de la lave ?"
+            set {quiz_answer} to "resistance au feu"
+            set {quiz_alt} to "fire resistance"
+        else if {_tId} is 475:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel bloc explosif s'active avec de la redstone ou un briquet ?"
+            set {quiz_answer} to "tnt"
+            set {quiz_alt} to "la tnt"
+        else if {_tId} is 476:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel outil permet de tondre la laine des moutons sans les blesser ?"
+            set {quiz_answer} to "cisailles"
+            set {quiz_alt} to "les cisailles"
+        else if {_tId} is 477:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel animal arctique blanc attaque si l'on s'approche trop près de son bébé ?"
+            set {quiz_answer} to "ours polaire"
+            set {quiz_alt} to "l'ours polaire"
+        else if {_tId} is 478:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Combien d'yeux d'araignée fermentés faut-il pour concevoir une potion d'invisibilité ?"
+            set {quiz_answer} to "1"
+            set {quiz_alt} to "un"
+        else if {_tId} is 479:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel minerai d'un bleu profond est utilisé pour enchanter des objets dans la table magique ?"
+            set {quiz_answer} to "lapis lazuli"
+            set {quiz_alt} to "lapis"
+        else if {_tId} is 480:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel bloc rouge d'osier lumineux attire les abeilles la nuit ?"
+            set {quiz_answer} to "ruche"
+            set {quiz_alt} to "nid d'abeille"
+        else if {_tId} is 481:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel boss titanesque invoqué avec 4 sables des âmes et 3 crânes tire des têtes explosives ?"
+            set {quiz_answer} to "wither"
+            set {quiz_alt} to "le wither"
+        else if {_tId} is 482:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quelle arme de tir silencieuse tire des feux d'artifice et des flèches perforantes ?"
+            set {quiz_answer} to "arbalete"
+            set {quiz_alt} to "crossbow"
+        else if {_tId} is 483:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Quel bloc magique permet de réapparaître dans le Nether au lieu de l'Overworld ?"
+            set {quiz_answer} to "ancre de reapparition"
+            set {quiz_alt} to "respawn anchor"
+        else if {_tId} is 484:
+            set {quiz_category} to "⛏️ MINECRAFT"
+            set {quiz_question} to "Combien de pépites de fer s'obtiennent en désenchantant ou fondant 1 armure de fer ?"
+            set {quiz_answer} to "1"
+            set {quiz_alt} to "une"
+        else if {_tId} is 485:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel est le nom du studio créateur de Grand Theft Auto et Red Dead Redemption ?"
+            set {quiz_answer} to "rockstar games"
+            set {quiz_alt} to "rockstar"
+        else if {_tId} is 486:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans quel jeu de cartes combat-on avec des Pokémons légendaires comme Rayquaza ?"
+            set {quiz_answer} to "pokemon"
+            set {quiz_alt} to "cartes pokemon"
+        else if {_tId} is 487:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel est le nom de l'ours héros qui porte un oiseau rouge dans son sac à dos ?"
+            set {quiz_answer} to "banjo"
+            set {quiz_alt} to "banjo kazooie"
+        else if {_tId} is 488:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel héros de PlayStation manie les Lames du Chaos dans la mythologie grecque ?"
+            set {quiz_answer} to "kratos"
+            set {quiz_alt} to "kratos"
+        else if {_tId} is 489:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel petit animal de poche bleu électrique de Sonic est son meilleur ami ?"
+            set {quiz_answer} to "tails"
+            set {quiz_alt} to "tails"
+        else if {_tId} is 490:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel FPS gratuit culte d'Activision se déroule sur la carte de Verdansk ?"
+            set {quiz_answer} to "warzone"
+            set {quiz_alt} to "call of duty warzone"
+        else if {_tId} is 491:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel Pokémon de départ de type Eau ressemble à une petite tortue bleue ?"
+            set {quiz_answer} to "carapuce"
+            set {quiz_alt} to "squirtle"
+        else if {_tId} is 492:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans Minecraft, quelle structure en bois abandonnée regorge de rails et de coffres souterrains ?"
+            set {quiz_answer} to "mineshaft"
+            set {quiz_alt} to "mine abandonnee"
+        else if {_tId} is 493:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel est le nom de l'intelligence artificielle malveillante dans Portal ?"
+            set {quiz_answer} to "glados"
+            set {quiz_alt} to "glados"
+        else if {_tId} is 494:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel studio japonais historique a créé Final Fantasy et Dragon Quest ?"
+            set {quiz_answer} to "square enix"
+            set {quiz_alt} to "square"
+        else if {_tId} is 495:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel est le nom du jeu de briques cubiques virtuelles le plus populaire auprès des enfants créé par Roblox Corp ?"
+            set {quiz_answer} to "roblox"
+            set {quiz_alt} to "roblox"
+        else if {_tId} is 496:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans quel jeu de stratégie sur PC récolte-t-on du bois, de la nourriture et de l'or pour bâtir un empire médiéval ?"
+            set {quiz_answer} to "age of empires"
+            set {quiz_alt} to "aoe"
+        else if {_tId} is 497:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel est le nom du prince démon aux cheveux blancs dans Devil May Cry ?"
+            set {quiz_answer} to "dante"
+            set {quiz_alt} to "dante"
+        else if {_tId} is 498:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans League of Legends, quelle championne tireuse aux cheveux bleus et couettes est l'héroïne d'Arcane ?"
+            set {quiz_answer} to "jinx"
+            set {quiz_alt} to "jinx"
+        else if {_tId} is 499:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel est le nom du boss final dragon dans Dark Souls ?"
+            set {quiz_answer} to "kalameet"
+            set {quiz_alt} to "seath"
+        else if {_tId} is 500:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quel plat québécois mondialement célèbre est composé de frites, fromage en grains et sauce brune ?"
+            set {quiz_answer} to "poutine"
+            set {quiz_alt} to "la poutine"
+        else if {_tId} is 501:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quel sirop doré et sucré emblématique du Québec est récolté dans les cabanes à sucre au printemps ?"
+            set {quiz_answer} to "sirop d'erable"
+            set {quiz_alt} to "sirop d'erable"
+        else if {_tId} is 502:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Que signifie l'expression québécoise 'Tire-toi une bûche' ?"
+            set {quiz_answer} to "assieds-toi"
+            set {quiz_alt} to "prends une chaise"
+        else if {_tId} is 503:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Que signifie l'expression québécoise 'C'est tiguidou' ?"
+            set {quiz_answer} to "c'est bon"
+            set {quiz_alt} to "c'est parfait"
+        else if {_tId} is 504:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quel mot québécois familier désigne une automobile ou une voiture ?"
+            set {quiz_answer} to "char"
+            set {quiz_alt} to "un char"
+        else if {_tId} is 505:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quelle tourte traditionnelle à la viande épicée est servie au Québec pendant le temps des Fêtes ?"
+            set {quiz_answer} to "tourtiere"
+            set {quiz_alt} to "la tourtiere"
+        else if {_tId} is 506:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quelle friandise québécoise est versée chaude sur la neige puis roulée sur un bâtonnet de bois ?"
+            set {quiz_answer} to "tire d'erable"
+            set {quiz_alt} to "la tire"
+        else if {_tId} is 507:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quel gâteau québécois économique et réconfortant est cuit sous un sirop bouillant de cassonade ?"
+            set {quiz_answer} to "pouding chomeur"
+            set {quiz_alt} to "pouding chômeur"
+        else if {_tId} is 508:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Que signifie l'expression québécoise 'Attache ta tuque avec de la broche' ?"
+            set {quiz_answer} to "prepare-toi"
+            set {quiz_alt} to "tiens-toi pret"
+        else if {_tId} is 509:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quel couvre-chef d'hiver chaud en laine est indispensable durant l'hiver québécois ?"
+            set {quiz_answer} to "tuque"
+            set {quiz_alt} to "une tuque"
+        else if {_tId} is 510:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quelle est la capitale nationale et officielle de la province de Québec ?"
+            set {quiz_answer} to "quebec"
+            set {quiz_alt} to "ville de quebec"
+        else if {_tId} is 511:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quelle est la plus grande métropole et île du Québec par sa population ?"
+            set {quiz_answer} to "montreal"
+            set {quiz_alt} to "l'ile de montreal"
+        else if {_tId} is 512:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quel grand fleuve majestueux traverse toute la province de Québec d'ouest en est ?"
+            set {quiz_answer} to "saint-laurent"
+            set {quiz_alt} to "saint laurent"
+        else if {_tId} is 513:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quelle équipe historique de hockey de la LNH joue au Centre Bell à Montréal ?"
+            set {quiz_answer} to "canadiens"
+            set {quiz_alt} to "canadiens de montreal"
+        else if {_tId} is 514:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Combien de Coupes Stanley les Canadiens de Montréal ont-ils remportées dans leur histoire ?"
+            set {quiz_answer} to "24"
+            set {quiz_alt} to "24 coupes"
+        else if {_tId} is 515:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quelle superstar mondiale de la chanson originaire de Charlemagne a chanté 'Pour que tu m'aimes encore' ?"
+            set {quiz_answer} to "celine dion"
+            set {quiz_alt} to "celine"
+        else if {_tId} is 516:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quel groupe de musique québécois culte et engagé a composé 'Les étoiles filantes' ?"
+            set {quiz_answer} to "les cowboys fringants"
+            set {quiz_alt} to "cowboys fringants"
+        else if {_tId} is 517:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quel célèbre hôtel de luxe en forme de château fort domine la vieille ville de Québec ?"
+            set {quiz_answer} to "chateau frontenac"
+            set {quiz_alt} to "le chateau frontenac"
+        else if {_tId} is 518:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quel rocher géant percé par les vagues se trouve à la pointe de la péninsule gaspésienne ?"
+            set {quiz_answer} to "rocher perce"
+            set {quiz_alt} to "le rocher perce"
+        else if {_tId} is 519:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Que signifie l'expression québécoise 'Avoir du front tout le tour de la tête' ?"
+            set {quiz_answer} to "etre audacieux"
+            set {quiz_alt} to "effronte"
+        else if {_tId} is 520:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Que signifie l'expression québécoise 'Se faire passer un sapin' ?"
+            set {quiz_answer} to "se faire arnaquer"
+            set {quiz_alt} to "se faire avoir"
+        else if {_tId} is 521:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Que veut dire 'Être dans les patates' en québécois ?"
+            set {quiz_answer} to "se tromper"
+            set {quiz_alt} to "etre dans l'erreur"
+        else if {_tId} is 522:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Que veut dire l'expression 'Chanter la pomme' au Québec ?"
+            set {quiz_answer} to "draguer"
+            set {quiz_alt} to "flirter"
+        else if {_tId} is 523:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Que désigne le mot 'Liqueur' au Québec lorsqu'on commande à boire ?"
+            set {quiz_answer} to "boisson gazeuse"
+            set {quiz_alt} to "soda"
+        else if {_tId} is 524:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Que signifie le verbe québécois 'Magasiner' ?"
+            set {quiz_answer} to "faire du shopping"
+            set {quiz_alt} to "shopping"
+        else if {_tId} is 525:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Que signifie l'expression québécoise 'Avoir la chienne' ?"
+            set {quiz_answer} to "avoir peur"
+            set {quiz_alt} to "peur"
+        else if {_tId} is 526:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quel gardien de but québécois de légende a remporté 4 Coupes Stanley avec Montréal et Colorado ?"
+            set {quiz_answer} to "patrick roy"
+            set {quiz_alt} to "roy"
+        else if {_tId} is 527:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quel joueur québécois légendaire des Canadiens de Montréal était surnommé 'Le Démon Blond' ?"
+            set {quiz_answer} to "guy lafleur"
+            set {quiz_alt} to "lafleur"
+        else if {_tId} is 528:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quel joueur de hockey québécois d'exception était surnommé 'Le Magnifique' à Pittsburgh ?"
+            set {quiz_answer} to "mario lemieux"
+            set {quiz_alt} to "lemieux"
+        else if {_tId} is 529:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quel ancien club de hockey de la LNH arborait une fleur de lys et jouait au Colisée de Québec ?"
+            set {quiz_answer} to "les nordiques"
+            set {quiz_alt} to "nordiques"
+        else if {_tId} is 530:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quel grand cirque artistique mondial fondé à Baie-Saint-Paul par Guy Laliberté est né au Québec ?"
+            set {quiz_answer} to "cirque du soleil"
+            set {quiz_alt} to "le cirque du soleil"
+        else if {_tId} is 531:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quel réalisateur québécois renommé a réalisé les films de science-fiction 'Dune' et 'Blade Runner 2049' ?"
+            set {quiz_answer} to "denis villeneuve"
+            set {quiz_alt} to "villeneuve"
+        else if {_tId} is 532:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quel personnage bonhomme de neige portant une ceinture fléchée est la mascotte du Carnaval de Québec ?"
+            set {quiz_answer} to "bonhomme carnaval"
+            set {quiz_alt} to "bonhomme"
+        else if {_tId} is 533:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quelle colline verdoyante surplombe le centre-ville de Montréal et lui donne son nom ?"
+            set {quiz_answer} to "mont royal"
+            set {quiz_alt} to "le mont-royal"
+        else if {_tId} is 534:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quel dessert québécois traditionnel à base de cassonade et crème est servi dans une pâte brisée ?"
+            set {quiz_answer} to "tarte au sucre"
+            set {quiz_alt} to "la tarte au sucre"
+        else if {_tId} is 535:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quel type de fromage québécois frais et salé fait 'couik-couik' sous la dent ?"
+            set {quiz_answer} to "fromage en grains"
+            set {quiz_alt} to "grains"
+        else if {_tId} is 536:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Que signifie l'expression québécoise 'Pelleter des nuages' ?"
+            set {quiz_answer} to "rever"
+            set {quiz_alt} to "etre irrealiste"
+        else if {_tId} is 537:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Que veut dire 'Tomber en amour' au Québec ?"
+            set {quiz_answer} to "tomber amoureux"
+            set {quiz_alt} to "aimer"
+        else if {_tId} is 538:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Que signifie 'Avoir le motton' au Québec ?"
+            set {quiz_answer} to "etre emu"
+            set {quiz_alt} to "avoir la gorge nouee"
+        else if {_tId} is 539:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Que veut dire 'C'est de valeur' au Québec ?"
+            set {quiz_answer} to "c'est dommage"
+            set {quiz_alt} to "dommage"
+        else if {_tId} is 540:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quel ragoût traditionnel québécois est préparé avec des boulettes de porc et des pattes de cochon ?"
+            set {quiz_answer} to "ragout de boulettes"
+            set {quiz_alt} to "ragout de pattes"
+        else if {_tId} is 541:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quelle grande chaîne de restauration rapide canadienne est célèbre pour ses beignes et Timbits ?"
+            set {quiz_answer} to "tim hortons"
+            set {quiz_alt} to "tims"
+        else if {_tId} is 542:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quelle chute spectaculaire près de Québec est plus haute de 30 mètres que les chutes du Niagara ?"
+            set {quiz_answer} to "chute montmorency"
+            set {quiz_alt} to "montmorency"
+        else if {_tId} is 543:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quelle grande région forestière et montagneuse au nord de Montréal regorge de lacs et stations de ski ?"
+            set {quiz_answer} to "les laurentides"
+            set {quiz_alt} to "laurentides"
+        else if {_tId} is 544:
+            set {quiz_category} to "⚜️ QUÉBEC & EXPRESSIONS"
+            set {quiz_question} to "Quelle devise officielle est inscrite sur toutes les plaques d'immatriculation du Québec ?"
+            set {quiz_answer} to "je me souviens"
+            set {quiz_alt} to "je me souviens"
+        else if {_tId} is 545:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans Elden Ring, quelle femme borgne sert de servante et permet de monter de niveau auprès des Grâces ?"
+            set {quiz_answer} to "melina"
+            set {quiz_alt} to "melina"
+        else if {_tId} is 546:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans League of Legends, quel est le dragon neutre élémentaire qui accorde de la régénération de PV ?"
+            set {quiz_answer} to "dragon des oceans"
+            set {quiz_alt} to "ocean"
+        else if {_tId} is 547:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel est le nom du protagoniste aux yeux bandés dans NieR:Automata accompagné de 2B ?"
+            set {quiz_answer} to "9s"
+            set {quiz_alt} to "9s"
+        else if {_tId} is 548:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans Valorant, quel agent français est un duelliste expert du téléport et des armes dorées ?"
+            set {quiz_answer} to "chamber"
+            set {quiz_alt} to "chamber"
+        else if {_tId} is 549:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans Skyrim, quel cri de dragon légendaire repousse violemment les ennemis au loin ?"
+            set {quiz_answer} to "fus ro dah"
+            set {quiz_alt} to "fus roh dah"
+        else if {_tId} is 550:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel est le nom du dieu des Enfers et père de Zagreus dans le jeu rogue-like Hades ?"
+            set {quiz_answer} to "hades"
+            set {quiz_alt} to "hades"
+        else if {_tId} is 551:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans Mario Kart, quel objet bleu ailé redouté cible impitoyablement le joueur en première position ?"
+            set {quiz_answer} to "carapace bleue"
+            set {quiz_alt} to "la carapace bleue"
+        else if {_tId} is 552:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel RPG légendaire de Square Enix met en scène Cloud Strife, Tifa Lockhart et Sephiroth ?"
+            set {quiz_answer} to "final fantasy vii"
+            set {quiz_alt} to "ff7"
+        else if {_tId} is 553:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans Minecraft, quel effet de statut inflige le Warden et plonge le joueur dans les ténèbres complètes ?"
+            set {quiz_answer} to "darkness"
+            set {quiz_alt} to "obscurite"
+        else if {_tId} is 554:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel Pokémon légendaire gardien des mers plonge dans les abysses et forme un duo avec Ho-Oh ?"
+            set {quiz_answer} to "lugia"
+            set {quiz_alt} to "lugia"
+        else if {_tId} is 555:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans Overwatch, quel gorille scientifique génial originaire de la colonie lunaire pose des boucliers ?"
+            set {quiz_answer} to "winston"
+            set {quiz_alt} to "winston"
+        else if {_tId} is 556:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel est le prénom de la princesse du Crépuscule qui chevauche Link transformé en loup dans Zelda ?"
+            set {quiz_answer} to "midona"
+            set {quiz_alt} to "midna"
+        else if {_tId} is 557:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans Cyberpunk 2077, quel rockeur rebelle légendaire interprété par Keanu Reeves vit dans la tête de V ?"
+            set {quiz_answer} to "johnny silverhand"
+            set {quiz_alt} to "johnny"
+        else if {_tId} is 558:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel jeu de construction spatiale parodique permet de concevoir des fusées avec de petits bonshommes verts ?"
+            set {quiz_answer} to "kerbal space program"
+            set {quiz_alt} to "ksp"
+        else if {_tId} is 559:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans Rainbow Six Siege, quel agent français utilise un drone spécial tirant des fléchettes taser ?"
+            set {quiz_answer} to "twitch"
+            set {quiz_alt} to "twitch"
+        else if {_tId} is 560:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel hérisson noir et rouge ténébreux rivalise avec Sonic en utilisant le Chaos Control ?"
+            set {quiz_answer} to "shadow"
+            set {quiz_alt} to "shadow the hedgehog"
+        else if {_tId} is 561:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel est le nom de l'île déserte sur laquelle Tom Nook installe les joueurs dans Animal Crossing New Horizons ?"
+            set {quiz_answer} to "l'ile"
+            set {quiz_alt} to "evasion ile deserte"
+        else if {_tId} is 562:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans Call of Duty Zombies, quelle boisson emblématique permet de courir et sprinter beaucoup plus vite ?"
+            set {quiz_answer} to "stamin-up"
+            set {quiz_alt} to "stamin up"
+        else if {_tId} is 563:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans Fallout, quel petit bonhomme souriant en combinaison bleue et jaune est la mascotte de Vault-Tec ?"
+            set {quiz_answer} to "vault boy"
+            set {quiz_alt} to "pip boy"
+        else if {_tId} is 564:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans Apex Legends, quel robot éclaireur joyeux utilise un grappin et une tyrolienne ?"
+            set {quiz_answer} to "pathfinder"
+            set {quiz_alt} to "pathfinder"
+        else if {_tId} is 565:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel jeu culte développé par Undertale Team met en scène Sans le squelette et Papyrus ?"
+            set {quiz_answer} to "undertale"
+            set {quiz_alt} to "undertale"
+        else if {_tId} is 566:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans World of Warcraft, quelle reine banshee réprouvée a brisé le Casque de Domination du Roi Liche ?"
+            set {quiz_answer} to "sylvanas"
+            set {quiz_alt} to "sylvanas coursevent"
+        else if {_tId} is 567:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Quel studio américain réputé a créé Starfield, Fallout 4 et The Elder Scrolls V ?"
+            set {quiz_answer} to "bethesda"
+            set {quiz_alt} to "bethesda game studios"
+        else if {_tId} is 568:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans Terraria, quel boss carnivore géant aux multiples yeux doit être vaincu pour activer le Hardmode ?"
+            set {quiz_answer} to "mur de chair"
+            set {quiz_alt} to "wall of flesh"
+        else if {_tId} is 569:
+            set {quiz_category} to "🎮 GAMING"
+            set {quiz_question} to "Dans Clash Royale, quelle troupe légendaire coûte 3 d'élixir et tire des flèches enflammées à longue portée ?"
+            set {quiz_answer} to "princesse"
+            set {quiz_alt} to "la princesse"
+        else if {_tId} is 570:
+            set {quiz_category} to "🎬 CINÉMA & SÉRIES"
+            set {quiz_question} to "Dans Harry Potter, quel est le nom du fidèle elfe de maison libéré par une chaussette ?"
+            set {quiz_answer} to "dobby"
+            set {quiz_alt} to "dobby l'elfe"
+        else if {_tId} is 571:
+            set {quiz_category} to "🎬 CINÉMA & SÉRIES"
+            set {quiz_question} to "Dans Le Seigneur des Anneaux, quelle créature corrompue répète sans cesse 'Mon Précieux' ?"
+            set {quiz_answer} to "gollum"
+            set {quiz_alt} to "smeagol"
+        else if {_tId} is 572:
+            set {quiz_category} to "🎬 CINÉMA & SÉRIES"
+            set {quiz_question} to "Dans Star Wars, quel maître Jedi vert âgé de 900 ans enseigne la Force à Luke sur Dagobah ?"
+            set {quiz_answer} to "yoda"
+            set {quiz_alt} to "maitre yoda"
+        else if {_tId} is 573:
+            set {quiz_category} to "🎬 CINÉMA & SÉRIES"
+            set {quiz_question} to "Dans Avengers: Endgame, quel héros sacrifie sa vie pour claquer des doigts et vaincre Thanos ?"
+            set {quiz_answer} to "iron man"
+            set {quiz_alt} to "tony stark"
+        else if {_tId} is 574:
+            set {quiz_category} to "🎬 CINÉMA & SÉRIES"
+            set {quiz_question} to "Dans Peaky Blinders, quel acteur irlandais charismatique incarne Tommy Shelby ?"
+            set {quiz_answer} to "cillian murphy"
+            set {quiz_alt} to "murphy"
+        else if {_tId} is 575:
+            set {quiz_category} to "🎬 CINÉMA & SÉRIES"
+            set {quiz_question} to "Dans Stranger Things, quel monstre prédateur venu de l'Upside Down possède une tête qui s'ouvre comme une fleur ?"
+            set {quiz_answer} to "demogorgon"
+            set {quiz_alt} to "le demogorgon"
+        else if {_tId} is 576:
+            set {quiz_category} to "🎬 CINÉMA & SÉRIES"
+            set {quiz_question} to "Dans Pirates des Caraïbes, quel est le nom du navire maudit à voiles noires du Capitaine Jack Sparrow ?"
+            set {quiz_answer} to "black pearl"
+            set {quiz_alt} to "le black pearl"
+        else if {_tId} is 577:
+            set {quiz_category} to "🎬 CINÉMA & SÉRIES"
+            set {quiz_question} to "Dans Le Roi Lion de Disney, quel est le nom du babouin sage et chaman de la Terre des Lions ?"
+            set {quiz_answer} to "rafiki"
+            set {quiz_alt} to "rafiki"
+        else if {_tId} is 578:
+            set {quiz_category} to "🎬 CINÉMA & SÉRIES"
+            set {quiz_question} to "Quel réalisateur visionnaire a créé Interstellar, Inception et Oppenheimer ?"
+            set {quiz_answer} to "christopher nolan"
+            set {quiz_alt} to "nolan"
+        else if {_tId} is 579:
+            set {quiz_category} to "🎬 CINÉMA & SÉRIES"
+            set {quiz_question} to "Dans Shrek, quel personnage félin charmeur a de grands yeux adorables et manie l'épée ?"
+            set {quiz_answer} to "chat potte"
+            set {quiz_alt} to "le puss in boots"
+        else if {_tId} is 580:
+            set {quiz_category} to "🎬 CINÉMA & SÉRIES"
+            set {quiz_question} to "Dans Retour vers le Futur, quelle vitesse en miles par heure la DeLorean doit-elle atteindre pour voyager dans le temps ?"
+            set {quiz_answer} to "88"
+            set {quiz_alt} to "88 mph"
+        else if {_tId} is 581:
+            set {quiz_category} to "🎬 CINÉMA & SÉRIES"
+            set {quiz_question} to "Dans The Walking Dead, quel est le nom de la batte de baseball entourée de fil barbelé de Negan ?"
+            set {quiz_answer} to "lucille"
+            set {quiz_alt} to "lucille"
+        else if {_tId} is 582:
+            set {quiz_category} to "🎬 CINÉMA & SÉRIES"
+            set {quiz_question} to "Dans Toy Story, quelle est la célèbre réplique fétiche de Buzz l'Éclair ?"
+            set {quiz_answer} to "vers l'infini et au-dela"
+            set {quiz_alt} to "vers l'infini"
+        else if {_tId} is 583:
+            set {quiz_category} to "🎬 CINÉMA & SÉRIES"
+            set {quiz_question} to "Dans Game of Thrones, comment s'appelle le gigantesque loup blanc aux yeux rouges de Jon Snow ?"
+            set {quiz_answer} to "fantome"
+            set {quiz_alt} to "ghost"
+        else if {_tId} is 584:
+            set {quiz_category} to "🎬 CINÉMA & SÉRIES"
+            set {quiz_question} to "Quel acteur musclé interprète Dominic Toretto dans la franchise Fast and Furious ?"
+            set {quiz_answer} to "vin diesel"
+            set {quiz_alt} to "diesel"
+        else if {_tId} is 585:
+            set {quiz_category} to "⛩ ANIME & MANGA"
+            set {quiz_question} to "Dans One Piece, quel est le nom du second de Luffy qui manie trois sabres à la fois ?"
+            set {quiz_answer} to "zoro"
+            set {quiz_alt} to "roronoa zoro"
+        else if {_tId} is 586:
+            set {quiz_category} to "⛩ ANIME & MANGA"
+            set {quiz_question} to "Dans Naruto Shippuden, quelle organisation secrète de mercenaires porte de longues capes noires à nuages rouges ?"
+            set {quiz_answer} to "akatsuki"
+            set {quiz_alt} to "l'akatsuki"
+        else if {_tId} is 587:
+            set {quiz_category} to "⛩ ANIME & MANGA"
+            set {quiz_question} to "Dans Jujutsu Kaisen, quel exorciste aux yeux bleus et bandeau noir possède le pouvoir de l'Infini ?"
+            set {quiz_answer} to "gojo"
+            set {quiz_alt} to "satoru gojo"
+        else if {_tId} is 588:
+            set {quiz_category} to "⛩ ANIME & MANGA"
+            set {quiz_question} to "Dans Dragon Ball Z, quelle fusion surpuissante entre Goku et Vegeta est réalisée avec les boucles d'oreilles Potalas ?"
+            set {quiz_answer} to "vegeto"
+            set {quiz_alt} to "vegetto"
+        else if {_tId} is 589:
+            set {quiz_category} to "⛩ ANIME & MANGA"
+            set {quiz_question} to "Dans Hunter x Hunter, quel jeune assassin aux cheveux blancs et éclairs électriques est le meilleur ami de Gon ?"
+            set {quiz_answer} to "killua"
+            set {quiz_alt} to "kirua"
+        else if {_tId} is 590:
+            set {quiz_category} to "⛩ ANIME & MANGA"
+            set {quiz_question} to "Dans L'Attaque des Titans, quel est le nom du commandant du Bataillon d'exploration qui charge avec bravoure ?"
+            set {quiz_answer} to "erwin"
+            set {quiz_alt} to "erwin smith"
+        else if {_tId} is 591:
+            set {quiz_category} to "⛩ ANIME & MANGA"
+            set {quiz_question} to "Dans My Hero Academia, quel super-héros légendaire numéro 1 cède son pouvoir du 'One For All' à Deku ?"
+            set {quiz_answer} to "all might"
+            set {quiz_alt} to "toshinori"
+        else if {_tId} is 592:
+            set {quiz_category} to "⛩ ANIME & MANGA"
+            set {quiz_question} to "Dans Fullmetal Alchemist, quelle loi suprême de l'alchimie stipule que rien ne se crée sans donner quelque chose en échange ?"
+            set {quiz_answer} to "echange equivalent"
+            set {quiz_alt} to "l'echange equivalent"
+        else if {_tId} is 593:
+            set {quiz_category} to "⛩ ANIME & MANGA"
+            set {quiz_question} to "Dans Demon Slayer, quelle jeune fille démone voyage dans une boîte en bois sur le dos de son frère Tanjiro ?"
+            set {quiz_answer} to "nezuko"
+            set {quiz_alt} to "nezuko kamado"
+        else if {_tId} is 594:
+            set {quiz_category} to "⛩ ANIME & MANGA"
+            set {quiz_question} to "Dans Bleach, quel est le nom du sabre Zanpakuto géant d'Ichigo Kurosaki ?"
+            set {quiz_answer} to "zangetsu"
+            set {quiz_alt} to "zangetsu"
+        else if {_tId} is 595:
+            set {quiz_category} to "⛩ ANIME & MANGA"
+            set {quiz_question} to "Dans Death Note, quel est le nom du détective prodige mondial amateur de friandises opposé à Light ?"
+            set {quiz_answer} to "l"
+            set {quiz_alt} to "ryuzaki"
+        else if {_tId} is 596:
+            set {quiz_category} to "⛩ ANIME & MANGA"
+            set {quiz_question} to "Dans One Punch Man, quel héros chauve en combinaison jaune terrasse tous ses ennemis d'un seul coup ?"
+            set {quiz_answer} to "saitama"
+            set {quiz_alt} to "saitama"
+        else if {_tId} is 597:
+            set {quiz_category} to "⛩ ANIME & MANGA"
+            set {quiz_question} to "Dans Vinland Saga, quel jeune guerrier viking cherche à venger son père Thors auprès d'Askeladd ?"
+            set {quiz_answer} to "thorfinn"
+            set {quiz_alt} to "thorfinn"
+        else if {_tId} is 598:
+            set {quiz_category} to "⛩ ANIME & MANGA"
+            set {quiz_question} to "Dans JoJo's Bizarre Adventure, quel est le Stand surpuissant capable d'arrêter le temps de Jotaro Kujo ?"
+            set {quiz_answer} to "star platinum"
+            set {quiz_alt} to "star platinum"
+        else if {_tId} is 599:
+            set {quiz_category} to "⛩ ANIME & MANGA"
+            set {quiz_question} to "Dans Blue Lock, quel jeune attaquant prodige doté d'une vision spatiale exceptionnelle vise à devenir le meilleur buteur ?"
+            set {quiz_answer} to "isagi"
+            set {quiz_alt} to "yoichi isagi"
+        else if {_tId} is 600:
+            set {quiz_category} to "🔬 SCIENCES & ESPACE"
+            set {quiz_question} to "Quelle est la planète la plus proche du Soleil dans notre système solaire ?"
+            set {quiz_answer} to "mercure"
+            set {quiz_alt} to "mercure"
+        else if {_tId} is 601:
+            set {quiz_category} to "🔬 SCIENCES & ESPACE"
+            set {quiz_question} to "Quel est l'élément chimique le plus abondant dans l'Univers tout entier ?"
+            set {quiz_answer} to "hydrogene"
+            set {quiz_alt} to "l'hydrogene"
+        else if {_tId} is 602:
+            set {quiz_category} to "🔬 SCIENCES & ESPACE"
+            set {quiz_question} to "Quelle particule subatomique de charge négative gravite autour du noyau de l'atome ?"
+            set {quiz_answer} to "electron"
+            set {quiz_alt} to "l'electron"
+        else if {_tId} is 603:
+            set {quiz_category} to "🔬 SCIENCES & ESPACE"
+            set {quiz_question} to "Quelle est la distance approximative parcourue par la lumière en 1 seconde dans le vide (en km/s) ?"
+            set {quiz_answer} to "300000"
+            set {quiz_alt} to "300 000 km/s"
+        else if {_tId} is 604:
+            set {quiz_category} to "🔬 SCIENCES & ESPACE"
+            set {quiz_question} to "Quel célèbre scientifique a formulé les trois lois du mouvement et la gravitation universelle après la chute d'une pomme ?"
+            set {quiz_answer} to "isaac newton"
+            set {quiz_alt} to "newton"
+        else if {_tId} is 605:
+            set {quiz_category} to "🔬 SCIENCES & ESPACE"
+            set {quiz_question} to "Quelle galaxie spirale géante est la plus proche voisine de notre Voie Lactée ?"
+            set {quiz_answer} to "andromede"
+            set {quiz_alt} to "m31"
+        else if {_tId} is 606:
+            set {quiz_category} to "🔬 SCIENCES & ESPACE"
+            set {quiz_question} to "Quel est l'organe le plus volumineux et le plus lourd du corps humain ?"
+            set {quiz_answer} to "la peau"
+            set {quiz_alt} to "peau"
+        else if {_tId} is 607:
+            set {quiz_category} to "🔬 SCIENCES & ESPACE"
+            set {quiz_question} to "Quel gaz composant environ 78%% de l'air que nous respirons est le plus abondant sur Terre ?"
+            set {quiz_answer} to "azote"
+            set {quiz_alt} to "diazote"
+        else if {_tId} is 608:
+            set {quiz_category} to "🔬 SCIENCES & ESPACE"
+            set {quiz_question} to "Comment s'appelle l'état de la matière qui n'est ni solide, ni liquide, ni gaz, mais formé d'ions et d'électrons libres ?"
+            set {quiz_answer} to "plasma"
+            set {quiz_alt} to "le plasma"
+        else if {_tId} is 609:
+            set {quiz_category} to "🔬 SCIENCES & ESPACE"
+            set {quiz_question} to "Combien d'os composent le squelette d'un être humain adulte en bonne santé ?"
+            set {quiz_answer} to "206"
+            set {quiz_alt} to "206 os"
+    # Annonce stylisée avec sons & animations
+    broadcast "{@border}"
+    broadcast "  &e&l✦ CHAT JEUX &8» &f%{quiz_category}%"
+    broadcast "  &7Question : &f%{quiz_question}%"
+    broadcast "  &7Recompense : &a+%{quiz_reward_money}%$ &7& &b+%{quiz_reward_xp}% XP"
+    broadcast "  &8[&7Ecrivez simplement votre reponse dans le chat !&8]"
+    broadcast "{@border}"
+    
+    send action bar "&e&l✦ NOUVEAU QUIZ ! &fRepondez dans le chat pour gagner &a+%{quiz_reward_money}%$" to all players
+    play sound "block.note_block.bell" with volume 0.8 and pitch 1.2 to all players
+    
+    # Expiration après 45 secondes
+    set {_currentStart} to {quiz_start_time}
+    wait 45 seconds
+    if {quiz_active} is true:
+        if {quiz_start_time} is {_currentStart}:
+            set {quiz_active} to false
+            broadcast "{@border}"
+            broadcast "  &c&l✦ TEMPS ÉCOULÉ ! &7Personne n''a trouve la bonne reponse."
+            broadcast "  &7La reponse etait : &e&l%{quiz_answer}%"
+            broadcast "{@border}"
+            play sound "block.note_block.bass" with volume 0.7 and pitch 0.8 to all players
+
+on chat:
+    if {quiz_active} is true:
+        set {_msg} to message
+        set {_cleanMsg} to {_msg}
+        # Normalisation
+        replace all "é" with "e" in {_cleanMsg}
+        replace all "è" with "e" in {_cleanMsg}
+        replace all "ê" with "e" in {_cleanMsg}
+        replace all "ë" with "e" in {_cleanMsg}
+        replace all "à" with "a" in {_cleanMsg}
+        replace all "â" with "a" in {_cleanMsg}
+        replace all "ù" with "u" in {_cleanMsg}
+        replace all "û" with "u" in {_cleanMsg}
+        replace all "î" with "i" in {_cleanMsg}
+        replace all "ï" with "i" in {_cleanMsg}
+        replace all "ô" with "o" in {_cleanMsg}
+        replace all "ç" with "c" in {_cleanMsg}
+        
+        set {_ans} to {quiz_answer}
+        set {_cleanAns} to {_ans}
+        replace all "é" with "e" in {_cleanAns}
+        replace all "è" with "e" in {_cleanAns}
+        replace all "ê" with "e" in {_cleanAns}
+        replace all "ë" with "e" in {_cleanAns}
+        replace all "à" with "a" in {_cleanAns}
+        replace all "â" with "a" in {_cleanAns}
+        replace all "ù" with "u" in {_cleanAns}
+        replace all "û" with "u" in {_cleanAns}
+        replace all "î" with "i" in {_cleanAns}
+        replace all "ï" with "i" in {_cleanAns}
+        replace all "ô" with "o" in {_cleanAns}
+        replace all "ç" with "c" in {_cleanAns}
+        
+        set {_alt} to {quiz_alt}
+        set {_alt2} to {quiz_alt2}
+        
+        set {_isCorrect} to false
+        if {_cleanMsg} is {_cleanAns}:
+            set {_isCorrect} to true
+        else if {_msg} is {_ans}:
+            set {_isCorrect} to true
+        else if {_cleanMsg} is {_alt}:
+            set {_isCorrect} to true
+        else if {_alt2} is not "":
+            if {_cleanMsg} is {_alt2}:
+                set {_isCorrect} to true
+                
+        if {_isCorrect} is true:
+            set {quiz_active} to false
+            cancel event
+            
+            # Calcul du temps de réponse
+            set {_timeTaken} to difference between {quiz_start_time} and now
+            
+            # Gestion des victoires et win streak
+            add 1 to {quiz_wins::%player's uuid%}
+            add 1 to {quiz_streak::%player's uuid%}
+            set {_streak} to {quiz_streak::%player's uuid%}
+            
+            # Bonus de streak
+            set {_finalMoney} to {quiz_reward_money}
+            set {_streakBonus} to 0
+            if {_streak} >= 2:
+                set {_streakBonus} to round({_finalMoney} * 0.5)
+                add {_streakBonus} to {_finalMoney}
+            
+            add {_finalMoney} to {balance::%player's uuid%}
+            add {quiz_reward_xp} to {xp::%player's uuid%}
+            
+            # Annonce Chat
+            broadcast "{@border}"
+            broadcast "  &a&l✔ VICTOIRE ! &f%player% &7a trouve la bonne reponse !"
+            broadcast "  &7Reponse : &e&l%{quiz_answer}% &8(&fTemps: %{_timeTaken}%&8)"
+            if {_streak} >= 2:
+                broadcast "  &6&l🔥 SÉRIE DE VICTOIRES : &e%{_streak}% d'affilee ! &a(+%{_streakBonus}%$ Bonus)"
+            broadcast "  &7Recompense recue : &a+%{_finalMoney}%$ &7& &b+%{quiz_reward_xp}% XP"
+            broadcast "{@border}"
+            
+            # Effets visuels & sonores premium
+            send title "&a&l✦ BONNE RÉPONSE ! ✦" with subtitle "&7Gagne : &a+%{_finalMoney}%$ &7& &b+%{quiz_reward_xp}% XP" to player for 3 seconds with fadein 5 ticks and fade out 15 ticks
+            play sound "entity.player.levelup" with volume 1.0 and pitch 1.3 to player
+            play sound "ui.toast.challenge_complete" with volume 0.8 and pitch 1.2 to player
+            draw 25 of totem of undying at player's head
+            draw 15 of firework at player's head
+
+# Reset du streak si le joueur se déconnecte
+on quit:
+    delete {quiz_streak::%player's uuid%}
+
+# Commande pour voir ses statistiques ou le top
+command /quiz [<text>]:
+    aliases: /chatjeux, /questions
+    trigger:
+        if arg-1 is "top" or "classement":
+            send "{@border}" to player
+            send "  &e&l✦ CLASSEMENT CHAT JEUX &8(Victoires)" to player
+            send "  &7Vos victoires : &e%{quiz_wins::%player's uuid%} ? 0% &7(Serie : &6%{quiz_streak::%player's uuid%} ? 0%&7)" to player
+            send "  &8Rejoignez chaque quiz toutes les 8 minutes !" to player
+            send "{@border}" to player
+        else if arg-1 is "force" or "start":
+            if player has permission "minestars.admin":
+                startChatGame()
+                send "{@prefix} &aQuiz lance manuellement !" to player
+            else:
+                send "&cVous n''avez pas la permission." to player
+        else:
+            send "{@border}" to player
+            send "  &e&l✦ STATISTIQUES QUIZ &8- &f%player%" to player
+            send "  &7Victoires totales : &a%{quiz_wins::%player's uuid%} ? 0%" to player
+            send "  &7Serie actuelle (Streak) : &6%{quiz_streak::%player's uuid%} ? 0% 🔥" to player
+            send "  &8Tapez &e/quiz top &8pour voir vos stats !" to player
+            send "{@border}" to player

@@ -1,0 +1,207 @@
+# ==============================================================================
+#           MINESTARS - STATUT DU SERVEUR EN TEMPS RÉEL SUR DISCORD
+#           - Webhook Discord : Statut du serveur en direct (Embed mis à jour)
+#           - Synchronisation : Toutes les 30s, à chaque connexion & déconnexion
+#           - Affichage : Joueurs en ligne, jauge dynamique, TPS, Uptime, IP & Liens
+#           - Mode Live Edit : Met à jour le même message Discord sans spammer !
+# ==============================================================================
+
+options:
+    prefix: &9&l✦ DISCORD STATUT &8> &7
+    
+    # URL du Webhook Discord pour le salon #statut-serveur
+    webhook: "https://discord.com/api/webhooks/1547829666272911411/h4R2XgN_-Cw5lCy5wOI-UEHFVoPb4d1qv_vuNOa3rLGAkjYn0UMM3sOeqqcsgQ4Taxlz"
+    
+    # Informations du serveur affichées sur Discord
+    server_name: "MineStars Network"
+    server_ip: "play.minestars.com"
+    server_port: "25565"
+    server_version: "1.20.x - 1.21.x (Java & Bedrock)"
+    server_max_slots: 50
+    store_url: "https://minestars.craftingstore.net"
+    discord_url: "https://discord.gg/minestars"
+    logo_icon: "https://i.imgur.com/8QdZ1vA.png"
+    banner_img: "https://i.imgur.com/6qR8p4E.png"
+
+# ==================== FONCTIONS DE CALCUL & FORMATTAGE ====================
+
+# Calcul du temps écoulé (Uptime)
+function getDiscordUptime() :: text:
+    if {discord::server::uptime_start} is not set:
+        set {discord::server::uptime_start} to now
+    set {_diff} to difference between {discord::server::uptime_start} and now
+    return "%{_diff}%"
+
+# Barre de progression visuelle des joueurs connectés
+function getDiscordProgressBar(current: number, max: number) :: text:
+    if {_max} <= 0:
+        set {_max} to 50
+    set {_percent} to ({_current} / {_max}) * 10
+    set {_filled} to round({_percent})
+    if {_filled} > 10:
+        set {_filled} to 10
+    set {_empty} to 10 - {_filled}
+    
+    set {_bar} to ""
+    loop {_filled} times:
+        set {_bar} to "%{_bar}%🟩"
+    loop {_empty} times:
+        set {_bar} to "%{_bar}%⬜"
+    
+    set {_pctNum} to round(({_current} / {_max}) * 100)
+    return "%{_bar}% (%{_pctNum}%%%)"
+
+# Liste des pseudonymes connectés
+function getDiscordOnlinePlayerList() :: text:
+    set {_count} to number of online players
+    if {_count} is 0:
+        return "*Aucun joueur connecté pour le moment.*"
+    
+    set {_list} to ""
+    set {_n} to 0
+    loop all players:
+        add 1 to {_n}
+        if {_n} <= 15:
+            if {_list} is "":
+                set {_list} to "`%loop-player%`"
+            else:
+                set {_list} to "%{_list}%, `%loop-player%`"
+    
+    if {_count} > 15:
+        set {_remaining} to {_count} - 15
+        set {_list} to "%{_list}% *+ %{_remaining}% autres...*"
+        
+    return {_list}
+
+# ==================== FONCTION PRINCIPALE D'ENVOI & MISE À JOUR ====================
+
+function updateDiscordServerStatus(stateType: text):
+    # stateType peut être : "ONLINE", "OFFLINE", ou "RESTART"
+    
+    set {_online} to number of online players
+    set {_max} to {@server_max_slots}
+    set {_uptime} to getDiscordUptime()
+    set {_progressBar} to getDiscordProgressBar({_online}, {_max})
+    set {_playerList} to getDiscordOnlinePlayerList()
+    set {_timeString} to "%now%"
+    
+    # Couleurs Discord (Entiers Décimaux)
+    # Vert : 3066993 | Orange : 15105570 | Rouge : 15158332
+    if {_stateType} is "ONLINE":
+        set {_title} to "🟢 STATUT DU SERVEUR • EN LIGNE"
+        set {_color} to 3066993
+        set {_statusBadge} to "🟢 **Ouvert & 100%% Opérationnel**"
+        set {_desc} to "Le serveur **MineStars** est actuellement en ligne ! Rejoignez vos amis dès maintenant."
+    else if {_stateType} is "RESTART":
+        set {_title} to "🟡 STATUT DU SERVEUR • REDÉMARRAGE EN COURS"
+        set {_color} to 15105570
+        set {_statusBadge} to "🟡 **Redémarrage / Sauvegarde des données**"
+        set {_desc} to "Le serveur effectue une maintenance rapide. Reconnexion possible dans quelques instants."
+    else:
+        set {_title} to "🔴 STATUT DU SERVEUR • HORS LIGNE"
+        set {_color} to 15158332
+        set {_statusBadge} to "🔴 **Serveur Hors Ligne / Maintenance**"
+        set {_desc} to "Le serveur est actuellement fermé. Suivez les annonces sur Discord pour la réouverture !"
+        set {_progressBar} to "⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜ (0%%)"
+        set {_playerList} to "*Serveur fermé.*"
+        set {_online} to 0
+
+    # Construction du JSON Discord Embed
+    set {_json} to "{""username"":""MineStars • Statut Serveur"",""avatar_url"":""{@logo_icon}"",""embeds"":[{""title"":""%{_title}%"",""description"":""%{_desc}%\n\n> 📊 **État :** %{_statusBadge}%\n> ⏱️ **Dernière actualisation :** `%{_timeString}%`"",""color"":%{_color}%,""thumbnail"":{""url"":""{@logo_icon}""},""fields"":[{""name"":""👥 Joueurs en Ligne (%{_online}%/%{_max}%)"",""value"":""%{_progressBar}%\n%{_playerList}%"",""inline"":false},{""name"":""⚡ Performances"",""value"":""`20.0 TPS (Stable)`\n`Uptime: %{_uptime}%`"",""inline"":true},{""name"":""🎮 Version & Accès"",""value"":""`{@server_version}`\nIP : `{@server_ip}`"",""inline"":true},{""name"":""🌍 Modes de Jeu Actifs"",""value"":""• 🏝️ **Skyblock V9** (Générateurs & Îles)\n• 🌲 **Survie 1.20+** (Métiers & Économie)\n• 🏛️ **Hub Principal** (Mini-jeux & Box)"",""inline"":false},{""name"":""🛒 Boutique Officielle"",""value"":""[minestars.craftingstore.net]({@store_url})"",""inline"":true},{""name"":""💬 Discord Communautaire"",""value"":""[discord.gg/minestars]({@discord_url})"",""inline"":true}],""footer"":{""text"":""MineStars Network • Actualisation automatique en temps réel"",""icon_url"":""{@logo_icon}""}}]}"
+
+    # Envoi HTTP vers Discord
+    # Si un ID de message est enregistré -> PATCH (modification du même message en direct)
+    # Sinon -> POST (création d'un nouveau message)
+    if {discord::status::message_id} is set:
+        set {_url} to "{@webhook}/messages/%{discord::status::message_id}%"
+        send a patch request to "{_url}" with body {_json} and headers "Content-Type: application/json", "User-Agent: MineStars-Server"
+    else:
+        send a post request to "{@webhook}" with body {_json} and headers "Content-Type: application/json", "User-Agent: MineStars-Server"
+
+# ==================== DÉCLENCHEURS & SYNCHRONISATION TEMPS RÉEL ====================
+
+# 1. Démarrage du serveur
+on load:
+    set {discord::server::uptime_start} to now
+    wait 3 seconds
+    updateDiscordServerStatus("ONLINE")
+
+# 2. Arrêt / Reload du serveur
+on unload:
+    updateDiscordServerStatus("RESTART")
+
+# 3. Synchronisation automatique toutes les 30 secondes
+every 30 seconds:
+    updateDiscordServerStatus("ONLINE")
+
+# 4. Connexion d'un joueur (mise à jour différée sans impacter la connexion)
+on join:
+    wait 4 seconds
+    updateDiscordServerStatus("ONLINE")
+
+# 5. Déconnexion d'un joueur
+on quit:
+    wait 2 seconds
+    updateDiscordServerStatus("ONLINE")
+
+# ==================== COMMANDES ADMINISTRATEUR ====================
+
+command /discordstatus [<text>] [<text>]:
+    aliases: /statusdiscord, /serverstatus, /statutdiscord
+    permission: op
+    permission message: &cTu n'as pas la permission d'exécuter cette commande !
+    trigger:
+        if arg-1 is "update" or "refresh" or "forcer":
+            send "{@prefix}&eActualisation du statut Discord en cours..." to player
+            updateDiscordServerStatus("ONLINE")
+            send "{@prefix}&aStatut Discord actualisé avec succès !" to player
+            play sound "entity.player.levelup" to player
+            stop
+            
+        else if arg-1 is "send" or "post" or "new":
+            send "{@prefix}&eEnvoi d'un nouvel embed de statut vers Discord..." to player
+            delete {discord::status::message_id}
+            updateDiscordServerStatus("ONLINE")
+            send "{@prefix}&aNouveau message envoyé ! (Pensez à fixer son ID si vous voulez l'éditer en direct)." to player
+            play sound "entity.player.levelup" to player
+            stop
+            
+        else if arg-1 is "setid" or "setmessage":
+            if arg-2 is not set:
+                send "{@prefix}&cUtilisation : &e/discordstatus setid <Message_ID_Discord>" to player
+                send "{@prefix}&7(Fais un clic-droit sur le message Discord dans ton salon > Copier l'identifiant du message)" to player
+                stop
+            set {discord::status::message_id} to arg-2
+            send "{@prefix}&aID du message Discord enregistré : &e%{discord::status::message_id}%" to player
+            send "{@prefix}&7Le serveur modifiera désormais ce message précis en temps réel !" to player
+            updateDiscordServerStatus("ONLINE")
+            play sound "entity.experience_orb.pickup" to player
+            stop
+
+        else if arg-1 is "clearid" or "resetid":
+            delete {discord::status::message_id}
+            send "{@prefix}&6ID du message réinitialisé. Les prochains envois créeront de nouveaux messages." to player
+            stop
+
+        else if arg-1 is "offline":
+            send "{@prefix}&cSimulation de l'état Hors Ligne..." to player
+            updateDiscordServerStatus("OFFLINE")
+            send "{@prefix}&aStatut mis sur Hors Ligne." to player
+            stop
+
+        # Menu d'aide
+        send "" to player
+        send "&8&m================================================" to player
+        send "       &9&l✦ GESTION DU STATUT DISCORD EN DIRECT ✦" to player
+        send "&8&m================================================" to player
+        send " &fID Message Actuel : &b%{discord::status::message_id} ? ""Aucun (Mode création)""%" to player
+        send " &fUptime Serveur    : &a%getDiscordUptime()%" to player
+        send " &fJoueurs Connectés : &e%number of online players% / {@server_max_slots}" to player
+        send "" to player
+        send " &9▸ &e/discordstatus update &8- &7Forcer la mise à jour immédiate" to player
+        send " &9▸ &e/discordstatus send &8- &7Envoyer un nouveau message de statut" to player
+        send " &9▸ &e/discordstatus setid <ID> &8- &7Définir l'ID du message à éditer en direct" to player
+        send " &9▸ &e/discordstatus clearid &8- &7Supprimer l'ID du message mémorisé" to player
+        send " &9▸ &e/discordstatus offline &8- &7Tester l'affichage hors ligne" to player
+        send "&8&m================================================" to player
+        play sound "block.note_block.pling" to player

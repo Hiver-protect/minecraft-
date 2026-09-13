@@ -1,0 +1,493 @@
+# ==============================================================================
+#           MINESTARS - SYSTÈME DE NIVEAUX GLOBAUX & CHAT TAGS ÉLITE
+#           - Format de chat compact & ultra-stylé (Niveau, Tag, Grade, Message)
+#           - Progression 1 à 100 avec Récompenses de Paliers (/level)
+#           - Menu interactif des Tags / Titres (/tags) épuré et moderne
+#           - Tags : Niveaux 5 à 100, Rangs VIP/MVP/STAR & Titres Staff
+# ==============================================================================
+
+options:
+    prefix: &d&l✦ TAGS &8> &7
+    lvl_prefix: &e&l✦ NIVEAU &8> &7
+
+# ==================== FONCTIONS DE VÉRIFICATION & GESTION DES TAGS ====================
+
+function hasTagUnlocked(p: player, tagId: text, reqLvl: number) :: boolean:
+    set {_u} to uuid of {_p}
+    if {unlocked_tags::%{_u}%::%{_tagId}%} is true:
+        return true
+    set {_lvl} to {player_lvl::%{_u}%} ? 1
+    if {_lvl} >= {_reqLvl}:
+        return true
+    return false
+
+function hasRankUnlocked(p: player, minRank: text) :: boolean:
+    if {_p} is op:
+        return true
+    set {_u} to uuid of {_p}
+    if {unlocked_tags::%{_u}%::%{_minRank}%} is true:
+        return true
+    set {_r} to {rank::%{_u}%} ? "Joueur"
+    if {_minRank} is "vip":
+        if {_r} is "VIP" or "MVP" or "STAR" or "Star" or "Helper" or "Modo" or "Resp" or "Admin" or "Fondateur":
+            return true
+    else if {_minRank} is "mvp":
+        if {_r} is "MVP" or "STAR" or "Star" or "Helper" or "Modo" or "Resp" or "Admin" or "Fondateur":
+            return true
+    else if {_minRank} is "star":
+        if {_r} is "STAR" or "Star" or "Helper" or "Modo" or "Resp" or "Admin" or "Fondateur":
+            return true
+    else if {_minRank} is "staff":
+        if {_r} is "Helper" or "Modo" or "Resp" or "Admin" or "Fondateur":
+            return true
+        if {_p} has permission "minestars.staff":
+            return true
+    return false
+
+# ==================== 1. SYSTÈME D'EXPÉRIENCE & DE NIVEAUX ====================
+
+function addPlayerLevelXP(p: player, amount: number, reason: text):
+    set {_u} to uuid of {_p}
+    if {player_lvl::%{_u}%} is not set:
+        set {player_lvl::%{_u}%} to 1
+        set {player_xp::%{_u}%} to 0
+        
+    set {_lvl} to {player_lvl::%{_u}%}
+    if {_lvl} >= 100:
+        stop
+        
+    add {_amount} to {player_xp::%{_u}%}
+    set {_reqXP} to {_lvl} * 120
+    
+    if {player_xp::%{_u}%} >= {_reqXP}:
+        remove {_reqXP} from {player_xp::%{_u}%}
+        add 1 to {player_lvl::%{_u}%}
+        set {_newLvl} to {player_lvl::%{_u}%}
+        
+        # Récompenses d'argent & diamants
+        set {_rewardMoney} to {_newLvl} * 250
+        set {_rewardDia} to round({_newLvl} / 5) + 1
+        execute console command "eco give %{_p}% %{_rewardMoney}%"
+        give {_rewardDia} of diamond to {_p}
+        
+        # Célébration compacte
+        send title "&e&l✦ NIVEAU %{_newLvl}% ✦" with subtitle "&a+%{_rewardMoney}%$ &8┃ &b+%{_rewardDia}% Diamants" to {_p} for 3 seconds
+        send "" to {_p}
+        send "{@lvl_prefix}&a&lFÉLICITATIONS ! &7Tu passes au &e&lNiveau %{_newLvl}%/100 &7!" to {_p}
+        send "{@lvl_prefix}&7Récompenses : &a+%{_rewardMoney}%$ &7et &b+%{_rewardDia}% Diamants&7." to {_p}
+        
+        # Déblocage automatique des Tags
+        if {_newLvl} is 5:
+            unlockTag({_p}, "apprenti", "&a🌱 Apprenti")
+        else if {_newLvl} is 10:
+            unlockTag({_p}, "guerrier", "&c⚔️ Guerrier")
+        else if {_newLvl} is 15:
+            unlockTag({_p}, "traqueur", "&6🏹 Traqueur")
+        else if {_newLvl} is 20:
+            unlockTag({_p}, "mineur", "&b⛏️ Mineur")
+        else if {_newLvl} is 25:
+            unlockTag({_p}, "godlike", "&e⚡ Godlike")
+        else if {_newLvl} is 30:
+            unlockTag({_p}, "riche", "&6💎 Riche")
+        else if {_newLvl} is 40:
+            unlockTag({_p}, "phenix", "&c🔥 Phénix")
+        else if {_newLvl} is 50:
+            unlockTag({_p}, "majeste", "&e👑 Majesté")
+        else if {_newLvl} is 75:
+            unlockTag({_p}, "astral", "&5🌌 Astral")
+        else if {_newLvl} is 100:
+            unlockTag({_p}, "legende", "&d⭐ Légende")
+            broadcast "{@lvl_prefix}&d&lLE JOUEUR &f%{_p}% &d&lA ATTEINT LE NIVEAU 100 (MAXIMUM DU SERVEUR) !"
+            
+        send "" to {_p}
+        play sound "ui.toast.challenge_complete" to {_p}
+
+function unlockTag(p: player, tagId: text, tagFormat: text):
+    set {_u} to uuid of {_p}
+    if {unlocked_tags::%{_u}%::%{_tagId}%} is not true:
+        set {unlocked_tags::%{_u}%::%{_tagId}%} to true
+        send "{@prefix}&a&lNOUVEAU TAG ! &7Tu as débloqué %{_tagFormat}% &7(Tape &e/tags&7) !" to {_p}
+        send action bar "&a&l★ NOUVEAU TAG : %{_tagFormat}%" to {_p}
+        play sound "ui.toast.challenge_complete" to {_p}
+
+function equipPlayerTag(p: player, tagFormat: text):
+    set {_u} to uuid of {_p}
+    set {active_tag_formatted::%{_u}%} to {_tagFormat}
+    close {_p}'s inventory
+    send "{@prefix}&aTag %{_tagFormat}% &aéquipé avec succès !" to {_p}
+    send action bar "&a&l✔ TAG ÉQUIPÉ : %{_tagFormat}%" to {_p}
+    play sound "entity.player.levelup" at pitch 1.4 to {_p}
+
+on join:
+    wait 5 ticks
+    if {player_lvl::%uuid of player%} is not set:
+        set {player_lvl::%uuid of player%} to 1
+        set {player_xp::%uuid of player%} to 0
+
+# ==================== GAINS D'XP PASSIFS ====================
+
+on break:
+    if "%world of player%" does not contain "skyblock":
+        set {_b} to "%event-block%"
+        if {_b} contains "diamond ore" or "ancient debris":
+            addPlayerLevelXP(player, 15, "Minage Diamant/Netherite")
+        else if {_b} contains "gold ore" or "emerald ore":
+            addPlayerLevelXP(player, 8, "Minage Or/Émeraude")
+        else if {_b} contains "iron ore" or "lapis ore":
+            addPlayerLevelXP(player, 4, "Minage Fer/Lapis")
+        else if {_b} contains "coal ore" or "log":
+            addPlayerLevelXP(player, 2, "Récolte")
+
+on death of monster:
+    if attacker is a player:
+        set {_v} to "%victim%"
+        if {_v} contains "wither" or "ender_dragon" or "warden":
+            addPlayerLevelXP(attacker, 100, "Boss vaincu")
+        else if {_v} contains "creeper" or "enderman":
+            addPlayerLevelXP(attacker, 6, "Monstre d'élite")
+        else:
+            addPlayerLevelXP(attacker, 3, "Monstre")
+
+# ==================== 2. MENU ULTRA-STYLÉ DES TAGS (/tags) ====================
+
+command /tags:
+    aliases: /tag, /titres, /titre, /chattags
+    trigger:
+        set {_gui} to a new chest inventory with 4 rows named "&8» &0&lMINESTARS &8- &d&lCHAT TAGS"
+        
+        # Fond sombre & bordures
+        loop 36 times:
+            set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
+            
+        set slot 0 of {_gui} to 1 of magenta stained glass pane named " "
+        set slot 8 of {_gui} to 1 of magenta stained glass pane named " "
+        set slot 27 of {_gui} to 1 of magenta stained glass pane named " "
+        set slot 35 of {_gui} to 1 of magenta stained glass pane named " "
+        
+        set {_u} to uuid of player
+        set {_curTag} to {active_tag_formatted::%{_u}%} ? "&7Aucun"
+        set {_lvl} to {player_lvl::%{_u}%} ? 1
+        set {_r} to {rank::%{_u}%} ? "Joueur"
+        if player is op:
+            if {_r} is "Joueur":
+                set {_r} to "Fondateur"
+
+        # En-tête profil (Slot 4)
+        set slot 4 of {_gui} to 1 of player head named "&d&l✦ TES TITRES DU CHAT ✦" with lore "&8&m─────────────────────────" and "&7• Tag équipé : %{_curTag}%" and "&7• Niveau actuel : &e★ %{_lvl}%/100" and "&7• Grade : &e%{_r}%" and "&8&m─────────────────────────" and "&e▸ Clique sur un tag pour l'afficher dans le chat !"
+
+        # --- TAGS DE NIVEAU (Rangée 2) ---
+        # 1. Apprenti (Niv 5) - Slot 10
+        if hasTagUnlocked(player, "apprenti", 5) is true:
+            set slot 10 of {_gui} to 1 of wheat named "&a🌱 Apprenti" with lore "&7• Requis : &eNiveau 5" and "&a✔ Débloqué &8(Clique pour équiper)"
+        else:
+            set slot 10 of {_gui} to 1 of structure_void named "&8🌱 &7Apprenti" with lore "&7• Requis : &eNiveau 5" and "&c🔒 Bloqué"
+
+        # 2. Guerrier (Niv 10) - Slot 11
+        if hasTagUnlocked(player, "guerrier", 10) is true:
+            set slot 11 of {_gui} to 1 of iron sword named "&c⚔️ Guerrier" with lore "&7• Requis : &eNiveau 10" and "&a✔ Débloqué &8(Clique pour équiper)"
+        else:
+            set slot 11 of {_gui} to 1 of structure_void named "&8⚔️ &7Guerrier" with lore "&7• Requis : &eNiveau 10" and "&c🔒 Bloqué"
+
+        # 3. Traqueur (Niv 15) - Slot 12
+        if hasTagUnlocked(player, "traqueur", 15) is true:
+            set slot 12 of {_gui} to 1 of bow named "&6🏹 Traqueur" with lore "&7• Requis : &eNiveau 15" and "&a✔ Débloqué &8(Clique pour équiper)"
+        else:
+            set slot 12 of {_gui} to 1 of structure_void named "&8🏹 &7Traqueur" with lore "&7• Requis : &eNiveau 15" and "&c🔒 Bloqué"
+
+        # 4. Mineur (Niv 20) - Slot 13
+        if hasTagUnlocked(player, "mineur", 20) is true:
+            set slot 13 of {_gui} to 1 of iron pickaxe named "&b⛏️ Mineur" with lore "&7• Requis : &eNiveau 20" and "&a✔ Débloqué &8(Clique pour équiper)"
+        else:
+            set slot 13 of {_gui} to 1 of structure_void named "&8⛏️ &7Mineur" with lore "&7• Requis : &eNiveau 20" and "&c🔒 Bloqué"
+
+        # 5. Godlike (Niv 25) - Slot 14
+        if hasTagUnlocked(player, "godlike", 25) is true:
+            set slot 14 of {_gui} to 1 of blaze rod named "&e⚡ Godlike" with lore "&7• Requis : &eNiveau 25" and "&a✔ Débloqué &8(Clique pour équiper)"
+        else:
+            set slot 14 of {_gui} to 1 of structure_void named "&8⚡ &7Godlike" with lore "&7• Requis : &eNiveau 25" and "&c🔒 Bloqué"
+
+        # 6. Riche (Niv 30) - Slot 15
+        if hasTagUnlocked(player, "riche", 30) is true:
+            set slot 15 of {_gui} to 1 of gold ingot named "&6💎 Riche" with lore "&7• Requis : &eNiveau 30" and "&a✔ Débloqué &8(Clique pour équiper)"
+        else:
+            set slot 15 of {_gui} to 1 of structure_void named "&8💎 &7Riche" with lore "&7• Requis : &eNiveau 30" and "&c🔒 Bloqué"
+
+        # 7. Phénix (Niv 40) - Slot 16
+        if hasTagUnlocked(player, "phenix", 40) is true:
+            set slot 16 of {_gui} to 1 of magma cream named "&c🔥 Phénix" with lore "&7• Requis : &eNiveau 40" and "&a✔ Débloqué &8(Clique pour équiper)"
+        else:
+            set slot 16 of {_gui} to 1 of structure_void named "&8🔥 &7Phénix" with lore "&7• Requis : &eNiveau 40" and "&c🔒 Bloqué"
+
+        # --- TAGS PRESTIGE & BOUTIQUE (Rangée 3) ---
+        # 8. Majesté (Niv 50) - Slot 19
+        if hasTagUnlocked(player, "majeste", 50) is true:
+            set slot 19 of {_gui} to 1 of golden helmet named "&e👑 Majesté" with lore "&7• Requis : &eNiveau 50" and "&a✔ Débloqué &8(Clique pour équiper)"
+        else:
+            set slot 19 of {_gui} to 1 of structure_void named "&8👑 &7Majesté" with lore "&7• Requis : &eNiveau 50" and "&c🔒 Bloqué"
+
+        # 9. Astral (Niv 75) - Slot 20
+        if hasTagUnlocked(player, "astral", 75) is true:
+            set slot 20 of {_gui} to 1 of amethyst shard named "&5🌌 Astral" with lore "&7• Requis : &eNiveau 75" and "&a✔ Débloqué &8(Clique pour équiper)"
+        else:
+            set slot 20 of {_gui} to 1 of structure_void named "&8🌌 &7Astral" with lore "&7• Requis : &eNiveau 75" and "&c🔒 Bloqué"
+
+        # 10. Légende (Niv 100) - Slot 21
+        if hasTagUnlocked(player, "legende", 100) is true:
+            set slot 21 of {_gui} to 1 of nether star named "&d⭐ Légende" with lore "&7• Requis : &eNiveau 100 (Max)" and "&a✔ Débloqué &8(Clique pour équiper)"
+        else:
+            set slot 21 of {_gui} to 1 of structure_void named "&8⭐ &7Légende" with lore "&7• Requis : &eNiveau 100" and "&c🔒 Bloqué"
+
+        # 11. VIP - Slot 22
+        if hasRankUnlocked(player, "vip") is true:
+            set slot 22 of {_gui} to 1 of gold block named "&e⚡ VIP" with lore "&7• Requis : &eGrade VIP+" and "&a✔ Débloqué &8(Clique pour équiper)"
+        else:
+            set slot 22 of {_gui} to 1 of structure_void named "&8⚡ &7VIP" with lore "&7• Requis : &eGrade VIP (/grades)" and "&c🔒 Bloqué"
+
+        # 12. MVP - Slot 23
+        if hasRankUnlocked(player, "mvp") is true:
+            set slot 23 of {_gui} to 1 of diamond block named "&b💎 MVP" with lore "&7• Requis : &bGrade MVP+" and "&a✔ Débloqué &8(Clique pour équiper)"
+        else:
+            set slot 23 of {_gui} to 1 of structure_void named "&8💎 &7MVP" with lore "&7• Requis : &bGrade MVP (/grades)" and "&c🔒 Bloqué"
+
+        # 13. STAR - Slot 24
+        if hasRankUnlocked(player, "star") is true:
+            set slot 24 of {_gui} to 1 of beacon named "&d✨ Star" with lore "&7• Requis : &dGrade STAR" and "&a✔ Débloqué &8(Clique pour équiper)"
+        else:
+            set slot 24 of {_gui} to 1 of structure_void named "&8✨ &7Star" with lore "&7• Requis : &dGrade STAR (/grades)" and "&c🔒 Bloqué"
+
+        # 14. Staff - Slot 25
+        if hasRankUnlocked(player, "staff") is true:
+            set slot 25 of {_gui} to 1 of shield named "&4🛡️ Staff" with lore "&7• Requis : &cÉquipe Staff" and "&a✔ Débloqué &8(Clique pour équiper)"
+        else:
+            set slot 25 of {_gui} to 1 of structure_void named "&8🛡️ &7Staff" with lore "&7• Requis : &cStaff uniquement" and "&c🔒 Bloqué"
+
+        # --- ACTIONS BAS (Rangée 4) ---
+        # Voir progression Niveau (Slot 29)
+        set slot 29 of {_gui} to 1 of experience bottle named "&e&l✦ NIVEAU JOUEUR ✦" with lore "&7Consulte tes récompenses de palier (/level)" and "&e▸ Cliquer pour ouvrir"
+
+        # Retirer le tag actuel (Slot 31)
+        set slot 31 of {_gui} to 1 of barrier named "&c&l✦ RETIRER MON TAG ✦" with lore "&7Déséquipe ton tag pour avoir un chat sans titre" and "&c▸ Cliquer pour retirer"
+
+        # Voir les grades boutique (Slot 33)
+        set slot 33 of {_gui} to 1 of gold ingot named "&e&l✦ BOUTIQUE GRADES ✦" with lore "&7Découvre les avantages VIP, MVP & STAR" and "&e▸ Cliquer pour voir (/grades)"
+
+        open {_gui} to player
+        play sound "block.chest.open" to player
+
+on inventory click:
+    if name of event-inventory is "&8» &0&lMINESTARS &8- &d&lCHAT TAGS":
+        cancel event
+        set {_u} to uuid of player
+
+        # 1. Apprenti (Slot 10)
+        if index of event-slot is 10:
+            if hasTagUnlocked(player, "apprenti", 5) is true:
+                equipPlayerTag(player, "&a🌱 Apprenti")
+            else:
+                send "{@prefix}&cTag débloqué au Niveau 5 !" to player
+                play sound "entity.villager.no" to player
+
+        # 2. Guerrier (Slot 11)
+        else if index of event-slot is 11:
+            if hasTagUnlocked(player, "guerrier", 10) is true:
+                equipPlayerTag(player, "&c⚔️ Guerrier")
+            else:
+                send "{@prefix}&cTag débloqué au Niveau 10 !" to player
+                play sound "entity.villager.no" to player
+
+        # 3. Traqueur (Slot 12)
+        else if index of event-slot is 12:
+            if hasTagUnlocked(player, "traqueur", 15) is true:
+                equipPlayerTag(player, "&6🏹 Traqueur")
+            else:
+                send "{@prefix}&cTag débloqué au Niveau 15 !" to player
+                play sound "entity.villager.no" to player
+
+        # 4. Mineur (Slot 13)
+        else if index of event-slot is 13:
+            if hasTagUnlocked(player, "mineur", 20) is true:
+                equipPlayerTag(player, "&b⛏️ Mineur")
+            else:
+                send "{@prefix}&cTag débloqué au Niveau 20 !" to player
+                play sound "entity.villager.no" to player
+
+        # 5. Godlike (Slot 14)
+        else if index of event-slot is 14:
+            if hasTagUnlocked(player, "godlike", 25) is true:
+                equipPlayerTag(player, "&e⚡ Godlike")
+            else:
+                send "{@prefix}&cTag débloqué au Niveau 25 !" to player
+                play sound "entity.villager.no" to player
+
+        # 6. Riche (Slot 15)
+        else if index of event-slot is 15:
+            if hasTagUnlocked(player, "riche", 30) is true:
+                equipPlayerTag(player, "&6💎 Riche")
+            else:
+                send "{@prefix}&cTag débloqué au Niveau 30 !" to player
+                play sound "entity.villager.no" to player
+
+        # 7. Phénix (Slot 16)
+        else if index of event-slot is 16:
+            if hasTagUnlocked(player, "phenix", 40) is true:
+                equipPlayerTag(player, "&c🔥 Phénix")
+            else:
+                send "{@prefix}&cTag débloqué au Niveau 40 !" to player
+                play sound "entity.villager.no" to player
+
+        # 8. Majesté (Slot 19)
+        else if index of event-slot is 19:
+            if hasTagUnlocked(player, "majeste", 50) is true:
+                equipPlayerTag(player, "&e👑 Majesté")
+            else:
+                send "{@prefix}&cTag débloqué au Niveau 50 !" to player
+                play sound "entity.villager.no" to player
+
+        # 9. Astral (Slot 20)
+        else if index of event-slot is 20:
+            if hasTagUnlocked(player, "astral", 75) is true:
+                equipPlayerTag(player, "&5🌌 Astral")
+            else:
+                send "{@prefix}&cTag débloqué au Niveau 75 !" to player
+                play sound "entity.villager.no" to player
+
+        # 10. Légende (Slot 21)
+        else if index of event-slot is 21:
+            if hasTagUnlocked(player, "legende", 100) is true:
+                equipPlayerTag(player, "&d⭐ Légende")
+            else:
+                send "{@prefix}&cTag débloqué au Niveau 100 !" to player
+                play sound "entity.villager.no" to player
+
+        # 11. VIP (Slot 22)
+        else if index of event-slot is 22:
+            if hasRankUnlocked(player, "vip") is true:
+                equipPlayerTag(player, "&e⚡ VIP")
+            else:
+                send "{@prefix}&cRéservé aux gradés VIP ! (/grades)" to player
+                play sound "entity.villager.no" to player
+
+        # 12. MVP (Slot 23)
+        else if index of event-slot is 23:
+            if hasRankUnlocked(player, "mvp") is true:
+                equipPlayerTag(player, "&b💎 MVP")
+            else:
+                send "{@prefix}&cRéservé aux gradés MVP ! (/grades)" to player
+                play sound "entity.villager.no" to player
+
+        # 13. STAR (Slot 24)
+        else if index of event-slot is 24:
+            if hasRankUnlocked(player, "star") is true:
+                equipPlayerTag(player, "&d✨ Star")
+            else:
+                send "{@prefix}&cRéservé aux gradés STAR ! (/grades)" to player
+                play sound "entity.villager.no" to player
+
+        # 14. Staff (Slot 25)
+        else if index of event-slot is 25:
+            if hasRankUnlocked(player, "staff") is true:
+                equipPlayerTag(player, "&4🛡️ Staff")
+            else:
+                send "{@prefix}&cRéservé à l'équipe du Staff !" to player
+                play sound "entity.villager.no" to player
+
+        # Raccourci /level (Slot 29)
+        else if index of event-slot is 29:
+            close player's inventory
+            execute player command "level"
+
+        # Retirer Tag (Slot 31)
+        else if index of event-slot is 31:
+            delete {active_tag_formatted::%{_u}%}
+            close player's inventory
+            send "{@prefix}&aTon tag a été retiré du chat." to player
+            play sound "block.wooden_button.click_off" to player
+
+        # Raccourci /grades (Slot 33)
+        else if index of event-slot is 33:
+            close player's inventory
+            execute player command "grades"
+
+# ==================== 3. MENU DES NIVEAUX (/level) ====================
+
+command /level:
+    aliases: /lvl, /niveaux, /progression
+    trigger:
+        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lMINESTARS &8- &e&lNIVEAU JOUEUR"
+        
+        loop 27 times:
+            set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
+            
+        set slot 0 of {_gui} to 1 of yellow stained glass pane named " "
+        set slot 8 of {_gui} to 1 of yellow stained glass pane named " "
+        set slot 18 of {_gui} to 1 of yellow stained glass pane named " "
+        set slot 26 of {_gui} to 1 of yellow stained glass pane named " "
+        
+        set {_u} to uuid of player
+        set {_lvl} to {player_lvl::%{_u}%} ? 1
+        set {_xp} to {player_xp::%{_u}%} ? 0
+        set {_req} to {_lvl} * 120
+        set {_curTag} to {active_tag_formatted::%{_u}%} ? "&7Aucun"
+        
+        # Barre de progression
+        set {_percent} to round(({_xp} / {_req}) * 10)
+        set {_pct} to round(({_xp} / {_req}) * 100)
+        set {_bar} to ""
+        loop 10 times:
+            if loop-number <= {_percent}:
+                set {_bar} to "%{_bar}%&a■"
+            else:
+                set {_bar} to "%{_bar}%&7■"
+
+        # Profil Niveau (Slot 4)
+        set slot 4 of {_gui} to 1 of player head named "&e&l✦ %player% &8(★ %{_lvl}%/100) ✦" with lore "&8&m─────────────────────────" and "&7• Progression : &b%{_xp}% / %{_req}% XP" and "&7• Barre : %{_bar}% &8(&e%{_pct}%%%&8)" and "&7• Tag équipé : %{_curTag}%" and "&8&m─────────────────────────"
+
+        # Paliers & Avantages
+        set slot 10 of {_gui} to 1 of iron ingot named "&f&l✦ PALIER NIVEAU 10 ✦" with lore "&7• Tag &c⚔️ Guerrier &7débloqué" and "&7• Bonus cash & diamants"
+        set slot 12 of {_gui} to 1 of diamond named "&b&l✦ PALIER NIVEAU 25 ✦" with lore "&7• Tag &e⚡ Godlike &7débloqué" and "&7• Bonus de récompenses"
+        set slot 14 of {_gui} to 1 of golden helmet named "&6&l✦ PALIER NIVEAU 50 ✦" with lore "&7• Tag &e👑 Majesté &7débloqué" and "&7• Gros bonus de cash"
+        set slot 16 of {_gui} to 1 of nether star named "&d&l★ PALIER NIVEAU 100 ★" with lore "&7• Tag &d⭐ Légende &7Ultime" and "&7• Annonce globale serveur !"
+
+        # Bouton Tags (Slot 22)
+        set slot 22 of {_gui} to 1 of name tag named "&d&l✦ VOIR LES TAGS (/tags) ✦" with lore "&7Équipe tes titres débloqués !" and "&d▸ Cliquer pour ouvrir"
+
+        open {_gui} to player
+        play sound "block.chest.open" to player
+
+on inventory click:
+    if name of event-inventory is "&8» &0&lMINESTARS &8- &e&lNIVEAU JOUEUR":
+        cancel event
+        if index of event-slot is 22:
+            close player's inventory
+            execute player command "tags"
+
+# ==================== 4. COMMANDES ADMINS ====================
+
+command /addxp <player> <number>:
+    permission: op
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        addPlayerLevelXP(arg-1, arg-2, "Admin Give")
+        send "{@lvl_prefix}&a+ %arg-2% XP &7donnés à &f%arg-1%&7." to player
+
+command /setlevel <player> <number>:
+    permission: op
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        set {player_lvl::%uuid of arg-1%} to arg-2
+        set {player_xp::%uuid of arg-1%} to 0
+        send "{@lvl_prefix}&aLe niveau de &f%arg-1% &aa été fixé à &e%{arg-2}%&a !" to player
+
+command /givetag <player> <text>:
+    permission: op
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        set {unlocked_tags::%uuid of arg-1%::%arg-2%} to true
+        send "{@prefix}&aTag '&f%arg-2%&a' débloqué pour &f%arg-1%&a." to player
+
+command /taketag <player> <text>:
+    permission: op
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        delete {unlocked_tags::%uuid of arg-1%::%arg-2%}
+        send "{@prefix}&cTag '&f%arg-2%&c' retiré à &f%arg-1%&c." to player

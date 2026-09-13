@@ -1,0 +1,716 @@
+# ==============================================================================
+#            MINESTARS - SYSTÈME DE RANGS & GRADES AVANCÉ
+#            - Synchronisation Immédiate TAB (Tablist + Nametag + Scoreboard)
+#            - Synchronisation Complète des Permissions & Avantages (/fly, /ec, /craft, /feed, /hat)
+#            - Attribution (/rank), Retrait (/derank), Menu GUI (/grades)
+# ==============================================================================
+
+options:
+    prefix: &6&l✦ RANGS &8> &7
+
+# ==================== FONCTION MAÎTRESSE DE SYNCHRONISATION ====================
+
+function applyRankSync(p: text, r: text):
+    set {_p} to "%{_p}%"
+    set {_r} to "%{_r}%"
+    
+    # 1. Sauvegarde systématique dans les variables
+    set {rank::%{_p}%} to {_r}
+    set {skript_rank::%{_p}%} to {_r}
+    
+    set {_u} to ""
+    set {_offline} to {_p} parsed as offline player
+    if {_offline} is set:
+        set {_u} to uuid of {_offline}
+        set {rank::%{_u}%} to {_r}
+        set {skript_rank::%{_u}%} to {_r}
+        
+    set {_online} to {_p} parsed as player
+    if {_online} is set:
+        set {_realName} to name of {_online}
+        set {_p} to {_realName}
+        set {_u} to uuid of {_online}
+        set {rank::%{_u}%} to {_r}
+        set {rank::%{_realName}%} to {_r}
+        set {skript_rank::%{_u}%} to {_r}
+        set {skript_rank::%{_realName}%} to {_r}
+
+    # 2. Définition des propriétés & préfixes selon le grade
+    set {_tabPfx} to "<#70A1FF>Joueur"
+    set {_tagPfx} to "%%animation:player_anim%% <#70A1FF>Joueur &8┃ &f"
+    set {_cleanPfx} to "&7[Joueur] &f"
+    set {_chatPfx} to "&7[Joueur] &7"
+    set {_lpGroup} to "joueur"
+    
+    if {_r} is "Fondateur":
+        set {_tabPfx} to "<#FF4757>&lFONDATEUR"
+        set {_tagPfx} to "%%animation:staff_anim%% <#FF4757>&lFONDATEUR &8┃ &f"
+        set {_cleanPfx} to "&c&l[FONDATEUR] &f"
+        set {_chatPfx} to "&c&l[FONDATEUR] &c"
+        set {_lpGroup} to "fondateur"
+    else if {_r} is "Admin":
+        set {_tabPfx} to "<#FF6B81>&lADMIN"
+        set {_tagPfx} to "%%animation:staff_anim%% <#FF6B81>&lADMIN &8┃ &f"
+        set {_cleanPfx} to "&c&l[ADMIN] &f"
+        set {_chatPfx} to "&c&l[ADMIN] &c"
+        set {_lpGroup} to "admin"
+    else if {_r} is "Resp":
+        set {_tabPfx} to "<#FFA502>&lRESP"
+        set {_tagPfx} to "%%animation:staff_anim%% <#FFA502>&lRESP &8┃ &f"
+        set {_cleanPfx} to "&6&l[RESP] &f"
+        set {_chatPfx} to "&6&l[RESP] &6"
+        set {_lpGroup} to "resp"
+    else if {_r} is "Modo":
+        set {_tabPfx} to "<#3742FA>&lMODO"
+        set {_tagPfx} to "%%animation:staff_anim%% <#3742FA>&lMODO &8┃ &f"
+        set {_cleanPfx} to "&9&l[MODO] &f"
+        set {_chatPfx} to "&9&l[MODO] &9"
+        set {_lpGroup} to "modo"
+    else if {_r} is "Helper":
+        set {_tabPfx} to "<#2ED573>&lHELPER"
+        set {_tagPfx} to "%%animation:staff_anim%% <#2ED573>&lHELPER &8┃ &f"
+        set {_cleanPfx} to "&a&l[HELPER] &f"
+        set {_chatPfx} to "&a&l[HELPER] &a"
+        set {_lpGroup} to "helper"
+    else if {_r} is "Build":
+        set {_tabPfx} to "<#10AC84>&lBUILD"
+        set {_tagPfx} to "<#10AC84>&l🛠 BUILD &8┃ &f"
+        set {_cleanPfx} to "&3&l[BUILD] &f"
+        set {_chatPfx} to "&3&l[BUILD] &3"
+        set {_lpGroup} to "builder"
+    else if {_r} is "Star":
+        set {_tabPfx} to "<#E056FD>&lSTAR"
+        set {_tagPfx} to "%%animation:star_anim%% <#E056FD>&lSTAR &8┃ &f"
+        set {_cleanPfx} to "&d&l[STAR] &f"
+        set {_chatPfx} to "&d&l[STAR] &d"
+        set {_lpGroup} to "star"
+    else if {_r} is "MVP":
+        set {_tabPfx} to "<#00D4FF>&lMVP"
+        set {_tagPfx} to "%%animation:star_anim%% <#00D4FF>&lMVP &8┃ &f"
+        set {_cleanPfx} to "&b&l[MVP] &f"
+        set {_chatPfx} to "&b&l[MVP] &b"
+        set {_lpGroup} to "mvp"
+    else if {_r} is "VIP":
+        set {_tabPfx} to "<#F1C40F>&lVIP"
+        set {_tagPfx} to "%%animation:star_anim%% <#F1C40F>&lVIP &8┃ &f"
+        set {_cleanPfx} to "&e&l[VIP] &f"
+        set {_chatPfx} to "&e&l[VIP] &e"
+        set {_lpGroup} to "vip"
+
+    # 3. Tags et permissions de modération / avantages
+    if {_u} is not "":
+        if {_r} is "VIP":
+            delete {unlocked_tags::%{_u}%::staff}
+            delete {staff::%{_u}%}
+            set {unlocked_tags::%{_u}%::vip} to true
+        else if {_r} is "MVP":
+            delete {unlocked_tags::%{_u}%::staff}
+            delete {staff::%{_u}%}
+            set {unlocked_tags::%{_u}%::vip} to true
+            set {unlocked_tags::%{_u}%::mvp} to true
+        else if {_r} is "Star":
+            delete {unlocked_tags::%{_u}%::staff}
+            delete {staff::%{_u}%}
+            set {unlocked_tags::%{_u}%::vip} to true
+            set {unlocked_tags::%{_u}%::mvp} to true
+            set {unlocked_tags::%{_u}%::star} to true
+        else if {_r} is "Helper" or "Modo" or "Resp" or "Admin" or "Fondateur" or "Build":
+            set {unlocked_tags::%{_u}%::vip} to true
+            set {unlocked_tags::%{_u}%::mvp} to true
+            set {unlocked_tags::%{_u}%::star} to true
+            set {unlocked_tags::%{_u}%::staff} to true
+            set {staff::%{_u}%} to true
+        else:
+            delete {unlocked_tags::%{_u}%::vip}
+            delete {unlocked_tags::%{_u}%::mvp}
+            delete {unlocked_tags::%{_u}%::star}
+            delete {unlocked_tags::%{_u}%::staff}
+            delete {staff::%{_u}%}
+
+    # 4. Synchronisation Permissions & Commandes TAB
+    execute console command "tab player %{_p}% group %{_lpGroup}%"
+    execute console command "tab player %{_p}% tagprefix ""%{_tagPfx}%"""
+    execute console command "tab player %{_p}% customtabname ""%{_p}%"""
+
+    # 5. Application directe en jeu
+    if {_online} is set:
+        set {_online}'s tab list name to "%{_tagPfx}%%{_p}%"
+        set {_online}'s display name to "%{_cleanPfx}%%{_p}%"
+
+function applyDerankSync(p: text):
+    applyRankSync({_p}, "Joueur")
+
+# ==================== SYNCHRONISATION À LA CONNEXION ====================
+
+on join:
+    wait 2 ticks
+    set {_u} to uuid of player
+    set {_p} to "%player%"
+    
+    set {_r} to "Joueur"
+    if {rank::%{_u}%} is set:
+        set {_r} to {rank::%{_u}%}
+    else if {rank::%{_p}%} is set:
+        set {_r} to {rank::%{_p}%}
+    else if player is op:
+        set {_r} to "Fondateur"
+        
+    set {rank::%{_u}%} to {_r}
+    set {rank::%{_p}%} to {_r}
+    set {skript_rank::%{_u}%} to {_r}
+    set {skript_rank::%{_p}%} to {_r}
+    
+    applyRankSync({_p}, {_r})
+
+# ==================== ATTRIBUTION DE GRADE (/rank /setrank) ====================
+
+command /setrank [<text>] [<text>]:
+    aliases: /rank, /grant, /giverank, /givegrade, /setgrade
+    permission: op
+    permission message: &cTu n'as pas la permission d'utiliser cette commande !
+    executable by: players and console
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation : &e/rank <pseudo> <Joueur|VIP|MVP|Star|Modo|Admin|Fondateur>" to executor
+            stop
+            
+        set {_rawInput} to arg-2
+        if {_rawInput} is not set:
+            send "{@prefix}&cPrécise un grade ! &7(Disponibles : &fJoueur, VIP, MVP, Star, Modo, Admin, Fondateur&7)" to executor
+            stop
+
+        # Normalisation du grade ultra flexible
+        set {_input} to "%{_rawInput}%" in lower case
+        set {_r} to "Joueur"
+        
+        if {_input} contains "fonda" or "owner":
+            set {_r} to "Fondateur"
+        else if {_input} contains "admin":
+            set {_r} to "Admin"
+        else if {_input} contains "resp":
+            set {_r} to "Resp"
+        else if {_input} contains "mod":
+            set {_r} to "Modo"
+        else if {_input} contains "guide" or "help":
+            set {_r} to "Helper"
+        else if {_input} contains "build":
+            set {_r} to "Build"
+        else if {_input} contains "star":
+            set {_r} to "Star"
+        else if {_input} contains "mvp" or "vip+":
+            set {_r} to "MVP"
+        else if {_input} contains "vip":
+            set {_r} to "VIP"
+        else if {_input} contains "joueur" or "player" or "member" or "default" or "clear" or "unrank" or "none":
+            set {_r} to "Joueur"
+        else:
+            send "{@prefix}&cGrade inconnu : &e%{_rawInput}% &7(Choix possibles : &fJoueur, VIP, MVP, Star, Helper, Modo, Resp, Admin, Fondateur&7)" to executor
+            stop
+            
+        set {_targetName} to arg-1
+        
+        # Application immédiate
+        applyRankSync({_targetName}, {_r})
+        
+        # Annonce et confirmation
+        send "{@prefix}&aLe grade de &f%{_targetName}% &aa été défini à &e[%{_r}%]&a !" to executor
+        
+        set {_targetPlayer} to arg-1 parsed as player
+        if {_targetPlayer} is set:
+            send title "&6&l✦ NOUVEAU GRADE ✦" with subtitle "&7Tu es désormais &e&l[%{_r}%] &7!" to {_targetPlayer} for 3 seconds
+            send "" to {_targetPlayer}
+            send "{@prefix}&a&lFÉLICITATIONS ! &7Ton grade a été mis à jour : &e&l[%{_r}%]&a !" to {_targetPlayer}
+            send "{@prefix}&7Tes avantages, kits et préfixes TAB ont été activés immédiatement." to {_targetPlayer}
+            send "" to {_targetPlayer}
+            play sound "ui.toast.challenge_complete" to {_targetPlayer}
+            if {_r} is not "Joueur":
+                broadcast "{@prefix}&6&l✦ &f%{_targetPlayer}% &7a obtenu le grade &e&l[%{_r}%] &7! Félicitations à lui !"
+                play sound "entity.player.levelup" to all players
+
+# ==================== RETRAIT DE GRADE (/derank) ====================
+
+command /derank [<text>]:
+    aliases: /ungiverank, /desgiverank, /removerank, /delrank, /degivegrade, /takegrade, /ungivegrade, /unrank
+    permission: op
+    permission message: &cTu n'as pas la permission d'utiliser cette commande !
+    executable by: players and console
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation : &e/derank <pseudo> &7(Remet le joueur en grade Joueur)" to executor
+            stop
+            
+        set {_targetName} to arg-1
+        applyRankSync({_targetName}, "Joueur")
+        send "{@prefix}&eLe grade de &f%{_targetName}% &aa été retiré (Grade: &fJoueur&a)." to executor
+        
+        set {_targetPlayer} to arg-1 parsed as player
+        if {_targetPlayer} is set:
+            send "" to {_targetPlayer}
+            send "{@prefix}&cTon grade a été retiré. Tu es désormais &f[Joueur]&c." to {_targetPlayer}
+            send "" to {_targetPlayer}
+            play sound "block.anvil.land" to {_targetPlayer}
+
+# ==================== VÉRIFICATION DU GRADE (/checkrank) ====================
+
+command /checkrank [<text>]:
+    aliases: /myrank, /rankinfo
+    trigger:
+        set {_t} to "%player%"
+        if arg-1 is set:
+            set {_t} to arg-1
+            
+        set {_u} to ""
+        set {_off} to {_t} parsed as offline player
+        if {_off} is set:
+            set {_u} to uuid of {_off}
+            
+        set {_r} to {rank::%{_t}%} ? {rank::%{_u}%} ? "Joueur"
+        send "{@prefix}&7Grade actuel de &f%{_t}% &7: &e&l[%{_r}%]" to player
+
+# ==================== COMMANDES & AVANTAGES DES GRADES ====================
+
+# 1. /craft - Établi Virtuel (MVP, STAR, Staff, OP)
+command /craft:
+    aliases: /workbench, /wb, /table
+    trigger:
+        set {_u} to uuid of player
+        set {_r} to {rank::%{_u}%} ? "Joueur"
+        if player is op:
+            open crafting table to player
+        else if {_r} is "MVP" or "Star" or "Helper" or "Modo" or "Resp" or "Admin" or "Fondateur" or "Build":
+            open crafting table to player
+            play sound "block.chest.open" to player
+        else:
+            send "{@prefix}&cLe &e/craft &cest réservé aux grades &b[MVP]&c, &d[STAR] &cet au &cStaff &c! &7(Consulte le &e/grades&7)" to player
+            play sound "entity.villager.no" to player
+
+# 2. /ec - EnderChest Virtuel (STAR, Staff, OP)
+command /ec:
+    aliases: /enderchest, /ender, /echest
+    trigger:
+        set {_u} to uuid of player
+        set {_r} to {rank::%{_u}%} ? "Joueur"
+        if player is op:
+            open player's ender chest to player
+        else if {_r} is "Star" or "Helper" or "Modo" or "Resp" or "Admin" or "Fondateur":
+            open player's ender chest to player
+            play sound "block.ender_chest.open" to player
+        else:
+            send "{@prefix}&cLe &e/ec &cest réservé au grade &d[STAR] &cet au &cStaff &c! &7(Consulte le &e/grades&7)" to player
+            play sound "entity.villager.no" to player
+
+# 3. /hat - Bloc sur la tête (MVP, STAR, Staff, OP)
+command /hat:
+    aliases: /chapeau
+    trigger:
+        set {_u} to uuid of player
+        set {_r} to {rank::%{_u}%} ? "Joueur"
+        set {_canHat} to false
+        if player is op:
+            set {_canHat} to true
+        else if {_r} is "MVP" or "Star" or "Helper" or "Modo" or "Resp" or "Admin" or "Fondateur":
+            set {_canHat} to true
+            
+        if {_canHat} is false:
+            send "{@prefix}&cLe &e/hat &cest réservé aux grades &b[MVP]&c, &d[STAR] &cet au &cStaff &c! &7(Consulte le &e/grades&7)" to player
+            play sound "entity.villager.no" to player
+            stop
+            
+        if player's tool is air:
+            send "{@prefix}&cVous devez tenir un item dans la main pour le mettre sur votre tête !" to player
+            stop
+            
+        set {_held} to player's tool
+        set {_helmet} to helmet of player
+        set helmet of player to {_held}
+        set player's tool to {_helmet}
+        send "{@prefix}&aVotre chapeau a été équipé avec succès !" to player
+        play sound "item.armor.equip_generic" to player
+
+# 4. /condense - Compacter les minerais en blocs (VIP, MVP, STAR, Staff, OP)
+command /condense:
+    aliases: /compact, /blocs
+    trigger:
+        set {_u} to uuid of player
+        set {_r} to {rank::%{_u}%} ? "Joueur"
+        if player is not op:
+            if "VIP,MVP,Star,Helper,Modo,Resp,Admin,Fondateur" does not contain {_r}:
+                send "{@prefix}&cLa commande &e/condense &cest réservée aux grades &e[VIP]&c, &b[MVP]&c, &d[STAR] &c!" to player
+                play sound "entity.villager.no" to player
+                stop
+        
+        set {_count} to 0
+        # Fer
+        set {_n} to amount of iron ingot in player's inventory
+        if {_n} >= 9:
+            set {_blocks} to floor({_n} / 9)
+            remove ({_blocks} * 9) of iron ingot from player's inventory
+            give {_blocks} of iron block to player
+            add {_blocks} to {_count}
+        # Or
+        set {_n} to amount of gold ingot in player's inventory
+        if {_n} >= 9:
+            set {_blocks} to floor({_n} / 9)
+            remove ({_blocks} * 9) of gold ingot from player's inventory
+            give {_blocks} of gold block to player
+            add {_blocks} to {_count}
+        # Diamant
+        set {_n} to amount of diamond in player's inventory
+        if {_n} >= 9:
+            set {_blocks} to floor({_n} / 9)
+            remove ({_blocks} * 9) of diamond from player's inventory
+            give {_blocks} of diamond block to player
+            add {_blocks} to {_count}
+        # Émeraude
+        set {_n} to amount of emerald in player's inventory
+        if {_n} >= 9:
+            set {_blocks} to floor({_n} / 9)
+            remove ({_blocks} * 9) of emerald from player's inventory
+            give {_blocks} of emerald block to player
+            add {_blocks} to {_count}
+        # Redstone
+        set {_n} to amount of redstone in player's inventory
+        if {_n} >= 9:
+            set {_blocks} to floor({_n} / 9)
+            remove ({_blocks} * 9) of redstone from player's inventory
+            give {_blocks} of redstone block to player
+            add {_blocks} to {_count}
+        # Lapis
+        set {_n} to amount of lapis lazuli in player's inventory
+        if {_n} >= 9:
+            set {_blocks} to floor({_n} / 9)
+            remove ({_blocks} * 9) of lapis lazuli from player's inventory
+            give {_blocks} of lapis block to player
+            add {_blocks} to {_count}
+            
+        if {_count} > 0:
+            send "{@prefix}&a+ &e%{_count}% blocs &acréés automatiquement en condensant vos minerais !" to player
+            play sound "block.anvil.use" to player
+        else:
+            send "{@prefix}&7Aucun lot de 9 lingots ou minerais trouvé à compacter." to player
+
+# 5. /furnace - Cuisson instantanée de l'inventaire (MVP, STAR, Staff, OP)
+command /furnace:
+    aliases: /cook, /smelt
+    trigger:
+        set {_u} to uuid of player
+        set {_r} to {rank::%{_u}%} ? "Joueur"
+        if player is not op:
+            if "MVP,Star,Helper,Modo,Resp,Admin,Fondateur" does not contain {_r}:
+                send "{@prefix}&cLa commande &e/furnace &cest réservée aux grades &b[MVP]&c, &d[STAR] &c!" to player
+                play sound "entity.villager.no" to player
+                stop
+                
+        set {_cooked} to 0
+        # Cuisson viandes
+        if player has beef:
+            set {_n} to number of beef in player's inventory
+            remove {_n} of beef from player's inventory
+            give {_n} of cooked beef to player
+            add {_n} to {_cooked}
+        if player has porkchop:
+            set {_n} to number of porkchop in player's inventory
+            remove {_n} of porkchop from player's inventory
+            give {_n} of cooked porkchop to player
+            add {_n} to {_cooked}
+        if player has chicken:
+            set {_n} to number of chicken in player's inventory
+            remove {_n} of chicken from player's inventory
+            give {_n} of cooked chicken to player
+            add {_n} to {_cooked}
+        if player has mutton:
+            set {_n} to number of mutton in player's inventory
+            remove {_n} of mutton from player's inventory
+            give {_n} of cooked mutton to player
+            add {_n} to {_cooked}
+        # Cuisson minerais bruts
+        if player has raw iron:
+            set {_n} to number of raw iron in player's inventory
+            remove {_n} of raw iron from player's inventory
+            give {_n} of iron ingot to player
+            add {_n} to {_cooked}
+        if player has raw gold:
+            set {_n} to number of raw gold in player's inventory
+            remove {_n} of raw gold from player's inventory
+            give {_n} of gold ingot to player
+            add {_n} to {_cooked}
+        if player has raw copper:
+            set {_n} to number of raw copper in player's inventory
+            remove {_n} of raw copper from player's inventory
+            give {_n} of copper ingot to player
+            add {_n} to {_cooked}
+            
+        if {_cooked} > 0:
+            send "{@prefix}&a+ &e%{_cooked}% items &acuits instantanément par magie !" to player
+            play sound "block.fire.ambient" to player
+        else:
+            send "{@prefix}&7Aucun aliment ou minerai brut à cuire trouvé dans ton inventaire." to player
+
+# 6. /anvil - Enclume Virtuelle (STAR, Staff, OP)
+command /anvil:
+    aliases: /enclume
+    trigger:
+        set {_u} to uuid of player
+        set {_r} to {rank::%{_u}%} ? "Joueur"
+        if player is not op:
+            if "Star,Helper,Modo,Resp,Admin,Fondateur" does not contain {_r}:
+                send "{@prefix}&cLa commande &e/anvil &cest réservée au grade &d[STAR] &cet au &cStaff &c!" to player
+                play sound "entity.villager.no" to player
+                stop
+        open anvil to player
+        play sound "block.anvil.use" to player
+
+# 7. /glow - Aura Lumineuse (STAR, Staff, OP)
+command /glow:
+    aliases: /aura, /lumiere
+    trigger:
+        set {_u} to uuid of player
+        set {_r} to {rank::%{_u}%} ? "Joueur"
+        if player is not op:
+            if "Star,Helper,Modo,Resp,Admin,Fondateur" does not contain {_r}:
+                send "{@prefix}&cLe &e/glow &cest réservé au grade &d[STAR] &cet au &cStaff &c!" to player
+                play sound "entity.villager.no" to player
+                stop
+        if {glowing::%{_u}%} is true:
+            delete {glowing::%{_u}%}
+            execute console command "effect clear %player% glowing"
+            send "{@prefix}&cEffet lumineux désactivé." to player
+        else:
+            set {glowing::%{_u}%} to true
+            execute console command "effect give %player% glowing infinite 1 true"
+            send "{@prefix}&aEffet lumineux activé autour de vous !" to player
+            play sound "entity.player.levelup" to player
+
+# 8. /near - Joueurs proches (STAR, Staff, OP)
+command /near:
+    aliases: /proche, /radar
+    trigger:
+        set {_u} to uuid of player
+        set {_r} to {rank::%{_u}%} ? "Joueur"
+        set {_canNear} to false
+        if player is op:
+            set {_canNear} to true
+        else if {_r} is "Star" or "Helper" or "Modo" or "Resp" or "Admin" or "Fondateur":
+            set {_canNear} to true
+            
+        if {_canNear} is false:
+            send "{@prefix}&cLe &e/near &cest réservé au grade &d[STAR] &cet au &cStaff &c! &7(Consulte le &e/grades&7)" to player
+            play sound "entity.villager.no" to player
+            stop
+            
+        set {_found} to false
+        send "" to player
+        send "{@prefix}&6Joueurs à proximité &7(Rayon 100 blocs) :" to player
+        loop all players:
+            if loop-player is not player:
+                if "%world of loop-player%" is "%world of player%":
+                    set {_dist} to round(distance between player and loop-player)
+                    if {_dist} <= 100:
+                        send " &e▸ &f%loop-player% &7(&a%{_dist}% blocs&7)" to player
+                        set {_found} to true
+        if {_found} is false:
+            send " &7Aucun joueur trouvé dans les 100 blocs." to player
+        send "" to player
+
+# 9. KITS DE GRADES (/kitgrade vip|mvp|star)
+command /kitgrade [<text>]:
+    aliases: /rankkit, /kitvip, /kitmvp, /kitstar
+    trigger:
+        set {_u} to uuid of player
+        set {_r} to {rank::%{_u}%} ? "Joueur"
+        set {_choice} to arg-1 ? "menu"
+        
+        if {_choice} is "vip":
+            if player is not op:
+                if "VIP,MVP,Star,Helper,Modo,Resp,Admin,Fondateur" does not contain {_r}:
+                    send "{@prefix}&cTu dois posséder le grade &e[VIP] &cpour réclamer ce kit !" to player
+                    play sound "entity.villager.no" to player
+                    stop
+            # Cooldown 24h
+            if {last_kit_vip::%{_u}%} is set:
+                set {_diff} to difference between {last_kit_vip::%{_u}%} and now
+                if {_diff} is less than 24 hours:
+                    set {_left} to difference between {_diff} and 24 hours
+                    send "{@prefix}&cKit VIP disponible dans : &e%{_left}%" to player
+                    play sound "entity.villager.no" to player
+                    stop
+            set {last_kit_vip::%{_u}%} to now
+            execute console command "eco give %player% 1000"
+            give 8 of gold ingot to player
+            give 32 of cooked beef to player
+            give 1 of potion of speed to player
+            send "{@prefix}&aKit &e[VIP] &arécupéré avec succès ! (+1,000$, 8 Ors, 32 Steaks, 1 Potion)" to player
+            play sound "entity.player.levelup" to player
+
+        else if {_choice} is "mvp":
+            if player is not op:
+                if "MVP,Star,Helper,Modo,Resp,Admin,Fondateur" does not contain {_r}:
+                    send "{@prefix}&cTu dois posséder le grade &b[MVP] &cpour réclamer ce kit !" to player
+                    play sound "entity.villager.no" to player
+                    stop
+            if {last_kit_mvp::%{_u}%} is set:
+                set {_diff} to difference between {last_kit_mvp::%{_u}%} and now
+                if {_diff} is less than 24 hours:
+                    set {_left} to difference between {_diff} and 24 hours
+                    send "{@prefix}&cKit MVP disponible dans : &e%{_left}%" to player
+                    play sound "entity.villager.no" to player
+                    stop
+            set {last_kit_mvp::%{_u}%} to now
+            execute console command "eco give %player% 2500"
+            give 6 of diamond to player
+            give 16 of gold ingot to player
+            give 4 of golden apple to player
+            give 16 of experience bottle to player
+            send "{@prefix}&aKit &b[MVP] &arécupéré avec succès ! (+2,500$, 6 Diamants, 4 Pommes Dorées, 16 Fioles XP)" to player
+            play sound "entity.player.levelup" to player
+
+        else if {_choice} is "star":
+            if player is not op:
+                if "Star,Helper,Modo,Resp,Admin,Fondateur" does not contain {_r}:
+                    send "{@prefix}&cTu dois posséder le grade &d[STAR] &cpour réclamer ce kit !" to player
+                    play sound "entity.villager.no" to player
+                    stop
+            if {last_kit_star::%{_u}%} is set:
+                set {_diff} to difference between {last_kit_star::%{_u}%} and now
+                if {_diff} is less than 24 hours:
+                    set {_left} to difference between {_diff} and 24 hours
+                    send "{@prefix}&cKit STAR disponible dans : &e%{_left}%" to player
+                    play sound "entity.villager.no" to player
+                    stop
+            set {last_kit_star::%{_u}%} to now
+            execute console command "eco give %player% 7500"
+            give 1 of netherite ingot to player
+            give 12 of diamond to player
+            give 1 of totem of undying to player
+            give 2 of enchanted golden apple to player
+            send "{@prefix}&aKit &d[STAR] &arécupéré avec succès ! (+7,500$, 1 Netherite, 12 Diamants, 1 Totem, 2 Notchs)" to player
+            play sound "ui.toast.challenge_complete" to player
+        else:
+            execute player command "grades"
+
+# ==================== MENU DES GRADES & AVANTAGES (/grades) ====================
+
+command /grades:
+    aliases: /ranks, /grade, /ranklist
+    trigger:
+        set {_gui} to a new chest inventory with 4 rows named "&8» &0&lMINESTARS &8- &6&lGRADES & PERKS"
+        
+        loop 36 times:
+            set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
+            
+        set slot 0 of {_gui} to 1 of yellow stained glass pane named " "
+        set slot 8 of {_gui} to 1 of yellow stained glass pane named " "
+        set slot 27 of {_gui} to 1 of yellow stained glass pane named " "
+        set slot 35 of {_gui} to 1 of yellow stained glass pane named " "
+        
+        set {_u} to uuid of player
+        set {_r} to {rank::%{_u}%} ? "Joueur"
+        
+        # En-tête profil (Slot 4)
+        set slot 4 of {_gui} to 1 of player head named "&e&l✦ TON GRADE : &f&l%{_r}% &e&l✦" with lore "&8&m─────────────────────────" and "&7• Statut : &e%{_r}%" and "&7• Boutique officielle : &fminestars.craftingstore.net" and "&8&m─────────────────────────" and "&e▸ Découvre les grades & clique pour réclamer tes kits :"
+        
+        # 1. VIP (Slot 10)
+        set slot 10 of {_gui} to 1 of gold ingot named "&e&l✦ GRADE VIP ✦" with lore "&8&m─────────────────────────" and "&7• Préfixe : &e&l[VIP]" and "&7• Commandes : &f/fly &7(Skyblock & Spawn), &f/condense" and "&7• Résidences : &f3 Homes &7en survie" and "&7• Économie : &a+15%% de gains &7sur tous les métiers" and "&7• Chat : &fCouleurs autorisées" and "&8&m─────────────────────────" and "&e▸ Clique sur le Kit VIP ci-dessous pour réclamer"
+        
+        # 2. MVP (Slot 12)
+        set slot 12 of {_gui} to 1 of diamond named "&b&l✦ GRADE MVP ✦" with lore "&8&m─────────────────────────" and "&7• Préfixe : &b&l[MVP]" and "&7• Commandes : &fTous VIP &7+ &f/craft&7, &f/furnace&7, &f/hat" and "&7• Résidences : &f5 Homes &7en survie" and "&7• Économie : &a+30%% de gains &7sur tous les métiers" and "&8&m─────────────────────────" and "&b▸ Clique sur le Kit MVP ci-dessous pour réclamer"
+        
+        # 3. STAR (Slot 14)
+        set slot 14 of {_gui} to 1 of nether star named "&d&l✦ GRADE STAR (ULTIME) ✦" with lore "&8&m─────────────────────────" and "&7• Préfixe : &d&l[STAR]" and "&7• Commandes : &fTous VIP/MVP &7+ &f/fly partout&7, &f/ec&7, &f/anvil&7, &f/feed&7, &f/glow&7, &f/near" and "&7• Résidences : &f10 Homes &7en survie" and "&7• Économie : &a+50%% de gains &7sur tous les métiers" and "&8&m─────────────────────────" and "&d▸ Le grade Prestige du serveur"
+        
+        # 4. STAFF (Slot 16)
+        set slot 16 of {_gui} to 1 of book named "&c&l✦ RECRUTEMENT STAFF ✦" with lore "&8&m─────────────────────────" and "&7Tu souhaites aider le serveur ?" and "&7• Rangs Staff : &aHelper&7, &9Modo&7, &cAdmin" and "&7• Candidatures : &fdiscord.gg/minestars" and "&8&m─────────────────────────" and "&e▸ Clique pour obtenir le lien Discord"
+
+        # Rangée 3 : Boutons Réclamer Kits de Grade
+        set slot 19 of {_gui} to 1 of chest named "&e&l✦ RÉCLAMER KIT VIP ✦" with lore "&7• 1,000$, Ors, Steaks, Potions" and "&e▸ Cliquer pour réclamer (/kitgrade vip)"
+        set slot 21 of {_gui} to 1 of chest named "&b&l✦ RÉCLAMER KIT MVP ✦" with lore "&7• 2,500$, Diamants, Pommes Dorées, XP" and "&b▸ Cliquer pour réclamer (/kitgrade mvp)"
+        set slot 23 of {_gui} to 1 of chest named "&d&l✦ RÉCLAMER KIT STAR ✦" with lore "&7• 7,500$, Netherite, Diamants, Totem, Notchs" and "&d▸ Cliquer pour réclamer (/kitgrade star)"
+        set slot 25 of {_gui} to 1 of emerald named "&a&l✦ BOUTIQUE EN LIGNE ✦" with lore "&7Ouvrir le lien de la boutique officielle" and "&a▸ minestars.craftingstore.net"
+
+        # Fermer (Slot 31)
+        set slot 31 of {_gui} to 1 of barrier named "&c&l✦ FERMER ✦" with lore "&7Fermer l'interface"
+
+        open {_gui} to player
+        play sound "block.chest.open" to player
+
+on inventory click:
+    if name of event-inventory is "&8» &0&lMINESTARS &8- &6&lGRADES & PERKS":
+        cancel event
+        if index of event-slot is 31:
+            close player's inventory
+            play sound "block.chest.close" to player
+        else if index of event-slot is 16:
+            close player's inventory
+            execute player command "discord"
+        else if index of event-slot is 19:
+            close player's inventory
+            execute player command "kitgrade vip"
+        else if index of event-slot is 21:
+            close player's inventory
+            execute player command "kitgrade mvp"
+        else if index of event-slot is 23:
+            close player's inventory
+            execute player command "kitgrade star"
+        else if index of event-slot is 25:
+            close player's inventory
+            execute player command "boutique"
+
+# ==================== FORMATAGE PRO & MODERNE DU CHAT ====================
+
+on chat:
+    # 0. Si le message est filtré ou routé (Mute, Slowchat, Staff Chat toggle)
+    if {sc_toggle::%uuid of player%} is true:
+        stop
+    if {chat_muted} is true:
+        if player is not op:
+            stop
+    if {muted::%uuid of player%} is true:
+        stop
+
+    cancel event
+    set {_u} to uuid of player
+    set {_r} to {rank::%{_u}%}
+    if {_r} is not set:
+        set {_r} to {rank::%player%}
+    if {_r} is not set:
+        if player is op:
+            set {_r} to "Fondateur"
+        else:
+            set {_r} to "Joueur"
+        
+    set {_lvl} to {player_lvl::%{_u}%} ? 1
+    set {_tag} to {active_tag_formatted::%{_u}%} ? ""
+    
+    set {_pfx} to "&7[Joueur] &7"
+    if {_r} is "Fondateur":
+        set {_pfx} to "&c&l[FONDATEUR] &c"
+    else if {_r} is "Admin":
+        set {_pfx} to "&c&l[ADMIN] &c"
+    else if {_r} is "Resp":
+        set {_pfx} to "&6&l[RESP] &6"
+    else if {_r} is "Modo":
+        set {_pfx} to "&9&l[MODO] &9"
+    else if {_r} is "Helper":
+        set {_pfx} to "&a&l[HELPER] &a"
+    else if {_r} is "Build":
+        set {_pfx} to "&3&l[BUILD] &3"
+    else if {_r} is "Star":
+        set {_pfx} to "&d&l[STAR] &d"
+    else if {_r} is "MVP":
+        set {_pfx} to "&b&l[MVP] &b"
+    else if {_r} is "VIP":
+        set {_pfx} to "&e&l[VIP] &e"
+    else if player is op:
+        set {_pfx} to "&c&l[FONDATEUR] &c"
+
+    # Support des couleurs pour le Staff et VIP+
+    set {_msg} to message
+    if player is op:
+        set {_msg} to colored {_msg}
+    else if "Fondateur|Admin|Resp|Modo|Helper|Star|MVP|VIP" contains {_r}:
+        set {_msg} to colored {_msg}
+        
+    if {_tag} is not "":
+        broadcast "&8[&e%{_lvl}%★&8] %{_tag}% %{_pfx}%%player% &8▸ &f%{_msg}%"
+    else:
+        broadcast "&8[&e%{_lvl}%★&8] %{_pfx}%%player% &8▸ &f%{_msg}%"

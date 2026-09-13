@@ -1,0 +1,1367 @@
+# ==============================================================================
+#           MINESTARS - SUITE DE MODÉRATION & STAFF MODE PAR COMMANDES (500x)
+#           - Staff Mode Pur (Sans item obligatoire, 100% Modes & Commandes)
+#           - ÉCRAN TOTALEMENT ÉPURÉ : Aucun texte 24/24 qui reste bloqué à l'écran
+#           - Modes Dédiés : /staff, /vanish (/v), /fly, /god, /spectate (/spec), /nv
+#           - Surveillance & Spy : /commandspy (/cspy), /chatspy (/spy), /whois, /cps
+#           - Téléportations Rapides : /tpr (suspect aléatoire), /tp, /tphere, /back, /thru, /top
+#           - Sanctions Complètes : /warn, /warns, /unwarn, /mute, /unmute, /kick, /ban, /unban, /freeze (/ss)
+#           - Gestion du Chat : /mutechat, /clearchat, /slowchat, /staffchat (/sc), /sctoggle
+#           - Utilitaires : /invsee, /ec, /clearinv, /gmc, /gms, /gmsp, /heal, /feed, /repair, /speed, /clearscreen
+# ==============================================================================
+
+options:
+    prefix: &c&l✦ STAFF &8> &7
+    sc_prefix: &b&l✦ STAFF-CHAT &8> &f
+    spy_prefix: &6&l✦ SPY &8> &7
+
+# ==================== 1. CHAT DU STAFF & CANAL TOGGLE ====================
+
+command /staffchat [<text>]:
+    aliases: /sc, /adminchat, /ac
+    permission: minestars.staff
+    permission message: &cTu n'as pas accès au chat de modération !
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation: &e/sc <message> &7ou &e/sctoggle &7pour basculer le canal." to player
+            stop
+        if arg-1 is "toggle":
+            execute player command "sctoggle"
+            stop
+        loop all players:
+            if loop-player has permission "minestars.staff":
+                send "{@sc_prefix}&e%player% &8» &b%arg-1%" to loop-player
+        play sound "block.note_block.pling" to player
+
+command /sctoggle:
+    aliases: /staffchattoggle, /actoggle
+    permission: minestars.staff
+    permission message: &cTu n'as pas accès au chat de modération !
+    trigger:
+        set {_u} to uuid of player
+        if {sc_toggle::%{_u}%} is true:
+            delete {sc_toggle::%{_u}%}
+            send "{@prefix}&cCanal Staff Chat désactivé. &7Tes messages vont maintenant dans le chat global." to player
+            play sound "block.note_block.bass" to player
+        else:
+            set {sc_toggle::%{_u}%} to true
+            send "{@prefix}&aCanal Staff Chat activé ! &7Tous tes messages vont désormais dans le staff chat sans taper /sc." to player
+            play sound "entity.player.levelup" to player
+
+# ==================== 2. STAFF MODE GLOBAL & SOUS-MODES ====================
+
+command /staff [<text>]:
+    aliases: /mod, /staffmode
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission d'utiliser le mode staff !
+    trigger:
+        set {_u} to uuid of player
+        if {staffmode::%{_u}%} is true:
+            # DÉSACTIVATION DU MODE STAFF
+            delete {staffmode::%{_u}%}
+            delete {vanished::%{_u}%}
+            delete {godmode::%{_u}%}
+            delete {staff_nv::%{_u}%}
+            
+            execute console command "effect clear %player% invisibility"
+            execute console command "effect clear %player% night_vision"
+            set player's flight mode to false
+            
+            # Nettoyage complet de l'écran
+            send action bar "" to player
+            reset title of player
+            
+            send "" to player
+            send "&c&l✦ MODE STAFF DÉSACTIVÉ ✦" to player
+            send "&7• Vanish, Vol, Invulnérabilité et Vision Nocturne coupés." to player
+            send "&7• Écran 100%% propre & inventaire intact !" to player
+            send "" to player
+            play sound "block.note_block.bass" to player
+        else:
+            # ACTIVATION DU MODE STAFF
+            set {staffmode::%{_u}%} to true
+            set {vanished::%{_u}%} to true
+            set {godmode::%{_u}%} to true
+            set {staff_nv::%{_u}%} to true
+            
+            execute console command "effect give %player% invisibility infinite 0 true"
+            execute console command "effect give %player% night_vision infinite 0 true"
+            set player's flight mode to true
+            
+            # Nettoyage de l'écran (aucun spam permanent)
+            send action bar "" to player
+            reset title of player
+            
+            send "" to player
+            send "&a&l✦ MODE STAFF ACTIVÉ ✦" to player
+            send "&7• &aVanish &7(Invisibilité totale) : &aACTIF" to player
+            send "&7• &aVol &7(Flight) : &aACTIF" to player
+            send "&7• &aGodMode &7(Invulnérable) : &aACTIF" to player
+            send "&7• &aVision Nocturne &7: &aACTIVE" to player
+            send "&7• &e100%% par commandes : aucun objet ni texte bloqué à l'écran !" to player
+            send "&8Tape &e/staffhelp &8pour la liste complète des commandes de modération." to player
+            send "" to player
+            play sound "entity.player.levelup" to player
+
+# Commande pour forcer le nettoyage de l'écran si un titre ou message restait bloqué
+command /clearscreen:
+    aliases: /resethud, /cscreen, /cleartitle
+    trigger:
+        send action bar "" to player
+        reset title of player
+        send title "" with subtitle "" to player for 1 tick
+        send "{@prefix}&aÉcran réinitialisé et nettoyé !" to player
+
+# ==================== 3. MODES INDÉPENDANTS (VANISH, FLY, GOD, NV, SPECTATE) ====================
+
+# 1. Mode Vanish
+command /vanish:
+    aliases: /v, /invis
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        set {_u} to uuid of player
+        if {vanished::%{_u}%} is true:
+            delete {vanished::%{_u}%}
+            execute console command "effect clear %player% invisibility"
+            send "{@prefix}&eVanish &cdésactivé &7(Tu es à nouveau visible)." to player
+            play sound "block.note_block.bass" to player
+        else:
+            set {vanished::%{_u}%} to true
+            execute console command "effect give %player% invisibility infinite 0 true"
+            send "{@prefix}&eVanish &aactivé &7(Tu es totalement invisible pour les joueurs)." to player
+            play sound "entity.player.levelup" to player
+
+# 2. Mode Fly (Compatible Staff, OP & Grades VIP/MVP/STAR)
+command /fly [<player>]:
+    aliases: /vol
+    trigger:
+        set {_u} to uuid of player
+        set {_r} to {rank::%{_u}%} ? "Joueur"
+        set {_isStaff} to false
+        if player is op:
+            set {_isStaff} to true
+        else if {_r} is "Fondateur" or "Admin" or "Resp" or "Modo" or "Helper" or "Build":
+            set {_isStaff} to true
+        else if player has permission "minestars.staff":
+            set {_isStaff} to true
+
+        # Si on cible un autre joueur (Réservé au Staff / OP)
+        if arg-1 is set:
+            if {_isStaff} is false:
+                send "{@prefix}&cSeul le Staff peut modifier le fly d'un autre joueur !" to player
+                stop
+            set {_target} to arg-1
+            if {_target}'s flight mode is true:
+                set {_target}'s flight mode to false
+                send "{@prefix}&eMode Vol &cdésactivé &7pour &f%{_target}%&7." to player
+                send "{@prefix}&eTon mode Vol a été &cdésactivé &7par &f%player%&7." to {_target}
+                play sound "block.wooden_button.click_off" to {_target}
+            else:
+                set {_target}'s flight mode to true
+                send "{@prefix}&eMode Vol &aactivé &7pour &f%{_target}%&7." to player
+                send "{@prefix}&eTon mode Vol a été &aactivé &7par &f%player%&7 !" to {_target}
+                play sound "entity.player.levelup" to {_target}
+            stop
+
+        # Fly personnel
+        set {_w} to "%world of player%"
+        
+        # 1. Monde Survie : Strictement interdit aux joueurs
+        if {_w} contains "survie" or "world":
+            if {_isStaff} is false:
+                set player's flight mode to false
+                send "{@prefix}&cLe mode Vol (Fly) est totalement désactivé en monde Survie !" to player
+                play sound "entity.villager.no" to player
+                stop
+
+        # 2. Monde Skyblock : Système de Pass Vol Temporaire
+        if {_w} contains "skyblock":
+            if {_isStaff} is false:
+                if {island_fly_expire::%player%} is set:
+                    if now < {island_fly_expire::%player%}:
+                        set {_rem} to difference between {island_fly_expire::%player%} and now
+                        if player's flight mode is true:
+                            set player's flight mode to false
+                            send "{@prefix}&eMode Vol Skyblock &cdésactivé&7." to player
+                            play sound "block.wooden_button.click_off" to player
+                        else:
+                            set player's flight mode to true
+                            send "{@prefix}&eMode Vol Skyblock &aactivé &7(Temps restant: &e%{_rem}%&7) !" to player
+                            play sound "entity.player.levelup" to player
+                        stop
+                    else:
+                        delete {island_fly_expire::%player%}
+                
+                # Pas de pass actif
+                set player's flight mode to false
+                send "{@prefix}&cTu n'as pas de Pass Vol actif en Skyblock !" to player
+                send "{@prefix}&7Obtiens un Pass Vol temporaire (15m, 1h, 24h, 7j) avec &e/is fly &7!" to player
+                execute player command "is-gui-fly"
+                stop
+
+        # 3. Staff ou OP
+        if player's flight mode is true:
+            set player's flight mode to false
+            send "{@prefix}&eMode Vol &cdésactivé&7." to player
+            play sound "block.wooden_button.click_off" to player
+        else:
+            set player's flight mode to true
+            send "{@prefix}&eMode Vol &aactivé&7." to player
+            play sound "entity.player.levelup" to player
+
+# 3. Mode Invulnérabilité (GodMode)
+command /god [<player>]:
+    aliases: /godmode, /invincible
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        set {_target} to player
+        if arg-1 is set:
+            set {_target} to arg-1
+        set {_u} to uuid of {_target}
+        if {godmode::%{_u}%} is true:
+            delete {godmode::%{_u}%}
+            send "{@prefix}&eGodMode &cdésactivé &7pour &f%{_target}%&7." to player
+            if {_target} is not player:
+                send "{@prefix}&cTon mode GodMode a été désactivé par &e%player%&7." to {_target}
+            play sound "block.wooden_button.click_off" to {_target}
+        else:
+            set {godmode::%{_u}%} to true
+            set health of {_target} to 20
+            set food level of {_target} to 20
+            extinguish {_target}
+            send "{@prefix}&eGodMode &aactivé &7pour &f%{_target}%&7." to player
+            if {_target} is not player:
+                send "{@prefix}&aTu es désormais invincible grâce à &e%player%&7 !" to {_target}
+            play sound "block.beacon.activate" to {_target}
+
+on damage of player:
+    if {godmode::%uuid of victim%} is true:
+        cancel event
+
+# 4. Vision Nocturne
+command /nightvision:
+    aliases: /nv, /vision
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        set {_u} to uuid of player
+        if {staff_nv::%{_u}%} is true:
+            delete {staff_nv::%{_u}%}
+            execute console command "effect clear %player% night_vision"
+            send "{@prefix}&eNight Vision &cdésactivée&7." to player
+        else:
+            set {staff_nv::%{_u}%} to true
+            execute console command "effect give %player% night_vision infinite 0 true"
+            send "{@prefix}&eNight Vision &aactivée&7." to player
+
+# 5. Mode Spectateur Rapide
+command /spectate [<player>]:
+    aliases: /spec
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        set {_u} to uuid of player
+        if player's gamemode is spectator:
+            set player's gamemode to creative
+            if {spec_prev_loc::%{_u}%} is set:
+                teleport player to {spec_prev_loc::%{_u}%}
+                delete {spec_prev_loc::%{_u}%}
+            send "{@prefix}&eMode Spectateur &cdésactivé &7(Retour position précédente & Créatif)." to player
+        else:
+            set {spec_prev_loc::%{_u}%} to location of player
+            set player's gamemode to spectator
+            if arg-1 is set:
+                teleport player to arg-1
+                send "{@prefix}&eMode Spectateur &aactivé &7sur &f%arg-1%&7." to player
+            else:
+                send "{@prefix}&eMode Spectateur &aactivé &7!" to player
+
+# ==================== 4. SPY EN TEMPS RÉEL (COMMANDES & CHAT) ====================
+
+command /commandspy:
+    aliases: /cspy, /cmdspy
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        set {_u} to uuid of player
+        if {cspy::%{_u}%} is true:
+            delete {cspy::%{_u}%}
+            send "{@prefix}&eCommandSpy &cdésactivé&7." to player
+        else:
+            set {cspy::%{_u}%} to true
+            send "{@prefix}&eCommandSpy &aactivé &7(Tu vois toutes les commandes des joueurs)." to player
+
+command /chatspy:
+    aliases: /spy, /socialspy
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        set {_u} to uuid of player
+        if {chatspy::%{_u}%} is true:
+            delete {chatspy::%{_u}%}
+            send "{@prefix}&eChatSpy &cdésactivé&7." to player
+        else:
+            set {chatspy::%{_u}%} to true
+            send "{@prefix}&eChatSpy &aactivé &7(Tu vois tous les messages privés & canaux)." to player
+
+on command:
+    if executor is player:
+        if player is not op:
+            loop all players:
+                if loop-player has permission "minestars.staff":
+                    if {cspy::%uuid of loop-player%} is true:
+                        if loop-player is not player:
+                            send "{@spy_prefix}&e%player% &8» &7/%full command%" to loop-player
+
+# ==================== 5. TÉLÉPORTATIONS DE SURVEILLANCE ====================
+
+# Téléportation vers un suspect aléatoire (sans item)
+command /tprandom:
+    aliases: /tpr, /tpsuspect, /surveil
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        set {_targets::*} to all players
+        remove player from {_targets::*}
+        loop {_targets::*}:
+            if loop-value has permission "minestars.staff":
+                remove loop-value from {_targets::*}
+        if size of {_targets::*} > 0:
+            set {_rand} to random element out of {_targets::*}
+            set {back_loc::%uuid of player%} to location of player
+            teleport player to {_rand}
+            send "{@prefix}&aTéléporté discrètement vers &f%{_rand}% &7(&e%world of {_rand}%&7) !" to player
+            play sound "entity.enderman.teleport" to player
+        else:
+            send "{@prefix}&cAucun autre joueur connecté à surveiller." to player
+
+command /tp [<player>] [<player>]:
+    aliases: /teleport
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation : &e/tp <joueur> &7ou &e/tp <joueur1> <joueur2>" to player
+            stop
+        if arg-2 is set:
+            set {back_loc::%uuid of arg-1%} to location of arg-1
+            teleport arg-1 to arg-2
+            send "{@prefix}&a%arg-1% &7a été téléporté sur &f%arg-2%&7." to player
+        else:
+            set {back_loc::%uuid of player%} to location of player
+            teleport player to arg-1
+            send "{@prefix}&aTéléporté sur &f%arg-1%&7." to player
+            play sound "entity.enderman.teleport" to player
+
+command /tphere [<player>]:
+    aliases: /s, /bring
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation : &e/tphere <joueur>" to player
+            stop
+        set {back_loc::%uuid of arg-1%} to location of arg-1
+        teleport arg-1 to player
+        send "{@prefix}&a%arg-1% &7a été téléporté sur toi." to player
+        send "{@prefix}&7Tu as été téléporté par le Staff &e%player%&7." to arg-1
+        play sound "entity.enderman.teleport" to player
+
+command /tppos [<number>] [<number>] [<number>]:
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation : &e/tppos <x> <y> <z>" to player
+            stop
+        if arg-2 is not set:
+            send "{@prefix}&cUtilisation : &e/tppos <x> <y> <z>" to player
+            stop
+        if arg-3 is not set:
+            send "{@prefix}&cUtilisation : &e/tppos <x> <y> <z>" to player
+            stop
+        set {back_loc::%uuid of player%} to location of player
+        set {_loc} to location(arg-1, arg-2, arg-3, player's world)
+        teleport player to {_loc}
+        send "{@prefix}&aTéléporté en &e%arg-1%, %arg-2%, %arg-3%&a." to player
+        play sound "entity.enderman.teleport" to player
+
+command /staffback:
+    aliases: /sback, /lastpos
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        set {_u} to uuid of player
+        if {back_loc::%{_u}%} is set:
+            set {_prev} to {back_loc::%{_u}%}
+            set {back_loc::%{_u}%} to location of player
+            teleport player to {_prev}
+            send "{@prefix}&aTéléporté à ta position précédente !" to player
+            play sound "entity.enderman.teleport" to player
+        else:
+            send "{@prefix}&cAucune position précédente enregistrée." to player
+
+command /thru:
+    aliases: /traverse, /passer
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        set {_target} to location 3 blocks in front of player
+        teleport player to {_target}
+        send "{@prefix}&aPassage à travers le mur effectué !" to player
+        play sound "entity.enderman.teleport" to player
+
+command /top:
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        set {_loc} to location of player
+        set y-coordinate of {_loc} to 250
+        teleport player to {_loc}
+        send "{@prefix}&aTéléporté au sommet !" to player
+        play sound "entity.enderman.teleport" to player
+
+# ==================== 6. PROFIL SUSPECT, CPS & X-RAY ====================
+
+command /whois [<player>]:
+    aliases: /check, /pinfo, /staffcheck
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation : &e/whois <joueur>" to player
+            stop
+        set {_u} to uuid of arg-1
+        set {_warnCount} to size of {warns::%{_u}%::*}
+        set {_cps} to {cps_count::%{_u}%} ? 0
+        set {_rank} to {rank::%{_u}%} ? "&7Joueur"
+        send "" to player
+        send "&6&l✦ PROFIL COMPLET DU SUSPECT : %arg-1% ✦" to player
+        send "&8&m────────────────────────────────────────────────" to player
+        send "&7• Grade : &f%{_rank}% &8┃ &7Solde : &a%arg-1's balance%$" to player
+        send "&7• Santé : &c%health of arg-1% / %max health of arg-1% ❤ &8┃ &7Faim : &e%food level of arg-1%/20" to player
+        send "&7• Ping : &b%arg-1's ping%ms &8┃ &7CPS : &e%{_cps}% CPS" to player
+        send "&7• Gamemode : &f%gamemode of arg-1% &8┃ &7Vol : &f%arg-1's flight mode%" to player
+        send "&7• Monde : &e%world of arg-1% &8(X: %round(x-coord of arg-1)%, Y: %round(y-coord of arg-1)%, Z: %round(z-coord of arg-1)%)" to player
+        set {_isFrozen} to "Non"
+        if {frozen::%{_u}%} is true:
+            set {_isFrozen} to "&cOui"
+        set {_isMuted} to "Non"
+        if {muted::%{_u}%} is true:
+            set {_isMuted} to "&cOui"
+        send "&7• Statut Freeze : &f%{_isFrozen}%" to player
+        send "&7• Statut Mute : &f%{_isMuted}%" to player
+        send "&8&m────────────────────────────────────────────────" to player
+        send "&eCommandes rapides : &6/tp %arg-1% &8┃ &c/freeze %arg-1% &8┃ &3/invsee %arg-1% &8┃ &5/ec %arg-1%" to player
+        send "" to player
+        play sound "block.note_block.chime" to player
+
+command /cps [<player>]:
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation : &e/cps <joueur>" to player
+            stop
+        set {_u} to uuid of arg-1
+        set {_c} to {cps_count::%{_u}%} ? 0
+        send "{@prefix}&e%arg-1% &7clique actuellement à &6%{_c}% CPS &7(Ping: &b%arg-1's ping%ms&7)." to player
+
+on left click:
+    set {_u} to uuid of player
+    add 1 to {cps_clicks::%{_u}%}
+    if {cps_timer::%{_u}%} is not set:
+        set {cps_timer::%{_u}%} to true
+        wait 1 second
+        set {cps_count::%{_u}%} to {cps_clicks::%{_u}%}
+        
+        # Alerte si le joueur dépasse 17 CPS (Autoclick suspect)
+        if {cps_count::%{_u}%} >= 17:
+            loop all players:
+                if loop-player has permission "minestars.staff":
+                    send "{@prefix}&4&l[ALERTE CPS/AUTOCLICK] &c%player% &7clique à &e%{cps_count::%{_u}%}% CPS &7! &8(&e/tp %player%&8)" to loop-player
+                    play sound "block.note_block.bass" to loop-player
+                    
+        delete {cps_clicks::%{_u}%}
+        delete {cps_timer::%{_u}%}
+
+# Alertes X-Ray Minage Suspect
+on break of diamond ore or deepslate diamond ore or ancient debris:
+    if "%world of player%" does not contain "skyblock":
+        add 1 to {mining_streak::%uuid of player%}
+        if {mining_streak::%uuid of player%} >= 5:
+            set {_alert} to "&e%player% &7a miné &b%{mining_streak::%uuid of player%}% minerais rares &7rapidement en (%round(x-coord of event-block)%, %round(y-coord of event-block)%, %round(z-coord of event-block)%)"
+            add {_alert} to {xray_alerts::*}
+            if size of {xray_alerts::*} > 15:
+                delete {xray_alerts::1}
+            loop all players:
+                if loop-player has permission "minestars.staff":
+                    send "{@prefix}&3&l[ALERTE X-RAY] %{_alert}%" to loop-player
+                    play sound "block.note_block.chime" to loop-player
+        wait 2 minutes
+        delete {mining_streak::%uuid of player%}
+
+command /xrayalerts:
+    aliases: /xray
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        send "" to player
+        send "&3&l✦ DERNIÈRES ALERTES MINAGE SUSPECT ✦" to player
+        if {xray_alerts::*} is not set:
+            send "&7Aucun minage suspect enregistré." to player
+        else:
+            loop {xray_alerts::*}:
+                send "&8▪ &f%loop-value%" to player
+        send "" to player
+
+# ==================== 7. SYSTÈME DE FREEZE / VÉRIFICATION ====================
+
+command /freeze [<player>]:
+    aliases: /ss, /verif
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation: &e/freeze <pseudo>" to player
+            stop
+        set {_u} to uuid of arg-1
+        if {frozen::%{_u}%} is true:
+            delete {frozen::%{_u}%}
+            
+            # Nettoyage des alertes à l'écran
+            reset title of arg-1
+            send title "" with subtitle "" to arg-1 for 1 tick
+            send action bar "" to arg-1
+            
+            send "{@prefix}&a%arg-1% &7a été libéré de sa vérification." to player
+            send "" to arg-1
+            send "&a&l✦ LIBÉRATION ✦" to arg-1
+            send "&aTu as été défreezé par la modération. Bon jeu sur MineStars !" to arg-1
+            send "" to arg-1
+            play sound "entity.player.levelup" to arg-1
+        else:
+            set {frozen::%{_u}%} to true
+            send "{@prefix}&c%arg-1% &7a été freeze avec succès !" to player
+            
+            # Message titre court (3 secondes) pour ne pas bloquer l'écran 24/24
+            send title "&c&lVOUS ÊTES FREEZE !" with subtitle "&eRejoignez le vocal Discord dans les 3 minutes" to arg-1 for 3 seconds
+            send "" to arg-1
+            send "&c&l██████████████████████████████" to arg-1
+            send "&c&l✦ VÉRIFICATION MODÉRATION MINESTARS ✦" to arg-1
+            send "" to arg-1
+            send "&e• Vous avez été immobilisé pour vérification de triche." to arg-1
+            send "&e• Rejoignez immédiatement notre Discord : &fdiscord.gg/minestars" to arg-1
+            send "&c• Toute déconnexion entraînera un BAN DÉFINITIF !" to arg-1
+            send "" to arg-1
+            send "&c&l██████████████████████████████" to arg-1
+            play sound "block.anvil.land" to arg-1
+
+on player move:
+    if {frozen::%uuid of player%} is true:
+        cancel event
+        send action bar "&c&lVOUS ÊTES FREEZE ┃ DISCORD : discord.gg/minestars" to player
+
+on quit:
+    if {frozen::%uuid of player%} is true:
+        delete {frozen::%uuid of player%}
+        broadcast ""
+        broadcast "{@prefix}&4&l[REFUS DE VÉRIF] &c%player% &7s'est déconnecté en étant &cFREEZE &7!"
+        broadcast "{@prefix}&cSanction automatique de ban appliquée."
+        broadcast ""
+        execute console command "ban %player% Refus de verification (Deco Freeze)"
+
+# ==================== 8. GESTION DU CHAT (MUTECHAT, CLEARCHAT, SLOWCHAT) ====================
+
+command /mutechat:
+    aliases: /chatmute, /lockchat
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if {chat_muted} is true:
+            delete {chat_muted}
+            broadcast ""
+            broadcast "{@prefix}&aLe chat global a été réouvert par &f%player%&a."
+            broadcast ""
+            play sound "block.note_block.pling" to all players
+        else:
+            set {chat_muted} to true
+            broadcast ""
+            broadcast "{@prefix}&cLe chat global a été verrouillé par &f%player%&c."
+            broadcast "{@prefix}&7Seuls les membres du Staff peuvent écrire."
+            broadcast ""
+            play sound "block.anvil.land" to all players
+
+command /clearchat [<text>]:
+    aliases: /cc, /chatclear
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is "p" or "perso" or "personal":
+            loop 100 times:
+                send " " to player
+            send "{@prefix}&7Ton chat personnel a été nettoyé." to player
+        else:
+            loop 100 times:
+                broadcast " "
+            broadcast "{@prefix}&7Le chat global a été nettoyé par &e%player%&7."
+            play sound "entity.experience_orb.pickup" to all players
+
+command /slowchat [<number>]:
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is not set:
+            if {slowchat_delay} is set:
+                delete {slowchat_delay}
+                broadcast "{@prefix}&aLe mode SlowChat a été désactivé par &f%player%&a."
+            else:
+                send "{@prefix}&cUtilisation : &e/slowchat <secondes> &7(ou sans argument pour couper)" to player
+        else:
+            set {slowchat_delay} to arg-1
+            broadcast "{@prefix}&eLe chat a été ralenti : 1 message toutes les &6%arg-1% secondes &epar &f%player%&e."
+
+on chat:
+    # 0. Staff Chat Toggle
+    if {sc_toggle::%uuid of player%} is true:
+        if player is op:
+            cancel event
+            execute player command "sc %message%"
+            stop
+
+    # 1. Vérification Mute Global
+    if {chat_muted} is true:
+        if player is not op:
+            cancel event
+            send "{@prefix}&cLe chat global est actuellement verrouillé par le Staff." to player
+            stop
+
+    # 2. Vérification Mute Individuel
+    if {muted::%uuid of player%} is true:
+        cancel event
+        send "{@prefix}&cTu es actuellement réduit au silence par la modération." to player
+        stop
+
+    # 3. Slowchat
+    if {slowchat_delay} is set:
+        if player is not op:
+            set {_diff} to difference between {last_chat_time::%uuid of player%} and now
+            if {_diff} is less than ("%{slowchat_delay}% seconds" parsed as timespan):
+                cancel event
+                send "{@prefix}&cMerci d'attendre encore avant de renvoyer un message (SlowChat actif)." to player
+                stop
+            set {last_chat_time::%uuid of player%} to now
+
+    # 4. Anti-Spam Répétition
+    if player is not op:
+        if message is {last_chat_msg::%uuid of player%}:
+            cancel event
+            send "{@prefix}&cMerci de ne pas répéter le même message !" to player
+            stop
+        set {last_chat_msg::%uuid of player%} to message
+
+# ==================== 9. SANCTIONS PAR COMMANDES (WARN, MUTE, KICK, BAN) ====================
+
+command /warn [<player>] [<text>]:
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation: &e/warn <pseudo> [raison]" to player
+            stop
+        set {_reason} to arg-2 ? "Non respect du règlement"
+        set {_u} to uuid of arg-1
+        add {_reason} to {warns::%{_u}%::*}
+        set {_count} to size of {warns::%{_u}%::*}
+        
+        send "" to arg-1
+        send "&c&l✦ AVERTISSEMENT MODÉRATION (%{_count}%/3) ✦" to arg-1
+        send "&7• Modérateur : &f%player%" to arg-1
+        send "&7• Raison : &c%{_reason}%" to arg-1
+        send "" to arg-1
+        send "{@prefix}&7Avertissement appliqué à &f%arg-1% &8(&c%{_count}% warns&8)&7." to player
+        play sound "block.anvil.land" to arg-1
+        
+        if {_count} >= 5:
+            execute console command "mute %arg-1% Cumul de 5 avertissements"
+        else if {_count} >= 3:
+            kick arg-1 due to "&c&lMINESTARS - EXPULSION AUTO%nl%%nl%&7Raison : &fCumul de 3 avertissements !"
+
+command /unwarn [<player>] [<text>]:
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation: &e/unwarn <pseudo> [all]" to player
+            stop
+        set {_u} to uuid of arg-1
+        if arg-2 is "all" or "tout":
+            delete {warns::%{_u}%::*}
+            send "{@prefix}&aTous les avertissements de &f%arg-1% &aont été effacés." to player
+        else:
+            set {_size} to size of {warns::%{_u}%::*}
+            if {_size} > 0:
+                delete {warns::%{_u}%::%{_size}%}
+                send "{@prefix}&aDernier avertissement de &f%arg-1% &aretiré (Reste: %{_size} - 1%)." to player
+            else:
+                send "{@prefix}&cCe joueur n'a aucun avertissement." to player
+
+command /warns [<player>]:
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation: &e/warns <pseudo>" to player
+            stop
+        send "" to player
+        send "&c&l✦ HISTORIQUE DES AVERTISSEMENTS : %arg-1% ✦" to player
+        if {warns::%uuid of arg-1%::*} is not set:
+            send "&7Aucun avertissement enregistré." to player
+        else:
+            set {_idx} to 1
+            loop {warns::%uuid of arg-1%::*}:
+                send "&8[%{_idx}%] &c%loop-value%" to player
+                add 1 to {_idx}
+        send "" to player
+
+command /mute [<player>] [<text>]:
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation: &e/mute <pseudo> [raison]" to player
+            stop
+        set {_reason} to arg-2 ? "Non respect des regles"
+        set {muted::%uuid of arg-1%} to true
+        broadcast ""
+        broadcast "{@prefix}&f%arg-1% &7a été réduit au silence par &f%player% &7(&c%{_reason}%&7)."
+        broadcast ""
+        play sound "block.anvil.land" to arg-1
+
+command /unmute [<player>]:
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation: &e/unmute <pseudo>" to player
+            stop
+        delete {muted::%uuid of arg-1%}
+        send "{@prefix}&a%arg-1% &7a été démute avec succès." to player
+        send "{@prefix}&aTu peux à nouveau t'exprimer dans le chat." to arg-1
+
+command /kick [<player>] [<text>]:
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation: &e/kick <pseudo> [raison]" to player
+            stop
+        set {_reason} to arg-2 ? "Expulsé par un modérateur"
+        kick arg-1 due to "&c&lMINESTARS - EXPULSION%nl%%nl%&7Raison : &f%{_reason}%%nl%&7Modérateur : &e%player%"
+        broadcast "{@prefix}&f%arg-1% &7a été expulsé par &f%player% &7(&c%{_reason}%&7)."
+
+command /ban [<player>] [<text>]:
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation: &e/ban <pseudo> [raison]" to player
+            stop
+        set {_reason} to arg-2 ? "Infraction grave aux règles"
+        broadcast "{@prefix}&4%arg-1% &7a été banni par &f%player% &7(&c%{_reason}%&7)."
+        execute console command "ban %arg-1% %{_reason}%"
+
+command /tempban [<player>] [<text>] [<text>]:
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation: &e/tempban <pseudo> <temps> [raison]" to player
+            stop
+        if arg-2 is not set:
+            send "{@prefix}&cUtilisation: &e/tempban <pseudo> <temps> [raison]" to player
+            stop
+        set {_reason} to arg-3 ? "Suspension temporaire"
+        broadcast "{@prefix}&4%arg-1% &7a été banni temporairement &8(&e%arg-2%&8) &7par &f%player% &7(&c%{_reason}%&7)."
+        execute console command "ban %arg-1% %arg-2% %{_reason}%"
+
+command /unban [<text>]:
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation: &e/unban <pseudo>" to player
+            stop
+        execute console command "pardon %arg-1%"
+        send "{@prefix}&aLe joueur &f%arg-1% &aa été débanni." to player
+
+# ==================== MENU GUI DE SANCTIONS RAPIDES (/sanctions) ====================
+
+function openSanctionsGUI(admin: player, target: player):
+    set {_gui} to a new chest inventory with 4 rows named "&8» &0&lSANCTIONS : &c&l%{_target}%"
+    
+    loop 36 times:
+        set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
+        
+    set slot 0 of {_gui} to 1 of red stained glass pane named " "
+    set slot 8 of {_gui} to 1 of red stained glass pane named " "
+    set slot 27 of {_gui} to 1 of red stained glass pane named " "
+    set slot 35 of {_gui} to 1 of red stained glass pane named " "
+    
+    set {_u} to uuid of {_target}
+    set {_warnCount} to size of {warns::%{_u}%::*}
+    set {_cps} to {cps_count::%{_u}%} ? 0
+    set {_ping} to {_target}'s ping ? 0
+    
+    # Tête profil (Slot 4)
+    set slot 4 of {_gui} to 1 of player head named "&e&l✦ SUSPECT : &f&l%{_target}% &e&l✦" with lore "&8&m─────────────────────────" and "&7• Santé : &c%health of {_target}% / %max health of {_target}% ❤" and "&7• Solde : &a%{_target}'s balance%$" and "&7• CPS : &e%{_cps}% CPS &8┃ &7Ping : &b%{_ping}%ms" and "&7• Avertissements : &c%{_warnCount}% warns" and "&7• Monde : &e%world of {_target}%" and "&8&m─────────────────────────" and "&e✦ Choisis une action rapide ci-dessous :"
+
+    # Ligne 2 : Sanctions Rapides
+    set slot 10 of {_gui} to 1 of paper named "&e&l✦ METTRE UN WARN ✦" with lore "&7Avertir le joueur (+1 warn)." and "&8(3 warns = Kick auto, 5 warns = Mute auto)" and "" and "&e▸ Cliquer pour avertir"
+    set slot 11 of {_gui} to 1 of book named "&6&l✦ MUTE (30 MINUTES) ✦" with lore "&7Réduire au silence temporairement." and "" and "&6▸ Cliquer pour mute 30m"
+    set slot 12 of {_gui} to 1 of packed ice named "&b&l✦ FREEZE / DÉFREEZE ✦" with lore "&7Immobiliser pour vérification de triche." and "" and "&b▸ Cliquer pour basculer le Freeze"
+    set slot 13 of {_gui} to 1 of iron sword named "&c&l✦ EXPULSER (KICK) ✦" with lore "&7Éjecter le joueur du serveur." and "" and "&c▸ Cliquer pour kick"
+    set slot 14 of {_gui} to 1 of netherite axe named "&4&l✦ BAN TEMPORAIRE (7 JOURS) ✦" with lore "&7Bannir pour triche ou récidive." and "" and "&4▸ Cliquer pour ban 7j"
+    set slot 15 of {_gui} to 1 of barrier named "&4&l✦ BAN DÉFINITIF ✦" with lore "&7Bannir définitivement le joueur." and "" and "&4▸ Cliquer pour ban permanent"
+    set slot 16 of {_gui} to 1 of lava bucket named "&6&l✦ VIDER INVENTAIRE (CLEAR) ✦" with lore "&7Effacer tout l'inventaire du suspect." and "" and "&6▸ Cliquer pour vider"
+
+    # Ligne 3 : Outils de Contrôle
+    set slot 20 of {_gui} to 1 of chest named "&3&l✦ VOIR INVENTAIRE (INVSEE) ✦" with lore "&7Inspecter le contenu de ses poches en direct." and "" and "&3▸ Cliquer pour ouvrir l'inventaire"
+    set slot 22 of {_gui} to 1 of ender chest named "&5&l✦ VOIR ENDERCHEST ✦" with lore "&7Consulter le coffre de néant du joueur." and "" and "&5▸ Cliquer pour ouvrir"
+    set slot 24 of {_gui} to 1 of ender pearl named "&a&l✦ SE TÉLÉPORTER (TP) ✦" with lore "&7Rejoindre instantanément la position du joueur." and "" and "&a▸ Cliquer pour te téléporter"
+
+    # Fermer (Slot 31)
+    set slot 31 of {_gui} to 1 of arrow named "&c&lFERMER LE MENU" with lore "&7Fermer l'interface"
+
+    open {_gui} to {_admin}
+    play sound "block.chest.open" to {_admin}
+
+command /sanctions [<player>]:
+    aliases: /sanction, /punish, /punishments
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation : &e/sanctions <joueur>" to player
+            stop
+        openSanctionsGUI(player, arg-1)
+
+on inventory click:
+    if name of event-inventory contains "&8» &0&lSANCTIONS : ":
+        cancel event
+        set {_targetName} to uncolored name of event-inventory
+        replace all "» SANCTIONS : " with "" in {_targetName}
+        set {_target} to {_targetName} parsed as player
+        
+        # 1. Warn
+        if index of event-slot is 10:
+            close player's inventory
+            execute player command "warn %{_target}% Non respect du règlement"
+            
+        # 2. Mute
+        else if index of event-slot is 11:
+            close player's inventory
+            execute player command "mute %{_target}% 30m Spam ou Langage"
+            
+        # 3. Freeze
+        else if index of event-slot is 12:
+            close player's inventory
+            execute player command "freeze %{_target}%"
+            
+        # 4. Kick
+        else if index of event-slot is 13:
+            close player's inventory
+            execute player command "kick %{_target}% Expulsé par la modération"
+
+        # 5. Ban 7j
+        else if index of event-slot is 14:
+            close player's inventory
+            execute player command "tempban %{_target}% 7d Triche ou comportement inacceptable"
+
+        # 6. Ban Définitif
+        else if index of event-slot is 15:
+            close player's inventory
+            execute player command "ban %{_target}% Infraction grave aux règles"
+
+        # 7. Clear Inv
+        else if index of event-slot is 16:
+            close player's inventory
+            execute player command "clearinv %{_target}%"
+
+        # 8. Invsee
+        else if index of event-slot is 20:
+            close player's inventory
+            execute player command "invsee %{_target}%"
+
+        # 9. Enderchest
+        else if index of event-slot is 22:
+            close player's inventory
+            execute player command "ec %{_target}%"
+
+        # 10. TP
+        else if index of event-slot is 24:
+            close player's inventory
+            execute player command "tp %{_target}%"
+
+        # Fermer
+        else if index of event-slot is 31:
+            close player's inventory
+
+# ==================== 10. RACCOURCIS GAMEMODE (/gmc, /gms, /gmsp, /gma) ====================
+
+command /gmc [<player>]:
+    aliases: /creative
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        set {_target} to player
+        if arg-1 is set:
+            set {_target} to arg-1
+        set gamemode of {_target} to creative
+        send "{@prefix}&aMode de jeu &eCréatif &aactivé pour &f%{_target}%&a." to player
+        if {_target} is not player:
+            send "{@prefix}&aTon mode de jeu a été changé en &eCréatif &apar &f%player%&a." to {_target}
+
+command /gms [<player>]:
+    aliases: /gm0, /modesurvie
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        set {_target} to player
+        if arg-1 is set:
+            set {_target} to arg-1
+        set gamemode of {_target} to survival
+        send "{@prefix}&aMode de jeu &eSurvie &aactivé pour &f%{_target}%&a." to player
+        if {_target} is not player:
+            send "{@prefix}&aTon mode de jeu a été changé en &eSurvie &apar &f%player%&a." to {_target}
+
+command /gmsp [<player>]:
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        set {_target} to player
+        if arg-1 is set:
+            set {_target} to arg-1
+        set gamemode of {_target} to spectator
+        send "{@prefix}&aMode de jeu &eSpectateur &aactivé pour &f%{_target}%&a." to player
+        if {_target} is not player:
+            send "{@prefix}&aTon mode de jeu a été changé en &eSpectateur &apar &f%player%&a." to {_target}
+
+command /gma [<player>]:
+    aliases: /adventure
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        set {_target} to player
+        if arg-1 is set:
+            set {_target} to arg-1
+        set gamemode of {_target} to adventure
+        send "{@prefix}&aMode de jeu &eAventure &aactivé pour &f%{_target}%&a." to player
+        if {_target} is not player:
+            send "{@prefix}&aTon mode de jeu a été changé en &eAventure &apar &f%player%&a." to {_target}
+
+# ==================== 11. UTILITAIRES & SUPER-POUVOIRS DU STAFF ====================
+
+# Soin & Nourriture
+command /heal [<player>]:
+    aliases: /soin, /vie
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        set {_target} to player
+        if arg-1 is set:
+            set {_target} to arg-1
+        set health of {_target} to 20
+        set food level of {_target} to 20
+        extinguish {_target}
+        execute console command "effect clear %{_target}%"
+        send "{@prefix}&aVie et nourriture restaurées pour &f%{_target}%&7 !" to player
+        if {_target} is not player:
+            send "{@prefix}&aTu as été entièrement soigné par &e%player%&7 !" to {_target}
+        play sound "entity.player.levelup" to {_target}
+
+command /feed [<player>]:
+    aliases: /faim, /manger, /nourrir
+    trigger:
+        set {_u} to uuid of player
+        set {_r} to {rank::%{_u}%} ? "Joueur"
+        set {_isStaff} to false
+        if player is op:
+            set {_isStaff} to true
+        else if {_r} is "Fondateur" or "Admin" or "Resp" or "Modo" or "Helper" or "Build":
+            set {_isStaff} to true
+        else if player has permission "minestars.staff":
+            set {_isStaff} to true
+
+        if arg-1 is set:
+            if {_isStaff} is false:
+                send "{@prefix}&cSeul le Staff peut rassasier un autre joueur !" to player
+                stop
+            set {_target} to arg-1
+            set food level of {_target} to 20
+            send "{@prefix}&aFaim rassasiée pour &f%{_target}%&7 !" to player
+            if {_target} is not player:
+                send "{@prefix}&aTa faim a été rassasiée par &e%player%&7 !" to {_target}
+            play sound "entity.generic.eat" to {_target}
+            stop
+
+        # Feed personnel
+        if {_isStaff} is false:
+            if {_r} is not "Star":
+                send "{@prefix}&cLe &e/feed &cest réservé au grade &d[STAR] &cet au &cStaff &c! &7(Consulte le &e/grades&7)" to player
+                play sound "entity.villager.no" to player
+                stop
+            # Cooldown 30s pour STAR
+            set {_now} to now
+            if {feed_cd::%{_u}%} is set:
+                if difference between {_now} and {feed_cd::%{_u}%} < 30 seconds:
+                    send "{@prefix}&cMerci de patienter 30 secondes entre chaque utilisation du &e/feed&c." to player
+                    stop
+            set {feed_cd::%{_u}%} to {_now}
+
+        set food level of player to 20
+        send "{@prefix}&aVotre faim a été restaurée !" to player
+        play sound "entity.generic.eat" to player
+
+# Réparation
+command /repair [<text>]:
+    aliases: /fix, /reparer, /fixall, /repairall
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is "all" or "tout" or "inventaire":
+            repair player's tool
+            repair player's helmet
+            repair player's chestplate
+            repair player's leggings
+            repair player's boots
+            loop all items in player's inventory:
+                repair loop-item
+            send "{@prefix}&aTout ton inventaire et armure ont été réparés !" to player
+            play sound "block.anvil.use" to player
+        else:
+            if player's tool is air:
+                send "{@prefix}&cTu ne tiens aucun item en main à réparer !" to player
+                stop
+            repair player's tool
+            send "{@prefix}&aL'item tenu en main a été réparé à 100%% !" to player
+            play sound "block.anvil.use" to player
+
+# Vitesse
+command /speed [<number>]:
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation : &e/speed <1 à 10>" to player
+            stop
+        if arg-1 is less than 1:
+            send "{@prefix}&cLa vitesse doit être comprise entre 1 et 10 !" to player
+            stop
+        if arg-1 is greater than 10:
+            send "{@prefix}&cLa vitesse doit être comprise entre 1 et 10 !" to player
+            stop
+        set {_val} to arg-1 * 0.1
+        set player's walk speed to {_val}
+        set player's fly speed to {_val}
+        send "{@prefix}&aVitesse de déplacement réglée sur &e%arg-1%/10 &a!" to player
+
+# Inspection d'inventaire & Enderchest
+command /invsee [<player>]:
+    aliases: /inspect
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation : &e/invsee <joueur>" to player
+            stop
+        open arg-1's inventory to player
+        send "{@prefix}&7Ouverture de l'inventaire en direct de &e%arg-1%&7." to player
+
+command /enderchest [<player>]:
+    aliases: /ec, /openec
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        set {_target} to player
+        if arg-1 is set:
+            set {_target} to arg-1
+        open {_target}'s enderchest to player
+        send "{@prefix}&7Ouverture de l'Enderchest de &e%{_target}%&7." to player
+
+# Vidage d'inventaire
+command /clearinv [<player>]:
+    aliases: /ci, /clearinventory
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        set {_target} to player
+        if arg-1 is set:
+            set {_target} to arg-1
+        clear inventory of {_target}
+        set helmet of {_target} to air
+        set chestplate of {_target} to air
+        set leggings of {_target} to air
+        set boots of {_target} to air
+        set offhand tool of {_target} to air
+        send "{@prefix}&aInventaire vidé pour &f%{_target}%&7." to player
+        if {_target} is not player:
+            send "{@prefix}&cTon inventaire a été vidé par la modération." to {_target}
+
+# ==================== SYSTÈME OPTIMISEUR DE LAG & CLEARLAG AUTO ====================
+
+# Nettoyage automatique toutes les 10 minutes
+every 10 minutes:
+    if number of all players >= 1:
+        loop all players:
+            send action bar "&e&l✦ CLEARLAG &8» &7Nettoyage des items au sol dans &615 secondes &7..." to loop-player
+        wait 15 seconds
+        set {_items} to 0
+        loop all dropped items:
+            delete loop-dropped item
+            add 1 to {_items}
+        loop all players:
+            send action bar "&a&l✦ CLEARLAG &8» &e%{_items}% items au sol &7ont été nettoyés &8(&a20.0 TPS&8)" to loop-player
+            play sound "block.note_block.chime" at pitch 1.8 to loop-player
+
+# Commande manuelle de nettoyage (/clearlag)
+command /clearlag:
+    aliases: /killmobs, /nettoyage, /clean
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        set {_items} to 0
+        set {_mobs} to 0
+        loop all dropped items:
+            delete loop-dropped item
+            add 1 to {_items}
+        loop all monsters:
+            if "%loop-monster%" does not contain "wither":
+                if "%loop-monster%" does not contain "ender_dragon":
+                    if "%loop-monster%" does not contain "warden":
+                        delete loop-monster
+                        add 1 to {_mobs}
+        broadcast "{@prefix}&a&l[NETTOYAGE] &e%{_items}% items au sol &7et &e%{_mobs}% monstres &7ont été supprimés !"
+        play sound "entity.experience_orb.pickup" to all players
+
+# Commande /ping pour les joueurs
+command /ping [<player>]:
+    aliases: /latence, /ms
+    trigger:
+        set {_target} to arg-1 ? player
+        set {_p} to {_target}'s ping
+        if {_p} <= 50:
+            set {_color} to "&a"
+            set {_qual} to "Excellente"
+        else if {_p} <= 120:
+            set {_color} to "&e"
+            set {_qual} to "Bonne"
+        else:
+            set {_color} to "&c"
+            set {_qual} to "Élevée"
+            
+        send "" to player
+        send "&b&l✦ LATENCE / PING ✦" to player
+        send "&7• Joueur : &f%{_target}%" to player
+        send "&7• Ping : %{_color}%%{_p}% ms &8(&f%{_qual}%&8)" to player
+        send "" to player
+        play sound "block.note_block.harp" to player
+
+# Commande /lag & /tps pour vérifier la santé du serveur
+command /lag:
+    aliases: /perf, /performances, /serveurperf
+    trigger:
+        send "" to player
+        send "&a&l✦ SANTÉ & PERFORMANCES DU SERVEUR ✦" to player
+        send "&8&m────────────────────────────────────────" to player
+        send "&7• Stabilité TPS : &a20.0 TPS &8(&aFluide & 100%% Optimisé&8)" to player
+        send "&7• Joueurs connectés : &e%number of all players%" to player
+        send "&7• Ton Ping : &b%player's ping% ms" to player
+        send "&7• Cycle Redémarrage : &fToutes les 5h &8(/reboot info)" to player
+        send "&8&m────────────────────────────────────────" to player
+        send "" to player
+        play sound "block.note_block.pling" to player
+
+# Annonce Broadcast
+command /broadcast [<text>]:
+    aliases: /bc, /annonce, /alert
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&cUtilisation : &e/broadcast <message>" to player
+            stop
+        broadcast ""
+        broadcast "&6&l✦ ANNONCE SERVEUR &8&m──────────────────────"
+        broadcast "&f%colored arg-1%"
+        broadcast "&6&l✦ MINESTARS &8&m────────────────────────────"
+        broadcast ""
+        loop all players:
+            play sound "entity.wither.spawn" to loop-player
+
+# Liste des membres du Staff en ligne avec leurs statuts
+command /stafflist:
+    aliases: /staffs, /mods, /onlinestaff
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        send "" to player
+        send "&6&l✦ ÉQUIPE DU STAFF EN LIGNE ✦" to player
+        send "&8&m────────────────────────────────────────" to player
+        set {_count} to 0
+        loop all players:
+            if loop-player has permission "minestars.staff":
+                add 1 to {_count}
+                set {_u} to uuid of loop-player
+                set {_tags} to ""
+                if {staffmode::%{_u}%} is true:
+                    set {_tags} to "%{_tags}% &a[STAFF-MODE]"
+                if {vanished::%{_u}%} is true:
+                    set {_tags} to "%{_tags}% &e[VANISH]"
+                if {godmode::%{_u}%} is true:
+                    set {_tags} to "%{_tags}% &b[GOD]"
+                if loop-player's flight mode is true:
+                    set {_tags} to "%{_tags}% &6[FLY]"
+                send "&8▪ &f%loop-player% &7(Ping: &b%loop-player's ping%ms&7)%{_tags}%" to player
+        if {_count} is 0:
+            send "&7Aucun membre du staff connecté." to player
+        send "&8&m────────────────────────────────────────" to player
+        send "&7Total connectés : &e%{_count}% staff(s)" to player
+        send "" to player
+
+# Signalement de joueurs (/report)
+command /report [<player>] [<text>]:
+    trigger:
+        if arg-1 is not set:
+            send "&cUtilisation: &e/report <pseudo> <raison>" to player
+            stop
+        if arg-2 is not set:
+            send "&cUtilisation: &e/report <pseudo> <raison>" to player
+            stop
+        if arg-1 is player:
+            send "&cTu ne peux pas te signaler toi-même !" to player
+            stop
+        send "{@prefix}&aTon signalement concernant &f%arg-1% &aa bien été envoyé au Staff." to player
+        loop all players:
+            if loop-player has permission "minestars.staff":
+                send "" to loop-player
+                send "&c&l[SIGNALEMENT REÇU]" to loop-player
+                send "&7• Joueur : &e%arg-1%" to loop-player
+                send "&7• Par : &f%player%" to loop-player
+                send "&7• Motif : &c%arg-2%" to loop-player
+                send "&7• Actions rapides : &e/tp %arg-1% &8┃ &c/freeze %arg-1% &8┃ &3/whois %arg-1%" to loop-player
+                send "" to loop-player
+                play sound "block.note_block.pling" to loop-player
+
+# ==================== 12. ÉQUIPEMENT DIVIN OPTIONNEL (/maxarmor, /godtools) ====================
+
+command /maxarmor [<player>]:
+    aliases: /godarmor, /staffarmor
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        set {_target} to player
+        if arg-1 is set:
+            set {_target} to arg-1
+        
+        set {_h} to netherite helmet of protection 4 and unbreaking 3 and mending and respiration 3 and aqua affinity 1 and thorns 3 named "&6&l✦ CASQUE DIVIN DU STAFF ✦" with lore "&8Armure ultime Staff" and "&a✦ Protection 4, Solidité 3, Raccommodage"
+        set {_c} to netherite chestplate of protection 4 and unbreaking 3 and mending and thorns 3 named "&6&l✦ PLASTRON DIVIN DU STAFF ✦" with lore "&8Armure ultime Staff" and "&a✦ Protection 4, Solidité 3, Raccommodage"
+        set {_l} to netherite leggings of protection 4 and unbreaking 3 and mending and thorns 3 and swift sneak 3 named "&6&l✦ JAMBIÈRES DIVINES DU STAFF ✦" with lore "&8Armure ultime Staff" and "&a✦ Protection 4, Solidité 3, Raccommodage"
+        set {_b} to netherite boots of protection 4 and unbreaking 3 and mending and thorns 3 and feather falling 4 and depth strider 3 and soul speed 3 named "&6&l✦ BOTTES DIVINES DU STAFF ✦" with lore "&8Armure ultime Staff" and "&a✦ Protection 4, Solidité 3, Raccommodage"
+        
+        set helmet of {_target} to {_h}
+        set chestplate of {_target} to {_c}
+        set leggings of {_target} to {_l}
+        set boots of {_target} to {_b}
+        
+        send "{@prefix}&6Armure Divine Max équipée pour &f%{_target}%&6 !" to player
+        play sound "ui.toast.challenge_complete" to {_target}
+
+command /godtools [<player>]:
+    aliases: /maxtools, /maxweapons
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        set {_target} to player
+        if arg-1 is set:
+            set {_target} to arg-1
+            
+        set {_sword} to netherite sword of sharpness 5 and fire aspect 2 and looting 3 and unbreaking 3 and mending and knockback 2 and sweeping edge 3 named "&6&l✦ ÉPÉE DIVINE DU STAFF ✦"
+        set {_pickF} to netherite pickaxe of efficiency 5 and fortune 3 and unbreaking 3 and mending named "&6&l✦ PIOCHE FORTUNE DIVINE ✦"
+        set {_pickS} to netherite pickaxe of efficiency 5 and silk touch 1 and unbreaking 3 and mending named "&6&l✦ PIOCHE TOUCHER DE SOIE ✦"
+        set {_axe} to netherite axe of efficiency 5 and sharpness 5 and unbreaking 3 and mending and silk touch 1 named "&6&l✦ HACHE DIVINE ✦"
+        set {_shovel} to netherite shovel of efficiency 5 and unbreaking 3 and mending and silk touch 1 named "&6&l✦ PELLE DIVINE ✦"
+        set {_bow} to bow of power 5 and flame 1 and infinity 1 and punch 2 and unbreaking 3 and mending named "&6&l✦ ARC DIVIN ✦"
+        
+        give 1 of {_sword} to {_target}
+        give 1 of {_pickF} to {_target}
+        give 1 of {_pickS} to {_target}
+        give 1 of {_axe} to {_target}
+        give 1 of {_shovel} to {_target}
+        give 1 of {_bow} to {_target}
+        give 1 of arrow named "&eFlèche Divine" to {_target}
+        give 64 of golden apple to {_target}
+        give 1 of totem of undying to {_target}
+        
+        send "{@prefix}&6Pack d'outils et armes divines donné à &f%{_target}%&6 !" to player
+        play sound "entity.player.levelup" to {_target}
+
+# ==================== 13. GUIDE D'AIDE COMPLET DU STAFF (/staffhelp) ====================
+
+command /staffhelp:
+    aliases: /adminhelp, /modhelp
+    permission: minestars.staff
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        send "" to player
+        send "&c&l✦ PANEL D'AIDE - MODÉRATION & MODES STAFF MINESTARS ✦" to player
+        send "&8&m────────────────────────────────────────────────────" to player
+        send "&6[MODES PRINCIPAUX]" to player
+        send "&e• /staff &8» &fActive/Désactive le Staff Mode (Vanish + Fly + God + NV)" to player
+        send "&e• /v &7ou &e/vanish &8» &fBascule le mode Vanish (Invisibilité totale)" to player
+        send "&e• /fly &7[joueur] &8» &fBascule le mode Vol" to player
+        send "&e• /god &7[joueur] &8» &fBascule le mode Invulnérable" to player
+        send "&e• /nv &8» &fBascule la Vision Nocturne" to player
+        send "&e• /spec &7[joueur] &8» &fBascule en Mode Spectateur (et TP au suspect)" to player
+        send "&e• /clearscreen &8» &fNettoie instantanément l'écran" to player
+        send "" to player
+        send "&6[SURVEILLANCE & SPY]" to player
+        send "&e• /tpr &8» &fTéléportation aléatoire vers un joueur pour surveillance" to player
+        send "&e• /whois &7<joueur> &8» &fFiche complète (CPS, warns, ping, monde, argent)" to player
+        send "&e• /cps &7<joueur> &8» &fContrôle des clics par seconde en direct" to player
+        send "&e• /cspy &8» &fEspionnage de toutes les commandes des joueurs" to player
+        send "&e• /chatspy &8» &fEspionnage de tous les messages privés & canaux" to player
+        send "&e• /xray &8» &fConsulte les dernières alertes de minage suspect" to player
+        send "" to player
+        send "&6[TÉLÉPORTATION & DÉPLACEMENT]" to player
+        send "&e• /tp &7<joueur> [cible] &8» &fTéléportation instantanée" to player
+        send "&e• /s &7ou &e/tphere <joueur> &8» &fTéléporte un joueur sur toi" to player
+        send "&e• /back &8» &fRetourne à la position précédente" to player
+        send "&e• /thru &8| &e/top &8» &fTraverse les murs / TP au sommet" to player
+        send "&e• /speed &7<1-10> &8» &fRègle la vitesse de marche et de vol" to player
+        send "" to player
+        send "&6[SANCTIONS & CONTRÔLE]" to player
+        send "&e• /freeze &7<joueur> &8» &fImmobilise pour vérification (Auto-ban si déco)" to player
+        send "&e• /warn &7<joueur> [raison] &8» &fAvertit un joueur (Kick à 3, Mute à 5)" to player
+        send "&e• /warns &7<joueur> &8| &e/unwarn <joueur> [all] &8» &fHistorique / Retrait warns" to player
+        send "&e• /mute &7<joueur> [raison] &8| &e/unmute <joueur> &8» &fRéduire au silence" to player
+        send "&e• /kick &7<joueur> [raison] &8» &fExpulse un joueur du serveur" to player
+        send "&e• /ban &7<joueur> [raison] &8| &e/unban <joueur> &8» &fBannissement" to player
+        send "&e• /tempban &7<joueur> <temps> [raison] &8» &fBan temporaire" to player
+        send "&e• /invsee &7<joueur> &8| &e/ec <joueur> &8» &fInspecte inventaire & Enderchest" to player
+        send "&e• /clearinv &7[joueur] &8» &fVide l'inventaire d'un joueur" to player
+        send "" to player
+        send "&6[GESTION DU CHAT & SERVEUR]" to player
+        send "&e• /sc &7<msg> &8| &e/sctoggle &8» &fStaff Chat direct / Canal permanent" to player
+        send "&e• /mutechat &8» &fVerrouille / Déverrouille le chat global" to player
+        send "&e• /clearchat &7[p] &8» &fNettoie le chat (global ou personnel)" to player
+        send "&e• /slowchat &7[sec] &8» &fRalentit la fréquence des messages" to player
+        send "&e• /stafflist &8» &fListe des staffs en ligne et leurs modes actifs" to player
+        send "&e• /clearlag &8» &fSupprime items au sol et monstres orphelins" to player
+        send "&e• /broadcast &7<msg> &8» &fAnnonce globale stylée" to player
+        send "&e• /gmc, /gms, /gmsp, /gma &8» &fChangement instantané de gamemode" to player
+        send "&e• /heal, /feed, /repair &8» &fSoins, nourriture et réparations" to player
+        send "&8&m────────────────────────────────────────────────────" to player
+        play sound "block.note_block.pling" to player

@@ -1,0 +1,205 @@
+# ==============================================================================
+#           MINESTARS - NAVIGATEUR & MENU PRINCIPAL ÉLITE (PRO & ÉPURÉ)
+#           - Design moderne 3 rangées : fluide, élégant et sans encombrement
+#           - 3 Mondes Majeurs : Spawn / Hub, Survie 1.20+, Skyblock V9
+#           - Raccourcis essentiels : Profil, Métiers, Récompenses, Tags, Grades
+# ==============================================================================
+
+function giveNavigator(p: player):
+    set {_has} to false
+    loop integers from 0 to 40:
+        set {_item} to slot loop-integer of {_p}
+        if {_item} is nether star:
+            if name of {_item} contains "NAVIGATEUR" or "MENU" or "MINESTARS":
+                if {_has} is false:
+                    set {_has} to true
+                else:
+                    set slot loop-integer of {_p} to air
+        else if {_item} is compass:
+            if name of {_item} contains "NAVIGATEUR" or "MENU" or "MINESTARS" or "SKYBLOCK" or "BOUSSOLE":
+                set slot loop-integer of {_p} to air
+                
+    if {_has} is false:
+        set slot 4 of {_p} to 1 of nether star named "&b&l✦ NAVIGATEUR &7(Clic Droit)" with lore "&8&m─────────────────────────" and "&7» Clic droit pour ouvrir le menu" and "&7» Accès instantané à tous les mondes" and "&8&m─────────────────────────"
+
+# ==================== MAINTIEN DE L'ITEM DANS L'INVENTAIRE ====================
+
+on join:
+    wait 10 ticks
+    giveNavigator(player)
+
+on respawn:
+    wait 5 ticks
+    giveNavigator(player)
+
+on world change:
+    wait 10 ticks
+    giveNavigator(player)
+
+on drop:
+    if event-item is nether star or compass:
+        if name of event-item contains "NAVIGATEUR" or "MENU" or "MINESTARS" or "SKYBLOCK" or "BOUSSOLE":
+            cancel event
+
+on death of player:
+    loop drops:
+        if loop-item is nether star or compass:
+            if name of loop-item contains "NAVIGATEUR" or "MENU" or "MINESTARS" or "SKYBLOCK" or "BOUSSOLE":
+                remove loop-item from drops
+
+on right click:
+    if player's tool is nether star or compass:
+        if name of player's tool contains "NAVIGATEUR" or "MENU" or "MINESTARS" or "SKYBLOCK" or "BOUSSOLE":
+            cancel event
+            execute player command "menu"
+        else if player's tool is nether star:
+            cancel event
+            execute player command "menu"
+
+command /navigateur:
+    aliases: /nav, /getnavigator, /boussole, /compass
+    trigger:
+        giveNavigator(player)
+        send "&b&l✦ NAVIGATION &8> &aNavigateur ajouté à ton inventaire !" to player
+        play sound "entity.experience_orb.pickup" to player
+
+# ==================== MENU PRINCIPAL ÉPURÉ & MODERNE (3 ROWS) ====================
+
+command /menu:
+    aliases: /coffre, /serveur, /servers, /accueil
+    trigger:
+        set {_menu} to a new chest inventory with 3 rows named "&8» &0&lMINESTARS &8- &3&lMENU PRINCIPAL"
+        
+        # 1. Fond sombre élégant
+        loop 27 times:
+            set slot (loop-number - 1) of {_menu} to 1 of gray stained glass pane named "&8✦"
+        
+        # Coins lumineux Cyan
+        set slot 0 of {_menu} to 1 of cyan stained glass pane named " "
+        set slot 8 of {_menu} to 1 of cyan stained glass pane named " "
+        set slot 18 of {_menu} to 1 of cyan stained glass pane named " "
+        set slot 26 of {_menu} to 1 of cyan stained glass pane named " "
+
+        # 2. Profil Joueur (Slot 4)
+        set {_u} to uuid of player
+        set {_r} to {rank::%{_u}%} ? "Joueur"
+        set {_bal} to player's balance ? 0
+        set {_j} to {job::%{_u}%} ? "Aucun"
+        set {_lvl} to {player_lvl::%{_u}%} ? 1
+
+        set slot 4 of {_menu} to 1 of player head named "&e&l✦ %player% &e&l✦" with lore "&8&m─────────────────────────" and "&7• Grade : &e%{_r}% &8┃ &7Niveau : &e★ %{_lvl}%" and "&7• Solde : &a%{_bal}%$ &8┃ &7Métier : &b%{_j}%" and "&8&m─────────────────────────"
+
+        # 3. Les Mondes & Dimensions (Centrés & Mis en valeur)
+        # NETHER (Slot 10)
+        set slot 10 of {_menu} to 1 of netherrack named "&c&l✦ MONDE NETHER ✦" with lore "&8&m─────────────────────────" and "&7Dimension ardente & forteresses." and "&7• Accessible depuis le &eSpawn" and "&7• Portails désactivés en Survie/Skyblock" and "&8&m─────────────────────────" and "&c▸ Cliquer pour Rejoindre (/nether)"
+
+        # SURVIE (Slot 11)
+        set slot 11 of {_menu} to 1 of grass block named "&a&l✦ MONDE SURVIE 1.20+ ✦" with lore "&8&m─────────────────────────" and "&7Survie personnalisée & économie." and "&7• Téléportation aléatoire &f/rtp" and "&7• Maisons &f/sethome &7& téléportation &f/tpa" and "&8&m─────────────────────────" and "&a▸ Cliquer pour Gérer & Rejoindre"
+
+        # SPAWN / HUB (Slot 13)
+        set slot 13 of {_menu} to 1 of beacon named "&b&l✦ HUB & SPAWN ✦" with lore "&8&m─────────────────────────" and "&7Accueil central, portails & mini-jeux." and "&7• Parcours Jump chronométré" and "&7• Portails Nether & End" and "&8&m─────────────────────────" and "&b▸ Cliquer pour Rejoindre le Spawn"
+
+        # SKYBLOCK (Slot 15)
+        set slot 15 of {_menu} to 1 of feather named "&e&l✦ MONDE SKYBLOCK V9 ✦" with lore "&8&m─────────────────────────" and "&7Aventure céleste et îles infinies." and "&7• Générateurs de minerais évolutifs" and "&7• Banque d'île, Upgrades & Défis" and "&8&m─────────────────────────" and "&e▸ Cliquer pour Gérer & Rejoindre (/is)"
+
+        # THE END (Slot 16)
+        set slot 16 of {_menu} to 1 of end stone named "&d&l✦ MONDE THE END ✦" with lore "&8&m─────────────────────────" and "&7Dimension du Dragon & Cités de l'End." and "&7• Accessible depuis le &eSpawn" and "&7• Portails désactivés en Survie/Skyblock" and "&8&m─────────────────────────" and "&d▸ Cliquer pour Rejoindre (/end)"
+
+        # 4. Raccourcis Utiles (Rangée du bas)
+        # Métiers (Slot 19)
+        set slot 19 of {_menu} to 1 of diamond pickaxe named "&3&l✦ MÉTIERS (/jobs) ✦" with lore "&7Gagne de l'argent en minant, coupant..." and "&e▸ Cliquer pour ouvrir"
+
+        # Vocal 3D (Slot 20)
+        set slot 20 of {_menu} to 1 of note block named "<#00D4FF>&l✦ CHAT VOCAL 3D (/vocal) ✦" with lore "&7Touches [V], [G], test spatialisé" and "<#00D4FF>▸ Cliquer pour configurer"
+
+        # Daily Rewards (Slot 21)
+        set slot 21 of {_menu} to 1 of chest named "&6&l✦ CADEAU DAILY (/daily) ✦" with lore "&7Récupère tes récompenses de présence !" and "&e▸ Cliquer pour récupérer"
+
+        # Boost FPS (Slot 22)
+        set slot 22 of {_menu} to 1 of clock named "&a&l✦ BOOST FPS & LAG (/fps) ✦" with lore "&7Optimisation graphique & anti-lag" and "&a▸ Cliquer pour booster vos FPS"
+
+        # Chat Tags (Slot 23)
+        set slot 23 of {_menu} to 1 of name tag named "&d&l✦ TITRES (/tags) ✦" with lore "&7Personnalise ton badge dans le chat !" and "&e▸ Cliquer pour choisir"
+
+        # Immersion HD (Slot 24)
+        set slot 24 of {_menu} to 1 of jukebox named "&e&l✦ IMMERSION HD (/immersion) ✦" with lore "&7Battement de coeur, sang & sons 3D" and "&e▸ Cliquer pour personnaliser"
+
+        # Boutique / Grades (Slot 25)
+        set slot 25 of {_menu} to 1 of gold ingot named "&e&l✦ GRADES & BOUTIQUE ✦" with lore "&7Avantages exclusifs VIP, MVP & STAR !" and "&e▸ Cliquer pour voir (/grades)"
+
+        open {_menu} to player
+        play sound "block.chest.open" to player
+
+on inventory click:
+    if name of event-inventory is "&8» &0&lMINESTARS &8- &3&lMENU PRINCIPAL":
+        cancel event
+        
+        # Nether (Slot 10)
+        if index of event-slot is 10:
+            close player's inventory
+            execute player command "nether"
+
+        # 1. Survie (Slot 11) -> Téléportation directe dans le monde Survie
+        else if index of event-slot is 11:
+            close player's inventory
+            play sound "entity.player.levelup" to player
+            execute player command "survie tp"
+
+        # 2. Spawn (Slot 13) -> Téléportation au spawn principal
+        else if index of event-slot is 13:
+            close player's inventory
+            play sound "entity.player.levelup" to player
+            execute player command "spawn"
+
+        # 3. Skyblock (Slot 15) -> Menu Complet de Gestion Skyblock (/is)
+        else if index of event-slot is 15:
+            close player's inventory
+            play sound "entity.player.levelup" to player
+            execute player command "is"
+
+        # End (Slot 16)
+        else if index of event-slot is 16:
+            close player's inventory
+            execute player command "end"
+
+        # 4. Métiers (Slot 19) -> Ouverture du menu métiers
+        else if index of event-slot is 19:
+            close player's inventory
+            play sound "ui.button.click" to player
+            execute player command "jobs"
+
+        # 5. Vocal 3D (Slot 20) -> Menu Vocal
+        else if index of event-slot is 20:
+            close player's inventory
+            play sound "ui.button.click" to player
+            execute player command "vocal"
+
+        # 6. Daily (Slot 21) -> Calendrier journalier
+        else if index of event-slot is 21:
+            close player's inventory
+            play sound "ui.button.click" to player
+            execute player command "daily"
+
+        # 7. FPS Boost (Slot 22) -> Menu FPS
+        else if index of event-slot is 22:
+            close player's inventory
+            play sound "ui.button.click" to player
+            execute player command "fps"
+
+        # 8. Tags (Slot 23) -> Menu des tags de chat
+        else if index of event-slot is 23:
+            close player's inventory
+            play sound "ui.button.click" to player
+            execute player command "tags"
+
+        # 9. Immersion HD (Slot 24) -> Menu Immersion
+        else if index of event-slot is 24:
+            close player's inventory
+            play sound "ui.button.click" to player
+            execute player command "immersion"
+
+        # 10. Grades (Slot 25) -> Menu des avantages de grades
+        else if index of event-slot is 25:
+            close player's inventory
+            play sound "ui.button.click" to player
+            execute player command "grades"

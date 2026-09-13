@@ -1,0 +1,341 @@
+# ==============================================================================
+#                 COSMÉTIQUES DU LOBBY (AURAS PARTICULES & BOUTIQUE 50K-100K)
+# ==============================================================================
+
+options:
+    prefix: &d&l✦ COSMÉTIQUES &8> &7
+
+# Commande directe pour tester les auras
+command /testaura [<text>]:
+    permission: op
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix}&e/testaura <flammes|coeurs|etoiles|nuages|portail|enchante|totem|off>" to player
+            stop
+        if arg-1 is "off" or "stop" or "clear":
+            delete {active_cosmetic::%uuid of player%}
+            send "{@prefix}&cAura désactivée." to player
+        else:
+            set {active_cosmetic::%uuid of player%} to arg-1
+            send "{@prefix}&aAura &e%arg-1% &aactivée avec succès!" to player
+            play sound "entity.player.levelup" to player
+
+# ==================== MENU COSMÉTIQUES & BOUTIQUE ====================
+
+command /cosmetiques:
+    aliases: /particles, /particules, /cosmetics, /aura, /auras
+    trigger:
+        set {_gui} to a new chest inventory with 4 rows named "&8» &0&lBOUTIQUE DES COSMÉTIQUES"
+        
+        loop 36 times:
+            set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
+            
+        set slot 0 of {_gui} to 1 of magenta stained glass pane named " "
+        set slot 8 of {_gui} to 1 of magenta stained glass pane named " "
+        set slot 27 of {_gui} to 1 of magenta stained glass pane named " "
+        set slot 35 of {_gui} to 1 of magenta stained glass pane named " "
+            
+        set {_act} to {active_cosmetic::%uuid of player%}
+        if {_act} is not set:
+            set {_act} to "Aucune"
+
+        # En-tête (Slot 4)
+        set slot 4 of {_gui} to 1 of nether star named "&d&l✦ PARTICULES & EFFETS D'AURA ✦" with lore "&8Tableau des cosmétiques", "", "&7• Aura active : &e%{_act}%", "", "&e✦ Sélectionne ou achète une aura ci-dessous !"
+
+        # 1. FLAMMES (50,000$)
+        if player is op or {unlocked_cosmetic::%uuid of player%::flammes} is true:
+            if {active_cosmetic::%uuid of player%} is "flammes":
+                set slot 10 of {_gui} to 1 of blaze powder named "&c&l✦ AURA DE FLAMMES ✦" with lore "&7Entoure tes pas de flammes ardentes", "", "&a✔ ACTIF &8(Clic pour désactiver)"
+            else:
+                set slot 10 of {_gui} to 1 of blaze powder named "&c&l✦ AURA DE FLAMMES ✦" with lore "&7Entoure tes pas de flammes ardentes", "", "&e▸ POSSÉDÉ &8(Clic pour activer)"
+        else:
+            set slot 10 of {_gui} to 1 of blaze powder named "&c&l✦ AURA DE FLAMMES ✦" with lore "&7Entoure tes pas de flammes ardentes", "", "&6✦ Prix: &e50,000$", "&e▸ Cliquer pour acheter"
+
+        # 2. CŒURS (60,000$)
+        if player is op or {unlocked_cosmetic::%uuid of player%::coeurs} is true:
+            if {active_cosmetic::%uuid of player%} is "coeurs":
+                set slot 12 of {_gui} to 1 of red dye named "&d&l✦ AURA DE CŒURS ✦" with lore "&7Fais flotter des cœurs d'amour autour de toi", "", "&a✔ ACTIF &8(Clic pour désactiver)"
+            else:
+                set slot 12 of {_gui} to 1 of red dye named "&d&l✦ AURA DE CŒURS ✦" with lore "&7Fais flotter des cœurs d'amour autour de toi", "", "&e▸ POSSÉDÉ &8(Clic pour activer)"
+        else:
+            set slot 12 of {_gui} to 1 of red dye named "&d&l✦ AURA DE CŒURS ✦" with lore "&7Fais flotter des cœurs d'amour autour de toi", "", "&6✦ Prix: &e60,000$", "&e▸ Cliquer pour acheter"
+
+        # 3. ÉTOILES / CRITS (75,000$)
+        if player is op or {unlocked_cosmetic::%uuid of player%::etoiles} is true:
+            if {active_cosmetic::%uuid of player%} is "etoiles":
+                set slot 14 of {_gui} to 1 of nether star named "&e&l✦ AURA D'ÉTOILES ✦" with lore "&7Brille de mille éclats étincelants", "", "&a✔ ACTIF &8(Clic pour désactiver)"
+            else:
+                set slot 14 of {_gui} to 1 of nether star named "&e&l✦ AURA D'ÉTOILES ✦" with lore "&7Brille de mille éclats étincelants", "", "&e▸ POSSÉDÉ &8(Clic pour activer)"
+        else:
+            set slot 14 of {_gui} to 1 of nether star named "&e&l✦ AURA D'ÉTOILES ✦" with lore "&7Brille de mille éclats étincelants", "", "&6✦ Prix: &e75,000$", "&e▸ Cliquer pour acheter"
+
+        # 4. NUAGES (80,000$)
+        if player is op or {unlocked_cosmetic::%uuid of player%::nuages} is true:
+            if {active_cosmetic::%uuid of player%} is "nuages":
+                set slot 16 of {_gui} to 1 of feather named "&b&l✦ AURA DE NUAGES ✦" with lore "&7Marche sur une brume céleste", "", "&a✔ ACTIF &8(Clic pour désactiver)"
+            else:
+                set slot 16 of {_gui} to 1 of feather named "&b&l✦ AURA DE NUAGES ✦" with lore "&7Marche sur une brume céleste", "", "&e▸ POSSÉDÉ &8(Clic pour activer)"
+        else:
+            set slot 16 of {_gui} to 1 of feather named "&b&l✦ AURA DE NUAGES ✦" with lore "&7Marche sur une brume céleste", "", "&6✦ Prix: &e80,000$", "&e▸ Cliquer pour acheter"
+
+        # 5. PORTAIL DU NÉANT (90,000$)
+        if player is op or {unlocked_cosmetic::%uuid of player%::portail} is true:
+            if {active_cosmetic::%uuid of player%} is "portail":
+                set slot 20 of {_gui} to 1 of ender pearl named "&5&l✦ AURA DU NÉANT ✦" with lore "&7Émets des particules mystiques de l'End", "", "&a✔ ACTIF &8(Clic pour désactiver)"
+            else:
+                set slot 20 of {_gui} to 1 of ender pearl named "&5&l✦ AURA DU NÉANT ✦" with lore "&7Émets des particules mystiques de l'End", "", "&e▸ POSSÉDÉ &8(Clic pour activer)"
+        else:
+            set slot 20 of {_gui} to 1 of ender pearl named "&5&l✦ AURA DU NÉANT ✦" with lore "&7Émets des particules mystiques de l'End", "", "&6✦ Prix: &e90,000$", "&e▸ Cliquer pour acheter"
+
+        # 6. ENCHANTEMENT (95,000$)
+        if player is op or {unlocked_cosmetic::%uuid of player%::enchante} is true:
+            if {active_cosmetic::%uuid of player%} is "enchante":
+                set slot 22 of {_gui} to 1 of enchanting table named "&9&l✦ AURA MAGIQUE ✦" with lore "&7Fais tournoyer les runes d'enchantement", "", "&a✔ ACTIF &8(Clic pour désactiver)"
+            else:
+                set slot 22 of {_gui} to 1 of enchanting table named "&9&l✦ AURA MAGIQUE ✦" with lore "&7Fais tournoyer les runes d'enchantement", "", "&e▸ POSSÉDÉ &8(Clic pour activer)"
+        else:
+            set slot 22 of {_gui} to 1 of enchanting table named "&9&l✦ AURA MAGIQUE ✦" with lore "&7Fais tournoyer les runes d'enchantement", "", "&6✦ Prix: &e95,000$", "&e▸ Cliquer pour acheter"
+
+        # 7. ROYALE / TOTEM (100,000$)
+        if player is op or {unlocked_cosmetic::%uuid of player%::totem} is true:
+            if {active_cosmetic::%uuid of player%} is "totem":
+                set slot 24 of {_gui} to 1 of totem of undying named "&6&l✦ AURA ROYALE TOTEM ✦" with lore "&7Les esprits immortels veillent sur toi", "", "&a✔ ACTIF &8(Clic pour désactiver)"
+            else:
+                set slot 24 of {_gui} to 1 of totem of undying named "&6&l✦ AURA ROYALE TOTEM ✦" with lore "&7Les esprits immortels veillent sur toi", "", "&e▸ POSSÉDÉ &8(Clic pour activer)"
+        else:
+            set slot 24 of {_gui} to 1 of totem of undying named "&6&l✦ AURA ROYALE TOTEM ✦" with lore "&7Les esprits immortels veillent sur toi", "", "&6✦ Prix: &e100,000$", "&e▸ Cliquer pour acheter"
+
+        # DÉSACTIVER TOUT (Slot 31)
+        set slot 31 of {_gui} to 1 of barrier named "&c&lDÉSACTIVER MON AURA" with lore "&7Retirer toutes tes particules actives"
+        
+        open {_gui} to player
+        play sound "block.chest.open" to player
+
+on inventory click:
+    if name of event-inventory is "&8» &0&lBOUTIQUE DES COSMÉTIQUES":
+        cancel event
+        
+        set {_eco} to player's balance
+        if {_eco} is not set:
+            set {_eco} to 0
+            
+        # 1. FLAMMES (50,000$)
+        if index of event-slot is 10:
+            if player is op or {unlocked_cosmetic::%uuid of player%::flammes} is true:
+                if {active_cosmetic::%uuid of player%} is "flammes":
+                    delete {active_cosmetic::%uuid of player%}
+                    send "{@prefix}&cAura de Flammes désactivée." to player
+                else:
+                    set {active_cosmetic::%uuid of player%} to "flammes"
+                    send "{@prefix}&aAura de Flammes activée!" to player
+                    play sound "entity.player.levelup" to player
+            else:
+                if {_eco} >= 50000:
+                    execute console command "eco take %player% 50000"
+                    set {unlocked_cosmetic::%uuid of player%::flammes} to true
+                    set {active_cosmetic::%uuid of player%} to "flammes"
+                    broadcast "&d&l✦ COSMÉTIQUES &8> &f%player% &7a débloqué l'&c&lAura de Flammes &7(&e50,000$&7) !"
+                    play sound "ui.toast.challenge_complete" to player
+                else:
+                    send "{@prefix}&cTu n'as pas assez d'argent! (&e50,000$&c requis, solde: &e%{_eco}%$&c)" to player
+                    play sound "entity.villager.no" to player
+            execute player command "cosmetiques"
+
+        # 2. CŒURS (60,000$)
+        else if index of event-slot is 12:
+            if player is op or {unlocked_cosmetic::%uuid of player%::coeurs} is true:
+                if {active_cosmetic::%uuid of player%} is "coeurs":
+                    delete {active_cosmetic::%uuid of player%}
+                    send "{@prefix}&cAura de Cœurs désactivée." to player
+                else:
+                    set {active_cosmetic::%uuid of player%} to "coeurs"
+                    send "{@prefix}&aAura de Cœurs activée!" to player
+                    play sound "entity.player.levelup" to player
+            else:
+                if {_eco} >= 60000:
+                    execute console command "eco take %player% 60000"
+                    set {unlocked_cosmetic::%uuid of player%::coeurs} to true
+                    set {active_cosmetic::%uuid of player%} to "coeurs"
+                    broadcast "&d&l✦ COSMÉTIQUES &8> &f%player% &7a débloqué l'&d&lAura de Cœurs &7(&e60,000$&7) !"
+                    play sound "ui.toast.challenge_complete" to player
+                else:
+                    send "{@prefix}&cTu n'as pas assez d'argent! (&e60,000$&c requis, solde: &e%{_eco}%$&c)" to player
+                    play sound "entity.villager.no" to player
+            execute player command "cosmetiques"
+
+        # 3. ÉTOILES (75,000$)
+        else if index of event-slot is 14:
+            if player is op or {unlocked_cosmetic::%uuid of player%::etoiles} is true:
+                if {active_cosmetic::%uuid of player%} is "etoiles":
+                    delete {active_cosmetic::%uuid of player%}
+                    send "{@prefix}&cAura d'Étoiles désactivée." to player
+                else:
+                    set {active_cosmetic::%uuid of player%} to "etoiles"
+                    send "{@prefix}&aAura d'Étoiles activée!" to player
+                    play sound "entity.player.levelup" to player
+            else:
+                if {_eco} >= 75000:
+                    execute console command "eco take %player% 75000"
+                    set {unlocked_cosmetic::%uuid of player%::etoiles} to true
+                    set {active_cosmetic::%uuid of player%} to "etoiles"
+                    broadcast "&d&l✦ COSMÉTIQUES &8> &f%player% &7a débloqué l'&e&lAura d'Étoiles &7(&e75,000$&7) !"
+                    play sound "ui.toast.challenge_complete" to player
+                else:
+                    send "{@prefix}&cTu n'as pas assez d'argent! (&e75,000$&c requis, solde: &e%{_eco}%$&c)" to player
+                    play sound "entity.villager.no" to player
+            execute player command "cosmetiques"
+
+        # 4. NUAGES (80,000$)
+        else if index of event-slot is 16:
+            if player is op or {unlocked_cosmetic::%uuid of player%::nuages} is true:
+                if {active_cosmetic::%uuid of player%} is "nuages":
+                    delete {active_cosmetic::%uuid of player%}
+                    send "{@prefix}&cAura de Nuages désactivée." to player
+                else:
+                    set {active_cosmetic::%uuid of player%} to "nuages"
+                    send "{@prefix}&aAura de Nuages activée!" to player
+                    play sound "entity.player.levelup" to player
+            else:
+                if {_eco} >= 80000:
+                    execute console command "eco take %player% 80000"
+                    set {unlocked_cosmetic::%uuid of player%::nuages} to true
+                    set {active_cosmetic::%uuid of player%} to "nuages"
+                    broadcast "&d&l✦ COSMÉTIQUES &8> &f%player% &7a débloqué l'&b&lAura de Nuages &7(&e80,000$&7) !"
+                    play sound "ui.toast.challenge_complete" to player
+                else:
+                    send "{@prefix}&cTu n'as pas assez d'argent! (&e80,000$&c requis, solde: &e%{_eco}%$&c)" to player
+                    play sound "entity.villager.no" to player
+            execute player command "cosmetiques"
+
+        # 5. PORTAIL DU NÉANT (90,000$)
+        else if index of event-slot is 20:
+            if player is op or {unlocked_cosmetic::%uuid of player%::portail} is true:
+                if {active_cosmetic::%uuid of player%} is "portail":
+                    delete {active_cosmetic::%uuid of player%}
+                    send "{@prefix}&cAura du Néant désactivée." to player
+                else:
+                    set {active_cosmetic::%uuid of player%} to "portail"
+                    send "{@prefix}&aAura du Néant activée!" to player
+                    play sound "entity.player.levelup" to player
+            else:
+                if {_eco} >= 90000:
+                    execute console command "eco take %player% 90000"
+                    set {unlocked_cosmetic::%uuid of player%::portail} to true
+                    set {active_cosmetic::%uuid of player%} to "portail"
+                    broadcast "&d&l✦ COSMÉTIQUES &8> &f%player% &7a débloqué l'&5&lAura du Néant &7(&e90,000$&7) !"
+                    play sound "ui.toast.challenge_complete" to player
+                else:
+                    send "{@prefix}&cTu n'as pas assez d'argent! (&e90,000$&c requis, solde: &e%{_eco}%$&c)" to player
+                    play sound "entity.villager.no" to player
+            execute player command "cosmetiques"
+
+        # 6. ENCHANTE (95,000$)
+        else if index of event-slot is 22:
+            if player is op or {unlocked_cosmetic::%uuid of player%::enchante} is true:
+                if {active_cosmetic::%uuid of player%} is "enchante":
+                    delete {active_cosmetic::%uuid of player%}
+                    send "{@prefix}&cAura Magique désactivée." to player
+                else:
+                    set {active_cosmetic::%uuid of player%} to "enchante"
+                    send "{@prefix}&aAura Magique activée!" to player
+                    play sound "entity.player.levelup" to player
+            else:
+                if {_eco} >= 95000:
+                    execute console command "eco take %player% 95000"
+                    set {unlocked_cosmetic::%uuid of player%::enchante} to true
+                    set {active_cosmetic::%uuid of player%} to "enchante"
+                    broadcast "&d&l✦ COSMÉTIQUES &8> &f%player% &7a débloqué l'&9&lAura Magique &7(&e95,000$&7) !"
+                    play sound "ui.toast.challenge_complete" to player
+                else:
+                    send "{@prefix}&cTu n'as pas assez d'argent! (&e95,000$&c requis, solde: &e%{_eco}%$&c)" to player
+                    play sound "entity.villager.no" to player
+            execute player command "cosmetiques"
+
+        # 7. ROYALE TOTEM (100,000$)
+        else if index of event-slot is 24:
+            if player is op or {unlocked_cosmetic::%uuid of player%::totem} is true:
+                if {active_cosmetic::%uuid of player%} is "totem":
+                    delete {active_cosmetic::%uuid of player%}
+                    send "{@prefix}&cAura Royale Totem désactivée." to player
+                else:
+                    set {active_cosmetic::%uuid of player%} to "totem"
+                    send "{@prefix}&aAura Royale Totem activée!" to player
+                    play sound "entity.player.levelup" to player
+            else:
+                if {_eco} >= 100000:
+                    execute console command "eco take %player% 100000"
+                    set {unlocked_cosmetic::%uuid of player%::totem} to true
+                    set {active_cosmetic::%uuid of player%} to "totem"
+                    broadcast "&6&l✦ COSMÉTIQUES &8> &f%player% &7a débloqué la légendaire &6&lAura Royale Totem &7(&e100,000$&7) !"
+                    play sound "ui.toast.challenge_complete" to player
+                else:
+                    send "{@prefix}&cTu n'as pas assez d'argent! (&e100,000$&c requis, solde: &e%{_eco}%$&c)" to player
+                    play sound "entity.villager.no" to player
+            execute player command "cosmetiques"
+
+        # DÉSACTIVER TOUT
+        else if index of event-slot is 31:
+            delete {active_cosmetic::%uuid of player%}
+            close player's inventory
+            send "{@prefix}&cToutes tes auras de particules ont été retirées." to player
+            play sound "block.chest.close" to player
+
+# ==================== MOTEUR DE RENDU DES PARTICULES ULTRA-FIABLE ====================
+
+every 10 ticks:
+    loop all players:
+        set {_p} to loop-player
+        if {active_cosmetic::%uuid of {_p}%} is set:
+            set {_type} to {active_cosmetic::%uuid of {_p}%}
+            
+            if {_type} is "flammes":
+                execute console command "execute at %{_p}% run particle flame ~ ~0.3 ~ 0.3 0.1 0.3 0.02 5 force"
+            else if {_type} is "coeurs":
+                execute console command "execute at %{_p}% run particle heart ~ ~1.8 ~ 0.35 0.2 0.35 0.05 3 force"
+            else if {_type} is "etoiles":
+                execute console command "execute at %{_p}% run particle crit ~ ~1.0 ~ 0.35 0.5 0.35 0.1 8 force"
+            else if {_type} is "nuages":
+                execute console command "execute at %{_p}% run particle cloud ~ ~0.1 ~ 0.35 0.05 0.35 0.01 6 force"
+            else if {_type} is "portail":
+                execute console command "execute at %{_p}% run particle portal ~ ~1.0 ~ 0.35 0.5 0.35 0.5 12 force"
+            else if {_type} is "enchante":
+                execute console command "execute at %{_p}% run particle enchant ~ ~1.2 ~ 0.35 0.5 0.35 0.5 10 force"
+            else if {_type} is "totem":
+                execute console command "execute at %{_p}% run particle totem_of_undying ~ ~1.2 ~ 0.35 0.5 0.35 0.1 8 force"
+
+# ==================== PARCOURS / JUMP DU SPAWN ====================
+
+command /setjumpstart:
+    permission: op
+    permission message: &cTu n'as pas la permission!
+    trigger:
+        set {jump_start} to location of player
+        send "&aPoint de départ du Jump défini à votre position!" to player
+
+command /setjumpend:
+    permission: op
+    permission message: &cTu n'as pas la permission!
+    trigger:
+        set {jump_end} to location of player
+        send "&aPoint d'arrivée du Jump défini à votre position!" to player
+
+on step on pressure plate:
+    if {jump_start} is set:
+        set {_dist} to distance between location of player and {jump_start}
+        if {_dist} <= 1.5:
+            set {jump_timer::%player%} to now
+            send action bar "&a&l✦ PARCOURS COMMENCÉ ! BONNE CHANCE ! ✦" to player
+            play sound "block.note_block.pling" to player
+            
+    if {jump_end} is set:
+        set {_dist} to distance between location of player and {jump_end}
+        if {_dist} <= 1.5:
+            if {jump_timer::%player%} is set:
+                set {_time} to difference between {jump_timer::%player%} and now
+                delete {jump_timer::%player%}
+                
+                execute console command "eco give %player% 100"
+                broadcast ""
+                broadcast "&e&l✦ VICTOIRE JUMP &8> &f%player% &7a terminé le parcours en &e%{_time}% &7(+100$) !"
+                broadcast ""
+                play sound "ui.toast.challenge_complete" to player

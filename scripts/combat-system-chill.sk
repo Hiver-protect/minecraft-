@@ -1,0 +1,68 @@
+# ==============================================================================
+#                 MINESTARS - SYSTÈME DE COMBAT & ÉQUIPEMENTS CHILL
+#                 - Bonus de Dégâts Armes Équilibré (+25% PvE / +20% PvP)
+#                 - Amélioration de la Défense des Armures & Réduction de Chute
+#                 - Durabilité Naturelle Accrue (25% de coups sans usure)
+# ==============================================================================
+
+options:
+    prefix: &6&l✦ COMBAT &8> &7
+
+# ==================== BONUS DE DÉGÂTS DES ARMES ====================
+
+on damage:
+    if attacker is a player:
+        # 1. Bonus aux Épées (+20%)
+        if attacker's tool is wooden sword or stone sword or iron sword or golden sword or diamond sword or netherite sword:
+            set damage to damage * 1.20
+            
+        # 2. Bonus aux Haches (+15%)
+        else if attacker's tool is wooden axe or stone axe or iron axe or golden axe or diamond axe or netherite axe:
+            set damage to damage * 1.15
+            
+        # 3. Bonus Arcs & Arbalètes (+20%)
+        else if damage cause is projectile:
+            set damage to damage * 1.20
+            
+        # 4. Bonus Trident (+20%)
+        else if attacker's tool is trident:
+            set damage to damage * 1.20
+
+        # 5. Bonus supplémentaire contre les monstres PvE (+15% pour rendre le farm agréable)
+        if victim is a monster:
+            set damage to damage * 1.15
+
+# ==================== AMÉLIORATION DES ARMURES & RÉSISTANCE ====================
+
+on damage:
+    if victim is a player:
+        # 1. Résistance accrue avec une armure complète (Réduit les dégâts subis de ~15% à 20%)
+        set {_def} to 0
+        if victim's helmet is set:
+            add 0.04 to {_def}
+        if victim's chestplate is set:
+            add 0.06 to {_def}
+        if victim's leggings is set:
+            add 0.05 to {_def}
+        if victim's boots is set:
+            add 0.04 to {_def}
+            
+        if {_def} > 0:
+            set damage to damage * (1 - {_def})
+
+        # 2. Amortissement des dégâts de chute avec des bottes (-30%)
+        if damage cause is fall:
+            if victim's boots is set:
+                set damage to damage * 0.70
+
+        # 3. Résistance au feu/lave si équipé d'un plastron (-25%)
+        if damage cause is fire, burning or lava:
+            if victim's chestplate is set:
+                set damage to damage * 0.75
+
+# ==================== BONUS DE SOLIDITÉ / DURABILITÉ (CHILL) ====================
+
+on item damage:
+    # 25% de chance de préserver la durabilité lors d'une utilisation ou d'un coup
+    chance of 25%:
+        cancel event

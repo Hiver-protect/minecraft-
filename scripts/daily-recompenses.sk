@@ -1,0 +1,198 @@
+# ==============================================================================
+#           MINESTARS - CALENDRIER DE RÉCOMPENSES JOURNALIÈRES
+#           Design Moderne 3 Rangées, Système de Série 7 Jours & Récompenses Élite
+# ==============================================================================
+
+options:
+    prefix: &6&l✦ RÉCOMPENSE &8> &7
+
+command /daily:
+    aliases: /reward, /journalier, /cadeau, /dailyrewards
+    trigger:
+        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lMINESTARS &8- &6&lRÉCOMPENSES 7J"
+        
+        # Fond sombre et bordures or
+        loop 27 times:
+            set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
+            
+        set slot 0 of {_gui} to 1 of yellow stained glass pane named " "
+        set slot 8 of {_gui} to 1 of yellow stained glass pane named " "
+        set slot 18 of {_gui} to 1 of yellow stained glass pane named " "
+        set slot 26 of {_gui} to 1 of yellow stained glass pane named " "
+            
+        set {_canClaim} to false
+        set {_leftMsg} to "&a✔ Disponible maintenant !"
+        if {daily_last_claim::%uuid of player%} is set:
+            set {_diff} to difference between {daily_last_claim::%uuid of player%} and now
+            if {_diff} is less than 24 hours:
+                set {_left} to difference between {_diff} and 24 hours
+                set {_leftMsg} to "&cDisponible dans : &e%{_left}%"
+            else:
+                set {_canClaim} to true
+        else:
+            set {_canClaim} to true
+
+        set {_streak} to {daily_streak::%uuid of player%} ? 1
+
+        # Statuts des jours
+        if {_streak} >= 1:
+            set {_s1} to "&a✔ Validé"
+        else:
+            set {_s1} to "&7🔒 Jour 1"
+
+        if {_streak} >= 2:
+            set {_s2} to "&a✔ Validé"
+        else:
+            set {_s2} to "&7🔒 Jour 2"
+
+        if {_streak} >= 3:
+            set {_s3} to "&a✔ Validé"
+        else:
+            set {_s3} to "&7🔒 Jour 3"
+
+        if {_streak} >= 4:
+            set {_s4} to "&a✔ Validé"
+        else:
+            set {_s4} to "&7🔒 Jour 4"
+
+        if {_streak} >= 5:
+            set {_s5} to "&a✔ Validé"
+        else:
+            set {_s5} to "&7🔒 Jour 5"
+
+        if {_streak} >= 6:
+            set {_s6} to "&a✔ Validé"
+        else:
+            set {_s6} to "&7🔒 Jour 6"
+
+        if {_streak} >= 7:
+            set {_s7} to "&a✔ JACKPOT RÉCUPÉRÉ"
+        else:
+            set {_s7} to "&6★ JACKPOT 7J"
+
+        # En-tête profil Daily (Slot 4)
+        set slot 4 of {_gui} to 1 of player head named "&e&l✦ SÉRIE ACTUELLE : JOUR &f&l%{_streak}%/7 &e&l✦" with lore "&8&m─────────────────────────" and "&7• Joueur : &f%player%" and "&7• Statut : %{_leftMsg}%" and "&7• Série active : &e%{_streak}% jours consécutifs" and "&8&m─────────────────────────" and "&e▸ Connecte-toi chaque jour pour décrocher le Jackpot !"
+
+        # Jour 1 (Slot 10)
+        set slot 10 of {_gui} to 1 of iron ingot named "&f&l✦ JOUR 1 ✦" with lore "&8&m─────────────────────────" and "&7• &a+300$" and "&7• &b+5 Diamants" and "&7• &6+16 Steaks" and "&8&m─────────────────────────" and "%{_s1}%"
+        
+        # Jour 2 (Slot 11)
+        set slot 11 of {_gui} to 1 of gold ingot named "&e&l✦ JOUR 2 ✦" with lore "&8&m─────────────────────────" and "&7• &a+500$" and "&7• &b+8 Diamants" and "&7• &6+24 Steaks" and "&8&m─────────────────────────" and "%{_s2}%"
+
+        # Jour 3 (Slot 12)
+        set slot 12 of {_gui} to 1 of emerald named "&a&l✦ JOUR 3 ✦" with lore "&8&m─────────────────────────" and "&7• &a+750$" and "&7• &b+12 Diamants" and "&7• &6+2 Pommes Dorées" and "&8&m─────────────────────────" and "%{_s3}%"
+
+        # Jour 4 (Slot 13)
+        set slot 13 of {_gui} to 1 of diamond named "&b&l✦ JOUR 4 ✦" with lore "&8&m─────────────────────────" and "&7• &a+1,000$" and "&7• &b+16 Diamants" and "&7• &6+4 Pommes Dorées" and "&8&m─────────────────────────" and "%{_s4}%"
+
+        # Jour 5 (Slot 14)
+        set slot 14 of {_gui} to 1 of experience bottle named "&d&l✦ JOUR 5 ✦" with lore "&8&m─────────────────────────" and "&7• &a+1,500$" and "&7• &b+20 Diamants" and "&7• &d+16 Fioles d'XP" and "&8&m─────────────────────────" and "%{_s5}%"
+
+        # Jour 6 (Slot 15)
+        set slot 15 of {_gui} to 1 of netherite ingot named "&8&l✦ JOUR 6 ✦" with lore "&8&m─────────────────────────" and "&7• &a+2,000$" and "&7• &b+24 Diamants" and "&7• &8+2 Lingots de Netherite" and "&8&m─────────────────────────" and "%{_s6}%"
+
+        # Jour 7 : JACKPOT (Slot 16)
+        set slot 16 of {_gui} to 1 of totem of undying named "&6&l★ JOUR 7 : LE JACKPOT ★" with lore "&8&m─────────────────────────" and "&7• &a+5,000$" and "&7• &b+32 Diamants" and "&7• &e+1 Totem d'Immortalité" and "&7• &6+8 Pommes Enchantées" and "&8&m─────────────────────────" and "%{_s7}%"
+
+        # Bouton Réclamer (Slot 22)
+        if {_canClaim} is true:
+            set slot 22 of {_gui} to 1 of lime concrete named "&a&l✦ RÉCLAMER MA RÉCOMPENSE ✦" with lore "&8&m─────────────────────────" and "&7Clique pour récupérer ton cadeau du &eJour %{_streak}% &7!" and "&8&m─────────────────────────" and "&a▸ Cliquer pour réclamer"
+        else:
+            set slot 22 of {_gui} to 1 of red concrete named "&c&l✦ DÉJÀ RÉCLAMÉ AUJOURD'HUI ✦" with lore "&8&m─────────────────────────" and "%{_leftMsg}%" and "&7Reviens demain pour continuer ta série !" and "&8&m─────────────────────────"
+
+        open {_gui} to player
+        play sound "block.chest.open" to player
+
+on inventory click:
+    if name of event-inventory is "&8» &0&lMINESTARS &8- &6&lRÉCOMPENSES 7J":
+        cancel event
+        
+        if index of event-slot is 22:
+            close player's inventory
+            
+            # Cooldown
+            if {daily_last_claim::%uuid of player%} is set:
+                set {_diff} to difference between {daily_last_claim::%uuid of player%} and now
+                if {_diff} is less than 24 hours:
+                    set {_left} to difference between {_diff} and 24 hours
+                    send "" to player
+                    send "{@prefix}&cTu as déjà récupéré ton cadeau quotidien !" to player
+                    send "&7Prochain cadeau dans : &e%{_left}%" to player
+                    send "" to player
+                    play sound "entity.villager.no" to player
+                    stop
+                    
+                # Gestion streak
+                if {_diff} is less than 48 hours:
+                    add 1 to {daily_streak::%uuid of player%}
+                    if {daily_streak::%uuid of player%} > 7:
+                        set {daily_streak::%uuid of player%} to 1
+                else:
+                    set {daily_streak::%uuid of player%} to 1
+            else:
+                set {daily_streak::%uuid of player%} to 1
+                
+            set {daily_last_claim::%uuid of player%} to now
+            set {_streak} to {daily_streak::%uuid of player%} ? 1
+                
+            send "" to player
+            send "&6&l✦ CADEAU QUOTIDIEN &8(Jour %{_streak}%/7) ✦" to player
+            
+            # Distribution
+            if {_streak} is 1:
+                execute console command "eco give %player% 300"
+                give 5 of diamond to player
+                give 16 of cooked beef to player
+                send "&a+ 300$ &7crédités sur ton compte" to player
+                send "&b+ 5 Diamants &7et &616 Steaks" to player
+
+            else if {_streak} is 2:
+                execute console command "eco give %player% 500"
+                give 8 of diamond to player
+                give 24 of cooked beef to player
+                send "&a+ 500$ &7crédités sur ton compte" to player
+                send "&b+ 8 Diamants &7et &624 Steaks" to player
+
+            else if {_streak} is 3:
+                execute console command "eco give %player% 750"
+                give 12 of diamond to player
+                give 2 of golden apple to player
+                send "&a+ 750$ &7crédités sur ton compte" to player
+                send "&b+ 12 Diamants &7et &62 Pommes Dorées" to player
+
+            else if {_streak} is 4:
+                execute console command "eco give %player% 1000"
+                give 16 of diamond to player
+                give 4 of golden apple to player
+                send "&a+ 1,000$ &7crédités sur ton compte" to player
+                send "&b+ 16 Diamants &7et &64 Pommes Dorées" to player
+
+            else if {_streak} is 5:
+                execute console command "eco give %player% 1500"
+                give 20 of diamond to player
+                give 16 of experience bottle to player
+                send "&a+ 1,500$ &7crédités sur ton compte" to player
+                send "&b+ 20 Diamants &7et &d16 Fioles d'XP" to player
+
+            else if {_streak} is 6:
+                execute console command "eco give %player% 2000"
+                give 24 of diamond to player
+                give 2 of netherite ingot to player
+                send "&a+ 2,000$ &7crédités sur ton compte" to player
+                send "&b+ 24 Diamants &7et &82 Lingots de Netherite" to player
+
+            else if {_streak} is 7:
+                execute console command "eco give %player% 5000"
+                give 32 of diamond to player
+                give 1 of totem of undying to player
+                give 8 of enchanted golden apple to player
+                send "&6&l★ LE GRAND JACKPOT 7 JOURS ★" to player
+                send "&a+ 5,000$ &7crédités sur ton compte" to player
+                send "&b+ 32 Diamants &7et &e1 Totem d'Immortalité" to player
+                send "&6+ 8 Pommes Enchantées (Cheat)" to player
+                broadcast "&6&l✦ SÉRIE 7 JOURS ✦ &f%player% &7a complété sa série de connexion et a décroché le &6&lGrand Jackpot &7!"
+                
+            send "" to player
+            send "&7Reviens demain pour ta prochaine récompense !" to player
+            send "" to player
+            play sound "ui.toast.challenge_complete" to player

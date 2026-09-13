@@ -1,0 +1,190 @@
+# ==============================================================================
+#           MINESTARS - SYSTÈME D'IMMERSION & SONS RÉALISTES HD
+#           - Compatible Pack CurseForge / AmbientSounds / Fresh Animations
+#           - Battement de Cœur Réaliste (Low HP Heartbeat FX)
+#           - Impacts & Particules de Sang Réalistes lors des Combats
+#           - Effets Sonores Dynamiques d'Ambiance (Grottes, Forêts, Sommets)
+#           - Souffle d'Hiver & Immersion Physique (Parade Bouclier, Chute)
+#           - Menu Joueur de Personnalisation : /immersion
+# ==============================================================================
+
+options:
+    prefix: &3&l✦ IMMERSION &8> &7
+
+# ==================== BATTEMENT DE COEUR & ALERTES BASSE SANTÉ ====================
+
+every 2 seconds:
+    loop all players:
+        set {_p} to loop-player
+        set {_uuid} to uuid of {_p}
+        
+        # Si le joueur a moins de 35% de sa vie (<= 3.5 coeurs) et que l'option n'est pas coupée
+        if health of {_p} <= 3.5:
+            if {immersion_heartbeat::%{_uuid}%} is not false:
+                # Son réaliste de battement de coeur (Warden Heartbeat)
+                play sound "entity.warden.heartbeat" with volume 1.3 and pitch 0.8 to {_p}
+                # Pulsation visuelle de danger subtile
+                if {fps_particles::%{_uuid}%} is not false:
+                    draw 4 of dust using dustOption(rgb(200, 20, 20), 1.2) at location 1.2 meters above {_p}
+
+# ==================== IMPACTS DE COMBAT RÉALISTES & EFFETS DE SANG ====================
+
+on damage:
+    if victim is a player or monster or animal:
+        set {_loc} to location of victim
+        set {_uuid_vic} to uuid of victim
+        
+        # 1. Effet de sang réaliste (Particules rouges légères)
+        if {immersion_blood::%{_uuid_vic}%} is not false:
+            if {fps_particles::%{_uuid_vic}%} is not false:
+                draw 8 of dust using dustOption(rgb(160, 0, 0), 1.0) at location 1 meter above {_loc}
+                
+        # 2. Son d'impact métallique si la victime porte une armure
+        if victim is a player:
+            if victim's chestplate is set:
+                play sound "item.armor.equip_iron" with volume 0.8 and pitch 1.4 at {_loc}
+                
+        # 3. Son de coup critique renforcé
+        if damage cause is attack:
+            if attacker is a player:
+                if attacker is not on ground:
+                    play sound "entity.player.attack.crit" with volume 1.2 and pitch 0.9 at {_loc}
+                    play sound "entity.arrow.hit_player" with volume 0.6 and pitch 1.6 at {_loc}
+
+# ==================== PARADE AU BOUCLIER & CRAQUEMENT DE CHUTE ====================
+
+on damage:
+    if victim is a player:
+        # Son de parade bouclier renforcé (Étincelles métalliques)
+        if damage cause is attack or projectile:
+            if victim is blocking:
+                play sound "item.shield.block" with volume 1.5 and pitch 0.85 at location of victim
+                play sound "block.anvil.land" with volume 0.5 and pitch 1.8 at location of victim
+                draw 10 of crit at location 1 meter above victim
+                
+        # Son de craquement d'os réaliste lors d'une lourde chute
+        if damage cause is fall:
+            if damage > 3:
+                play sound "block.bone_block.break" with volume 1.4 and pitch 0.8 at location of victim
+                play sound "entity.skeleton.hurt" with volume 0.9 and pitch 0.7 at location of victim
+
+# ==================== AMBIANCES NATURELLES DYNAMIQUES PAR ENVIRONNEMENT ====================
+
+every 25 seconds:
+    loop all players:
+        set {_p} to loop-player
+        set {_uuid} to uuid of {_p}
+        
+        if {immersion_ambience::%{_uuid}%} is not false:
+            if gamemode of {_p} is survival or adventure:
+                set {_loc} to location of {_p}
+                set {_y} to y-coord of {_loc}
+                
+                # 1. Dans les profondeurs (Grottes profondes Y < 10)
+                if {_y} < 10:
+                    if {_p} is not swimming:
+                        chance of 40%:
+                            play sound "block.dripstone_block.drip_water" with volume 0.8 and pitch 0.9 to {_p}
+                        chance of 25%:
+                            play sound "ambient.cave" with volume 0.5 and pitch 0.8 to {_p}
+                            
+                # 2. Sommets enneigés & Grands froids (Y > 110)
+                else if {_y} > 110:
+                    chance of 35%:
+                        play sound "entity.breeze.wind_burst" with volume 0.4 and pitch 0.5 to {_p}
+                    if {fps_particles::%{_uuid}%} is not false:
+                        draw 2 of cloud at location 1.7 meters above {_loc}
+                        
+                # 3. Sous l'eau (Immersion aquatique)
+                if {_p} is swimming:
+                    chance of 35%:
+                        play sound "ambient.underwater.loop.additions.ultra_rare" with volume 0.8 and pitch 0.8 to {_p}
+
+# ==================== SONS PHYSIQUES DU JOUEUR (Consommables & Tir) ====================
+
+on consume:
+    play sound "entity.generic.eat" with volume 1.1 and pitch 1.0 to player
+    play sound "entity.player.burp" with volume 0.5 and pitch 1.2 to player
+
+on shoot:
+    if shooter is a player:
+        play sound "item.crossbow.loading_start" with volume 0.7 and pitch 1.4 at location of shooter
+
+# ==================== MENU JOUEUR /immersion ====================
+
+command /immersion:
+    aliases: /ambiance, /sons, /realiste
+    trigger:
+        set {_p} to player
+        set {_uuid} to uuid of {_p}
+        
+        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lMINESTARS &8- &3&lIMMERSION HD"
+        
+        loop 27 times:
+            set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
+            
+        # 1. Battement de Coeur (Low HP)
+        if {immersion_heartbeat::%{_uuid}%} is false:
+            set {_item_heart} to gray dye named "&7&lBattement de Cœur : &cDÉSACTIVÉ" with lore "&7Joue un rythme cardiaque lourd" and "&7lorsque votre santé tombe sous 35%%." and "" and "&e► Cliquez pour &aACTIVER"
+        else:
+            set {_item_heart} to red dye named "&c&lBattement de Cœur : &aACTIVÉ" with lore "&7Joue un rythme cardiaque lourd" and "&7lorsque votre santé tombe sous 35%%." and "" and "&e► Cliquez pour &cDÉSACTIVER"
+        set slot 11 of {_gui} to {_item_heart}
+        
+        # 2. Particules de Sang Réalistes
+        if {immersion_blood::%{_uuid}%} is false:
+            set {_item_blood} to gray dye named "&7&lEffets de Sang : &cDÉSACTIVÉS" with lore "&7Éclats de sang immersifs lors" and "&7des frappes en combat." and "" and "&e► Cliquez pour &aACTIVER"
+        else:
+            set {_item_blood} to pink dye named "&d&lEffets de Sang : &aACTIVÉS" with lore "&7Éclats de sang immersifs lors" and "&7des frappes en combat." and "" and "&e► Cliquez pour &cDÉSACTIVER"
+        set slot 13 of {_gui} to {_item_blood}
+        
+        # 3. Ambiances Sonores Naturelles
+        if {immersion_ambience::%{_uuid}%} is false:
+            set {_item_amb} to gray dye named "&7&lAmbiances de Biomes : &cDÉSACTIVÉES" with lore "&7Échos de cavernes, vents d'altitude" and "&7et sons d'immersion dynamiques." and "" and "&e► Cliquez pour &aACTIVER"
+        else:
+            set {_item_amb} to cyan dye named "&3&lAmbiances de Biomes : &aACTIVÉES" with lore "&7Échos de cavernes, vents d'altitude" and "&7et sons d'immersion dynamiques." and "" and "&e► Cliquez pour &cDÉSACTIVER"
+        set slot 15 of {_gui} to {_item_amb}
+        
+        # Pack info
+        set slot 22 of {_gui} to 1 of music disc chirp named "&e&lPack HD Sons & Visuels CurseForge" with lore "&8▪ &7Modèles 3D : &aInclus & Actifs" and "&8▪ &7Animations Fresh Animations : &aActives" and "&8▪ &7Sons Ambiance & Mobs HD : &aPrêts"
+        
+        open {_gui} to {_p}
+        play sound "ui.button.click" with pitch 1.2 to {_p}
+
+on inventory click:
+    if name of current inventory of player is "&8» &0&lMINESTARS &8- &3&lIMMERSION HD":
+        cancel event
+        set {_slot} to clicked slot
+        set {_uuid} to uuid of player
+        
+        # Toggle Heartbeat
+        if {_slot} is 11:
+            if {immersion_heartbeat::%{_uuid}%} is false:
+                set {immersion_heartbeat::%{_uuid}%} to true
+                send "{@prefix}&aBattement de cœur réaliste activé !" to player
+            else:
+                set {immersion_heartbeat::%{_uuid}%} to false
+                send "{@prefix}&cBattement de cœur réaliste désactivé." to player
+            play sound "block.note_block.bass" to player
+            make player execute command "/immersion"
+            
+        # Toggle Sang
+        else if {_slot} is 13:
+            if {immersion_blood::%{_uuid}%} is false:
+                set {immersion_blood::%{_uuid}%} to true
+                send "{@prefix}&aParticules d'impacts de sang activées !" to player
+            else:
+                set {immersion_blood::%{_uuid}%} to false
+                send "{@prefix}&cParticules d'impacts de sang désactivées." to player
+            play sound "block.note_block.hat" to player
+            make player execute command "/immersion"
+            
+        # Toggle Ambiance
+        else if {_slot} is 15:
+            if {immersion_ambience::%{_uuid}%} is false:
+                set {immersion_ambience::%{_uuid}%} to true
+                send "{@prefix}&aAmbiances et échos de biomes activés !" to player
+            else:
+                set {immersion_ambience::%{_uuid}%} to false
+                send "{@prefix}&cAmbiances et échos de biomes désactivés." to player
+            play sound "block.note_block.bell" to player
+            make player execute command "/immersion"

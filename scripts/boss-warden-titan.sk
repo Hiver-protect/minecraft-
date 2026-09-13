@@ -1,0 +1,166 @@
+# ==============================================================================
+#                 MINESTARS - BOSS WARDEN TITAN (ÉDITION ULTIME & ÉPIQUE)
+#                 - 3 Phases de Combat Épiques (Normal, Enragé, Apocalypse)
+#                 - Attaques Spectaculaires (Vortex du Sculk, Onde Sonique, Éclairs)
+#                 - Arme Mythique "Lame du Warden" & Loots Légendaires
+# ==============================================================================
+
+options:
+    prefix: &4&l☠ WARDEN TITAN &8> &7
+    max_hp: 500
+
+# ==================== APPARITION DU WARDEN TITAN ====================
+
+on spawn of warden:
+    wait 2 ticks
+    set max health of event-entity to {@max_hp}
+    set health of event-entity to {@max_hp}
+    set custom name of event-entity to "&4&l☠ WARDEN TITAN &8┃ &a500&7/&a500❤"
+    
+    # Effets cinématiques d'apparition
+    play sound "entity.warden.emerge" at event-entity for all players
+    play sound "entity.wither.spawn" at event-entity for all players
+    play sound "entity.ender_dragon.growl" at event-entity for all players
+    
+    broadcast ""
+    broadcast "&4&l☠══════════════════════════════════════════☠"
+    broadcast " &4&l✦ ÉVÉNEMENT BOSS : LE WARDEN TITAN A ÉMERGÉ !"
+    broadcast " &7Un titan ancestral de &c500❤ &7est apparu dans les ténèbres."
+    broadcast " &eTous les guerriers sont appelés au combat ! Butins Mythiques !"
+    broadcast "&4&l☠══════════════════════════════════════════☠"
+    broadcast ""
+    
+    loop players in radius 30 around event-entity:
+        send title "&4&l☠ WARDEN TITAN ☠" with subtitle "&cLe combat pour votre survie commence !" to loop-player for 3 seconds
+
+# ==================== PHASES DE COMBAT & ATTAQUES SPÉCIALES ====================
+
+on damage of warden:
+    set {_hp} to round(health of victim - damage)
+    if {_hp} < 0:
+        set {_hp} to 0
+        
+    set {_u} to uuid of victim
+
+    # ========== PHASE 1 : TITAN NORMAL (500 - 250 PV) ==========
+    if {_hp} > 250:
+        set custom name of victim to "&4&l☠ WARDEN TITAN &8┃ &a%{_hp}%&7/&a500❤"
+
+        # Onde Tellurique Sonique (1 chance sur 5)
+        chance of 20%:
+            play sound "entity.warden.sonic_boom" at victim for all players
+            loop players in radius 12 around victim:
+                push loop-player upwards at speed 0.9
+                push loop-player (vector from victim to loop-player) at speed 1.6
+                damage loop-player by 4
+                send "{@prefix}&cLe Warden Titan a déclenché une &4&lOnde Tellurique &c!" to loop-player
+
+    # ========== PHASE 2 : WARDEN ENRAGÉ (250 - 100 PV) ==========
+    else if {_hp} > 100:
+        set custom name of victim to "&6&l☠ WARDEN ENRAGÉ &8┃ &e%{_hp}%&7/&a500❤ 🔥"
+        
+        # Passage en rage (Annonce & Invocation unique)
+        if {phase2::%{_u}%} is not set:
+            set {phase2::%{_u}%} to true
+            play sound "entity.warden.roar" at victim for all players
+            play sound "entity.generic.explode" at victim for all players
+            broadcast "{@prefix}&6&l⚠ PHASE 2 : Le Warden Titan entre en &4&lRAGE &6et appelle ses Ombres !"
+            apply speed 1 to victim for 999 days
+            loop 3 times:
+                spawn 1 vex at victim
+                set name of last spawned entity to "&8&l✦ Ombre du Sculk ✦"
+                set max health of last spawned entity to 25
+                set health of last spawned entity to 25
+
+        # Vortex du Sculk (Attire les joueurs vers le boss)
+        chance of 20%:
+            play sound "entity.warden.heartbeat" at victim for all players
+            loop players in radius 15 around victim:
+                push loop-player (vector from loop-player to victim) at speed 1.2
+                apply darkness 1 to loop-player for 5 seconds
+                send "{@prefix}&8Le &5&lVortex du Sculk &8vous attire vers le Titan !" to loop-player
+
+    # ========== PHASE 3 : FURIE APOCALYPTIQUE (< 100 PV) ==========
+    else:
+        set custom name of victim to "&5&l☠ WARDEN APOCALYPSE &8┃ &c%{_hp}%&7/&a500❤ ⚡"
+
+        # Passage en Furie Ultime
+        if {phase3::%{_u}%} is not set:
+            set {phase3::%{_u}%} to true
+            play sound "entity.warden.sonic_boom" at victim for all players
+            play sound "ui.toast.challenge_complete" at victim for all players
+            broadcast "{@prefix}&5&l⚡ DERNIÈRE PHASE : Le Warden libère sa &c&lFURIE APOCALYPTIQUE &5!"
+            apply strength 1 to victim for 999 days
+
+        # Foudre et onde sonique déchaînée
+        chance of 25%:
+            play sound "entity.lightning_bolt.thunder" at victim for all players
+            loop players in radius 15 around victim:
+                strike lightning effect at loop-player's location
+                damage loop-player by 5
+                apply slowness 2 to loop-player for 3 seconds
+                send "{@prefix}&cUne foudre abyssale frappe votre position !" to loop-player
+
+# ==================== MORT DU BOSS & RÉCOMPENSES LÉGENDAIRES ====================
+
+on death of warden:
+    set {_u} to uuid of victim
+    delete {phase2::%{_u}%}
+    delete {phase3::%{_u}%}
+    
+    # 1. Annonce Globale de Victoire
+    broadcast ""
+    broadcast "&6&l⭐══════════════════════════════════════════⭐"
+    broadcast " &6&l✦ VICTOIRE : LE WARDEN TITAN A ÉTÉ VAINCU !"
+    if attacker is a player:
+        broadcast " &eGuerrier victorieux : &f&l%attacker%"
+        broadcast " &aRécompenses : &e+1,500$ &7et butin du Sculk !"
+        
+        # Récompenses directes au vainqueur (équilibrées)
+        execute console command "eco give %attacker% 1500"
+        give 1 of golden apple to attacker
+        give 6 of diamond to attacker
+        give 16 of experience bottle to attacker
+        
+        # 35% de chance d'obtenir la Lame du Sculk
+        chance of 33%:
+            set {_sword} to getCustomWeapon("sculk")
+            give {_sword} to attacker
+            send "{@prefix}&6&lCHANCE DIVINE ! &eTu as obtenu la &3&lLame du Sculk &e!" to attacker
+        
+        send title "&6&l✦ BOSS VAINCU ✦" with subtitle "&aTu as terrassé le Warden Titan !" to attacker for 4 seconds
+        play sound "ui.toast.challenge_complete" to attacker
+    else:
+        broadcast " &7Le Warden Titan a succombé aux blessures !"
+    broadcast "&6&l⭐══════════════════════════════════════════⭐"
+    broadcast ""
+    
+    # 2. Drops équilibrés au sol
+    drop 1 of netherite scrap at victim's location
+    drop 3 of diamond at victim's location
+    drop 4 of gold ingot at victim's location
+    drop 4 of golden apple at victim's location
+    spawn 150 of xp at victim's location
+
+# ==================== COMMANDES ADMIN (/wardenboss) ====================
+
+command /wardenboss [<text>]:
+    permission: op
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        if arg-1 is "spawn":
+            spawn 1 warden at player
+            send "{@prefix}&aWarden Titan invoqué à ta position !" to player
+        else if arg-1 is "kill":
+            set {_c} to 0
+            loop all entities in world of player:
+                if "%type of loop-entity%" is "warden":
+                    delete loop-entity
+                    add 1 to {_c}
+            send "{@prefix}&c%{_c}% Warden(s) supprimé(s) dans ce monde." to player
+        else:
+            send "" to player
+            send "{@prefix}&6&lCOMMANDES WARDEN TITAN :" to player
+            send " &e▸ &f/wardenboss spawn &7- Invoquer le Boss" to player
+            send " &e▸ &f/wardenboss kill &7- Supprimer les Boss" to player
+            send "" to player

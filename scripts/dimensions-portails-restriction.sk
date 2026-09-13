@@ -1,0 +1,166 @@
+# ==============================================================================
+#      MINESTARS - CONTRÔLE DES DIMENSIONS (NETHER & END)
+#      - Interdiction absolue du Nether & End en Survie et Skyblock
+#      - Blocage de la création et utilisation de portails hors Spawn
+#      - Accès officiel au Nether & End uniquement depuis le Spawn
+# ==============================================================================
+
+options:
+    prefix: &c&l✦ DIMENSIONS &8> &7
+
+# ==================== COMMANDES DE CONFIGURATION (STAFF) ====================
+
+command /setnetherspawn:
+    permission: op
+    permission message: &cTu n'as pas la permission!
+    trigger:
+        set {nether::spawn} to location of player
+        send "{@prefix}&aPoint d'apparition du Nether défini à votre position !" to player
+        play sound "block.note_block.pling" to player
+
+command /setendspawn:
+    permission: op
+    permission message: &cTu n'as pas la permission!
+    trigger:
+        set {end::spawn} to location of player
+        send "{@prefix}&aPoint d'apparition de l'End défini à votre position !" to player
+        play sound "block.note_block.pling" to player
+
+# ==================== COMMANDES D'ACCÈS AUX DIMENSIONS ====================
+
+command /nether:
+    aliases: /hell, /netherworld
+    trigger:
+        set {_w} to "%world of player%"
+        set {_can} to false
+        
+        # Autorisé au Spawn ou pour le Staff
+        if {spawn::world} is set:
+            if {_w} is {spawn::world}:
+                set {_can} to true
+        if {_w} contains "spawn" or "world_nether":
+            set {_can} to true
+        if player is op:
+            set {_can} to true
+        else if player has permission "minestars.staff" or "minestars.bypass.portals":
+            set {_can} to true
+            
+        if {_can} is true:
+            set {_targetWorld} to world "world_nether"
+            if {_targetWorld} is not set:
+                set {_targetWorld} to "world_nether" parsed as world
+            if {_targetWorld} is not set:
+                set {_targetWorld} to world "DIM-1"
+                
+            if {nether::spawn} is set:
+                teleport player to {nether::spawn}
+            else if {_targetWorld} is set:
+                teleport player to spawn of {_targetWorld}
+            else:
+                send "{@prefix}&cLe monde du Nether n'est pas encore configuré ! Fais &e/setnetherspawn&c." to player
+                stop
+                
+            send "{@prefix}&c&lTÉLÉPORTATION AU NETHER &7! Prépare-toi à affronter les flammes..." to player
+            play sound "entity.enderman.teleport" to player
+        else:
+            send "" to player
+            send "{@prefix}&cAccès refusé ! Le Nether est uniquement accessible depuis le &eSpawn&c." to player
+            send "&7» Tapez &a/spawn &7puis empruntez le portail ou tapez &c/nether &7depuis le Spawn." to player
+            send "" to player
+            play sound "block.chest.locked" to player
+
+command /end:
+    aliases: /theend, /the_end, /endworld
+    trigger:
+        set {_w} to "%world of player%"
+        set {_can} to false
+        
+        # Autorisé au Spawn ou pour le Staff
+        if {spawn::world} is set:
+            if {_w} is {spawn::world}:
+                set {_can} to true
+        if {_w} contains "spawn" or "world_the_end":
+            set {_can} to true
+        if player is op:
+            set {_can} to true
+        else if player has permission "minestars.staff" or "minestars.bypass.portals":
+            set {_can} to true
+            
+        if {_can} is true:
+            set {_targetWorld} to world "world_the_end"
+            if {_targetWorld} is not set:
+                set {_targetWorld} to "world_the_end" parsed as world
+            if {_targetWorld} is not set:
+                set {_targetWorld} to world "DIM1"
+                
+            if {end::spawn} is set:
+                teleport player to {end::spawn}
+            else if {_targetWorld} is set:
+                teleport player to spawn of {_targetWorld}
+            else:
+                send "{@prefix}&cLe monde de l'End n'est pas encore configuré ! Fais &e/setendspawn&c." to player
+                stop
+                
+            send "{@prefix}&d&lTÉLÉPORTATION DANS L'END &7! Attention au vide cosmique..." to player
+            play sound "entity.enderman.teleport" to player
+        else:
+            send "" to player
+            send "{@prefix}&cAccès refusé ! L'End est uniquement accessible depuis le &eSpawn&c." to player
+            send "&7» Tapez &a/spawn &7puis empruntez le portail ou tapez &d/end &7depuis le Spawn." to player
+            send "" to player
+            play sound "block.chest.locked" to player
+
+# ==================== INTERDICTIONS PORTAILS SURVIE & SKYBLOCK ====================
+
+# 1. Interdiction d'allumer / créer un portail du Nether
+on portal create:
+    set {_w} to "%event-world%"
+    if {_w} contains "survie" or "skyblock":
+        cancel event
+        send "{@prefix}&cCréation de portail interdite en %{_w}% ! Accès uniquement via le &eSpawn (/spawn)&c." to all players in radius 5 around event-block
+        play sound "block.fire.extinguish" at event-block
+
+# 2. Interdiction d'allumer de l'obsidienne au briquet / charge de feu
+on right click on obsidian:
+    set {_w} to "%world of event-block%"
+    if {_w} contains "survie" or "skyblock":
+        if player's tool is flint and steel or fire charge:
+            cancel event
+            send action bar "&c⚠ Les portails du Nether sont désactivés ici ! Rendez-vous au &e/spawn &c!" to player
+            play sound "block.fire.extinguish" at event-block for player
+
+# 3. Interdiction d'insérer un œil de l'End dans un cadre de portail
+on right click on end portal frame:
+    set {_w} to "%world of event-block%"
+    if {_w} contains "survie" or "skyblock":
+        if player's tool is eye of ender or ender eye:
+            cancel event
+            send action bar "&c⚠ Les portails de l'End sont désactivés ici ! Rendez-vous au &e/spawn &c!" to player
+            play sound "block.chest.locked" at event-block for player
+
+# 4. Interdiction d'entrer ou d'utiliser un portail (Nether / End) en Survie & Skyblock
+on portal enter:
+    set {_w} to "%world of player%"
+    if {_w} contains "survie" or "skyblock":
+        cancel event
+        push player backwards at speed 0.5
+        send action bar "&c⚠ Portails interdits en Survie/Skyblock ! Accédez-y via le &e/spawn &c!" to player
+        play sound "block.chest.locked" at player for player
+
+on portal:
+    set {_w} to "%world of player%"
+    if {_w} contains "survie" or "skyblock":
+        cancel event
+        send action bar "&c⚠ Portails interdits en Survie/Skyblock ! Rendez-vous au &e/spawn &c!" to player
+        play sound "block.chest.locked" at player for player
+
+# 5. Sécurité anti-téléportation interdimensionnelle non autorisée
+on teleport:
+    set {_from} to "%world of player%"
+    set {_to} to "%world of teleport target%"
+    
+    if {_from} contains "survie" or "skyblock":
+        if {_to} contains "nether" or "the_end" or "DIM-1" or "DIM1":
+            if teleport cause is nether portal or end portal or end gateway:
+                cancel event
+                send action bar "&c⚠ Téléportation interdite ! Utilisez le &e/spawn &c!" to player

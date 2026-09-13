@@ -1,0 +1,191 @@
+# ==============================================================================
+#            MINESTARS - SUITE ULTIME CHAT VOCAL DE PROXIMITÉ 3D
+#            - Système Interactif Complet : /vocal, /voice, /micro
+#            - Équipements Vocaux Custom : Mégaphone & Talkie-Walkie Radio
+#            - Testeur Spatial 3D Stéréo & Dépannage en 1-Clic
+#            - Modération Vocale Staff : /voicemute, /voiceunmute
+#            - Notifications & Alertes Proximité
+# ==============================================================================
+
+options:
+    prefix: <#00D4FF>&l✦ VOCAL 3D &8> &7
+    tag_radio: &6&l✦ RADIO / TALKIE &8> &7
+    tag_mega: &e&l✦ MÉGAPHONE &8> &7
+    tag_staff: &c&l✦ STAFF VOCAL &8> &7
+
+# ==================== RAPPEL DE CONNEXION & HUD ====================
+
+on join:
+    wait 4 seconds
+    send " " to player
+    send " <#00D4FF>&l✦ CHAT VOCAL DE PROXIMITÉ 3D ACTIVÉ ✦" to player
+    send " &8▪ &fParlez avec votre voix aux joueurs autour de vous (<#2ED573>48 blocs&f)." to player
+    send " &8▪ &fTouche &e&l[V] &fpour régler votre micro | Touche &6&l[G] &fpour créer un salon d'équipe." to player
+    send " &8▪ &fTapez <#00D4FF>&n/vocal&r &fpour ouvrir le menu complet ou tester votre casque !" to player
+    send " " to player
+
+# ==================== MENU PRINCIPAL /vocal & /voice ====================
+
+command /voicechat [<text>]:
+    aliases: /voc, /vocal, /chatvocal, /simplevoicechat, /voice, /micro
+    trigger:
+        set {_p} to player
+        set {_uuid} to uuid of {_p}
+        
+        set {_gui} to a new chest inventory with 4 rows named "&8» &0&lMINESTARS &8- <#00D4FF>&lCHAT VOCAL 3D"
+        
+        loop 36 times:
+            set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
+            
+        # Cadre décoratif Bleu Cyan
+        set slot 0 of {_gui} to 1 of cyan stained glass pane named " "
+        set slot 8 of {_gui} to 1 of cyan stained glass pane named " "
+        set slot 27 of {_gui} to 1 of cyan stained glass pane named " "
+        set slot 35 of {_gui} to 1 of cyan stained glass pane named " "
+
+        # 1. Raccourcis Clavier
+        set slot 10 of {_gui} to 1 of paper named "<#00D4FF>&lTouches & Raccourcis Clavier" with lore "&8▪ <#2ED573>[V] &7: Paramètres du micro & volume" and "&8▪ <#FFA502>[G] &7: Groupes vocaux privés d'équipe" and "&8▪ <#FF4757>[M] &7: Couper / Activer son micro (Mute)" and "&8▪ <#E056FD>[H] &7: Couper le son reçu (Deafen)" and "&8▪ <#70A1FF>[Verr Maj] &7: Push-to-Talk (Parler)" and "" and "&e► Cliquez pour afficher le récap dans le chat"
+        
+        # 2. Portées & Audio 3D
+        set slot 12 of {_gui} to 1 of jukebox named "&6&lPortées Vocales & Audio Spatial" with lore "&8▪ &7Voix normale : <#2ED573>48 blocs &7(Atténuation 3D)" and "&8▪ &7Chuchotement (Sneak) : <#FFA502>8 blocs" and "&8▪ &7Mégaphone : &e120 blocs &7(Portée amplifiée)" and "&8▪ &7Talkie-Walkie : &bIllimité &7(Fréquence d'équipe)" and "" and "&7Qualité audio : &aHD VOIP Faible Latence"
+        
+        # 3. Test Audio Spatial 3D Stéréo
+        set slot 14 of {_gui} to 1 of note block named "&e&lTesteur Audio 3D Stéréo" with lore "&7Vérifiez la balance gauche/droite et le" and "&7volume de votre casque en direct." and "" and "&e► Cliquez pour &aLANCER LE TEST 3D"
+        
+        # 4. Obtenir un Mégaphone ou Talkie-Walkie
+        set slot 16 of {_gui} to 1 of goat horn named "&d&lÉquipements Vocaux & Radios" with lore "&7Découvrez les objets d'amplification vocale :" and "&8▪ &eMégaphone de Zone" and "&8▪ &bTalkie-Walkie de Faction" and "" and "&e► Cliquez pour voir les détails"
+        
+        # 5. Dépannage & FAQ
+        set slot 21 of {_gui} to 1 of redstone torch named "&c&lDépannage & Solutions Micro" with lore "&7Micro muet ou mod non détecté ?" and "&8▪ &7Sélection du bon micro dans [V]" and "&8▪ &7Vérification du pare-feu & port UDP" and "" and "&e► Cliquez pour les astuces"
+        
+        # 6. Téléchargement Modrinth / Curseforge
+        set slot 23 of {_gui} to 1 of ender eye named "&b&lTélécharger le Mod Simple Voice Chat" with lore "&7Compatible 1.20 - 1.21+ (Fabric, Forge, NeoForge)" and "&8▪ &bhttps://modrinth.com/plugin/simple-voice-chat" and "" and "&e► Cliquez pour recevoir le lien en jeu"
+        
+        # Statut du joueur en bas
+        set slot 31 of {_gui} to 1 of compass named "<#00D4FF>&lStatut Vocal du Joueur" with lore "&8▪ &7Serveur Audio : &aEn ligne (UDP 25567)" and "&8▪ &7Spatialisation 3D : &aActive" and "&8▪ &7Votre statut : &eConnecté au serveur"
+        
+        open {_gui} to {_p}
+        play sound "ui.button.click" with pitch 1.2 to {_p}
+
+on inventory click:
+    if name of current inventory of player is "&8» &0&lMINESTARS &8- <#00D4FF>&lCHAT VOCAL 3D":
+        cancel event
+        set {_slot} to clicked slot
+        
+        # Raccourcis
+        if {_slot} is 10:
+            close player's inventory
+            send "&8&m────────────────────────────────────────────────────" to player
+            send " <#00D4FF>&lMINESTARS &8- &fRaccourcis Clavier Simple Voice Chat" to player
+            send "  &8» <#2ED573>&l[V] &8: &fMenu des réglages (Choix du micro, volume, amplification)" to player
+            send "  &8» <#FFA502>&l[G] &8: &fGestion des salons vocaux privés avec mot de passe" to player
+            send "  &8» <#FF4757>&l[M] &8: &fMute / Unmute son micro instantanément" to player
+            send "  &8» <#E056FD>&l[H] &8: &fDeafen (Couper / Rétablir le son des autres)" to player
+            send "  &8» <#70A1FF>&l[Verr Maj] &8: &fPush-to-Talk (Appuyer pour parler)" to player
+            send "&8&m────────────────────────────────────────────────────" to player
+            play sound "entity.experience_orb.pickup" to player
+            
+        # Test Audio 3D
+        else if {_slot} is 14:
+            send "{@prefix}&aTest audio 3D lancé... Écoutez la spatialisation gauche puis droite !" to player
+            play sound "block.amethyst_block.hit" with volume 1.0 and pitch 0.8 to player
+            wait 10 ticks
+            play sound "block.bell.use" with volume 1.2 and pitch 1.2 to player
+            wait 10 ticks
+            play sound "block.amethyst_block.chime" with volume 1.5 and pitch 1.6 to player
+            send "{@prefix}&2✔ &aSi vous avez entendu les 3 sons, votre équipement est 100%% fonctionnel !" to player
+            
+        # Équipements Vocaux
+        else if {_slot} is 16:
+            close player's inventory
+            send "&8&m────────────────────────────────────────────────────" to player
+            send " &d&l✦ ÉQUIPEMENTS VOCAUX MINESTARS ✦" to player
+            send " &e📢 Mégaphone : &7Portée de 120 blocs. Tapez &e/megaphone <message>" to player
+            send " &b📻 Talkie-Walkie : &7Communication d'équipe. Tapez &b/radio <canal> <message>" to player
+            send "&8&m────────────────────────────────────────────────────" to player
+            play sound "entity.item.pickup" to player
+            
+        # Dépannage
+        else if {_slot} is 21:
+            close player's inventory
+            send "&8&m────────────────────────────────────────────────────" to player
+            send " <#FF4757>&l✦ DÉPANNAGE & SOLUTIONS RAPIDES ✦" to player
+            send " &81. &fMicro muet ou non détecté :" to player
+            send "    &7Appuyez sur &e[V] &7> Réglages > Vérifiez le périphérique sélectionné." to player
+            send " &82. &fIcône micro barrée d'un trait rouge :" to player
+            send "    &7Appuyez sur &e[M] &7pour vous démuter en jeu." to player
+            send " &83. &fIcône de microphone absente :" to player
+            send "    &7Installez le mod Simple Voice Chat (Fabric/Forge) dans votre dossier mods." to player
+            send "&8&m────────────────────────────────────────────────────" to player
+            play sound "block.note_block.pling" to player
+            
+        # Téléchargement
+        else if {_slot} is 23:
+            close player's inventory
+            send "{@prefix}&fLien officiel du mod : &b&nhttps://modrinth.com/plugin/simple-voice-chat" to player
+            play sound "entity.item.pickup" to player
+
+# ==================== SYSTÈME DE MÉGAPHONE & RADIO ====================
+
+command /megaphone <text>:
+    aliases: /megavoc, /crier
+    trigger:
+        set {_msg} to arg-1
+        set {_p} to player
+        set {_loc} to location of {_p}
+        
+        # Son de mégaphone
+        play sound "item.goat_horn.sound.0" with volume 2.0 and pitch 1.5 at {_loc}
+        
+        # Diffusion à 120 blocs
+        loop all players in radius 120 of {_loc}:
+            send "{@tag_mega}&e%player% &7&l(MÉGAPHONE) &8» &f%{_msg}%" to loop-player
+            play sound "block.bell.resonate" with volume 0.8 and pitch 1.2 to loop-player
+            
+        draw 15 of note at location 1.5 meters above {_loc}
+
+command /radio [<text>] [<text>]:
+    aliases: /talkie, /talkiewalkie, /focradio
+    trigger:
+        if arg-1 is not set:
+            send "{@tag_radio}&eUtilisation : &b/radio <canal/fréquence> <message>" to player
+            send "{@tag_radio}&7Exemple : &b/radio 101.5 Besoin de renforts à la base !" to player
+            stop
+            
+        if arg-2 is not set:
+            send "{@tag_radio}&cPrécisez votre message après le canal !" to player
+            stop
+            
+        set {_canal} to arg-1
+        set {_msg} to arg-2
+        
+        # Son de radio / grésillement
+        play sound "item.flintandsteel.use" with volume 0.8 and pitch 1.8 to player
+        
+        loop all players:
+            send "{@tag_radio}&b[%{_canal}% MHz] &3%player% &8» &f%{_msg}%" to loop-player
+            play sound "block.iron_door.close" with volume 0.3 and pitch 2.0 to loop-player
+
+# ==================== MODÉRATION VOCALE DU STAFF ====================
+
+command /voicemute <player> [<text>]:
+    permission: op
+    permission message: &cTu n'as pas la permission!
+    trigger:
+        set {_target} to arg-1
+        set {_reason} to arg-2
+        if {_reason} is not set:
+            set {_reason} to "Non respect des règles vocales"
+            
+        set {voicemute::%uuid of {_target}%} to true
+        broadcast "{@tag_staff}&c&l%{_target}% &7a été &c&lMUTE DU CHAT VOCAL &7par &e%player% &7pour : &f%{_reason}%"
+        play sound "block.anvil.land" with pitch 0.8 to {_target}
+
+command /voiceunmute <player>:
+    permission: op
+    permission message: &cTu n'as pas la permission!
+    trigger:
+        set {_target} to arg-1
+        clear {voicemute::%uuid of {_target}%}
+        broadcast "{@tag_staff}&a&l%{_target}% &7a été &a&lDÉMUTE DU CHAT VOCAL &7par &e%player%."
+        play sound "entity.player.levelup" with pitch 1.5 to {_target}

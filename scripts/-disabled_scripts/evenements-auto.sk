@@ -1,0 +1,65 @@
+# ==============================================================================
+#                      ÉVÉNEMENTS AUTOMATIQUES DU SERVEUR
+# ==============================================================================
+
+# ==================== 1. CHAT QUIZ AUTOMATIQUE ====================
+
+every 15 minutes:
+    set {_r} to random integer between 1 and 3
+    if {_r} is 1:
+        set {quiz_answer} to "15"
+        broadcast ""
+        broadcast "&e&l✦ CHAT QUIZ ✦ &7Combien font &e7 + 8 &7?"
+        broadcast "&7Le premier à répondre dans le chat gagne &e+150$ &7!"
+        broadcast ""
+    else if {_r} is 2:
+        set {quiz_answer} to "diamant"
+        broadcast ""
+        broadcast "&e&l✦ CHAT QUIZ ✦ &7Réécris le mot: &ediamant"
+        broadcast "&7Le premier à répondre dans le chat gagne &e+150$ &7!"
+        broadcast ""
+    else:
+        set {quiz_answer} to "42"
+        broadcast ""
+        broadcast "&e&l✦ CHAT QUIZ ✦ &7Combien font &e6 x 7 &7?"
+        broadcast "&7Le premier à répondre dans le chat gagne &e+150$ &7!"
+        broadcast ""
+
+on chat:
+    if {quiz_answer} is set:
+        if message is {quiz_answer}:
+            delete {quiz_answer}
+            if {balance::%uuid of player%} is not set:
+                set {balance::%uuid of player%} to 100
+            add 150 to {balance::%uuid of player%}
+            execute console command "eco give %player% 150"
+            broadcast "&a&l✦ CHAT QUIZ &8> &f%player% &7a trouvé la bonne réponse en premier (&e+150$&7) !"
+            play sound "entity.player.levelup" to player
+
+# ==================== 2. ÉVÉNEMENT MÉTÉORITE ====================
+
+command /meteorite:
+    permission: op
+    permission message: &cTu n'as pas la permission!
+    trigger:
+        set {_w} to world "survie"
+        if {_w} is not set:
+            set {_w} to "survie" parsed as world
+        if {_w} is not set:
+            send "&cMonde survie introuvable!" to player
+            stop
+            
+        set {_x} to random integer between -1000 and 1000
+        set {_z} to random integer between -1000 and 1000
+        set {_loc} to location at {_x}, 75, {_z} of {_w}
+        
+        # Dépose des blocs précieux
+        set block at {_loc} to diamond block
+        set block at location at {_x}, 76, {_z} of {_w} to gold block
+        
+        broadcast ""
+        broadcast "&c&l✦ ALERTE MÉTÉORITE ✦"
+        broadcast "&eUne météorite de minerais s'est écrasée en Survie !"
+        broadcast "&7Coordonnées approximatives: &fX: %{_x}%, Z: %{_z}%"
+        broadcast "&7Soyez les premiers sur place pour miner le trésor !"
+        broadcast ""

@@ -1,0 +1,152 @@
+# ==============================================================================
+#           SYSTÈME DE CAISSES MYSTÈRES (CRATES & KEYS) - ÉDITION PRO
+#           Design Glassmorphism 3 Rangées, Aperçu des Gains & Clés Visuelles
+# ==============================================================================
+
+options:
+    prefix: &e&l✦ BOX &8> &7
+
+# Commande pour donner des clés
+command /givekey [<player>] [<text>] [<number>]:
+    permission: op
+    permission message: &cTu n'as pas la permission!
+    trigger:
+        if arg-1 is not set:
+            send "&cUtilisation: &e/givekey <joueur> <commune|rare|legendaire> <quantite>" to player
+            stop
+        set {_type} to arg-2
+        if {_type} is not set:
+            set {_type} to "commune"
+        set {_qty} to arg-3
+        if {_qty} is not set:
+            set {_qty} to 1
+            
+        if {_type} is "commune":
+            add {_qty} to {keys::%uuid of arg-1%::commune}
+            send "&aDonné %{_qty}% clé(s) Commune(s) à %arg-1%!" to player
+            send "{@prefix}&7Tu as reçu &a%{_qty}% clé(s) Commune(s) &7! Fais &e/crates &7pour ouvrir." to arg-1
+        else if {_type} is "rare":
+            add {_qty} to {keys::%uuid of arg-1%::rare}
+            send "&aDonné %{_qty}% clé(s) Rare(s) à %arg-1%!" to player
+            send "{@prefix}&7Tu as reçu &b%{_qty}% clé(s) Rare(s) &7! Fais &e/crates &7pour ouvrir." to arg-1
+        else if {_type} is "legendaire":
+            add {_qty} to {keys::%uuid of arg-1%::legendaire}
+            send "&aDonné %{_qty}% clé(s) Légendaire(s) à %arg-1%!" to player
+            send "{@prefix}&7Tu as reçu &6%{_qty}% clé(s) Légendaire(s) &7! Fais &e/crates &7pour ouvrir." to arg-1
+        play sound "entity.player.levelup" to arg-1
+
+# Menu des Caisses
+command /crates:
+    aliases: /crate, /box, /boxs, /caisses
+    trigger:
+        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lCAISSES MYSTÈRES & LOOTS"
+        
+        loop 27 times:
+            set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
+            
+        set slot 0 of {_gui} to 1 of yellow stained glass pane named " "
+        set slot 8 of {_gui} to 1 of yellow stained glass pane named " "
+        set slot 18 of {_gui} to 1 of yellow stained glass pane named " "
+        set slot 26 of {_gui} to 1 of yellow stained glass pane named " "
+            
+        set {_kc} to {keys::%uuid of player%::commune}
+        if {_kc} is not set:
+            set {_kc} to 0
+        set {_kr} to {keys::%uuid of player%::rare}
+        if {_kr} is not set:
+            set {_kr} to 0
+        set {_kl} to {keys::%uuid of player%::legendaire}
+        if {_kl} is not set:
+            set {_kl} to 0
+            
+        # Profil Clés (Slot 4)
+        set slot 4 of {_gui} to 1 of tripwire hook named "&e&l✦ TROUSSEAU DE CLÉS ✦" with lore "&8Tes clés disponibles :", "", "&7• Clés Communes : &a%{_kc}%", "&7• Clés Rares : &b%{_kr}%", "&7• Clés Légendaires : &6%{_kl}%", "", "&e✦ Sélectionne une caisse ci-dessous !"
+
+        # 1. Caisse Commune (Slot 11)
+        set slot 11 of {_gui} to 1 of chest named "&a&l✦ CAISSE COMMUNE ✦" with lore "&8Butin standard", "", "&7• Clés possédées : &a%{_kc}%", "&7• Butin possible :", "  &7- &a250$", "  &7- &f16 Lingots de Fer", "  &7- &632 Steaks cuits", "", "&a▸ Cliquer pour ouvrir (1 clé requise)"
+        
+        # 2. Caisse Rare (Slot 13)
+        set slot 13 of {_gui} to 1 of chest named "&b&l✦ CAISSE RARE ✦" with lore "&8Butin supérieur", "", "&7• Clés possédées : &b%{_kr}%", "&7• Butin possible :", "  &7- &e750$", "  &7- &b12 Diamants", "  &7- &64 Pommes Dorées", "", "&b▸ Cliquer pour ouvrir (1 clé requise)"
+        
+        # 3. Caisse Légendaire (Slot 15)
+        set slot 15 of {_gui} to 1 of ender chest named "&6&l✦ CAISSE LÉGENDAIRE ✦" with lore "&8Butin d'élite", "", "&7• Clés possédées : &6%{_kl}%", "&7• Butin possible :", "  &7- &e3,000$", "  &7- &b32 Diamants", "  &7- &e1 Totem d'Immortalité", "  &7- &84 Lingots de Netherite", "", "&6▸ Cliquer pour ouvrir (1 clé requise)"
+        
+        set slot 22 of {_gui} to 1 of barrier named "&c&lFERMER LE MENU" with lore "&7Fermer l'interface"
+
+        open {_gui} to player
+        play sound "block.chest.open" to player
+
+on inventory click:
+    if name of event-inventory is "&8» &0&lCAISSES MYSTÈRES & LOOTS":
+        cancel event
+        
+        if index of event-slot is 22:
+            close player's inventory
+            play sound "block.chest.close" to player
+            stop
+
+        # 1. Caisse Commune
+        if index of event-slot is 11:
+            if {keys::%uuid of player%::commune} > 0:
+                remove 1 from {keys::%uuid of player%::commune}
+                close player's inventory
+                
+                if {balance::%uuid of player%} is not set:
+                    set {balance::%uuid of player%} to 100
+                add 250 to {balance::%uuid of player%}
+                execute console command "eco give %player% 250"
+                give player 16 iron ingot
+                give player 32 cooked beef
+                send "" to player
+                send "&a&l✦ BOX COMMUNE ✦" to player
+                send "&e+ 250$ &7ajoutés à ton compte !" to player
+                send "&f+ 16 Fer &7et &632 Steaks &7reçus !" to player
+                send "" to player
+                play sound "entity.player.levelup" to player
+            else:
+                send "{@prefix}&cTu n'as pas de clé Commune! Gagne-en dans le /daily ou les /jobs." to player
+                play sound "entity.villager.no" to player
+                
+        # 2. Caisse Rare
+        else if index of event-slot is 13:
+            if {keys::%uuid of player%::rare} > 0:
+                remove 1 from {keys::%uuid of player%::rare}
+                close player's inventory
+                
+                if {balance::%uuid of player%} is not set:
+                    set {balance::%uuid of player%} to 100
+                add 750 to {balance::%uuid of player%}
+                execute console command "eco give %player% 750"
+                give player 12 diamond
+                give player 4 golden apple
+                send "" to player
+                send "&b&l✦ BOX RARE ✦" to player
+                send "&e+ 750$ &7ajoutés à ton compte !" to player
+                send "&b+ 12 Diamants &7et &64 Pommes Dorées &7reçus !" to player
+                send "" to player
+                play sound "entity.player.levelup" to player
+            else:
+                send "{@prefix}&cTu n'as pas de clé Rare!" to player
+                play sound "entity.villager.no" to player
+                
+        # 3. Caisse Légendaire
+        else if index of event-slot is 15:
+            if {keys::%uuid of player%::legendaire} > 0:
+                remove 1 from {keys::%uuid of player%::legendaire}
+                close player's inventory
+                
+                if {balance::%uuid of player%} is not set:
+                    set {balance::%uuid of player%} to 100
+                add 3000 to {balance::%uuid of player%}
+                execute console command "eco give %player% 3000"
+                give player 32 diamond
+                give player 1 totem of undying
+                give player 4 netherite ingot
+                
+                broadcast ""
+                broadcast "&6&l✦ JACKPOT ✦ &f%player% &7a ouvert une &6Caisse Légendaire &7et a remporté &e3000$&7, &b32 Diamants &7et &84 Netherite &7!"
+                broadcast ""
+                play sound "ui.toast.challenge_complete" to player
+            else:
+                send "{@prefix}&cTu n'as pas de clé Légendaire!" to player
+                play sound "entity.villager.no" to player

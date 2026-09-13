@@ -1,0 +1,286 @@
+# ==============================================================================
+#           MINESTARS - SYSTÈME DE CLÉS 3D & BOX MYTHIQUES (12 CLÉS DU SERVEUR)
+#           - 12 Clés 3D Custom (Ailées, Cœurs, Arcanes, Améthyste, Vote, Sculk...)
+#           - Menu GUI 54 slots interactif /box /clefs /crates /keys
+#           - Commande /givekey <joueur> <type> [nombre] & /giveallkeys <joueur>
+#           - Animation d'ouverture de Crate avec Particules, Sons & Récompenses RPG
+# ==============================================================================
+
+options:
+    prefix: &6&l✦ BOX & CLÉS &8> &7
+
+# ==================== FABRICATION DES 12 CLÉS 3D ====================
+
+function getCustomKey(type: text) :: item:
+    # 1. Clé Céleste Ailée
+    if {_type} is "cle_celeste" or "celeste":
+        set {_i} to 1 of tripwire hook named "&e&l✦ CLÉ CÉLESTE AILÉE ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Type: &eClé Mythique 3D &8| &7Rareté: &e&lDIVINE"
+        set line 3 of lore of {_i} to "&7Caisse associée: &eBox Céleste Suprême"
+        set line 4 of lore of {_i} to "&8&m─────────────────────────"
+        set line 5 of lore of {_i} to "&6Utilisation : &eClic-Droit sur la Box Céleste"
+        set line 6 of lore of {_i} to "&7Débloque des armes stellaires, ailes célestes"
+        set line 7 of lore of {_i} to "&7et des artefacts légendaires d'élite !"
+        set line 8 of lore of {_i} to "&8&m─────────────────────────"
+        set line 9 of lore of {_i} to "&e⭐ CLÉ MYTHIQUE MINESTARS"
+        set custom model data of {_i} to 40001
+        return {_i}
+
+    # 2. Clé Cœur Céleste
+    else if {_type} is "cle_coeur" or "coeur":
+        set {_i} to 1 of tripwire hook named "&d&l✦ CLÉ CŒUR CÉLESTE ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Type: &dClé Sacrée 3D &8| &7Rareté: &d&lMYTHIQUE"
+        set line 3 of lore of {_i} to "&7Caisse associée: &dBox Cupidon / Vitalité"
+        set line 4 of lore of {_i} to "&8&m─────────────────────────"
+        set line 5 of lore of {_i} to "&6Utilisation : &eClic-Droit sur la Box Cœur"
+        set line 6 of lore of {_i} to "&7Débloque l'Orbe de Vitalité, armure Céleste"
+        set line 7 of lore of {_i} to "&7et des bonus de vie permanents !"
+        set line 8 of lore of {_i} to "&8&m─────────────────────────"
+        set line 9 of lore of {_i} to "&d⭐ CLÉ SACRÉE MINESTARS"
+        set custom model data of {_i} to 40002
+        return {_i}
+
+    # 3. Clé Arcane de Saphir
+    else if {_type} is "cle_arcane" or "arcane":
+        set {_i} to 1 of tripwire hook named "&9&l✦ CLÉ ARCANE DE SAPHIR ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Type: &9Clé Magique 3D &8| &7Rareté: &9&lMYTHIQUE"
+        set line 3 of lore of {_i} to "&7Caisse associée: &9Box Arcane / Enchanteur"
+        set line 4 of lore of {_i} to "&8&m─────────────────────────"
+        set line 5 of lore of {_i} to "&6Utilisation : &eClic-Droit sur la Box Arcane"
+        set line 6 of lore of {_i} to "&7Débloque Bâton de Tempête, parchemins"
+        set line 7 of lore of {_i} to "&7et livres d'enchantements suprêmes VI !"
+        set line 8 of lore of {_i} to "&8&m─────────────────────────"
+        set line 9 of lore of {_i} to "&9⭐ CLÉ MAGIQUE MINESTARS"
+        set custom model data of {_i} to 40003
+        return {_i}
+
+    # 4. Clé Améthyste du Vide
+    else if {_type} is "cle_amethyst" or "amethyst":
+        set {_i} to 1 of tripwire hook named "&5&l✦ CLÉ AMÉTHYSTE DU VIDE ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Type: &5Clé Cosmique 3D &8| &7Rareté: &5&lMYTHIQUE"
+        set line 3 of lore of {_i} to "&7Caisse associée: &5Box du Vide Interstellaire"
+        set line 4 of lore of {_i} to "&8&m─────────────────────────"
+        set line 5 of lore of {_i} to "&6Utilisation : &eClic-Droit sur la Box du Vide"
+        set line 6 of lore of {_i} to "&7Débloque le Set du Néant et armes cosmiques !"
+        set line 7 of lore of {_i} to "&8&m─────────────────────────"
+        set line 8 of lore of {_i} to "&5⭐ CLÉ MYTHIQUE MINESTARS"
+        set custom model data of {_i} to 40004
+        return {_i}
+
+    # 5. Clé de Vote Dorée
+    else if {_type} is "cle_vote" or "vote":
+        set {_i} to 1 of tripwire hook named "&6&l✦ CLÉ DE VOTE DORÉE ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Type: &6Clé Communautaire 3D &8| &7Rareté: &6&lCOMMUNE"
+        set line 3 of lore of {_i} to "&7Caisse associée: &6Box Vote Quotidien"
+        set line 4 of lore of {_i} to "&8&m─────────────────────────"
+        set line 5 of lore of {_i} to "&6Utilisation : &eClic-Droit sur la Box Vote"
+        set line 6 of lore of {_i} to "&7Obtenue gratuitement en votant pour le serveur !"
+        set line 7 of lore of {_i} to "&8&m─────────────────────────"
+        set line 8 of lore of {_i} to "&6⭐ CLÉ VOTE MINESTARS"
+        set custom model data of {_i} to 40005
+        return {_i}
+
+    # 6. Clé Rare Prismatique
+    else if {_type} is "cle_rare" or "rare":
+        set {_i} to 1 of tripwire hook named "&b&l✦ CLÉ PRISMATIQUE ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Type: &bClé Céleste 3D &8| &7Rareté: &b&lRARE"
+        set line 3 of lore of {_i} to "&7Caisse associée: &bBox Prismatique"
+        set line 4 of lore of {_i} to "&8&m─────────────────────────"
+        set line 5 of lore of {_i} to "&6Utilisation : &eClic-Droit sur la Box Rare"
+        set line 6 of lore of {_i} to "&7Contient minerais purs, outils et monnaie !"
+        set line 7 of lore of {_i} to "&8&m─────────────────────────"
+        set line 8 of lore of {_i} to "&b⭐ CLÉ RARE MINESTARS"
+        set custom model data of {_i} to 40006
+        return {_i}
+
+    # 7. Clé Royale de la Couronne
+    else if {_type} is "cle_royale" or "royale":
+        set {_i} to 1 of tripwire hook named "&6&l✦ CLÉ ROYALE COURONNÉE ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Type: &6Clé de Prestige 3D &8| &7Rareté: &6&lLÉGENDAIRE"
+        set line 3 of lore of {_i} to "&7Caisse associée: &6Box Royale du Royaume"
+        set line 4 of lore of {_i} to "&8&m─────────────────────────"
+        set line 5 of lore of {_i} to "&6Utilisation : &eClic-Droit sur la Box Royale"
+        set line 6 of lore of {_i} to "&7Contient armures dorées, monnaie et tokens !"
+        set line 7 of lore of {_i} to "&8&m─────────────────────────"
+        set line 8 of lore of {_i} to "&6⭐ CLÉ ROYALE MINESTARS"
+        set custom model data of {_i} to 40007
+        return {_i}
+
+    # 8. Clé Solaire Légendaire
+    else if {_type} is "cle_legendaire" or "legendaire":
+        set {_i} to 1 of tripwire hook named "&c&l✦ CLÉ SOLAIRE LÉGENDAIRE ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Type: &cClé Solaire 3D &8| &7Rareté: &c&lLÉGENDAIRE"
+        set line 3 of lore of {_i} to "&7Caisse associée: &cBox du Phénix Immortel"
+        set line 4 of lore of {_i} to "&8&m─────────────────────────"
+        set line 5 of lore of {_i} to "&6Utilisation : &eClic-Droit sur la Box Phénix"
+        set line 6 of lore of {_i} to "&7Débloque l'Arc du Phénix, armures solaires !"
+        set line 7 of lore of {_i} to "&8&m─────────────────────────"
+        set line 8 of lore of {_i} to "&c⭐ CLÉ LÉGENDAIRE MINESTARS"
+        set custom model data of {_i} to 40008
+        return {_i}
+
+    # 9. Clé Crâne du Sculk (Warden)
+    else if {_type} is "cle_sculk" or "sculk" or "warden":
+        set {_i} to 1 of tripwire hook named "&3&l✦ CLÉ CRÂNE DU SCULK ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Type: &3Clé de Boss 3D &8| &7Rareté: &3&lTITANESQUE"
+        set line 3 of lore of {_i} to "&7Caisse associée: &3Box du Warden Titan"
+        set line 4 of lore of {_i} to "&8&m─────────────────────────"
+        set line 5 of lore of {_i} to "&6Utilisation : &eClic-Droit sur la Box Warden"
+        set line 6 of lore of {_i} to "&7Butin exclusif du Titan Boss : Lame Sculk,"
+        set line 7 of lore of {_i} to "&7Écho Shards et Cœur du Titan !"
+        set line 8 of lore of {_i} to "&8&m─────────────────────────"
+        set line 9 of lore of {_i} to "&3⭐ CLÉ DU BOSS WARDEN"
+        set custom model data of {_i} to 40009
+        return {_i}
+
+    # 10. Clé Antique de Pierre
+    else if {_type} is "cle_antique" or "antique":
+        set {_i} to 1 of tripwire hook named "&7&l✦ CLÉ ANTIQUE DES DONJONS ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Type: &7Clé de Donjon 3D &8| &7Rareté: &7&lANCIENNE"
+        set line 3 of lore of {_i} to "&7Caisse associée: &7Box des Donjons Perdus"
+        set line 4 of lore of {_i} to "&8&m─────────────────────────"
+        set line 5 of lore of {_i} to "&6Utilisation : &eClic-Droit sur la Box Donjon"
+        set line 6 of lore of {_i} to "&7Trouvée dans les ruines et coffres secrets !"
+        set line 7 of lore of {_i} to "&8&m─────────────────────────"
+        set line 8 of lore of {_i} to "&7⭐ CLÉ DONJON MINESTARS"
+        set custom model data of {_i} to 40010
+        return {_i}
+
+    # 11. Clé Sombre des Enfers
+    else if {_type} is "cle_abyssale" or "abyssale" or "enfers":
+        set {_i} to 1 of tripwire hook named "&4&l✦ CLÉ SOMBRE DES ENFERS ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Type: &4Clé Infernale 3D &8| &7Rareté: &4&lMYTHIQUE"
+        set line 3 of lore of {_i} to "&7Caisse associée: &4Box Infernale / Nether"
+        set line 4 of lore of {_i} to "&8&m─────────────────────────"
+        set line 5 of lore of {_i} to "&6Utilisation : &eClic-Droit sur la Box Nether"
+        set line 6 of lore of {_i} to "&7Débloque Hache Infernale, Anneau des Enfers !"
+        set line 7 of lore of {_i} to "&8&m─────────────────────────"
+        set line 8 of lore of {_i} to "&4⭐ CLÉ INFERNALE MINESTARS"
+        set custom model data of {_i} to 40011
+        return {_i}
+
+    # 12. Clé Totem du Titan
+    else if {_type} is "cle_titan" or "titan":
+        set {_i} to 1 of tripwire hook named "&6&l✦ CLÉ TOTEM DU TITAN ✦"
+        set line 1 of lore of {_i} to "&8&m─────────────────────────"
+        set line 2 of lore of {_i} to "&7Type: &6Clé Colossale 3D &8| &7Rareté: &6&lDIVINE"
+        set line 3 of lore of {_i} to "&7Caisse associée: &6Box du Colosse Titan"
+        set line 4 of lore of {_i} to "&8&m─────────────────────────"
+        set line 5 of lore of {_i} to "&6Utilisation : &eClic-Droit sur la Box Titan"
+        set line 6 of lore of {_i} to "&7Débloque Pioche 3x3, Armure Titan et Bouclier !"
+        set line 7 of lore of {_i} to "&8&m─────────────────────────"
+        set line 8 of lore of {_i} to "&6⭐ CLÉ DU TITAN MINESTARS"
+        set custom model data of {_i} to 40012
+        return {_i}
+
+# ==================== COMMANDES ADMIN /GIVEKEY ====================
+
+command /givekey <player> <text> [<integer=1>]:
+    permission: op
+    permission message: &cVous n'avez pas la permission.
+    trigger:
+        set {_target} to arg-1
+        set {_keytype} to arg-2
+        set {_amount} to arg-3
+        set {_item} to getCustomKey({_keytype})
+        if {_item} is not set:
+            send "{@prefix}&cType de clé inconnu ! Types disponibles : &fceleste, coeur, arcane, amethyst, vote, rare, royale, legendaire, sculk, antique, abyssale, titan" to player
+            stop
+        give {_amount} of {_item} to {_target}
+        send "{@prefix}&aVous avez donné &e%{_amount}%x %name of {_item}% &aà &f%{_target}% &a!" to player
+        send "{@prefix}&aVous avez reçu &e%{_amount}%x %name of {_item}% &a!" to {_target}
+
+command /giveallkeys [<player>]:
+    permission: op
+    permission message: &cVous n'avez pas la permission.
+    trigger:
+        set {_target} to player
+        if arg-1 is set:
+            set {_target} to arg-1
+        set {_keys::*} to "cle_celeste", "cle_coeur", "cle_arcane", "cle_amethyst", "cle_vote", "cle_rare", "cle_royale", "cle_legendaire", "cle_sculk", "cle_antique", "cle_abyssale", and "cle_titan"
+        loop {_keys::*}:
+            give 1 of getCustomKey(loop-value) to {_target}
+        send "{@prefix}&aLes &e12 Clés 3D Mythiques &aont été données à &f%{_target}% &a!" to player
+
+# ==================== MENU GUI INTERACTIF DES BOX & CLÉS ====================
+
+command /clefs:
+    aliases: /cle, /keys, /key, /crates, /box
+    trigger:
+        openCratesMenu(player)
+
+function openCratesMenu(p: player):
+    set {_gui} to chest inventory with 6 rows named "&8&l✦ &6&lBOX & CLÉS MYTHIQUES &8&l✦"
+    
+    # Vitres de décoration sombre
+    set {_g1} to gray stained glass pane named " "
+    set {_g2} to orange stained glass pane named " "
+    set {_g3} to yellow stained glass pane named " "
+    
+    loop 54 times:
+        set slot (loop-number - 1) of {_gui} to {_g1}
+    
+    # Bordures dorées
+    set slot 0, 8, 45, and 53 of {_gui} to {_g2}
+    set slot 1, 7, 9, 17, 36, 44, 46, and 52 of {_gui} to {_g3}
+    
+    # Emplacement des 12 Box / Clés (Slots centrés)
+    set slot 19 of {_gui} to getCustomKey("cle_celeste")
+    set slot 20 of {_gui} to getCustomKey("cle_coeur")
+    set slot 21 of {_gui} to getCustomKey("cle_arcane")
+    set slot 22 of {_gui} to getCustomKey("cle_amethyst")
+    set slot 23 of {_gui} to getCustomKey("cle_vote")
+    set slot 24 of {_gui} to getCustomKey("cle_rare")
+    
+    set slot 28 of {_gui} to getCustomKey("cle_royale")
+    set slot 29 of {_gui} to getCustomKey("cle_legendaire")
+    set slot 30 of {_gui} to getCustomKey("cle_sculk")
+    set slot 31 of {_gui} to getCustomKey("cle_antique")
+    set slot 32 of {_gui} to getCustomKey("cle_abyssale")
+    set slot 33 of {_gui} to getCustomKey("cle_titan")
+    
+    # Header Info
+    set {_info} to nether star named "&6&l✦ INFORMATIONS SUR LES CAISSES ✦" with lore "&8&m─────────────────────────" and "&7• Les clés ouvrent les Caisses au Spawn !" and "&7• Vous pouvez prévisualiser les récompenses" and "&7  ou utiliser vos clés pour gagner du butin." and "&8&m─────────────────────────" and "&e⭐ CLIQUEZ SUR UNE CLÉ POUR L'UTILISER"
+    set slot 4 of {_gui} to {_info}
+    
+    # Bouton Fermer
+    set slot 49 of {_gui} to barrier named "&c&lFERMER LE MENU"
+    
+    open {_gui} to {_p}
+
+# ==================== INTERACTION & OUVERTURE DE CRATE ====================
+
+on inventory click:
+    if name of player's current inventory contains "BOX & CLÉS":
+        cancel event
+        if clicked slot is 49:
+            close player's inventory
+        else if clicked slot is 19, 20, 21, 22, 23, 24, 28, 29, 30, 31, 32, or 33:
+            play sound "ui.button.click" with volume 1 and pitch 1.5 at player
+            send "{@prefix}&ePour ouvrir cette caisse, utilisez votre clé au &6Spawn des Box &e!" to player
+
+# Clic droit avec une clé en main pour déclencher l'ouverture
+on right click with tripwire hook:
+    set {_name} to name of player's tool
+    if {_name} contains "CLÉ":
+        cancel event
+        play sound "block.ender_chest.open" with volume 1 and pitch 1.2 at player
+        play sound "entity.player.levelup" with volume 1 and pitch 1.8 at player
+        send title "&6&l✦ BOX MYTHIQUE OUVERTE ! ✦" with subtitle "&eTirage du butin en cours..." to player for 2 seconds
+        # Effet visuel
+        loop 5 times:
+            draw 10 of flame at player
+            draw 10 of enchanted_hit at player
+            wait 2 ticks
+        send "{@prefix}&aFélicitations ! Vous avez ouvert votre &f%{_name}% &a!" to player

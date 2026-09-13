@@ -1,0 +1,178 @@
+# ==============================================================================
+#      GESTIONNAIRE DE SÉPARATION D'INVENTAIRES MULTI-MONDES
+#      - Groupe 1 : SPAWN & MONDE SURVIE (Même inventaire partagé 100%)
+#      - Groupe 2 : MONDE SKYBLOCK (Inventaire totalement distinct et indépendant)
+# ==============================================================================
+
+options:
+    prefix: &b&l✦ INVENTAIRE &8> &7
+
+# ==================== FONCTIONS DE SAUVEGARDE & RESTAURATION ====================
+
+function saveWorldInventory(p: player, group: text):
+    set {_u} to uuid of {_p}
+    loop integers from 0 to 35:
+        set {inv_store::%{_group}%::%{_u}%::slot::%loop-integer%} to slot loop-integer of {_p}
+    set {inv_store::%{_group}%::%{_u}%::helmet} to helmet of {_p}
+    set {inv_store::%{_group}%::%{_u}%::chestplate} to chestplate of {_p}
+    set {inv_store::%{_group}%::%{_u}%::leggings} to leggings of {_p}
+    set {inv_store::%{_group}%::%{_u}%::boots} to boots of {_p}
+    set {inv_store::%{_group}%::%{_u}%::offhand} to slot 40 of {_p}
+    set {inv_store::%{_group}%::%{_u}%::level} to level of {_p}
+    set {inv_store::%{_group}%::%{_u}%::xp} to level progress of {_p}
+    set {_h} to health of {_p}
+    if {_h} <= 0:
+        set {_h} to 20
+    set {inv_store::%{_group}%::%{_u}%::health} to {_h}
+    set {inv_store::%{_group}%::%{_u}%::food} to food level of {_p}
+    set {inv_store::%{_group}%::%{_u}%::saved} to true
+
+function loadWorldInventory(p: player, group: text):
+    set {_u} to uuid of {_p}
+    clear {_p}'s inventory
+    set helmet of {_p} to air
+    set chestplate of {_p} to air
+    set leggings of {_p} to air
+    set boots of {_p} to air
+    set slot 40 of {_p} to air
+    
+    if {inv_store::%{_group}%::%{_u}%::saved} is true:
+        loop integers from 0 to 35:
+            if {inv_store::%{_group}%::%{_u}%::slot::%loop-integer%} is set:
+                set slot loop-integer of {_p} to {inv_store::%{_group}%::%{_u}%::slot::%loop-integer%}
+        if {inv_store::%{_group}%::%{_u}%::helmet} is set:
+            set helmet of {_p} to {inv_store::%{_group}%::%{_u}%::helmet}
+        if {inv_store::%{_group}%::%{_u}%::chestplate} is set:
+            set chestplate of {_p} to {inv_store::%{_group}%::%{_u}%::chestplate}
+        if {inv_store::%{_group}%::%{_u}%::leggings} is set:
+            set leggings of {_p} to {inv_store::%{_group}%::%{_u}%::leggings}
+        if {inv_store::%{_group}%::%{_u}%::boots} is set:
+            set boots of {_p} to {inv_store::%{_group}%::%{_u}%::boots}
+        if {inv_store::%{_group}%::%{_u}%::offhand} is set:
+            set slot 40 of {_p} to {inv_store::%{_group}%::%{_u}%::offhand}
+        if {inv_store::%{_group}%::%{_u}%::level} is set:
+            set level of {_p} to {inv_store::%{_group}%::%{_u}%::level}
+        if {inv_store::%{_group}%::%{_u}%::xp} is set:
+            set level progress of {_p} to {inv_store::%{_group}%::%{_u}%::xp}
+            
+        set {_savedHealth} to {inv_store::%{_group}%::%{_u}%::health}
+        if {_savedHealth} is set:
+            if {_savedHealth} > 0:
+                set health of {_p} to {_savedHealth}
+            else:
+                set health of {_p} to 20
+        else:
+            set health of {_p} to 20
+            
+        if {inv_store::%{_group}%::%{_u}%::food} is set:
+            set food level of {_p} to {inv_store::%{_group}%::%{_u}%::food}
+        else:
+            set food level of {_p} to 20
+    else:
+        set health of {_p} to 20
+        set food level of {_p} to 20
+
+
+
+function handleInventorySwitch(p: player, targetWorld: text):
+    set {_u} to uuid of {_p}
+    
+    # Détermination du groupe cible
+    set {_targetGroup} to "survival"
+    if {_targetWorld} contains "skyblock":
+        set {_targetGroup} to "skyblock"
+    
+    # Groupe actuellement actif pour ce joueur
+    set {_currentGroup} to {active_inv_group::%{_u}%}
+    if {_currentGroup} is not set:
+        set {_currentGroup} to "survival"
+        set {active_inv_group::%{_u}%} to "survival"
+
+    # Si le joueur change de groupe de monde
+    if {_targetGroup} is not {_currentGroup}:
+        # 1. Sauvegarde de l'ancien inventaire
+        saveWorldInventory({_p}, {_currentGroup})
+        
+        # 2. Mise à jour du groupe actif
+        set {active_inv_group::%{_u}%} to {_targetGroup}
+        
+        # 3. Chargement du nouvel inventaire
+        loadWorldInventory({_p}, {_targetGroup})
+        
+        if {_targetGroup} is "skyblock":
+            send "{@prefix}&aInventaire Skyblock chargé !" to {_p}
+        else:
+            send "{@prefix}&aInventaire Survie / Spawn chargé !" to {_p}
+
+# ==================== ENFORCEMENT DU KEEP-INVENTORY GLOBAL ====================
+
+on load:
+    execute console command "mv gamerule set keep_inventory true *"
+    execute console command "mv gamerule set keepInventory true *"
+
+on world change:
+    set {_targetWorld} to "%event-world%"
+    handleInventorySwitch(player, {_targetWorld})
+    wait 5 ticks
+    giveNavigator(player)
+
+# Sauvegarde préventive au moment du coup fatal
+on damage of player:
+    if damage >= health of victim:
+        set {_u} to uuid of victim
+        set {_w} to "%world of victim%"
+        set {_group} to "survival"
+        if {_w} contains "skyblock":
+            set {_group} to "skyblock"
+        saveWorldInventory(victim, {_group})
+
+# Sécurité totale anti-perte de stuff à la mort
+on death of player:
+    clear drops
+    set {_u} to uuid of victim
+    set {_w} to "%world of victim%"
+    set {last_death_world::%{_u}%} to {_w}
+    set {_group} to "survival"
+    if {_w} contains "skyblock":
+        set {_group} to "skyblock"
+    saveWorldInventory(victim, {_group})
+    send "{@prefix}&aTon stuff et ton expérience ont été conservés !" to victim
+
+on respawn:
+    wait 2 ticks
+    set {_u} to uuid of player
+    set {_w} to "%world of player%"
+    set {_group} to "survival"
+    if {last_death_world::%{_u}%} is set:
+        if "%{last_death_world::%{_u}%}%" contains "skyblock":
+            set {_group} to "skyblock"
+    else if {_w} contains "skyblock":
+        set {_group} to "skyblock"
+        
+    set {active_inv_group::%{_u}%} to {_group}
+    loadWorldInventory(player, {_group})
+    wait 3 ticks
+    giveNavigator(player)
+
+on join:
+    wait 2 ticks
+    set {_w} to "%world of player%"
+    set {_u} to uuid of player
+    if {_w} contains "skyblock":
+        set {active_inv_group::%{_u}%} to "skyblock"
+    else:
+        set {active_inv_group::%{_u}%} to "survival"
+    wait 3 ticks
+    giveNavigator(player)
+
+on quit:
+    set {_u} to uuid of player
+    set {_group} to {active_inv_group::%{_u}%} ? "survival"
+    saveWorldInventory(player, {_group})
+
+command /syncinv:
+    trigger:
+        set {_w} to "%world of player%"
+        handleInventorySwitch(player, {_w})
+
+        send "{@prefix}&aSynchronisation manuelle de l'inventaire effectuée !" to player
