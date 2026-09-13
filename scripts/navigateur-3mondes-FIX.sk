@@ -63,63 +63,79 @@ command /navigateur:
         send "&b&l✦ NAVIGATION &8> &aNavigateur ajouté à ton inventaire !" to player
         play sound "entity.experience_orb.pickup" to player
 
-# ==================== MENU PRINCIPAL ÉPURÉ & MODERNE (3 ROWS) ====================
+# ==================== MENU PRINCIPAL ÉPURÉ & MODERNE (4 ROWS) ====================
 
 command /menu:
     aliases: /coffre, /serveur, /servers, /accueil
     trigger:
-        set {_menu} to a new chest inventory with 3 rows named "<#00D4FF>&lMINE<#FFFFFF>&lSTARS &8▸ &fMenu Principal"
+        set {_menu} to a new chest inventory with 4 rows named "<#00D4FF>&lMINE<#FFFFFF>&lSTARS &8▸ &fMenu Principal"
         
         # 1. Fond sombre élégant
-        loop 27 times:
+        loop 36 times:
             set slot (loop-number - 1) of {_menu} to 1 of gray stained glass pane named "&8✦"
         
-        # Coins lumineux Cyan
+        # Bordures et coins lumineux Cyan
         set slot 0 of {_menu} to 1 of cyan stained glass pane named " "
         set slot 8 of {_menu} to 1 of cyan stained glass pane named " "
-        set slot 18 of {_menu} to 1 of cyan stained glass pane named " "
-        set slot 26 of {_menu} to 1 of cyan stained glass pane named " "
+        set slot 27 of {_menu} to 1 of cyan stained glass pane named " "
+        set slot 35 of {_menu} to 1 of cyan stained glass pane named " "
 
-        # 2. Profil Joueur (Slot 4)
+        # 2. Rangée 1 : En-tête & Profil Joueur
         set {_u} to uuid of player
         set {_r} to {rank::%{_u}%} ? "Joueur"
         set {_bal} to player's balance ? 0
         set {_j} to {job::%{_u}%} ? "Aucun"
         set {_lvl} to {player_lvl::%{_u}%} ? 1
 
-        set slot 4 of {_menu} to 1 of player head named "<#00D4FF>&l✦ &f%player% <#00D4FF>&l✦" with lore "&8&m─────────────────────" and "&8▸ &7Grade : &e%{_r}% &8┃ &7Niveau : &e★ %{_lvl}%" and "&8▸ &7Solde : &a%{_bal}%$ &8┃ &7Métier : &b%{_j}%" and "&8&m─────────────────────"
+        # Infos Serveur (Slot 2)
+        set slot 2 of {_menu} to 1 of nether star named "<#00D4FF>&l✦ MINESTARS MULTIVERSE ✦" with lore "&8&m─────────────────────" and "&8▸ &7Version : &a1.20+ Native" and "&8▸ &7Saison : &eÉdition Lunaire" and "&8▸ &7Performances : &a20.0 TPS (Ultra-Fluide)" and "&8&m─────────────────────"
 
-        # 3. Les 3 Mondes Majeurs (Centrés & Épurés)
-        # SURVIE (Slot 11)
-        set slot 11 of {_menu} to 1 of grass block named "<#2ED573>&l✦ SURVIE 1.20+ ✦" with lore "&8&m─────────────────────" and "&8▸ &7Survie semi-RP & Économie" and "&8▸ &7RTP, Résidences & TPA" and "&8&m─────────────────────" and "&a▶ Cliquer pour rejoindre"
+        # Profil Joueur (Slot 4)
+        set slot 4 of {_menu} to 1 of player head named "<#00D4FF>&l✦ &f%player% <#00D4FF>&l✦" with lore "&8&m─────────────────────" and "&8▸ &7Grade : &e%{_r}% &8┃ &7Niveau : &e★ %{_lvl}%" and "&8▸ &7Solde : &a%{_bal}%$ &8┃ &7Métier : &b%{_j}%" and "&8&m─────────────────────" and "&7» Cliquez pour voir votre profil"
 
-        # SPAWN / HUB (Slot 13)
-        set slot 13 of {_menu} to 1 of beacon named "<#00D4FF>&l✦ HUB & SPAWN ✦" with lore "&8&m─────────────────────" and "&8▸ &7Accueil & Portails mondes" and "&8▸ &7Parcours Jump & PNJ Box" and "&8&m─────────────────────" and "&b▶ Cliquer pour rejoindre"
+        # Boutique & Grades (Slot 6)
+        set slot 6 of {_menu} to 1 of gold ingot named "<#A855F7>&l✦ BOUTIQUE & GRADES ✦" with lore "&8&m─────────────────────" and "&8▸ &7Avantages VIP, MVP & STAR" and "&8▸ &7Bonus exclusifs & Cosmétiques" and "&8&m─────────────────────" and "&d▶ Découvrir (/grades)"
 
-        # SKYBLOCK (Slot 15)
-        set slot 15 of {_menu} to 1 of feather named "<#FFA502>&l✦ SKYBLOCK V9 ✦" with lore "&8&m─────────────────────" and "&8▸ &7Îles infinies & Générateurs" and "&8▸ &7Banque, Upgrades & Co-op" and "&8&m─────────────────────" and "&e▶ Cliquer pour gérer (/is)"
+        # 3. Rangée 2 : Les 3 Mondes Majeurs & Combats 3D
+        # SURVIE (Slot 10)
+        set slot 10 of {_menu} to 1 of grass block named "<#2ED573>&l✦ SURVIE 1.20+ ✦" with lore "&8&m─────────────────────" and "&8▸ &7Survie semi-RP & Économie dynamique" and "&8▸ &7RTP, Claims, Résidences & TPA" and "&8&m─────────────────────" and "&a▶ Clic gauche : &fRejoindre le monde" and "&2▶ Clic droit : &fMenu Survie (/survie)"
 
-        # 4. Raccourcis Utiles (Rangée du bas)
+        # SPAWN / HUB (Slot 11)
+        set slot 11 of {_menu} to 1 of beacon named "<#00D4FF>&l✦ HUB CENTRAL & SPAWN ✦" with lore "&8&m─────────────────────" and "&8▸ &7Accueil & Portails mondes" and "&8▸ &7PNJ Box, Parcours Jump & PNJ Métiers" and "&8&m─────────────────────" and "&b▶ Cliquer pour rejoindre"
+
+        # SKYBLOCK (Slot 12)
+        set slot 12 of {_menu} to 1 of feather named "<#FFA502>&l✦ SKYBLOCK CÉLESTE V9 ✦" with lore "&8&m─────────────────────" and "&8▸ &7Îles infinies, Minerais & Générateurs" and "&8▸ &7Banque d'île, Upgrades & Co-op" and "&8&m─────────────────────" and "&e▶ Clic gauche : &fRejoindre mon île (/is home)" and "&6▶ Clic droit : &fGérer mon île (/is)"
+
+        # ARSENAL 3D (Slot 14)
+        set slot 14 of {_menu} to 1 of netherite sword named "<#E74C3C>&l✦ ARSENAL & ARMES 3D ✦" with lore "&8&m─────────────────────" and "&8▸ &7Épées, Dagues, Lances & Pioche du Titan" and "&8▸ &7Compétences uniques & Dégâts 3D" and "&8&m─────────────────────" and "&c▶ Ouvrir l'Arsenal (/arsenal)"
+
+        # BOX & CLÉS (Slot 15)
+        set slot 15 of {_menu} to 1 of ender chest named "<#9B59B6>&l✦ BOX & CLÉS 3D ✦" with lore "&8&m─────────────────────" and "&8▸ &7Box Vote, Mythique, Céleste & Ultime" and "&8▸ &7Animations d'ouverture 3D" and "&8&m─────────────────────" and "&d▶ Ouvrir les Box (/box)"
+
+        # BOSS TITANS (Slot 16)
+        set slot 16 of {_menu} to 1 of sculk catalyst named "<#34495E>&l✦ BOSS & TITANS ✦" with lore "&8&m─────────────────────" and "&8▸ &7Titan Céleste, Dragon Ancien & Gardiens" and "&8▸ &7Butins Légendaires & Récompenses" and "&8&m─────────────────────" and "&8▶ Consulter les Boss (/boss)"
+
+        # 4. Rangée 3 : Métiers, Récompenses, Outils & Immersion
         # Métiers (Slot 19)
-        set slot 19 of {_menu} to 1 of diamond pickaxe named "<#0984E3>&l✦ MÉTIERS ✦" with lore "&8▸ &7Gagnez du cash en jouant" and "&b▶ Ouvrir (/jobs)"
+        set slot 19 of {_menu} to 1 of diamond pickaxe named "<#0984E3>&l✦ MÉTIERS & ÉCONOMIE ✦" with lore "&8▸ &7Mineur, Bûcheron, Chasseur..." and "&8▸ &7Gagnez du cash en jouant" and "&b▶ Gérer mes métiers (/jobs)"
 
-        # Vocal 3D (Slot 20)
-        set slot 20 of {_menu} to 1 of note block named "<#00D4FF>&l✦ VOCAL 3D ✦" with lore "&8▸ &7Touches [V], [G] & Proximité" and "<#00D4FF>▶ Configurer (/vocal)"
+        # Daily Rewards (Slot 20)
+        set slot 20 of {_menu} to 1 of chest named "<#F1C40F>&l✦ RÉCOMPENSES 7J ✦" with lore "&8▸ &7Cadeaux quotidiens de présence" and "&8▸ &7Jackpot exclusif au Jour 7" and "&e▶ Réclamer mon cadeau (/daily)"
 
-        # Daily Rewards (Slot 21)
-        set slot 21 of {_menu} to 1 of chest named "<#F1C40F>&l✦ RÉCOMPENSES ✦" with lore "&8▸ &7Cadeaux de présence 7J" and "&e▶ Réclamer (/daily)"
+        # Vocal 3D (Slot 21)
+        set slot 21 of {_menu} to 1 of note block named "<#00D4FF>&l✦ CHAT VOCAL 3D ✦" with lore "&8▸ &7Touches [V], [G] & Proximité 3D" and "&8▸ &7Groupes privés & Micro" and "<#00D4FF>▶ Guide & Réglages (/vocal)"
 
-        # Boost FPS (Slot 22)
-        set slot 22 of {_menu} to 1 of clock named "<#00B894>&l✦ BOOST FPS ✦" with lore "&8▸ &7Anti-lag & Fluidité client" and "&a▶ Optimiser (/fps)"
+        # Boost FPS (Slot 23)
+        set slot 23 of {_menu} to 1 of clock named "<#00B894>&l✦ BOOST FPS & ANTI-LAG ✦" with lore "&8▸ &7Optimisation des particules" and "&8▸ &7Fluidité client & Confort" and "&a▶ Configurer (/fps)"
 
-        # Chat Tags (Slot 23)
-        set slot 23 of {_menu} to 1 of name tag named "<#FD79A8>&l✦ TITRES & TAGS ✦" with lore "&8▸ &7Badges de chat exclusifs" and "&d▶ Choisir (/tags)"
+        # Chat Tags (Slot 24)
+        set slot 24 of {_menu} to 1 of name tag named "<#FD79A8>&l✦ TITRES & TAGS DU CHAT ✦" with lore "&8▸ &7Badges de prestige personnalisés" and "&8▸ &7Déblocables par niveau et exploits" and "&d▶ Choisir un tag (/tags)"
 
-        # Immersion HD (Slot 24)
-        set slot 24 of {_menu} to 1 of jukebox named "<#74B9FF>&l✦ IMMERSION HD ✦" with lore "&8▸ &7Sons 3D & Effets réalistes" and "&3▶ Réglages (/immersion)"
+        # Immersion HD (Slot 25)
+        set slot 25 of {_menu} to 1 of jukebox named "<#74B9FF>&l✦ SONS & IMMERSION 3D ✦" with lore "&8▸ &7Ambiance sonore réaliste & bruits de pas" and "&8▸ &7Effets visuels et physiques" and "&3▶ Réglages sonores (/immersion)"
 
-        # Boutique / Grades (Slot 25)
-        set slot 25 of {_menu} to 1 of gold ingot named "<#A855F7>&l✦ BOUTIQUE & GRADES ✦" with lore "&8▸ &7Avantages VIP, MVP & STAR" and "&d▶ Découvrir (/grades)"
+        # 5. Rangée 4 : Bouton Fermer (Slot 31)
+        set slot 31 of {_menu} to 1 of barrier named "<#FF4757>&l✦ FERMER LE MENU ✦" with lore "&7Cliquez pour quitter"
 
         open {_menu} to player
         play sound "block.chest.open" to player
@@ -128,62 +144,106 @@ on inventory click:
     if name of event-inventory contains "Menu Principal":
         cancel event
 
-        # 1. Survie (Slot 11) -> Téléportation directe dans le monde Survie
-        if index of event-slot is 11:
+        # Profil (Slot 4)
+        if index of event-slot is 4:
+            close player's inventory
+            execute player command "profile"
+
+        # Boutique (Slot 6)
+        else if index of event-slot is 6:
+            close player's inventory
+            play sound "ui.button.click" with pitch 1.2 to player
+            execute player command "grades"
+
+        # 1. Survie (Slot 10)
+        else if index of event-slot is 10:
             close player's inventory
             play sound "entity.player.levelup" to player
-            execute player command "survie tp"
+            if click type is right mouse button or right mouse button with shift:
+                execute player command "survie"
+            else:
+                execute player command "survie tp"
 
-        # 2. Spawn (Slot 13) -> Téléportation au spawn principal
-        else if index of event-slot is 13:
+        # 2. Spawn (Slot 11)
+        else if index of event-slot is 11:
             close player's inventory
             play sound "entity.player.levelup" to player
             execute player command "spawn"
 
-        # 3. Skyblock (Slot 15) -> Menu Complet de Gestion Skyblock (/is)
-        else if index of event-slot is 15:
+        # 3. Skyblock (Slot 12)
+        else if index of event-slot is 12:
             close player's inventory
             play sound "entity.player.levelup" to player
-            execute player command "is"
+            if click type is right mouse button or right mouse button with shift:
+                execute player command "is"
+            else:
+                set {_u} to uuid of player
+                set {_owner} to "%player%"
+                if {island_team_owner::%{_u}%} is set:
+                    set {_owner} to "%{island_team_owner::%{_u}%}%"
+                else if {island_team_owner::%player%} is set:
+                    set {_owner} to "%{island_team_owner::%player%}%"
 
-        # 4. Métiers (Slot 19)
+                if {island::%{_owner}%::x} is set:
+                    execute player command "is home"
+                else:
+                    execute player command "is"
+
+        # 4. Arsenal 3D (Slot 14)
+        else if index of event-slot is 14:
+            close player's inventory
+            play sound "ui.button.click" with pitch 1.2 to player
+            execute player command "arsenal"
+
+        # 5. Box & Clés 3D (Slot 15)
+        else if index of event-slot is 15:
+            close player's inventory
+            play sound "ui.button.click" with pitch 1.2 to player
+            execute player command "box"
+
+        # 6. Boss Titans (Slot 16)
+        else if index of event-slot is 16:
+            close player's inventory
+            play sound "ui.button.click" with pitch 1.2 to player
+            execute player command "boss"
+
+        # 7. Métiers (Slot 19)
         else if index of event-slot is 19:
             close player's inventory
             play sound "ui.button.click" with pitch 1.2 to player
             execute player command "jobs"
 
-        # 5. Vocal 3D (Slot 20)
+        # 8. Daily (Slot 20)
         else if index of event-slot is 20:
-            close player's inventory
-            play sound "ui.button.click" with pitch 1.2 to player
-            execute player command "vocal"
-
-        # 6. Daily (Slot 21)
-        else if index of event-slot is 21:
             close player's inventory
             play sound "ui.button.click" with pitch 1.2 to player
             execute player command "daily"
 
-        # 7. FPS Boost (Slot 22)
-        else if index of event-slot is 22:
+        # 9. Vocal 3D (Slot 21)
+        else if index of event-slot is 21:
+            close player's inventory
+            play sound "ui.button.click" with pitch 1.2 to player
+            execute player command "vocal"
+
+        # 10. FPS Boost (Slot 23)
+        else if index of event-slot is 23:
             close player's inventory
             play sound "ui.button.click" with pitch 1.2 to player
             execute player command "fps"
 
-        # 8. Tags (Slot 23)
-        else if index of event-slot is 23:
+        # 11. Tags (Slot 24)
+        else if index of event-slot is 24:
             close player's inventory
             play sound "ui.button.click" with pitch 1.2 to player
             execute player command "tags"
 
-        # 9. Immersion HD (Slot 24)
-        else if index of event-slot is 24:
+        # 12. Immersion HD (Slot 25)
+        else if index of event-slot is 25:
             close player's inventory
             play sound "ui.button.click" with pitch 1.2 to player
             execute player command "immersion"
 
-        # 10. Grades (Slot 25)
-        else if index of event-slot is 25:
+        # 13. Fermer (Slot 31)
+        else if index of event-slot is 31:
             close player's inventory
-            play sound "ui.button.click" with pitch 1.2 to player
-            execute player command "grades"
+            play sound "block.chest.close" to player

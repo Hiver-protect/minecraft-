@@ -263,13 +263,15 @@ function openCratesMenu(p: player):
 # ==================== INTERACTION & OUVERTURE DE CRATE ====================
 
 on inventory click:
-    if name of player's current inventory contains "BOX & CLÉS":
+    if name of event-inventory contains "Box" or name of event-inventory contains "Clés" or name of event-inventory contains "Clefs" or name of event-inventory contains "Crates":
         cancel event
-        if clicked slot is 49:
+        set {_slot} to index of event-slot
+        if {_slot} is 49:
             close player's inventory
-        else if clicked slot is 19, 20, 21, 22, 23, 24, 28, 29, 30, 31, 32, or 33:
-            play sound "ui.button.click" with volume 1 and pitch 1.5 at player
-            send "{@prefix}&ePour ouvrir cette caisse, utilisez votre clé au &6Spawn des Box &e!" to player
+            play sound "block.chest.close" to player
+        else if {_slot} is 19 or 20 or 21 or 22 or 23 or 24 or 28 or 29 or 30 or 31 or 32 or 33:
+            play sound "ui.button.click" with pitch 1.5 to player
+            send "{@prefix}&ePour ouvrir cette caisse, utilise ta clé au &6Spawn des Box &e(ou fais un &aClic Droit &eavec la clé en main) !" to player
 
 # Clic droit avec une clé en main pour déclencher l'ouverture
 on right click with tripwire hook:

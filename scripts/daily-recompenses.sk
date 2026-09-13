@@ -104,10 +104,10 @@ command /daily:
         play sound "block.chest.open" to player
 
 on inventory click:
-    if name of event-inventory contains "Récompenses 7J":
+    if name of event-inventory contains "Récompenses 7J" or name of event-inventory contains "RÉCOMPENSES":
         cancel event
         
-        if index of event-slot is 22:
+        if index of event-slot is 10 or 11 or 12 or 13 or 14 or 15 or 16 or 22:
             close player's inventory
             
             # Cooldown

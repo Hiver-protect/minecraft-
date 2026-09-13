@@ -3253,7 +3253,7 @@ every 20 seconds:
 
 # Gestion des clics dans le Menu de Mobs & Paramètres
 on inventory click:
-    if name of event-inventory is "&8» &0&lGESTION MOBS & PARAMÈTRES":
+    if name of event-inventory contains "GESTION MOBS" or name of event-inventory contains "Gestion Mobs" or name of event-inventory contains "Paramètres" or name of event-inventory contains "PARAMÈTRES":
         cancel event
         set {_u} to uuid of player
         set {_owner} to "%player%"
@@ -3369,7 +3369,7 @@ on explode:
 
 # Gestion des clics dans le Menu Admin des Îles
 on inventory click:
-    if name of event-inventory contains "&8» &0&lÎLES SKYBLOCK":
+    if name of event-inventory contains "ÎLES SKYBLOCK" or name of event-inventory contains "Îles Skyblock" or name of event-inventory contains "Liste des Îles":
         cancel event
         if event-slot is set:
             set {_name} to uncolored name of event-slot
