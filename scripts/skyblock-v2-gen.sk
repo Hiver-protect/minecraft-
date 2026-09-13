@@ -81,7 +81,9 @@ on join:
 # ==================== FONCTIONS UTILITAIRES, RAYON D'ÎLE & COFFRES ====================
 
 function getIslandRadius(owner: text) :: number:
-    set {_lvl} to {island_upgrades::%{_owner}%::size} ? 1
+    set {_lvl} to {island_upgrades::%{_owner}%::size}
+    if {_lvl} is not set:
+        set {_lvl} to 1
     if {_lvl} is 1:
         return 50
     else if {_lvl} is 2:
@@ -321,7 +323,9 @@ command /isadmin [<text>] [<text>] [<text>] [<text>]:
                 set {_owner} to loop-index
                 set {_x} to {island::%{_owner}%::x}
                 set {_z} to {island::%{_owner}%::z}
-                set {_lvl} to {island_level::%{_owner}%} ? 10
+                set {_lvl} to {island_level::%{_owner}%}
+                if {_lvl} is not set:
+                    set {_lvl} to 10
                 set slot {_slot} of {_gui} to 1 of player head named "&e&l✦ Île de %{_owner}% ✦" with lore "&8&m─────────────────────" and "&8▸ &7Coordonnées : &fX: %{_x}%, Z: %{_z}%" and "&8▸ &7Niveau d'île : &a★ %{_lvl}% ⭐" and "&8&m─────────────────────" and "&a▶ Clic Gauche : Se téléporter" and "&c▶ Clic Droit : Régénérer"
                 add 1 to {_slot}
                 if {_slot} >= 54:
@@ -340,7 +344,10 @@ command /isadmin [<text>] [<text>] [<text>] [<text>]:
         if arg-1 is "scan" or "scanner" or "find":
             send "" to player
             send "&e&l✦ SCANNER DES ÎLES PHYSIQUES SKYBLOCK ✦" to player
-            send "&7Recherche des îles construites de X: 0 à X: %{skyblock_next_x} ? 15000%..." to player
+            set {_scanMax} to {skyblock_next_x}
+            if {_scanMax} is not set:
+                set {_scanMax} to 15000
+            send "&7Recherche des îles construites de X: 0 à X: %{_scanMax}%..." to player
             set {_found} to 0
             set {_w} to world "skyblock"
             if {_w} is not set:
@@ -348,7 +355,9 @@ command /isadmin [<text>] [<text>] [<text>] [<text>]:
             if {_w} is not set:
                 set {_w} to world of player
                 
-            set {_maxScan} to {skyblock_next_x} ? 15000
+            set {_maxScan} to {skyblock_next_x}
+            if {_maxScan} is not set:
+                set {_maxScan} to 15000
             if {_maxScan} < 10000:
                 set {_maxScan} to 15000
                 
@@ -368,8 +377,12 @@ command /isadmin [<text>] [<text>] [<text>] [<text>]:
             stop
             
         if arg-1 is "tpcoord" or "gotocoord":
-            set {_x} to (arg-2 parsed as number) ? 0
-            set {_z} to (arg-3 parsed as number) ? 0
+            set {_x} to (arg-2 parsed as number)
+            if {_x} is not set:
+                set {_x} to 0
+            set {_z} to (arg-3 parsed as number)
+            if {_z} is not set:
+                set {_z} to 0
             set {_w} to world "skyblock"
             if {_w} is not set:
                 set {_w} to "skyblock" parsed as world
@@ -387,8 +400,12 @@ command /isadmin [<text>] [<text>] [<text>] [<text>]:
             stop
             
         if arg-1 is "link" or "relink" or "lier":
-            set {_x} to (arg-3 parsed as number) ? 0
-            set {_z} to (arg-4 parsed as number) ? 0
+            set {_x} to (arg-3 parsed as number)
+            if {_x} is not set:
+                set {_x} to 0
+            set {_z} to (arg-4 parsed as number)
+            if {_z} is not set:
+                set {_z} to 0
             set {_w} to world "skyblock"
             if {_w} is not set:
                 set {_w} to "skyblock" parsed as world
@@ -614,7 +631,9 @@ command /skyblock [<text>] [<text>] [<number>]:
                     set block at {_locBelow} to bedrock
                     set block at {_targetLoc} to cobblestone
                     
-                    set {_lvl} to {island_upgrades::%{_genOwner}%::gen} ? 1
+                    set {_lvl} to {island_upgrades::%{_genOwner}%::gen}
+                    if {_lvl} is not set:
+                        set {_lvl} to 1
                     send "{@prefix}&a✦ Générateur de minerais infini &e(Tier %{_lvl}%) &areplacé avec succès !" to player
                     send "{@prefix}&7Mine le bloc au-dessus de la bedrock pour récolter tes minerais !" to player
                     if {_genOwner} is not "%player%":
@@ -877,10 +896,18 @@ command /skyblock [<text>] [<text>] [<number>]:
                 set {_targetOwner} to {_owner}
 
             if {island::%{_targetOwner}%::x} is set:
-                set {_lvl} to {island_level::%{_targetOwner}%} ? 10
-                set {_bank} to {island_bank::%{_targetOwner}%} ? 0
-                set {_gen} to {island_upgrades::%{_targetOwner}%::gen} ? 1
-                set {_likes} to {island_likes::%{_targetOwner}%} ? 0
+                set {_lvl} to {island_level::%{_targetOwner}%}
+                if {_lvl} is not set:
+                    set {_lvl} to 10
+                set {_bank} to {island_bank::%{_targetOwner}%}
+                if {_bank} is not set:
+                    set {_bank} to 0
+                set {_gen} to {island_upgrades::%{_targetOwner}%::gen}
+                if {_gen} is not set:
+                    set {_gen} to 1
+                set {_likes} to {island_likes::%{_targetOwner}%}
+                if {_likes} is not set:
+                    set {_likes} to 0
                 set {_teamSize} to size of {island_team::%{_targetOwner}%::*}
 
                 send "" to player
@@ -1044,9 +1071,15 @@ command /skyblock [<text>] [<text>] [<number>]:
         set slot 35 of {_gui} to 1 of yellow stained glass pane named " "
 
         # Profil du Joueur & Île (Slot 4)
-        set {_lvl} to {island_level::%{_owner}%} ? 10
-        set {_bank} to {island_bank::%{_owner}%} ? 0
-        set {_genLvl} to {island_upgrades::%{_owner}%::gen} ? 1
+        set {_lvl} to {island_level::%{_owner}%}
+        if {_lvl} is not set:
+            set {_lvl} to 10
+        set {_bank} to {island_bank::%{_owner}%}
+        if {_bank} is not set:
+            set {_bank} to 0
+        set {_genLvl} to {island_upgrades::%{_owner}%::gen}
+        if {_genLvl} is not set:
+            set {_genLvl} to 1
         set {_rad} to getIslandRadius({_owner})
             
         set slot 4 of {_gui} to 1 of nether star named "<#FFA502>&l✦ DOMAINE : &f&l%{_owner}% <#FFA502>&l✦" with lore "&8&m─────────────────────" and "&8▸ &7Niveau : &e★ %{_lvl}% &8┃ &7Banque : &a%{_bank}%$" and "&8▸ &7Rayon : <#00D4FF>%{_rad}% blocs &8┃ &7Générateur : &6Tier %{_genLvl}%/4" and "&8&m─────────────────────"
@@ -1109,8 +1142,12 @@ command /is-gui-upgrades:
         else if {island_team_owner::%player%} is set:
             set {_owner} to "%{island_team_owner::%player%}%"
 
-        set {_genLvl} to {island_upgrades::%{_owner}%::gen} ? 1
-        set {_sizeLvl} to {island_upgrades::%{_owner}%::size} ? 1
+        set {_genLvl} to {island_upgrades::%{_owner}%::gen}
+        if {_genLvl} is not set:
+            set {_genLvl} to 1
+        set {_sizeLvl} to {island_upgrades::%{_owner}%::size}
+        if {_sizeLvl} is not set:
+            set {_sizeLvl} to 1
         set {_rad} to getIslandRadius({_owner})
             
         # Upgrade Générateur (Slot 10)
@@ -1176,7 +1213,9 @@ command /is-gui-border:
             set slot 12 of {_gui} to lime dye named "&aMur Laser : &a✔ Actif" with lore "&8&m─────────────────────" and "&8▸ &7Mur laser visible actif." and "&8&m─────────────────────" and "&e▶ Cliquer pour &cDésactiver"
             
         # 3. Couleur des Particules
-        set {_col} to {border_color::%{_u}%} ? "rouge"
+        set {_col} to {border_color::%{_u}%}
+        if {_col} is not set:
+            set {_col} to "rouge"
         set slot 14 of {_gui} to red dye named "&6Teinte Laser : &e%{_col}%" with lore "&8&m─────────────────────" and "&8▸ &7Couleurs : &cRouge &8┃ &bCyan &8┃ &aVert &8┃ &6Or" and "&8&m─────────────────────" and "&e▶ Cliquer pour changer de couleur"
         
         # 4. Agrandir l'île
@@ -1650,7 +1689,9 @@ on inventory click:
 
         # Générateur Upgrade (Slot 10)
         if index of event-slot is 10:
-            set {_lvl} to {island_upgrades::%{_owner}%::gen} ? 1
+            set {_lvl} to {island_upgrades::%{_owner}%::gen}
+            if {_lvl} is not set:
+                set {_lvl} to 1
             if {_lvl} is 1:
                 if player's balance >= 25000:
                     remove 25000 from player's balance
@@ -1684,7 +1725,9 @@ on inventory click:
 
         # Taille & Extension de Bordure (Slot 12)
         else if index of event-slot is 12:
-            set {_sizeLvl} to {island_upgrades::%{_owner}%::size} ? 1
+            set {_sizeLvl} to {island_upgrades::%{_owner}%::size}
+            if {_sizeLvl} is not set:
+                set {_sizeLvl} to 1
             if {_sizeLvl} is 1:
                 if player's balance >= 20000:
                     remove 20000 from player's balance
@@ -1769,7 +1812,9 @@ on inventory click:
             
         # Changer Couleur (Slot 14)
         else if index of event-slot is 14:
-            set {_col} to {border_color::%{_u}%} ? "rouge"
+            set {_col} to {border_color::%{_u}%}
+            if {_col} is not set:
+                set {_col} to "rouge"
             if {_col} is "rouge":
                 set {border_color::%{_u}%} to "cyan"
             else if {_col} is "cyan":
@@ -2511,7 +2556,9 @@ command /staffgen [<player>]:
         set block at {_targetLoc} to cobblestone
         
         if arg-1 is set:
-            set {_targetLvl} to {island_upgrades::%arg-1%::gen} ? 1
+            set {_targetLvl} to {island_upgrades::%arg-1%::gen}
+            if {_targetLvl} is not set:
+                set {_targetLvl} to 1
             send "{@prefix}&a✦ Générateur Skyblock (Tier %{_targetLvl}%) placé pour &e%arg-1% &a!" to player
             send "{@prefix}&a✦ Un membre du Staff (&e%player%&a) a replacé ton générateur de minerais !" to arg-1
         else:
@@ -2638,7 +2685,9 @@ every 10 ticks:
                 # Contact et franchissement de la bordure : Répulsion immédiate & Alerte
                 if {_maxDist} >= {_rad}:
                     if loop-player is not op:
-                        set {_r} to {rank::%{_u}%} ? "Joueur"
+                        set {_r} to {rank::%{_u}%}
+                        if {_r} is not set:
+                            set {_r} to "Joueur"
                         if {_r} is not "Fondateur" or "Admin" or "Resp" or "Modo":
                             if gamemode of loop-player is not spectator:
                                 set {_centerLoc} to location({_isX}, {_py}, {_isZ}, {_pw})
@@ -2652,7 +2701,9 @@ every 10 ticks:
             # 3. Expiration du Vol en Skyblock
             if loop-player's flight mode is true:
                 if loop-player is not op:
-                    set {_r} to {rank::%{_u}%} ? "Joueur"
+                    set {_r} to {rank::%{_u}%}
+                    if {_r} is not set:
+                        set {_r} to "Joueur"
                     if {_r} is not "Fondateur" or "Admin" or "Resp" or "Modo":
                         if {island_fly_expire::%loop-player%} is set:
                             if now >= {island_fly_expire::%loop-player%}:
@@ -2671,7 +2722,9 @@ every 10 ticks:
             if loop-player's flight mode is true:
                 if loop-player is not op:
                     set {_u} to uuid of loop-player
-                    set {_r} to {rank::%{_u}%} ? "Joueur"
+                    set {_r} to {rank::%{_u}%}
+                    if {_r} is not set:
+                        set {_r} to "Joueur"
                     if {_r} is not "Fondateur" or "Admin" or "Resp" or "Modo":
                         set loop-player's flight mode to false
                         send "{@prefix}&cLe vol (Fly) est désactivé en monde Survie !" to loop-player
@@ -2682,7 +2735,9 @@ on block place:
     if "%world of player%" contains "skyblock":
         if player is not op:
             set {_u} to uuid of player
-            set {_r} to {rank::%{_u}%} ? "Joueur"
+            set {_r} to {rank::%{_u}%}
+            if {_r} is not set:
+                set {_r} to "Joueur"
             if {_r} is not "Fondateur" or "Admin" or "Resp" or "Modo":
                 set {_owner} to "%player%"
                 if {island_team_owner::%{_u}%} is set:
@@ -2704,7 +2759,9 @@ on block break:
         if block 1 below event-block is not bedrock: # Préserve le générateur infini
             if player is not op:
                 set {_u} to uuid of player
-                set {_r} to {rank::%{_u}%} ? "Joueur"
+                set {_r} to {rank::%{_u}%}
+                if {_r} is not set:
+                    set {_r} to "Joueur"
                 if {_r} is not "Fondateur" or "Admin" or "Resp" or "Modo":
                     set {_owner} to "%player%"
                     if {island_team_owner::%{_u}%} is set:
@@ -2726,7 +2783,9 @@ on world change:
     if "%world of player%" contains "survie" or "world":
         if player is not op:
             set {_u} to uuid of player
-            set {_r} to {rank::%{_u}%} ? "Joueur"
+            set {_r} to {rank::%{_u}%}
+            if {_r} is not set:
+                set {_r} to "Joueur"
             if {_r} is not "Fondateur" or "Admin" or "Resp" or "Modo":
                 if player's flight mode is true:
                     set player's flight mode to false
@@ -2874,7 +2933,9 @@ on form of cobblestone or stone or basalt:
                 set {_owner} to "%loop-player%"
             exit loop if {_owner} is not ""
             
-        set {_genLvl} to {island_upgrades::%{_owner}%::gen} ? 1
+        set {_genLvl} to {island_upgrades::%{_owner}%::gen}
+        if {_genLvl} is not set:
+            set {_genLvl} to 1
         set {_rand} to random integer between 1 and 100
         
         # Palier 1 (Départ - Principalement Cobble & Roches de base)
@@ -2969,7 +3030,9 @@ on break:
                 else if {island_team_owner::%player%} is set:
                     set {_owner} to "%{island_team_owner::%player%}%"
                 
-                set {_genLvl} to {island_upgrades::%{_owner}%::gen} ? 1
+                set {_genLvl} to {island_upgrades::%{_owner}%::gen}
+                if {_genLvl} is not set:
+                    set {_genLvl} to 1
                 set {_roll} to random integer between 1 and 100
                 
                 # Tier 1 (Débutant : 75% Cobble, 12% Roches, 8% Charbon, 3% Cuivre, 2% Fer)
@@ -3148,7 +3211,7 @@ every 20 seconds:
                             set {_mobRoll} to random integer between 1 and 100
                             
                             # Mini-Boss Céleste Rare (Garde Céleste - 2%)
-                            if {_mobRoll} is 100 or 99:
+                            if {_mobRoll} >= 99:
                                 spawn 1 zombie at {_spawnLoc}
                                 set {_boss} to last spawned zombie
                                 set name of {_boss} to "&6&l✦ GARDE CÉLESTE ✦ &c[Mini-Boss]"
@@ -3163,7 +3226,7 @@ every 20 seconds:
                                 send "{@prefix}&6&l✦ UN GARDE CÉLESTE (Mini-Boss) EST APPARU SUR TON ÎLE ! ✦" to loop-player
                             
                             # Mini-Boss des Ombres (Spectre du Néant - 2%)
-                            else if {_mobRoll} is 98 or 97:
+                            else if {_mobRoll} >= 97:
                                 spawn 1 skeleton at {_spawnLoc}
                                 set {_boss} to last spawned skeleton
                                 set name of {_boss} to "&d&l✦ SPECTRE DU NÉANT ✦ &c[Mini-Boss]"

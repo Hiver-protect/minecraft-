@@ -82,10 +82,18 @@ command /menu:
 
         # 2. Rangée 1 : En-tête & Profil Joueur
         set {_u} to uuid of player
-        set {_r} to {rank::%{_u}%} ? "Joueur"
-        set {_bal} to player's balance ? 0
-        set {_j} to {job::%{_u}%} ? "Aucun"
-        set {_lvl} to {player_lvl::%{_u}%} ? 1
+        set {_r} to {rank::%{_u}%}
+        if {_r} is not set:
+            set {_r} to "Joueur"
+        set {_bal} to player's balance
+        if {_bal} is not set:
+            set {_bal} to 0
+        set {_j} to {job::%{_u}%}
+        if {_j} is not set:
+            set {_j} to "Aucun"
+        set {_lvl} to {player_lvl::%{_u}%}
+        if {_lvl} is not set:
+            set {_lvl} to 1
 
         # Infos Serveur (Slot 2)
         set slot 2 of {_menu} to 1 of nether star named "<#00D4FF>&l✦ MINESTARS MULTIVERSE ✦" with lore "&8&m─────────────────────" and "&8▸ &7Version : &a1.20+ Native" and "&8▸ &7Saison : &eÉdition Lunaire" and "&8▸ &7Performances : &a20.0 TPS (Ultra-Fluide)" and "&8&m─────────────────────"

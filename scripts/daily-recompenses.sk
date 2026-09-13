@@ -32,7 +32,9 @@ command /daily:
         else:
             set {_canClaim} to true
 
-        set {_streak} to {daily_streak::%uuid of player%} ? 1
+        set {_streak} to {daily_streak::%uuid of player%}
+        if {_streak} is not set:
+            set {_streak} to 1
 
         # Statuts des jours
         if {_streak} >= 1:
@@ -107,7 +109,12 @@ on inventory click:
     if name of event-inventory contains "Récompenses 7J" or name of event-inventory contains "RÉCOMPENSES":
         cancel event
         
-        if index of event-slot is 10 or 11 or 12 or 13 or 14 or 15 or 16 or 22:
+        set {_validClaim} to false
+        if index of event-slot is between 10 and 16:
+            set {_validClaim} to true
+        if index of event-slot is 22:
+            set {_validClaim} to true
+        if {_validClaim} is true:
             close player's inventory
             
             # Cooldown
@@ -133,7 +140,9 @@ on inventory click:
                 set {daily_streak::%uuid of player%} to 1
                 
             set {daily_last_claim::%uuid of player%} to now
-            set {_streak} to {daily_streak::%uuid of player%} ? 1
+            set {_streak} to {daily_streak::%uuid of player%}
+            if {_streak} is not set:
+                set {_streak} to 1
                 
             send "" to player
             send "&6&l✦ CADEAU QUOTIDIEN &8(Jour %{_streak}%/7) ✦" to player

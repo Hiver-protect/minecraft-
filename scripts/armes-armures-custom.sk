@@ -1823,7 +1823,9 @@ function openArsenalMenu(p: player, category: text):
 command /equipements [<text>]:
     aliases: /arsenal, /armes, /armures, /weapons, /armors, /custom, /stuff, /relique, /reliques, /outils, /tools
     trigger:
-        set {_cat} to arg-1 ? "all"
+        set {_cat} to arg-1
+        if {_cat} is not set:
+            set {_cat} to "all"
         if {_cat} is "arme" or "armes" or "weapon" or "weapons":
             set {_cat} to "weapons"
         else if {_cat} is "armure" or "armures" or "armor" or "armors":

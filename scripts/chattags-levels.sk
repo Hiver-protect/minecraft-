@@ -16,7 +16,9 @@ function hasTagUnlocked(p: player, tagId: text, reqLvl: number) :: boolean:
     set {_u} to uuid of {_p}
     if {unlocked_tags::%{_u}%::%{_tagId}%} is true:
         return true
-    set {_lvl} to {player_lvl::%{_u}%} ? 1
+    set {_lvl} to {player_lvl::%{_u}%}
+    if {_lvl} is not set:
+        set {_lvl} to 1
     if {_lvl} >= {_reqLvl}:
         return true
     return false
@@ -27,7 +29,9 @@ function hasRankUnlocked(p: player, minRank: text) :: boolean:
     set {_u} to uuid of {_p}
     if {unlocked_tags::%{_u}%::%{_minRank}%} is true:
         return true
-    set {_r} to {rank::%{_u}%} ? "Joueur"
+    set {_r} to {rank::%{_u}%}
+    if {_r} is not set:
+        set {_r} to "Joueur"
     if {_minRank} is "vip":
         if {_r} is "VIP" or "MVP" or "STAR" or "Star" or "Helper" or "Modo" or "Resp" or "Admin" or "Fondateur":
             return true
@@ -165,9 +169,15 @@ command /tags:
         set slot 35 of {_gui} to 1 of magenta stained glass pane named " "
         
         set {_u} to uuid of player
-        set {_curTag} to {active_tag_formatted::%{_u}%} ? "&7Aucun"
-        set {_lvl} to {player_lvl::%{_u}%} ? 1
-        set {_r} to {rank::%{_u}%} ? "Joueur"
+        set {_curTag} to {active_tag_formatted::%{_u}%}
+        if {_curTag} is not set:
+            set {_curTag} to "&7Aucun"
+        set {_lvl} to {player_lvl::%{_u}%}
+        if {_lvl} is not set:
+            set {_lvl} to 1
+        set {_r} to {rank::%{_u}%}
+        if {_r} is not set:
+            set {_r} to "Joueur"
         if player is op:
             if {_r} is "Joueur":
                 set {_r} to "Fondateur"
@@ -424,10 +434,16 @@ command /level:
         set slot 26 of {_gui} to 1 of yellow stained glass pane named " "
         
         set {_u} to uuid of player
-        set {_lvl} to {player_lvl::%{_u}%} ? 1
-        set {_xp} to {player_xp::%{_u}%} ? 0
+        set {_lvl} to {player_lvl::%{_u}%}
+        if {_lvl} is not set:
+            set {_lvl} to 1
+        set {_xp} to {player_xp::%{_u}%}
+        if {_xp} is not set:
+            set {_xp} to 0
         set {_req} to {_lvl} * 120
-        set {_curTag} to {active_tag_formatted::%{_u}%} ? "&7Aucun"
+        set {_curTag} to {active_tag_formatted::%{_u}%}
+        if {_curTag} is not set:
+            set {_curTag} to "&7Aucun"
         
         # Barre de progression
         set {_percent} to round(({_xp} / {_req}) * 10)

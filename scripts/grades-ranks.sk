@@ -264,7 +264,11 @@ command /checkrank [<text>]:
         if {_off} is set:
             set {_u} to uuid of {_off}
             
-        set {_r} to {rank::%{_t}%} ? {rank::%{_u}%} ? "Joueur"
+        set {_r} to {rank::%{_t}%}
+        if {_r} is not set:
+            set {_r} to {rank::%{_u}%}
+        if {_r} is not set:
+            set {_r} to "Joueur"
         send "{@prefix}&7Grade actuel de &f%{_t}% &7: &e&l[%{_r}%]" to player
 
 # ==================== COMMANDES & AVANTAGES DES GRADES ====================
@@ -274,7 +278,9 @@ command /craft:
     aliases: /workbench, /wb, /table
     trigger:
         set {_u} to uuid of player
-        set {_r} to {rank::%{_u}%} ? "Joueur"
+        set {_r} to {rank::%{_u}%}
+        if {_r} is not set:
+            set {_r} to "Joueur"
         if player is op:
             open crafting table to player
         else if {_r} is "MVP" or "Star" or "Helper" or "Modo" or "Resp" or "Admin" or "Fondateur" or "Build":
@@ -289,7 +295,9 @@ command /ec:
     aliases: /enderchest, /ender, /echest
     trigger:
         set {_u} to uuid of player
-        set {_r} to {rank::%{_u}%} ? "Joueur"
+        set {_r} to {rank::%{_u}%}
+        if {_r} is not set:
+            set {_r} to "Joueur"
         if player is op:
             open player's ender chest to player
         else if {_r} is "Star" or "Helper" or "Modo" or "Resp" or "Admin" or "Fondateur":
@@ -304,7 +312,9 @@ command /hat:
     aliases: /chapeau
     trigger:
         set {_u} to uuid of player
-        set {_r} to {rank::%{_u}%} ? "Joueur"
+        set {_r} to {rank::%{_u}%}
+        if {_r} is not set:
+            set {_r} to "Joueur"
         set {_canHat} to false
         if player is op:
             set {_canHat} to true
@@ -332,7 +342,9 @@ command /condense:
     aliases: /compact, /blocs
     trigger:
         set {_u} to uuid of player
-        set {_r} to {rank::%{_u}%} ? "Joueur"
+        set {_r} to {rank::%{_u}%}
+        if {_r} is not set:
+            set {_r} to "Joueur"
         if player is not op:
             if "VIP,MVP,Star,Helper,Modo,Resp,Admin,Fondateur" does not contain {_r}:
                 send "{@prefix}&cLa commande &e/condense &cest réservée aux grades &e[VIP]&c, &b[MVP]&c, &d[STAR] &c!" to player
@@ -394,7 +406,9 @@ command /furnace:
     aliases: /cook, /smelt
     trigger:
         set {_u} to uuid of player
-        set {_r} to {rank::%{_u}%} ? "Joueur"
+        set {_r} to {rank::%{_u}%}
+        if {_r} is not set:
+            set {_r} to "Joueur"
         if player is not op:
             if "MVP,Star,Helper,Modo,Resp,Admin,Fondateur" does not contain {_r}:
                 send "{@prefix}&cLa commande &e/furnace &cest réservée aux grades &b[MVP]&c, &d[STAR] &c!" to player
@@ -451,7 +465,9 @@ command /anvil:
     aliases: /enclume
     trigger:
         set {_u} to uuid of player
-        set {_r} to {rank::%{_u}%} ? "Joueur"
+        set {_r} to {rank::%{_u}%}
+        if {_r} is not set:
+            set {_r} to "Joueur"
         if player is not op:
             if "Star,Helper,Modo,Resp,Admin,Fondateur" does not contain {_r}:
                 send "{@prefix}&cLa commande &e/anvil &cest réservée au grade &d[STAR] &cet au &cStaff &c!" to player
@@ -465,7 +481,9 @@ command /glow:
     aliases: /aura, /lumiere
     trigger:
         set {_u} to uuid of player
-        set {_r} to {rank::%{_u}%} ? "Joueur"
+        set {_r} to {rank::%{_u}%}
+        if {_r} is not set:
+            set {_r} to "Joueur"
         if player is not op:
             if "Star,Helper,Modo,Resp,Admin,Fondateur" does not contain {_r}:
                 send "{@prefix}&cLe &e/glow &cest réservé au grade &d[STAR] &cet au &cStaff &c!" to player
@@ -486,7 +504,9 @@ command /near:
     aliases: /proche, /radar
     trigger:
         set {_u} to uuid of player
-        set {_r} to {rank::%{_u}%} ? "Joueur"
+        set {_r} to {rank::%{_u}%}
+        if {_r} is not set:
+            set {_r} to "Joueur"
         set {_canNear} to false
         if player is op:
             set {_canNear} to true
@@ -517,8 +537,12 @@ command /kitgrade [<text>]:
     aliases: /rankkit, /kitvip, /kitmvp, /kitstar
     trigger:
         set {_u} to uuid of player
-        set {_r} to {rank::%{_u}%} ? "Joueur"
-        set {_choice} to arg-1 ? "menu"
+        set {_r} to {rank::%{_u}%}
+        if {_r} is not set:
+            set {_r} to "Joueur"
+        set {_choice} to arg-1
+        if {_choice} is not set:
+            set {_choice} to "menu"
         
         if {_choice} is "vip":
             if player is not op:
@@ -598,7 +622,9 @@ command /grades:
         set slot 35 of {_gui} to 1 of magenta stained glass pane named " "
         
         set {_u} to uuid of player
-        set {_r} to {rank::%{_u}%} ? "Joueur"
+        set {_r} to {rank::%{_u}%}
+        if {_r} is not set:
+            set {_r} to "Joueur"
         
         # En-tête profil (Slot 4)
         set slot 4 of {_gui} to 1 of player head named "<#A855F7>&l✦ RANG : &f&l%{_r}% <#A855F7>&l✦" with lore "&8&m─────────────────────" and "&8▸ &7Statut : &e%{_r}%" and "&8▸ &7Boutique : &fminestars.craftingstore.net" and "&8&m─────────────────────"
@@ -672,8 +698,12 @@ on chat:
         else:
             set {_r} to "Joueur"
         
-    set {_lvl} to {player_lvl::%{_u}%} ? 1
-    set {_tag} to {active_tag_formatted::%{_u}%} ? ""
+    set {_lvl} to {player_lvl::%{_u}%}
+    if {_lvl} is not set:
+        set {_lvl} to 1
+    set {_tag} to {active_tag_formatted::%{_u}%}
+    if {_tag} is not set:
+        set {_tag} to ""
     
     set {_pfx} to "&7[Joueur] &7"
     if {_r} is "Fondateur":

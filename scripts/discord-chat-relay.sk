@@ -26,7 +26,9 @@ function sendDiscordMessage(p: player, worldType: text, msg: text, isSystem: boo
     replace all """" with "\""" in {_cleanMsg}
     
     # Choix du webhook selon le monde
-    set {_webhook} to {discord_webhook::global} ? "{@default_webhook_global}"
+    set {_webhook} to {discord_webhook::global}
+    if {_webhook} is not set:
+        set {_webhook} to "{@default_webhook_global}"
     if {_worldType} contains "Skyblock":
         if {discord_webhook::skyblock} is set:
             set {_webhook} to {discord_webhook::skyblock}
@@ -70,7 +72,9 @@ on chat:
         set {_worldType} to "End"
         
     set {_u} to uuid of player
-    set {_rank} to {rank::%{_u}%} ? "Joueur"
+    set {_rank} to {rank::%{_u}%}
+    if {_rank} is not set:
+        set {_rank} to "Joueur"
     
     set {_chatMsg} to message
     sendDiscordMessage(player, {_worldType}, {_chatMsg}, false)
@@ -118,10 +122,22 @@ command /discordrelay [<text>] [<text>] [<text>]:
         if arg-1 is not set:
             send "" to player
             send "{@prefix}&b&lGESTION DU RELAIS DISCORD" to player
-            send "&7• Statut : %({discord_relay_enabled} ? ""&aActivé"" : ""&cActif par défaut"")%" to player
-            send "&7• Webhook Global : &e%{discord_webhook::global} ? ""Non défini""%" to player
-            send "&7• Webhook Survie : &e%{discord_webhook::survie} ? ""Non défini""%" to player
-            send "&7• Webhook Skyblock : &e%{discord_webhook::skyblock} ? ""Non défini""%" to player
+            if {discord_relay_enabled} is false:
+                send "&7• Statut : &cDésactivé" to player
+            else:
+                send "&7• Statut : &aActivé" to player
+            set {_wh} to {discord_webhook::global}
+            if {_wh} is not set:
+                set {_wh} to "Non défini"
+            send "&7• Webhook Global : &e%{_wh}%" to player
+            set {_wh} to {discord_webhook::survie}
+            if {_wh} is not set:
+                set {_wh} to "Non défini"
+            send "&7• Webhook Survie : &e%{_wh}%" to player
+            set {_wh} to {discord_webhook::skyblock}
+            if {_wh} is not set:
+                set {_wh} to "Non défini"
+            send "&7• Webhook Skyblock : &e%{_wh}%" to player
             send "" to player
             send "&7Commandes disponibles :" to player
             send "&e/discordrelay setwebhook <global|survie|skyblock> <URL_WEBHOOK>" to player

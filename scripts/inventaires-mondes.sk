@@ -167,7 +167,9 @@ on join:
 
 on quit:
     set {_u} to uuid of player
-    set {_group} to {active_inv_group::%{_u}%} ? "survival"
+    set {_group} to {active_inv_group::%{_u}%}
+    if {_group} is not set:
+        set {_group} to "survival"
     saveWorldInventory(player, {_group})
 
 command /syncinv:

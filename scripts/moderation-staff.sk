@@ -137,7 +137,9 @@ command /fly [<player>]:
     aliases: /vol
     trigger:
         set {_u} to uuid of player
-        set {_r} to {rank::%{_u}%} ? "Joueur"
+        set {_r} to {rank::%{_u}%}
+        if {_r} is not set:
+            set {_r} to "Joueur"
         set {_isStaff} to false
         if player is op:
             set {_isStaff} to true
@@ -435,8 +437,12 @@ command /whois [<player>]:
             stop
         set {_u} to uuid of arg-1
         set {_warnCount} to size of {warns::%{_u}%::*}
-        set {_cps} to {cps_count::%{_u}%} ? 0
-        set {_rank} to {rank::%{_u}%} ? "&7Joueur"
+        set {_cps} to {cps_count::%{_u}%}
+        if {_cps} is not set:
+            set {_cps} to 0
+        set {_rank} to {rank::%{_u}%}
+        if {_rank} is not set:
+            set {_rank} to "&7Joueur"
         send "" to player
         send "&6&l✦ PROFIL COMPLET DU SUSPECT : %arg-1% ✦" to player
         send "&8&m────────────────────────────────────────────────" to player
@@ -466,7 +472,9 @@ command /cps [<player>]:
             send "{@prefix}&cUtilisation : &e/cps <joueur>" to player
             stop
         set {_u} to uuid of arg-1
-        set {_c} to {cps_count::%{_u}%} ? 0
+        set {_c} to {cps_count::%{_u}%}
+        if {_c} is not set:
+            set {_c} to 0
         send "{@prefix}&e%arg-1% &7clique actuellement à &6%{_c}% CPS &7(Ping: &b%arg-1's ping%ms&7)." to player
 
 on left click:
@@ -671,7 +679,9 @@ command /warn [<player>] [<text>]:
         if arg-1 is not set:
             send "{@prefix}&cUtilisation: &e/warn <pseudo> [raison]" to player
             stop
-        set {_reason} to arg-2 ? "Non respect du règlement"
+        set {_reason} to arg-2
+        if {_reason} is not set:
+            set {_reason} to "Non respect du règlement"
         set {_u} to uuid of arg-1
         add {_reason} to {warns::%{_u}%::*}
         set {_count} to size of {warns::%{_u}%::*}
@@ -733,7 +743,9 @@ command /mute [<player>] [<text>]:
         if arg-1 is not set:
             send "{@prefix}&cUtilisation: &e/mute <pseudo> [raison]" to player
             stop
-        set {_reason} to arg-2 ? "Non respect des regles"
+        set {_reason} to arg-2
+        if {_reason} is not set:
+            set {_reason} to "Non respect des regles"
         set {muted::%uuid of arg-1%} to true
         broadcast ""
         broadcast "{@prefix}&f%arg-1% &7a été réduit au silence par &f%player% &7(&c%{_reason}%&7)."
@@ -758,7 +770,9 @@ command /kick [<player>] [<text>]:
         if arg-1 is not set:
             send "{@prefix}&cUtilisation: &e/kick <pseudo> [raison]" to player
             stop
-        set {_reason} to arg-2 ? "Expulsé par un modérateur"
+        set {_reason} to arg-2
+        if {_reason} is not set:
+            set {_reason} to "Expulsé par un modérateur"
         kick arg-1 due to "&c&lMINESTARS - EXPULSION%nl%%nl%&7Raison : &f%{_reason}%%nl%&7Modérateur : &e%player%"
         broadcast "{@prefix}&f%arg-1% &7a été expulsé par &f%player% &7(&c%{_reason}%&7)."
 
@@ -769,7 +783,9 @@ command /ban [<player>] [<text>]:
         if arg-1 is not set:
             send "{@prefix}&cUtilisation: &e/ban <pseudo> [raison]" to player
             stop
-        set {_reason} to arg-2 ? "Infraction grave aux règles"
+        set {_reason} to arg-2
+        if {_reason} is not set:
+            set {_reason} to "Infraction grave aux règles"
         broadcast "{@prefix}&4%arg-1% &7a été banni par &f%player% &7(&c%{_reason}%&7)."
         execute console command "ban %arg-1% %{_reason}%"
 
@@ -783,7 +799,9 @@ command /tempban [<player>] [<text>] [<text>]:
         if arg-2 is not set:
             send "{@prefix}&cUtilisation: &e/tempban <pseudo> <temps> [raison]" to player
             stop
-        set {_reason} to arg-3 ? "Suspension temporaire"
+        set {_reason} to arg-3
+        if {_reason} is not set:
+            set {_reason} to "Suspension temporaire"
         broadcast "{@prefix}&4%arg-1% &7a été banni temporairement &8(&e%arg-2%&8) &7par &f%player% &7(&c%{_reason}%&7)."
         execute console command "ban %arg-1% %arg-2% %{_reason}%"
 
@@ -812,8 +830,12 @@ function openSanctionsGUI(admin: player, target: player):
     
     set {_u} to uuid of {_target}
     set {_warnCount} to size of {warns::%{_u}%::*}
-    set {_cps} to {cps_count::%{_u}%} ? 0
-    set {_ping} to {_target}'s ping ? 0
+    set {_cps} to {cps_count::%{_u}%}
+    if {_cps} is not set:
+        set {_cps} to 0
+    set {_ping} to {_target}'s ping
+    if {_ping} is not set:
+        set {_ping} to 0
     
     # Tête profil (Slot 4)
     set slot 4 of {_gui} to 1 of player head named "&e&l✦ Suspect : &f%{_target}%" with lore "&8&m─────────────────────" and "&8▸ &7Santé : &c%health of {_target}% / %max health of {_target}% ❤" and "&8▸ &7Solde : &a%{_target}'s balance%$" and "&8▸ &7CPS : &e%{_cps}% &8┃ &7Ping : &b%{_ping}%ms" and "&8▸ &7Warns : &c%{_warnCount}% &8┃ &7Monde : &e%world of {_target}%" and "&8&m─────────────────────"
@@ -987,7 +1009,9 @@ command /feed [<player>]:
     aliases: /faim, /manger, /nourrir
     trigger:
         set {_u} to uuid of player
-        set {_r} to {rank::%{_u}%} ? "Joueur"
+        set {_r} to {rank::%{_u}%}
+        if {_r} is not set:
+            set {_r} to "Joueur"
         set {_isStaff} to false
         if player is op:
             set {_isStaff} to true
@@ -1151,7 +1175,9 @@ command /clearlag:
 command /ping [<player>]:
     aliases: /latence, /ms
     trigger:
-        set {_target} to arg-1 ? player
+        set {_target} to arg-1
+        if {_target} is not set:
+            set {_target} to player
         set {_p} to {_target}'s ping
         if {_p} <= 50:
             set {_color} to "&a"

@@ -3325,7 +3325,13 @@ command /quiz [<text>]:
         if arg-1 is "top" or "classement":
             send "{@border}" to player
             send "  &e&l✦ CLASSEMENT CHAT JEUX &8(Victoires)" to player
-            send "  &7Vos victoires : &e%{quiz_wins::%player's uuid%} ? 0% &7(Serie : &6%{quiz_streak::%player's uuid%} ? 0%&7)" to player
+            set {_qw} to {quiz_wins::%player's uuid%}
+            if {_qw} is not set:
+                set {_qw} to 0
+            set {_qs} to {quiz_streak::%player's uuid%}
+            if {_qs} is not set:
+                set {_qs} to 0
+            send "  &7Vos victoires : &e%{_qw}% &7(Serie : &6%{_qs}%&7)" to player
             send "  &8Rejoignez chaque quiz toutes les 8 minutes !" to player
             send "{@border}" to player
         else if arg-1 is "force" or "start":
@@ -3337,7 +3343,19 @@ command /quiz [<text>]:
         else:
             send "{@border}" to player
             send "  &e&l✦ STATISTIQUES QUIZ &8- &f%player%" to player
-            send "  &7Victoires totales : &a%{quiz_wins::%player's uuid%} ? 0%" to player
-            send "  &7Serie actuelle (Streak) : &6%{quiz_streak::%player's uuid%} ? 0% 🔥" to player
+            set {_qw} to {quiz_wins::%player's uuid%}
+            if {_qw} is not set:
+                set {_qw} to 0
+            set {_qs} to {quiz_streak::%player's uuid%}
+            if {_qs} is not set:
+                set {_qs} to 0
+            send "  &7Victoires totales : &a%{_qw}%" to player
+            set {_qw} to {quiz_wins::%player's uuid%}
+            if {_qw} is not set:
+                set {_qw} to 0
+            set {_qs} to {quiz_streak::%player's uuid%}
+            if {_qs} is not set:
+                set {_qs} to 0
+            send "  &7Serie actuelle (Streak) : &6%{_qs}% 🔥" to player
             send "  &8Tapez &e/quiz top &8pour voir vos stats !" to player
             send "{@border}" to player

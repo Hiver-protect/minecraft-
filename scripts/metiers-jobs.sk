@@ -52,7 +52,9 @@ function addJobXP(p: player, j: text, baseMoney: number, xpAmount: number):
     set {_multiplier} to 1.0 + (({_lvl} - 1) * 0.1)
     
     # Bonus VIP additionnel si applicable
-    set {_r} to {rank::%{_u}%} ? "Joueur"
+    set {_r} to {rank::%{_u}%}
+    if {_r} is not set:
+        set {_r} to "Joueur"
     if {_r} is "STAR" or "Star":
         add 0.5 to {_multiplier}
     else if {_r} is "MVP" or "Mvp":
@@ -114,29 +116,47 @@ function openJobsMenu(p: player):
     set slot 26 of {_gui} to 1 of cyan stained glass pane named " "
     
     set {_u} to uuid of {_p}
-    set {_cur} to {job::%{_u}%} ? "Aucun"
+    set {_cur} to {job::%{_u}%}
+    if {_cur} is not set:
+        set {_cur} to "Aucun"
         
     # 1. Calculs Mineur
-    set {_lvlM} to {job_lvl::%{_u}%::Mineur} ? 1
-    set {_xpM} to {job_xp::%{_u}%::Mineur} ? 0
+    set {_lvlM} to {job_lvl::%{_u}%::Mineur}
+    if {_lvlM} is not set:
+        set {_lvlM} to 1
+    set {_xpM} to {job_xp::%{_u}%::Mineur}
+    if {_xpM} is not set:
+        set {_xpM} to 0
     set {_reqM} to {_lvlM} * 100
     set {_bM} to ({_lvlM} - 1) * 10
 
     # 2. Calculs Bûcheron
-    set {_lvlB} to {job_lvl::%{_u}%::Bûcheron} ? 1
-    set {_xpB} to {job_xp::%{_u}%::Bûcheron} ? 0
+    set {_lvlB} to {job_lvl::%{_u}%::Bûcheron}
+    if {_lvlB} is not set:
+        set {_lvlB} to 1
+    set {_xpB} to {job_xp::%{_u}%::Bûcheron}
+    if {_xpB} is not set:
+        set {_xpB} to 0
     set {_reqB} to {_lvlB} * 100
     set {_bB} to ({_lvlB} - 1) * 10
 
     # 3. Calculs Chasseur
-    set {_lvlC} to {job_lvl::%{_u}%::Chasseur} ? 1
-    set {_xpC} to {job_xp::%{_u}%::Chasseur} ? 0
+    set {_lvlC} to {job_lvl::%{_u}%::Chasseur}
+    if {_lvlC} is not set:
+        set {_lvlC} to 1
+    set {_xpC} to {job_xp::%{_u}%::Chasseur}
+    if {_xpC} is not set:
+        set {_xpC} to 0
     set {_reqC} to {_lvlC} * 100
     set {_bC} to ({_lvlC} - 1) * 10
 
     # 4. Calculs Fermier
-    set {_lvlF} to {job_lvl::%{_u}%::Fermier} ? 1
-    set {_xpF} to {job_xp::%{_u}%::Fermier} ? 0
+    set {_lvlF} to {job_lvl::%{_u}%::Fermier}
+    if {_lvlF} is not set:
+        set {_lvlF} to 1
+    set {_xpF} to {job_xp::%{_u}%::Fermier}
+    if {_xpF} is not set:
+        set {_xpF} to 0
     set {_reqF} to {_lvlF} * 100
     set {_bF} to ({_lvlF} - 1) * 10
 
@@ -192,7 +212,9 @@ on inventory click:
             else:
                 updateJobPermissions(player, "Mineur")
                 close player's inventory
-                set {_lvl} to {job_lvl::%uuid of player%::Mineur} ? 1
+                set {_lvl} to {job_lvl::%uuid of player%::Mineur}
+                if {_lvl} is not set:
+                    set {_lvl} to 1
                 send "{@prefix}&aTu exerces désormais le métier de &b&lMineur &7(Niveau %{_lvl}%/10) &a!" to player
                 play sound "entity.player.levelup" to player
             
@@ -204,7 +226,9 @@ on inventory click:
             else:
                 updateJobPermissions(player, "Bûcheron")
                 close player's inventory
-                set {_lvl} to {job_lvl::%uuid of player%::Bûcheron} ? 1
+                set {_lvl} to {job_lvl::%uuid of player%::Bûcheron}
+                if {_lvl} is not set:
+                    set {_lvl} to 1
                 send "{@prefix}&aTu exerces désormais le métier de &6&lBûcheron &7(Niveau %{_lvl}%/10) &a!" to player
                 play sound "entity.player.levelup" to player
             
@@ -216,7 +240,9 @@ on inventory click:
             else:
                 updateJobPermissions(player, "Chasseur")
                 close player's inventory
-                set {_lvl} to {job_lvl::%uuid of player%::Chasseur} ? 1
+                set {_lvl} to {job_lvl::%uuid of player%::Chasseur}
+                if {_lvl} is not set:
+                    set {_lvl} to 1
                 send "{@prefix}&aTu exerces désormais le métier de &c&lChasseur &7(Niveau %{_lvl}%/10) &a!" to player
                 play sound "entity.player.levelup" to player
             
@@ -228,7 +254,9 @@ on inventory click:
             else:
                 updateJobPermissions(player, "Fermier")
                 close player's inventory
-                set {_lvl} to {job_lvl::%uuid of player%::Fermier} ? 1
+                set {_lvl} to {job_lvl::%uuid of player%::Fermier}
+                if {_lvl} is not set:
+                    set {_lvl} to 1
                 send "{@prefix}&aTu exerces désormais le métier de &a&lFermier &7(Niveau %{_lvl}%/10) &a!" to player
                 play sound "entity.player.levelup" to player
             

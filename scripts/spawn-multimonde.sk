@@ -53,7 +53,9 @@ command /spawn:
         else if player has permission "minestars.staff":
             set {_isStaff} to true
 
-        set {_r} to {rank::%uuid of player%} ? "Joueur"
+        set {_r} to {rank::%uuid of player%}
+        if {_r} is not set:
+            set {_r} to "Joueur"
         if {_isStaff} is false:
             set player's flight mode to false
 

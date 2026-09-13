@@ -269,7 +269,10 @@ on inventory click:
         if {_slot} is 49:
             close player's inventory
             play sound "block.chest.close" to player
-        else if {_slot} is 19 or 20 or 21 or 22 or 23 or 24 or 28 or 29 or 30 or 31 or 32 or 33:
+        else if {_slot} is between 19 and 24:
+            play sound "ui.button.click" with pitch 1.5 to player
+            send "{@prefix}&ePour ouvrir cette caisse, utilise ta clé au &6Spawn des Box &e(ou fais un &aClic Droit &eavec la clé en main) !" to player
+        else if {_slot} is between 28 and 33:
             play sound "ui.button.click" with pitch 1.5 to player
             send "{@prefix}&ePour ouvrir cette caisse, utilise ta clé au &6Spawn des Box &e(ou fais un &aClic Droit &eavec la clé en main) !" to player
 

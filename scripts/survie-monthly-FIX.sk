@@ -68,7 +68,9 @@ command /survie [<text>]:
         # 2. Homes (Slot 12)
         set {_hCount} to size of {survie_homes::%uuid of player%::*}
         set {_u} to uuid of player
-        set {_r} to {rank::%{_u}%} ? "Joueur"
+        set {_r} to {rank::%{_u}%}
+        if {_r} is not set:
+            set {_r} to "Joueur"
         set {_maxHomes} to 2
         if player is op:
             set {_maxHomes} to 100
@@ -146,12 +148,16 @@ command /sethome [<text>]:
             send "{@prefix}&cTu ne peux pas poser de maison survie en Skyblock ! Utilise &e/is sethome&c." to player
             stop
             
-        set {_name} to arg-1 ? "maison"
+        set {_name} to arg-1
+        if {_name} is not set:
+            set {_name} to "maison"
         set {_count} to size of {survie_homes::%uuid of player%::*}
         
         # Calcul de la limite de homes selon le grade
         set {_u} to uuid of player
-        set {_r} to {rank::%{_u}%} ? "Joueur"
+        set {_r} to {rank::%{_u}%}
+        if {_r} is not set:
+            set {_r} to "Joueur"
         set {_maxHomes} to 2
         if player is op:
             set {_maxHomes} to 100
@@ -176,7 +182,9 @@ command /sethome [<text>]:
 
 command /home [<text>]:
     trigger:
-        set {_name} to arg-1 ? "maison"
+        set {_name} to arg-1
+        if {_name} is not set:
+            set {_name} to "maison"
         if {survie_homes::%uuid of player%::%{_name}%} is not set:
             send "{@prefix}&cCette maison n'existe pas ! Fais &e/homes &cpour afficher tes résidences." to player
             play sound "entity.villager.no" to player
