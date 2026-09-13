@@ -420,8 +420,8 @@ function getCustomWeapon(type: text) :: item:
 # ==================== FABRICATION DES OUTILS & BOUCLIERS (STYLE HYPIXEL / RPG) ====================
 
 function getCustomTool(type: text) :: item:
-    # 1. Pioche Stellaire 3x3
-    if {_type} is "pickaxe":
+    # 1. Pioche du Titan 3x3
+    if {_type} is "pickaxe" or "titan" or "pioche" or "piochedutitan" or "titan_pickaxe" or "3x3":
         set {_i} to 1 of netherite pickaxe named "&e&l✦ PIOCHE DU TITAN 3X3 ✦"
         set line 1 of lore of {_i} to "&8&m─────────────────────────"
         set line 2 of lore of {_i} to "&7Gear Score: &e930 &8| &7Rareté: &e&lDIVINE"
@@ -1880,88 +1880,146 @@ on inventory click:
 
 # ==================== COMMANDES ADMIN GIVE ====================
 
-command /giveweapon [<player>] [<text>]:
-    aliases: /givecustomweapon
-    permission: op
-    permission message: &cTu n'as pas la permission !
-    trigger:
-        if arg-1 is not set:
-            send "{@prefix}&cUtilisation : &e/giveweapon <joueur> <star|titan|scythe|hammer|katana|frost|vampire|inferno|dragon|sculk|venom|chaos|infinity|wand|phoenix_bow|gravity_bow|dragon_bow|crossbow|abyss|shadow>" to player
-            stop
-            
-        set {_t} to arg-2 ? "star"
-        set {_item} to getCustomWeapon({_t})
-        if {_item} is set:
-            give {_item} to arg-1
-            send "{@prefix}&aArme &e[%{_t}%]&a donnée à &f%arg-1% &a!" to player
-            send "{@prefix}&aTu as reçu une &6Arme Légendaire &a!" to arg-1
-            play sound "entity.player.levelup" to arg-1
-        else:
-            send "{@prefix}&cArme inconnue !" to player
+# ==================== COMMANDES ADMIN GIVE ====================
 
-command /givetool [<player>] [<text>]:
-    aliases: /givecustomtool
+command /giveweapon [<text>] [<text>]:
+    aliases: /givecustomweapon, /givearme
     permission: op
     permission message: &cTu n'as pas la permission !
     trigger:
-        if arg-1 is not set:
-            send "{@prefix}&cUtilisation : &e/givetool <joueur> <pickaxe|smelt_pickaxe|axe|shovel|rod|shield>" to player
-            stop
-            
-        set {_t} to arg-2 ? "pickaxe"
-        set {_item} to getCustomTool({_t})
-        if {_item} is set:
-            give {_item} to arg-1
-            send "{@prefix}&aOutil &e[%{_t}%]&a donné à &f%arg-1% &a!" to player
-            send "{@prefix}&aTu as reçu un &6Outil Légendaire &a!" to arg-1
-            play sound "entity.player.levelup" to arg-1
-        else:
-            send "{@prefix}&cOutil inconnu !" to player
+        set {_target} to player
+        set {_type} to "star"
+        if arg-1 is set:
+            set {_p} to arg-1 parsed as player
+            if {_p} is set:
+                set {_target} to {_p}
+                if arg-2 is set:
+                    set {_type} to arg-2
+            else:
+                set {_type} to arg-1
+                if arg-2 is set:
+                    set {_p2} to arg-2 parsed as player
+                    if {_p2} is set:
+                        set {_target} to {_p2}
 
-command /givearmor [<player>] [<text>] [<text>]:
-    aliases: /givecustomarmor
+        set {_item} to getCustomWeapon({_type})
+        if {_item} is set:
+            if {_target} is set:
+                give {_item} to {_target}
+                send "{@prefix}&aArme &e[%{_type}%]&a donnée à &f%{_target}% &a!" to player
+                if {_target} is not player:
+                    send "{@prefix}&aTu as reçu une &6Arme Légendaire &a!" to {_target}
+                play sound "entity.player.levelup" to {_target}
+            else:
+                send "{@prefix}&cJoueur introuvable !" to player
+        else:
+            send "{@prefix}&cArme inconnue ! Armes : &e<star|titan|scythe|hammer|katana|frost|vampire|inferno|dragon|sculk|venom|chaos|infinity|wand|phoenix_bow|gravity_bow|dragon_bow|crossbow|abyss|shadow>" to player
+
+command /givetool [<text>] [<text>]:
+    aliases: /givecustomtool, /piochedutitan, /givepioche, /givepiochedutitan, /titanpickaxe
     permission: op
     permission message: &cTu n'as pas la permission !
     trigger:
-        if arg-1 is not set:
-            send "{@prefix}&cUtilisation : &e/givearmor <joueur> <titan|phoenix|shadow|celestial|dragon|void> <all|helmet|chestplate|leggings|boots>" to player
-            stop
-            
-        set {_set} to arg-2 ? "titan"
-        set {_piece} to arg-3 ? "all"
+        set {_target} to player
+        set {_type} to "pickaxe"
+        if arg-1 is set:
+            set {_p} to arg-1 parsed as player
+            if {_p} is set:
+                set {_target} to {_p}
+                if arg-2 is set:
+                    set {_type} to arg-2
+            else:
+                set {_type} to arg-1
+                if arg-2 is set:
+                    set {_p2} to arg-2 parsed as player
+                    if {_p2} is set:
+                        set {_target} to {_p2}
+
+        set {_item} to getCustomTool({_type})
+        if {_item} is set:
+            if {_target} is set:
+                give {_item} to {_target}
+                send "{@prefix}&aOutil &e[%{_type}%]&a donné à &f%{_target}% &a!" to player
+                if {_target} is not player:
+                    send "{@prefix}&aTu as reçu un &6Outil Divin &a!" to {_target}
+                play sound "entity.player.levelup" to {_target}
+            else:
+                send "{@prefix}&cJoueur introuvable !" to player
+        else:
+            send "{@prefix}&cOutil inconnu ! Outils : &e<pickaxe|smelt_pickaxe|axe|shovel|rod|shield>" to player
+
+command /givearmor [<text>] [<text>] [<text>]:
+    aliases: /givecustomarmor, /givearmure
+    permission: op
+    permission message: &cTu n'as pas la permission !
+    trigger:
+        set {_target} to player
+        set {_set} to "titan"
+        set {_piece} to "all"
+        if arg-1 is set:
+            set {_p} to arg-1 parsed as player
+            if {_p} is set:
+                set {_target} to {_p}
+                if arg-2 is set:
+                    set {_set} to arg-2
+                if arg-3 is set:
+                    set {_piece} to arg-3
+            else:
+                set {_set} to arg-1
+                if arg-2 is set:
+                    set {_piece} to arg-2
+                if arg-3 is set:
+                    set {_p3} to arg-3 parsed as player
+                    if {_p3} is set:
+                        set {_target} to {_p3}
         
-        if {_piece} is "all":
-            give getCustomArmor({_set}, "helmet") to arg-1
-            give getCustomArmor({_set}, "chestplate") to arg-1
-            give getCustomArmor({_set}, "leggings") to arg-1
-            give getCustomArmor({_set}, "boots") to arg-1
-            send "{@prefix}&aSet complet &e[%{_set}%]&a donné à &f%arg-1% &a!" to player
-            send "{@prefix}&aTu as reçu un &6Set d'Armure Légendaire &a!" to arg-1
-            play sound "entity.player.levelup" to arg-1
+        if {_piece} is "all" or "tout" or "full":
+            give getCustomArmor({_set}, "helmet") to {_target}
+            give getCustomArmor({_set}, "chestplate") to {_target}
+            give getCustomArmor({_set}, "leggings") to {_target}
+            give getCustomArmor({_set}, "boots") to {_target}
+            send "{@prefix}&aSet complet &e[%{_set}%]&a donné à &f%{_target}% &a!" to player
+            if {_target} is not player:
+                send "{@prefix}&aTu as reçu un &6Set d'Armure Légendaire &a!" to {_target}
+            play sound "entity.player.levelup" to {_target}
         else:
             set {_item} to getCustomArmor({_set}, {_piece})
             if {_item} is set:
-                give {_item} to arg-1
-                send "{@prefix}&aPièce &e[%{_set}% - %{_piece}%]&a donnée à &f%arg-1% &a!" to player
-                play sound "entity.player.levelup" to arg-1
+                give {_item} to {_target}
+                send "{@prefix}&aPièce &e[%{_set}% - %{_piece}%]&a donnée à &f%{_target}% &a!" to player
+                play sound "entity.player.levelup" to {_target}
             else:
-                send "{@prefix}&cPièce inconnue !" to player
+                send "{@prefix}&cPièce inconnue ! &e<all|helmet|chestplate|leggings|boots>" to player
 
-command /giverelic [<player>] [<text>]:
+command /giverelic [<text>] [<text>]:
     aliases: /givecustomrelic, /giverelique
     permission: op
     permission message: &cTu n'as pas la permission !
     trigger:
-        if arg-1 is not set:
-            send "{@prefix}&cUtilisation : &e/giverelic <joueur> <heart|wind|ring|totem|wings|phoenix_wings|orb|gem>" to player
-            stop
+        set {_target} to player
+        set {_type} to "heart"
+        if arg-1 is set:
+            set {_p} to arg-1 parsed as player
+            if {_p} is set:
+                set {_target} to {_p}
+                if arg-2 is set:
+                    set {_type} to arg-2
+            else:
+                set {_type} to arg-1
+                if arg-2 is set:
+                    set {_p2} to arg-2 parsed as player
+                    if {_p2} is set:
+                        set {_target} to {_p2}
             
-        set {_t} to arg-2 ? "heart"
-        set {_item} to getCustomRelic({_t})
+        set {_item} to getCustomRelic({_type})
         if {_item} is set:
-            give {_item} to arg-1
-            send "{@prefix}&aRelique &e[%{_t}%]&a donnée à &f%arg-1% &a!" to player
-            send "{@prefix}&aTu as reçu un &dArtefact Mythique &a!" to arg-1
-            play sound "entity.player.levelup" to arg-1
+            if {_target} is set:
+                give {_item} to {_target}
+                send "{@prefix}&aRelique &e[%{_type}%]&a donnée à &f%{_target}% &a!" to player
+                if {_target} is not player:
+                    send "{@prefix}&aTu as reçu un &dArtefact Mythique &a!" to {_target}
+                play sound "entity.player.levelup" to {_target}
+            else:
+                send "{@prefix}&cJoueur introuvable !" to player
         else:
-            send "{@prefix}&cRelique inconnue !" to player
+            send "{@prefix}&cRelique inconnue ! Reliques : &e<heart|wind|ring|totem|wings|phoenix_wings|orb|gem>" to player
