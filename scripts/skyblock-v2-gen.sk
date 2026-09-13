@@ -317,15 +317,25 @@ command /isadmin [<text>] [<text>] [<text>] [<text>]:
                 set {_owner} to loop-index
                 set {_x} to {island::%{_owner}%::x}
                 set {_z} to {island::%{_owner}%::z}
+            set {_gui} to a new chest inventory with 6 rows named "&8» &0&lÎLES SKYBLOCK &8(&e%{_count}%&8)"
+            set {_slot} to 0
+            loop {island::*}:
+                set {_owner} to loop-index
+                set {_x} to {island::%{_owner}%::x}
+                set {_z} to {island::%{_owner}%::z}
                 set {_lvl} to {island_level::%{_owner}%} ? 10
-                send "&7• &e%{_owner}% &8» &fX: %{_x}%, Z: %{_z}% &8┃ &a★ %{_lvl}% ⭐ &7(/isadmin tp %{_owner}%)" to player
-                add 1 to {_count}
-                
+                set slot {_slot} of {_gui} to 1 of player head named "&e&l✦ Île de %{_owner}% ✦" with lore "&8&m─────────────────────────" and "&7• Coordonnées : &fX: %{_x}%, Z: %{_z}%" and "&7• Niveau d'île : &a★ %{_lvl}% ⭐" and "&8&m─────────────────────────" and "&a▸ Clic Gauche : Se téléporter sur l'île" and "&c▸ Clic Droit : Régénérer l'île"
+                add 1 to {_slot}
+                if {_slot} >= 54:
+                    stop loop
+                    
             if {_count} is 0:
                 send "&7Aucune île enregistrée dans les variables actuelles." to player
                 send "&7Astuce : Utilisez &e/isadmin scan &7pour détecter les îles physiques dans le monde !" to player
             else:
-                send "&aTotal : %{_count}% îles enregistrées." to player
+                send "&aTotal : %{_count}% îles trouvées. Menu ouvert !" to player
+                open {_gui} to player
+                play sound "block.chest.open" to player
             send "" to player
             stop
             
@@ -3313,4 +3323,22 @@ on explode:
                     damage loop-entity by 6
             draw 15 of explosion at event-location
             play sound "entity.generic.explode" with volume 1.2 and pitch 1.0 at event-location
+
+# Gestion des clics dans le Menu Admin des Îles
+on inventory click:
+    if name of event-inventory contains "&8» &0&lÎLES SKYBLOCK":
+        cancel event
+        if event-slot is set:
+            set {_name} to uncolored name of event-slot
+            replace all "✦ " with "" in {_name}
+            replace all " ✦" with "" in {_name}
+            replace all "Île de " with "" in {_name}
+            set {_owner} to {_name}
+            
+            if click type is left mouse button or left mouse button with shift:
+                close player's inventory
+                execute player command "isadmin tp %{_owner}%"
+            else if click type is right mouse button or right mouse button with shift:
+                close player's inventory
+                execute player command "isadmin regen %{_owner}%"
 
