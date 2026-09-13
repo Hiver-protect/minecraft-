@@ -257,7 +257,7 @@ function createIsland(p: player, x: number, z: number):
 
 # ==================== COMMANDES ADMIN / RÉCUPÉRATION D'ÎLE (/isadmin) ====================
 
-command /isadmin [<text>] [<text>] [<text>]:
+command /isadmin [<text>] [<text>] [<text>] [<text>]:
     aliases: /isadm, /islandadmin
     permission: op
     permission message: &cTu n'as pas la permission!
@@ -265,18 +265,59 @@ command /isadmin [<text>] [<text>] [<text>]:
         if arg-1 is not set:
             send "" to player
             send "&e&l✦ GESTION ADMIN SKYBLOCK ✦" to player
-            send "&7• &e/isadmin create <joueur> &7- Créer et téléporter une île neuve pour un joueur" to player
+            send "&7• &e/isadmin link <joueur> <x> <z> &7- Relier une île existante aux coordonnées X Z" to player
+            send "&7• &e/isadmin setisland <joueur> &7- Assigner l'île du joueur à votre position actuelle" to player
+            send "&7• &e/isadmin tpcoord <x> <z> &7- Se téléporter aux coordonnées de l'île" to player
             send "&7• &e/isadmin tp <joueur> &7- Se téléporter sur l'île d'un joueur" to player
+            send "&7• &e/isadmin create <joueur> &7- Créer une île neuve pour un joueur" to player
             send "&7• &e/isadmin regen <joueur> &7- Régénérer l'île d'un joueur" to player
-            send "&7• &e/isadmin setisland <joueur> &7- Assigner l'île du joueur à votre position" to player
             send "&7• &e/isadmin fixhome <joueur> &7- Réinitialiser le spawn d'île du joueur" to player
             send "&7• &e/isadmin delete <joueur> &7- Supprimer l'enregistrement d'une île" to player
             send "" to player
             stop
             
+        if arg-1 is "tpcoord" or "gotocoord":
+            set {_x} to (arg-2 parsed as number) ? 0
+            set {_z} to (arg-3 parsed as number) ? 0
+            set {_w} to world "skyblock"
+            if {_w} is not set:
+                set {_w} to "skyblock" parsed as world
+            if {_w} is not set:
+                set {_w} to world of player
+            set {_loc} to location(({_x} + 0.5), 151, ({_z} + 2.5), {_w})
+            teleport player to {_loc}
+            send "{@prefix}&aTéléporté en Skyblock à &eX: %{_x}%, Y: 151, Z: %{_z}%&a !" to player
+            play sound "entity.enderman.teleport" to player
+            stop
+            
         set {_target} to arg-2
         if {_target} is not set:
             send "{@prefix}&cPrécisez le pseudo du joueur !" to player
+            stop
+            
+        if arg-1 is "link" or "relink" or "lier":
+            set {_x} to (arg-3 parsed as number) ? 0
+            set {_z} to (arg-4 parsed as number) ? 0
+            set {_w} to world "skyblock"
+            if {_w} is not set:
+                set {_w} to "skyblock" parsed as world
+            if {_w} is not set:
+                set {_w} to world of player
+                
+            set {island::%{_target}%::x} to {_x}
+            set {island::%{_target}%::y} to 150
+            set {island::%{_target}%::z} to {_z}
+            set {island::%{_target}%::world} to {_w}
+            set {island_home::%{_target}%} to location(({_x} + 0.5), 151, ({_z} + 2.5), {_w})
+            
+            set {_targetP} to {_target} parsed as player
+            if {_targetP} is online:
+                applyIslandBorder({_targetP}, "%{_target}%")
+                teleport {_targetP} to {island_home::%{_target}%}
+                send "{@prefix}&aVotre île a été retrouvée et reliée avec succès par un administrateur !" to {_targetP}
+                
+            send "{@prefix}&aL'île de &e%{_target}% &aa été reliée avec succès aux coordonnées &eX: %{_x}%, Z: %{_z}%&a !" to player
+            play sound "entity.player.levelup" to player
             stop
             
         if arg-1 is "create" or "new" or "add":
