@@ -1173,8 +1173,8 @@ on break:
             play sound "block.wood.break" at event-block for player
 
 # Pêche avec la Canne des Profondeurs
-on fishing:
-    if fish state is caught fish:
+on fish:
+    if "%fishing state%" contains "CAUGHT" or "FISH":
         if name of player's tool contains "CANNE DES PROFONDEURS":
             if chance of 20%:
                 give 1 of diamond to player
@@ -1841,7 +1841,7 @@ command /equipements [<text>]:
 # ==================== GESTION DES CLICS DU MENU (VITRINE SÉCURISÉE) ====================
 
 on inventory click:
-    if name of event-inventory contains "Arsenal 3D" or name of event-inventory contains "ARSENAL":
+    if name of event-inventory contains "Arsenal" or "ARSENAL":
         cancel event
         set {_s} to index of event-slot
         

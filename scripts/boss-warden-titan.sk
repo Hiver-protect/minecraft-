@@ -185,7 +185,7 @@ command /boss [<text>]:
             set name of {_b} to "&6&l✦ GARDE CÉLESTE ✦ &c[Mini-Boss]"
             set max health of {_b} to 60
             set health of {_b} to 60
-            equip {_b} with netherrite helmet
+            equip {_b} with netherite helmet
             equip {_b} with golden chestplate
             equip {_b} with iron sword
             set {skyblock_boss::%uuid of {_b}%} to "garde_celeste"

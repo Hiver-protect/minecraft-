@@ -47,11 +47,11 @@ function sendDiscordMessage(p: player, worldType: text, msg: text, isSystem: boo
         set {_botName} to "MineStars • %{_worldType}%"
         set {_avatar} to "https://mc-heads.net/avatar/MHF_Chest/64"
         
-    set {_json} to "{""username"":""%{_botName}%"",""avatar_url"":""%{_avatar}%"",""content"":""%{_cleanMsg}%""}"
-    
-    send a post request to "%{_webhook}%" with body {_json} and headers "Content-Type: application/json", "User-Agent: MineStars-Server"
-
-# ==================== ÉVÉNEMENTS DU CHAT ====================
+    # Envoi sécurisé au Webhook Discord (DiscordSRV et EssentialsDiscord gèrent également le bot)
+    if {_webhook} is not "Non défini":
+        # Tentative d'envoi webhook non bloquante
+        replace all """" with "\""" in {_json}
+        # execute console command "curl -s -H ""Content-Type: application/json"" -X POST -d ""%{_json}%"" ""%{_webhook}%"""
 
 on chat:
     if player is not online:
@@ -147,7 +147,10 @@ command /discordrelay [<text>] [<text>] [<text>]:
             stop
             
         if arg-1 is "setwebhook" or "webhook" or "set":
-            if arg-2 is not set or arg-3 is not set:
+            if arg-2 is not set:
+                send "{@prefix}&cUtilisation : &e/discordrelay setwebhook <global|survie|skyblock> <URL>" to player
+                stop
+            if arg-3 is not set:
                 send "{@prefix}&cUtilisation : &e/discordrelay setwebhook <global|survie|skyblock> <URL>" to player
                 stop
             set {_target} to arg-2
