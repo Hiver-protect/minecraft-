@@ -1173,8 +1173,8 @@ on break:
             play sound "block.wood.break" at event-block for player
 
 # Pêche avec la Canne des Profondeurs
-on fish:
-    if "%fishing state%" contains "CAUGHT" or "FISH":
+on right click:
+    if "%player's tool%" contains "fishing_rod" or "fishing rod":
         if name of player's tool contains "CANNE DES PROFONDEURS":
             if chance of 20%:
                 give 1 of diamond to player
@@ -1183,6 +1183,7 @@ on fish:
             else if chance of 33%:
                 give 2 of gold ingot to player
                 send action bar "&6🪙 Trésor des Abysses pêché : +2 Lingots d'Or !" to player
+
 
 # ==================== COMPÉTENCES ACTIVES & SORTS ====================
 

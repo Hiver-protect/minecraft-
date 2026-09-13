@@ -14,7 +14,7 @@ on break of oak log, birch log, spruce log, jungle log, acacia log, dark oak log
         stop # Sneak permet de couper 1 seul bloc sans faire tomber tout l'arbre
     
     set {_tool} to player's tool
-    if {_tool} is any axe:
+    if "%{_tool}%" contains "axe":
         set {_loc} to location of event-block
         set {_logType} to type of event-block
         
@@ -32,17 +32,17 @@ on break of oak log, birch log, spruce log, jungle log, acacia log, dark oak log
                 # Spawn falling block physics entity
                 set {_bType} to type of block at {_current}
                 set block at {_current} to air
-                spawn falling block of {_bType} at {_current}
+                break block at {_current} naturally
                 play sound "block.wood.hit" with volume 0.6 and pitch 1.1 at {_current}
                 draw 5 dust using dustOption(rgb(140, 95, 50), 1.2) at {_current} with offset vector(0.4, 0.4, 0.4)
             else:
                 # Si plus de bûches, faire tomber les feuilles proches
                 loop blocks in radius 3 around {_current}:
-                    if loop-block is any leaves:
+                    if "%loop-block%" contains "leaves":
                         if chance of 60%:
                             set {_lType} to type of loop-block
                             set loop-block to air
-                            spawn falling block of {_lType} at location of loop-block
+                            break loop-block naturally
                             draw 3 dust using dustOption(rgb(60, 140, 50), 1.0) at location of loop-block with offset vector(0.3, 0.3, 0.3)
                 stop loop
 
@@ -67,7 +67,7 @@ on break of stone, deepslate, cobbled_deepslate, netherrack or basalt:
             if block at {_c} is gravel or sand or red sand or dirt or coarse dirt:
                 set {_mat} to type of block at {_c}
                 set block at {_c} to air
-                spawn falling block of {_mat} at {_c}
+                break block at {_c} naturally
                 set {_c} to location 1 block above {_c}
             else:
                 stop loop
@@ -93,8 +93,7 @@ on explode:
                     set vector length of {_dir} to (random number between 0.4 and 0.9)
                     set y of {_dir} to (random number between 0.3 and 0.7)
                     
-                    spawn falling block of {_bMat} at {_bLoc}
-                    set velocity of last spawned entity to {_dir}
+                    break loop-block naturally
                     draw 8 dust using dustOption(rgb(80, 80, 80), 1.8) at {_bLoc} with offset vector(0.4, 0.4, 0.4)
 
 # ==================== 4. IMPACT PHYSIQUE DE LA MASSE (MACE SHOCKWAVE) ====================

@@ -106,7 +106,7 @@ command /daily:
         play sound "block.chest.open" to player
 
 on inventory click:
-    if name of event-inventory contains "Récompenses 7J" or name of event-inventory contains "RÉCOMPENSES":
+    if name of event-inventory contains "Récompenses 7J" or "RÉCOMPENSES":
         cancel event
         
         set {_validClaim} to false

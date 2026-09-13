@@ -871,7 +871,7 @@ command /sanctions [<player>]:
         openSanctionsGUI(player, arg-1)
 
 on inventory click:
-    if name of event-inventory contains "Sanctions" or name of event-inventory contains "SANCTIONS":
+    if name of event-inventory contains "Sanctions" or "SANCTIONS":
         cancel event
         set {_targetName} to uncolored name of event-inventory
         replace all "MINESTARS ▸ Sanctions - " with "" in {_targetName}

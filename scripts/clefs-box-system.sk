@@ -263,7 +263,7 @@ function openCratesMenu(p: player):
 # ==================== INTERACTION & OUVERTURE DE CRATE ====================
 
 on inventory click:
-    if name of event-inventory contains "Box" or name of event-inventory contains "Clés" or name of event-inventory contains "Clefs" or name of event-inventory contains "Crates":
+    if name of event-inventory contains "Box" or "Clés" or "Clefs" or "Crates":
         cancel event
         set {_slot} to index of event-slot
         if {_slot} is 49:

@@ -1658,7 +1658,7 @@ on break:
 
 on inventory click:
     # 1. MENU PRINCIPAL SKYBLOCK (4 RANGÉES)
-    if name of event-inventory contains "Skyblock Céleste" or name of event-inventory contains "SKYBLOCK":
+    if name of event-inventory contains "Skyblock Céleste" or "SKYBLOCK":
         cancel event
         
         # Rejoindre / Créer mon île (Slot 11)
@@ -1714,7 +1714,7 @@ on inventory click:
             execute player command "is-gui-quests"
 
     # 2. MENU UPGRADES
-    else if name of event-inventory contains "Améliorations" or name of event-inventory contains "AMÉLIORATIONS":
+    else if name of event-inventory contains "Améliorations" or "AMÉLIORATIONS":
         cancel event
         if index of event-slot is 22:
             execute player command "is"
@@ -1832,7 +1832,7 @@ on inventory click:
                 send "{@prefix}&cIl te faut 20,000$ pour cette amélioration !" to player
 
     # 2b. MENU BORDURE & BARRIÈRE CÉLESTE
-    else if name of event-inventory contains "Bordure Céleste" or name of event-inventory contains "BORDURE":
+    else if name of event-inventory contains "Bordure Céleste" or "BORDURE":
         cancel event
         set {_u} to uuid of player
         if index of event-slot is 22:
@@ -1874,7 +1874,7 @@ on inventory click:
             execute player command "is-gui-upgrades"
 
     # 3. MENU MISSIONS & DÉFIS
-    else if name of event-inventory contains "Quêtes Skyblock" or name of event-inventory contains "MISSIONS":
+    else if name of event-inventory contains "Quêtes Skyblock" or "MISSIONS":
         cancel event
         if index of event-slot is 31:
             execute player command "is"
@@ -1988,7 +1988,7 @@ on inventory click:
                 send "{@prefix}&cTu as déjà validé ce défi !" to player
 
     # 4. MENU BIOMES
-    else if name of event-inventory contains "Biomes de l'Île" or name of event-inventory contains "BIOME":
+    else if name of event-inventory contains "Biomes de l'Île" or "BIOME":
         cancel event
         if index of event-slot is 22:
             execute player command "is"
@@ -2048,7 +2048,7 @@ on inventory click:
                 send "{@prefix}&cIl te faut 35,000$ pour ce biome !" to player
 
     # 5. MENU BOOSTERS
-    else if name of event-inventory contains "Boosters" or name of event-inventory contains "BOOSTERS":
+    else if name of event-inventory contains "Boosters" or "BOOSTERS":
         cancel event
         if index of event-slot is 22:
             execute player command "is"
@@ -2077,7 +2077,7 @@ on inventory click:
                 send "{@prefix}&cIl te faut 25,000$ pour ce booster !" to player
 
     # 7. MENU PARAMÈTRES & MOBS
-    else if name of event-inventory contains "Paramètres & Mobs" or name of event-inventory contains "PARAMÈTRES" or name of event-inventory contains "GESTION MOBS":
+    else if name of event-inventory contains "Paramètres & Mobs" or "PARAMÈTRES" or "GESTION MOBS":
         cancel event
         if index of event-slot is 22:
             execute player command "is"
@@ -2150,7 +2150,7 @@ on inventory click:
             execute player command "is-gui-fly"
 
     # 8. MENU ÉQUIPE COOP
-    else if name of event-inventory contains "Équipe & Coop" or name of event-inventory contains "GESTION D'ÉQUIPE":
+    else if name of event-inventory contains "Équipe & Coop" or "GESTION D'ÉQUIPE":
         cancel event
         if index of event-slot is 22:
             execute player command "is"
@@ -2166,13 +2166,13 @@ on inventory click:
             execute player command "is leave"
 
     # 8bis. RETOUR TOP
-    else if name of event-inventory contains "Top Îles" or name of event-inventory contains "CLASSEMENT":
+    else if name of event-inventory contains "Top Îles" or "CLASSEMENT":
         cancel event
         if index of event-slot is 22:
             execute player command "is"
 
     # 9. MENU GESTION & PASS VOL TEMPORAIRE
-    else if name of event-inventory contains "Pass Vol Céleste" or name of event-inventory contains "PASS VOL":
+    else if name of event-inventory contains "Pass Vol Céleste" or "PASS VOL":
         cancel event
         if index of event-slot is 22:
             execute player command "is"
@@ -2287,7 +2287,7 @@ on inventory click:
                 send "{@prefix}&cIl te faut 60,000$ pour le Pass Vol 7 Jours !" to player
 
     # 10. MENU BANQUE INTERACTIVE
-    else if name of event-inventory contains "Banque de l'Île" or name of event-inventory contains "BANQUE":
+    else if name of event-inventory contains "Banque de l'Île" or "BANQUE":
         cancel event
         if index of event-slot is 22:
             execute player command "is"
@@ -2369,7 +2369,7 @@ on inventory click:
                 send "{@prefix}&cLa banque est vide !" to player
 
     # 11. BOUTIQUE & VENTE RAPIDE SKYBLOCK
-    else if name of event-inventory contains "Boutique & Vente" or name of event-inventory contains "BOUTIQUE":
+    else if name of event-inventory contains "Boutique & Vente" or "BOUTIQUE":
         cancel event
         if index of event-slot is 31:
             execute player command "is"
@@ -2546,7 +2546,7 @@ on inventory click:
                 send "{@prefix}&cPas assez d'argent !" to player
 
     # 12. MENU ADMIN LISTE DES ÎLES
-    else if name of event-inventory contains "Îles Skyblock" or name of event-inventory contains "ÎLES SKYBLOCK":
+    else if name of event-inventory contains "Îles Skyblock" or "ÎLES SKYBLOCK":
         cancel event
         if event-item is player head:
             set {_headName} to uncolored name of event-item
@@ -3356,7 +3356,7 @@ every 20 seconds:
 
 # Gestion des clics dans le Menu de Mobs & Paramètres
 on inventory click:
-    if name of event-inventory contains "GESTION MOBS" or name of event-inventory contains "Gestion Mobs" or name of event-inventory contains "Paramètres" or name of event-inventory contains "PARAMÈTRES":
+    if name of event-inventory contains "GESTION MOBS" or "Gestion Mobs" or "Paramètres" or "PARAMÈTRES":
         cancel event
         set {_u} to uuid of player
         set {_owner} to "%player%"
@@ -3472,7 +3472,7 @@ on explode:
 
 # Gestion des clics dans le Menu Admin des Îles
 on inventory click:
-    if name of event-inventory contains "ÎLES SKYBLOCK" or name of event-inventory contains "Îles Skyblock" or name of event-inventory contains "Liste des Îles":
+    if name of event-inventory contains "ÎLES SKYBLOCK" or "Îles Skyblock" or "Liste des Îles":
         cancel event
         if event-slot is set:
             set {_name} to uncolored name of event-slot

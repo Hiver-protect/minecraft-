@@ -117,23 +117,23 @@ on portal create:
     set {_w} to "%event-world%"
     if {_w} contains "survie" or "skyblock":
         cancel event
-        send "{@prefix}&cCréation de portail interdite en %{_w}% ! Accès uniquement via le &eSpawn (/spawn)&c." to all players in radius 5 around event-block
-        play sound "block.fire.extinguish" at event-block
+        send "{@prefix}&cCréation de portail interdite en %{_w}% ! Accès uniquement via le &eSpawn (/spawn)&c." to all players in radius 5 around player
+        play sound "block.fire.extinguish" at player
 
 # 2. Interdiction d'allumer de l'obsidienne au briquet / charge de feu
 on right click on obsidian:
     set {_w} to "%world of event-block%"
     if {_w} contains "survie" or "skyblock":
-        if player's tool is flint and steel or fire charge:
+        if "%player's tool%" contains "flint and steel" or "fire charge":
             cancel event
             send action bar "&c⚠ Les portails du Nether sont désactivés ici ! Rendez-vous au &e/spawn &c!" to player
-            play sound "block.fire.extinguish" at event-block for player
+            play sound "block.fire.extinguish" at player for player
 
 # 3. Interdiction d'insérer un œil de l'End dans un cadre de portail
 on right click on end portal frame:
     set {_w} to "%world of event-block%"
     if {_w} contains "survie" or "skyblock":
-        if player's tool is eye of ender or ender eye:
+        if "%player's tool%" contains "eye of ender" or "ender eye":
             cancel event
             send action bar "&c⚠ Les portails de l'End sont désactivés ici ! Rendez-vous au &e/spawn &c!" to player
             play sound "block.chest.locked" at event-block for player
@@ -157,7 +157,7 @@ on portal:
 # 5. Sécurité anti-téléportation interdimensionnelle non autorisée
 on teleport:
     set {_from} to "%world of player%"
-    set {_to} to "%world of teleport target%"
+    set {_to} to "%world of event-location%"
     
     if {_from} contains "survie" or "skyblock":
         if {_to} contains "nether" or "the_end" or "DIM-1" or "DIM1":
