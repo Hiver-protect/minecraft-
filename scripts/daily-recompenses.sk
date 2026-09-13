@@ -9,7 +9,7 @@ options:
 command /daily:
     aliases: /reward, /journalier, /cadeau, /dailyrewards
     trigger:
-        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lMINESTARS &8- &6&lRÉCOMPENSES 7J"
+        set {_gui} to a new chest inventory with 3 rows named "<#F1C40F>&lMINE<#FFFFFF>&lSTARS &8▸ &6Récompenses 7J"
         
         # Fond sombre et bordures or
         loop 27 times:
@@ -38,32 +38,32 @@ command /daily:
         if {_streak} >= 1:
             set {_s1} to "&a✔ Validé"
         else:
-            set {_s1} to "&7🔒 Jour 1"
+            set {_s1} to "&8🔒 Verrouillé"
 
         if {_streak} >= 2:
             set {_s2} to "&a✔ Validé"
         else:
-            set {_s2} to "&7🔒 Jour 2"
+            set {_s2} to "&8🔒 Verrouillé"
 
         if {_streak} >= 3:
             set {_s3} to "&a✔ Validé"
         else:
-            set {_s3} to "&7🔒 Jour 3"
+            set {_s3} to "&8🔒 Verrouillé"
 
         if {_streak} >= 4:
             set {_s4} to "&a✔ Validé"
         else:
-            set {_s4} to "&7🔒 Jour 4"
+            set {_s4} to "&8🔒 Verrouillé"
 
         if {_streak} >= 5:
             set {_s5} to "&a✔ Validé"
         else:
-            set {_s5} to "&7🔒 Jour 5"
+            set {_s5} to "&8🔒 Verrouillé"
 
         if {_streak} >= 6:
             set {_s6} to "&a✔ Validé"
         else:
-            set {_s6} to "&7🔒 Jour 6"
+            set {_s6} to "&8🔒 Verrouillé"
 
         if {_streak} >= 7:
             set {_s7} to "&a✔ JACKPOT RÉCUPÉRÉ"
@@ -71,40 +71,40 @@ command /daily:
             set {_s7} to "&6★ JACKPOT 7J"
 
         # En-tête profil Daily (Slot 4)
-        set slot 4 of {_gui} to 1 of player head named "&e&l✦ SÉRIE ACTUELLE : JOUR &f&l%{_streak}%/7 &e&l✦" with lore "&8&m─────────────────────────" and "&7• Joueur : &f%player%" and "&7• Statut : %{_leftMsg}%" and "&7• Série active : &e%{_streak}% jours consécutifs" and "&8&m─────────────────────────" and "&e▸ Connecte-toi chaque jour pour décrocher le Jackpot !"
+        set slot 4 of {_gui} to 1 of player head named "<#F1C40F>&l✦ SÉRIE : JOUR &f&l%{_streak}%/7 <#F1C40F>&l✦" with lore "&8&m─────────────────────" and "&8▸ &7Statut : %{_leftMsg}%" and "&8▸ &7Série : &e%{_streak}% jours consécutifs" and "&8&m─────────────────────"
 
         # Jour 1 (Slot 10)
-        set slot 10 of {_gui} to 1 of iron ingot named "&f&l✦ JOUR 1 ✦" with lore "&8&m─────────────────────────" and "&7• &a+300$" and "&7• &b+5 Diamants" and "&7• &6+16 Steaks" and "&8&m─────────────────────────" and "%{_s1}%"
+        set slot 10 of {_gui} to 1 of iron ingot named "<#FFFFFF>&l✦ JOUR 1 ✦" with lore "&8&m─────────────────────" and "&8▸ &a+300$ &8┃ &b+5 Diamants &8┃ &6+16 Steaks" and "&8&m─────────────────────" and "%{_s1}%"
         
         # Jour 2 (Slot 11)
-        set slot 11 of {_gui} to 1 of gold ingot named "&e&l✦ JOUR 2 ✦" with lore "&8&m─────────────────────────" and "&7• &a+500$" and "&7• &b+8 Diamants" and "&7• &6+24 Steaks" and "&8&m─────────────────────────" and "%{_s2}%"
+        set slot 11 of {_gui} to 1 of gold ingot named "<#F1C40F>&l✦ JOUR 2 ✦" with lore "&8&m─────────────────────" and "&8▸ &a+500$ &8┃ &b+8 Diamants &8┃ &6+24 Steaks" and "&8&m─────────────────────" and "%{_s2}%"
 
         # Jour 3 (Slot 12)
-        set slot 12 of {_gui} to 1 of emerald named "&a&l✦ JOUR 3 ✦" with lore "&8&m─────────────────────────" and "&7• &a+750$" and "&7• &b+12 Diamants" and "&7• &6+2 Pommes Dorées" and "&8&m─────────────────────────" and "%{_s3}%"
+        set slot 12 of {_gui} to 1 of emerald named "<#2ED573>&l✦ JOUR 3 ✦" with lore "&8&m─────────────────────" and "&8▸ &a+750$ &8┃ &b+12 Diamants &8┃ &6+2 G-Apples" and "&8&m─────────────────────" and "%{_s3}%"
 
         # Jour 4 (Slot 13)
-        set slot 13 of {_gui} to 1 of diamond named "&b&l✦ JOUR 4 ✦" with lore "&8&m─────────────────────────" and "&7• &a+1,000$" and "&7• &b+16 Diamants" and "&7• &6+4 Pommes Dorées" and "&8&m─────────────────────────" and "%{_s4}%"
+        set slot 13 of {_gui} to 1 of diamond named "<#00D4FF>&l✦ JOUR 4 ✦" with lore "&8&m─────────────────────" and "&8▸ &a+1,000$ &8┃ &b+16 Diamants &8┃ &6+4 G-Apples" and "&8&m─────────────────────" and "%{_s4}%"
 
         # Jour 5 (Slot 14)
-        set slot 14 of {_gui} to 1 of experience bottle named "&d&l✦ JOUR 5 ✦" with lore "&8&m─────────────────────────" and "&7• &a+1,500$" and "&7• &b+20 Diamants" and "&7• &d+16 Fioles d'XP" and "&8&m─────────────────────────" and "%{_s5}%"
+        set slot 14 of {_gui} to 1 of experience bottle named "<#E056FD>&l✦ JOUR 5 ✦" with lore "&8&m─────────────────────" and "&8▸ &a+1,500$ &8┃ &b+20 Diamants &8┃ &d+16 Fioles XP" and "&8&m─────────────────────" and "%{_s5}%"
 
         # Jour 6 (Slot 15)
-        set slot 15 of {_gui} to 1 of netherite ingot named "&8&l✦ JOUR 6 ✦" with lore "&8&m─────────────────────────" and "&7• &a+2,000$" and "&7• &b+24 Diamants" and "&7• &8+2 Lingots de Netherite" and "&8&m─────────────────────────" and "%{_s6}%"
+        set slot 15 of {_gui} to 1 of netherite ingot named "<#747D8C>&l✦ JOUR 6 ✦" with lore "&8&m─────────────────────" and "&8▸ &a+2,000$ &8┃ &b+24 Diamants &8┃ &8+2 Netherite" and "&8&m─────────────────────" and "%{_s6}%"
 
         # Jour 7 : JACKPOT (Slot 16)
-        set slot 16 of {_gui} to 1 of totem of undying named "&6&l★ JOUR 7 : LE JACKPOT ★" with lore "&8&m─────────────────────────" and "&7• &a+5,000$" and "&7• &b+32 Diamants" and "&7• &e+1 Totem d'Immortalité" and "&7• &6+8 Pommes Enchantées" and "&8&m─────────────────────────" and "%{_s7}%"
+        set slot 16 of {_gui} to 1 of totem of undying named "<#FFA502>&l★ JOUR 7 : JACKPOT ★" with lore "&8&m─────────────────────" and "&8▸ &a+5,000$ &8┃ &b+32 Diamants &8┃ &e+1 Totem &8┃ &6+8 Notchs" and "&8&m─────────────────────" and "%{_s7}%"
 
         # Bouton Réclamer (Slot 22)
         if {_canClaim} is true:
-            set slot 22 of {_gui} to 1 of lime concrete named "&a&l✦ RÉCLAMER MA RÉCOMPENSE ✦" with lore "&8&m─────────────────────────" and "&7Clique pour récupérer ton cadeau du &eJour %{_streak}% &7!" and "&8&m─────────────────────────" and "&a▸ Cliquer pour réclamer"
+            set slot 22 of {_gui} to 1 of lime concrete named "<#2ED573>&l✦ RÉCLAMER MON CADEAU ✦" with lore "&8&m─────────────────────" and "&8▸ &7Récupérer le cadeau du &eJour %{_streak}%" and "&8&m─────────────────────" and "&a▶ Cliquer pour réclamer"
         else:
-            set slot 22 of {_gui} to 1 of red concrete named "&c&l✦ DÉJÀ RÉCLAMÉ AUJOURD'HUI ✦" with lore "&8&m─────────────────────────" and "%{_leftMsg}%" and "&7Reviens demain pour continuer ta série !" and "&8&m─────────────────────────"
+            set slot 22 of {_gui} to 1 of red concrete named "<#FF4757>&l✦ DÉJÀ RÉCLAMÉ ✦" with lore "&8&m─────────────────────" and "&8▸ %{_leftMsg}%" and "&8▸ &7Reviens demain pour continuer !" and "&8&m─────────────────────"
 
         open {_gui} to player
         play sound "block.chest.open" to player
 
 on inventory click:
-    if name of event-inventory is "&8» &0&lMINESTARS &8- &6&lRÉCOMPENSES 7J":
+    if name of event-inventory contains "Récompenses 7J":
         cancel event
         
         if index of event-slot is 22:

@@ -800,7 +800,7 @@ command /unban [<text>]:
 # ==================== MENU GUI DE SANCTIONS RAPIDES (/sanctions) ====================
 
 function openSanctionsGUI(admin: player, target: player):
-    set {_gui} to a new chest inventory with 4 rows named "&8» &0&lSANCTIONS : &c&l%{_target}%"
+    set {_gui} to a new chest inventory with 4 rows named "<#D63031>&lMINE<#FFFFFF>&lSTARS &8▸ &cSanctions &8- &f%{_target}%"
     
     loop 36 times:
         set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
@@ -816,24 +816,24 @@ function openSanctionsGUI(admin: player, target: player):
     set {_ping} to {_target}'s ping ? 0
     
     # Tête profil (Slot 4)
-    set slot 4 of {_gui} to 1 of player head named "&e&l✦ SUSPECT : &f&l%{_target}% &e&l✦" with lore "&8&m─────────────────────────" and "&7• Santé : &c%health of {_target}% / %max health of {_target}% ❤" and "&7• Solde : &a%{_target}'s balance%$" and "&7• CPS : &e%{_cps}% CPS &8┃ &7Ping : &b%{_ping}%ms" and "&7• Avertissements : &c%{_warnCount}% warns" and "&7• Monde : &e%world of {_target}%" and "&8&m─────────────────────────" and "&e✦ Choisis une action rapide ci-dessous :"
+    set slot 4 of {_gui} to 1 of player head named "&e&l✦ Suspect : &f%{_target}%" with lore "&8&m─────────────────────" and "&8▸ &7Santé : &c%health of {_target}% / %max health of {_target}% ❤" and "&8▸ &7Solde : &a%{_target}'s balance%$" and "&8▸ &7CPS : &e%{_cps}% &8┃ &7Ping : &b%{_ping}%ms" and "&8▸ &7Warns : &c%{_warnCount}% &8┃ &7Monde : &e%world of {_target}%" and "&8&m─────────────────────"
 
     # Ligne 2 : Sanctions Rapides
-    set slot 10 of {_gui} to 1 of paper named "&e&l✦ METTRE UN WARN ✦" with lore "&7Avertir le joueur (+1 warn)." and "&8(3 warns = Kick auto, 5 warns = Mute auto)" and "" and "&e▸ Cliquer pour avertir"
-    set slot 11 of {_gui} to 1 of book named "&6&l✦ MUTE (30 MINUTES) ✦" with lore "&7Réduire au silence temporairement." and "" and "&6▸ Cliquer pour mute 30m"
-    set slot 12 of {_gui} to 1 of packed ice named "&b&l✦ FREEZE / DÉFREEZE ✦" with lore "&7Immobiliser pour vérification de triche." and "" and "&b▸ Cliquer pour basculer le Freeze"
-    set slot 13 of {_gui} to 1 of iron sword named "&c&l✦ EXPULSER (KICK) ✦" with lore "&7Éjecter le joueur du serveur." and "" and "&c▸ Cliquer pour kick"
-    set slot 14 of {_gui} to 1 of netherite axe named "&4&l✦ BAN TEMPORAIRE (7 JOURS) ✦" with lore "&7Bannir pour triche ou récidive." and "" and "&4▸ Cliquer pour ban 7j"
-    set slot 15 of {_gui} to 1 of barrier named "&4&l✦ BAN DÉFINITIF ✦" with lore "&7Bannir définitivement le joueur." and "" and "&4▸ Cliquer pour ban permanent"
-    set slot 16 of {_gui} to 1 of lava bucket named "&6&l✦ VIDER INVENTAIRE (CLEAR) ✦" with lore "&7Effacer tout l'inventaire du suspect." and "" and "&6▸ Cliquer pour vider"
+    set slot 10 of {_gui} to 1 of paper named "&e&lAvertissement (+1 Warn)" with lore "&8&m─────────────────────" and "&8▸ &73 warns = Kick auto &8┃ &75 = Mute" and "&8&m─────────────────────" and "&e▶ Cliquer pour avertir"
+    set slot 11 of {_gui} to 1 of book named "&6&lMute 30 Minutes" with lore "&8&m─────────────────────" and "&8▸ &7Silence temporaire pour spam/insultes." and "&8&m─────────────────────" and "&6▶ Cliquer pour mute"
+    set slot 12 of {_gui} to 1 of packed ice named "&b&lFreeze / Unfreeze" with lore "&8&m─────────────────────" and "&8▸ &7Immobilise le joueur pour vérif." and "&8&m─────────────────────" and "&b▶ Cliquer pour basculer"
+    set slot 13 of {_gui} to 1 of iron sword named "&c&lExpulser (Kick)" with lore "&8&m─────────────────────" and "&8▸ &7Éjecte immédiatement le joueur." and "&8&m─────────────────────" and "&c▶ Cliquer pour expulser"
+    set slot 14 of {_gui} to 1 of netherite axe named "&4&lBan 7 Jours" with lore "&8&m─────────────────────" and "&8▸ &7Bannissement temporaire 7 jours." and "&8&m─────────────────────" and "&4▶ Cliquer pour ban 7j"
+    set slot 15 of {_gui} to 1 of barrier named "&4&lBan Permanent ✖" with lore "&8&m─────────────────────" and "&8▸ &7Bannissement définitif du joueur." and "&8&m─────────────────────" and "&4▶ Cliquer pour ban permanent"
+    set slot 16 of {_gui} to 1 of lava bucket named "&6&lVider Inventaire (Clear)" with lore "&8&m─────────────────────" and "&8▸ &7Efface le contenu des poches." and "&8&m─────────────────────" and "&6▶ Cliquer pour clear"
 
     # Ligne 3 : Outils de Contrôle
-    set slot 20 of {_gui} to 1 of chest named "&3&l✦ VOIR INVENTAIRE (INVSEE) ✦" with lore "&7Inspecter le contenu de ses poches en direct." and "" and "&3▸ Cliquer pour ouvrir l'inventaire"
-    set slot 22 of {_gui} to 1 of ender chest named "&5&l✦ VOIR ENDERCHEST ✦" with lore "&7Consulter le coffre de néant du joueur." and "" and "&5▸ Cliquer pour ouvrir"
-    set slot 24 of {_gui} to 1 of ender pearl named "&a&l✦ SE TÉLÉPORTER (TP) ✦" with lore "&7Rejoindre instantanément la position du joueur." and "" and "&a▸ Cliquer pour te téléporter"
+    set slot 20 of {_gui} to 1 of chest named "&3&lVoir Inventaire (Invsee)" with lore "&8&m─────────────────────" and "&8▸ &7Inspecter l'inventaire en direct." and "&8&m─────────────────────" and "&3▶ Cliquer pour ouvrir"
+    set slot 22 of {_gui} to 1 of ender chest named "&5&lVoir Enderchest" with lore "&8&m─────────────────────" and "&8▸ &7Consulter l'Enderchest du joueur." and "&8&m─────────────────────" and "&5▶ Cliquer pour ouvrir"
+    set slot 24 of {_gui} to 1 of ender pearl named "&a&lTéléportation (TP)" with lore "&8&m─────────────────────" and "&8▸ &7Se téléporter au joueur." and "&8&m─────────────────────" and "&a▶ Cliquer pour te téléporter"
 
     # Fermer (Slot 31)
-    set slot 31 of {_gui} to 1 of arrow named "&c&lFERMER LE MENU" with lore "&7Fermer l'interface"
+    set slot 31 of {_gui} to 1 of arrow named "&c« Fermer le Menu"
 
     open {_gui} to {_admin}
     play sound "block.chest.open" to {_admin}
@@ -849,9 +849,10 @@ command /sanctions [<player>]:
         openSanctionsGUI(player, arg-1)
 
 on inventory click:
-    if name of event-inventory contains "&8» &0&lSANCTIONS : ":
+    if name of event-inventory contains "Sanctions" or name of event-inventory contains "SANCTIONS":
         cancel event
         set {_targetName} to uncolored name of event-inventory
+        replace all "MINESTARS ▸ Sanctions - " with "" in {_targetName}
         replace all "» SANCTIONS : " with "" in {_targetName}
         set {_target} to {_targetName} parsed as player
         

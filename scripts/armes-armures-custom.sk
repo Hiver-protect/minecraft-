@@ -1651,38 +1651,44 @@ on death:
 
 # ==================== FONCTION D'OUVERTURE DU GRAND MENU UNIFIÉ ====================
 
+# ==================== FONCTION D'OUVERTURE DU GRAND MENU UNIFIÉ ====================
+
 function openArsenalMenu(p: player, category: text):
-    set {_gui} to a new chest inventory with 6 rows named "&8» &0&lMINESTARS &8- &6&lARSENAL UNIFIÉ"
+    set {_gui} to a new chest inventory with 6 rows named "<#FFA502>&lMINE<#FFFFFF>&lSTARS &8▸ &6Arsenal 3D"
     
     # Bordures décoratives
     loop 54 times:
         set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
+    set slot 1 of {_gui} to 1 of orange stained glass pane named " "
+    set slot 3 of {_gui} to 1 of orange stained glass pane named " "
+    set slot 5 of {_gui} to 1 of orange stained glass pane named " "
+    set slot 7 of {_gui} to 1 of orange stained glass pane named " "
 
     # Ligne 1 : Onglets de Catégories (Slots 0, 2, 4, 6, 8)
     if {_category} is "weapons":
-        set slot 0 of {_gui} to 1 of diamond sword named "&e&l▶ ⚔️ ARMES MYTHIQUES ◀" with lore "&a✓ Onglet Actif" and "&7Découvre les 20 armes légendaires."
+        set slot 0 of {_gui} to 1 of diamond sword named "&6&l⚔ Armes Mythiques &a✔" with lore "&8&m─────────────────────" and "&a✔ Catégorie active" and "&8&m─────────────────────"
     else:
-        set slot 0 of {_gui} to 1 of iron sword named "&f⚔️ Armes Mythiques" with lore "&e▸ Clique pour afficher les armes"
+        set slot 0 of {_gui} to 1 of iron sword named "&f⚔ Armes Mythiques" with lore "&8&m─────────────────────" and "&e▶ Cliquer pour afficher" and "&8&m─────────────────────"
 
     if {_category} is "armors":
-        set slot 2 of {_gui} to 1 of netherite chestplate named "&e&l▶ 🛡️ ARMURES COMPLÈTES ◀" with lore "&a✓ Onglet Actif" and "&7Découvre les 6 sets d'armures."
+        set slot 2 of {_gui} to 1 of netherite chestplate named "&6&l🛡 Armures Complètes &a✔" with lore "&8&m─────────────────────" and "&a✔ Catégorie active" and "&8&m─────────────────────"
     else:
-        set slot 2 of {_gui} to 1 of iron chestplate named "&f🛡️ Armures Complètes" with lore "&e▸ Clique pour afficher les armures"
+        set slot 2 of {_gui} to 1 of iron chestplate named "&f🛡 Armures Complètes" with lore "&8&m─────────────────────" and "&e▶ Cliquer pour afficher" and "&8&m─────────────────────"
 
     if {_category} is "tools":
-        set slot 4 of {_gui} to 1 of netherite pickaxe named "&e&l▶ ⛏️ OUTILS & BOUCLIERS ◀" with lore "&a✓ Onglet Actif" and "&7Pioche 3x3, Auto-Smelt, Hache & Bouclier."
+        set slot 4 of {_gui} to 1 of netherite pickaxe named "&6&l⛏ Outils Spéciaux &a✔" with lore "&8&m─────────────────────" and "&a✔ Catégorie active" and "&8&m─────────────────────"
     else:
-        set slot 4 of {_gui} to 1 of iron pickaxe named "&f⛏️ Outils & Boucliers" with lore "&e▸ Clique pour afficher les outils"
+        set slot 4 of {_gui} to 1 of iron pickaxe named "&f⛏ Outils Spéciaux" with lore "&8&m─────────────────────" and "&e▶ Cliquer pour afficher" and "&8&m─────────────────────"
 
     if {_category} is "relics":
-        set slot 6 of {_gui} to 1 of nether star named "&e&l▶ 🔮 RELIQUES & ARTEFACTS ◀" with lore "&a✓ Onglet Actif" and "&7Découvre les 8 talismans magiques."
+        set slot 6 of {_gui} to 1 of nether star named "&6&l🔮 Reliques & Runes &a✔" with lore "&8&m─────────────────────" and "&a✔ Catégorie active" and "&8&m─────────────────────"
     else:
-        set slot 6 of {_gui} to 1 of heart of the sea named "&f🔮 Reliques & Artefacts" with lore "&e▸ Clique pour afficher les reliques"
+        set slot 6 of {_gui} to 1 of heart of the sea named "&f🔮 Reliques & Runes" with lore "&8&m─────────────────────" and "&e▶ Cliquer pour afficher" and "&8&m─────────────────────"
 
     if {_category} is "all":
-        set slot 8 of {_gui} to 1 of beacon named "&e&l▶ 👑 ARSENAL GLOBAL ◀" with lore "&a✓ Onglet Actif" and "&7Vue d'ensemble de tous les équipements."
+        set slot 8 of {_gui} to 1 of beacon named "&6&l👑 Vue Globale &a✔" with lore "&8&m─────────────────────" and "&a✔ Catégorie active" and "&8&m─────────────────────"
     else:
-        set slot 8 of {_gui} to 1 of beacon named "&f👑 Vue Globale" with lore "&e▸ Clique pour afficher tout l'arsenal"
+        set slot 8 of {_gui} to 1 of beacon named "&f👑 Vue Globale" with lore "&8&m─────────────────────" and "&e▶ Cliquer pour afficher" and "&8&m─────────────────────"
 
     # ================= CONTENU SELON L'ONGLET =================
     
@@ -1807,7 +1813,7 @@ function openArsenalMenu(p: player, category: text):
         set slot 43 of {_gui} to getCustomRelic("orb")
 
     # Bouton Fermer (Slot 49)
-    set slot 49 of {_gui} to 1 of barrier named "&c&l✦ FERMER LE MENU ✦" with lore "&7Fermer l'Arsenal Minestars"
+    set slot 49 of {_gui} to 1 of arrow named "&c« Fermer l'Arsenal"
 
     open {_gui} to {_p}
     play sound "block.chest.open" to {_p}
@@ -1815,7 +1821,7 @@ function openArsenalMenu(p: player, category: text):
 # ==================== COMMANDE GLOBALE UNIQUE ====================
 
 command /equipements [<text>]:
-    aliases: /menu, /arsenal, /armes, /armures, /weapons, /armors, /custom, /stuff, /relique, /reliques, /outils, /tools
+    aliases: /arsenal, /armes, /armures, /weapons, /armors, /custom, /stuff, /relique, /reliques, /outils, /tools
     trigger:
         set {_cat} to arg-1 ? "all"
         if {_cat} is "arme" or "armes" or "weapon" or "weapons":
@@ -1833,7 +1839,7 @@ command /equipements [<text>]:
 # ==================== GESTION DES CLICS DU MENU (VITRINE SÉCURISÉE) ====================
 
 on inventory click:
-    if name of event-inventory is "&8» &0&lMINESTARS &8- &6&lARSENAL UNIFIÉ":
+    if name of event-inventory contains "Arsenal 3D" or name of event-inventory contains "ARSENAL":
         cancel event
         set {_s} to index of event-slot
         

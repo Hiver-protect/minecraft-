@@ -314,17 +314,15 @@ command /isadmin [<text>] [<text>] [<text>] [<text>]:
             send "&e&l✦ LISTE DES ÎLES SKYBLOCK ENREGISTRÉES ✦" to player
             set {_count} to 0
             loop {island::*}:
-                set {_owner} to loop-index
-                set {_x} to {island::%{_owner}%::x}
-                set {_z} to {island::%{_owner}%::z}
-            set {_gui} to a new chest inventory with 6 rows named "&8» &0&lÎLES SKYBLOCK &8(&e%{_count}%&8)"
+                add 1 to {_count}
+            set {_gui} to a new chest inventory with 6 rows named "<#FFA502>&lMINE<#FFFFFF>&lSTARS &8▸ &6Îles Skyblock &8(&e%{_count}%&8)"
             set {_slot} to 0
             loop {island::*}:
                 set {_owner} to loop-index
                 set {_x} to {island::%{_owner}%::x}
                 set {_z} to {island::%{_owner}%::z}
                 set {_lvl} to {island_level::%{_owner}%} ? 10
-                set slot {_slot} of {_gui} to 1 of player head named "&e&l✦ Île de %{_owner}% ✦" with lore "&8&m─────────────────────────" and "&7• Coordonnées : &fX: %{_x}%, Z: %{_z}%" and "&7• Niveau d'île : &a★ %{_lvl}% ⭐" and "&8&m─────────────────────────" and "&a▸ Clic Gauche : Se téléporter sur l'île" and "&c▸ Clic Droit : Régénérer l'île"
+                set slot {_slot} of {_gui} to 1 of player head named "&e&l✦ Île de %{_owner}% ✦" with lore "&8&m─────────────────────" and "&8▸ &7Coordonnées : &fX: %{_x}%, Z: %{_z}%" and "&8▸ &7Niveau d'île : &a★ %{_lvl}% ⭐" and "&8&m─────────────────────" and "&a▶ Clic Gauche : Se téléporter" and "&c▶ Clic Droit : Régénérer"
                 add 1 to {_slot}
                 if {_slot} >= 54:
                     stop loop
@@ -1034,7 +1032,7 @@ command /skyblock [<text>] [<text>] [<number>]:
             stop
 
         # ==================== MENU SKYBLOCK MODERNE & ÉPURÉ (4 RANGÉES) ====================
-        set {_gui} to a new chest inventory with 4 rows named "&8» &0&lMINESTARS &8- &e&lSKYBLOCK"
+        set {_gui} to a new chest inventory with 4 rows named "<#FFA502>&lMINE<#FFFFFF>&lSTARS &8▸ &eSkyblock Céleste"
         
         # Fond sombre & bordures dorées
         loop 36 times:
@@ -1051,46 +1049,46 @@ command /skyblock [<text>] [<text>] [<number>]:
         set {_genLvl} to {island_upgrades::%{_owner}%::gen} ? 1
         set {_rad} to getIslandRadius({_owner})
             
-        set slot 4 of {_gui} to 1 of nether star named "&e&l✦ DOMAINE DE &f&l%{_owner}% &e&l✦" with lore "&8&m─────────────────────────" and "&7• Altitude : &bY=150 (Nuages)" and "&7• Rayon de l'île : <#00D4FF>%{_rad}% blocs &7(%{_rad}*2%x%{_rad}*2%)" and "&7• Niveau : &e%{_lvl}% ⭐ &8┃ &7Banque : &a%{_bank}%$" and "&7• Générateur : &6Tier %{_genLvl}%/4 (Multi-Blocs)" and "&8&m─────────────────────────" and "&e▸ Choisis une action ci-dessous."
+        set slot 4 of {_gui} to 1 of nether star named "<#FFA502>&l✦ DOMAINE : &f&l%{_owner}% <#FFA502>&l✦" with lore "&8&m─────────────────────" and "&8▸ &7Niveau : &e★ %{_lvl}% &8┃ &7Banque : &a%{_bank}%$" and "&8▸ &7Rayon : <#00D4FF>%{_rad}% blocs &8┃ &7Générateur : &6Tier %{_genLvl}%/4" and "&8&m─────────────────────"
 
         # ==================== LIGNE 2 : ACTIONS PRINCIPALES ====================
         
         # 1. Mon Île / Créer mon Île (Slot 11)
         if {island::%{_owner}%::x} is set:
-            set slot 11 of {_gui} to 1 of grass block named "&a&l✦ MON ÎLE CÉLESTE ✦" with lore "&8&m─────────────────────────" and "&7• Propriétaire : &e%{_owner}%" and "&7Téléporte-toi instantanément sur ton domaine." and "&8&m─────────────────────────" and "&a▸ Cliquer pour te téléporter (/is home)"
+            set slot 11 of {_gui} to 1 of grass block named "<#2ED573>&l✦ MON DOMAINE ✦" with lore "&8&m─────────────────────" and "&8▸ &7Téléportation immédiate sur ton île" and "&8&m─────────────────────" and "&a▶ Se téléporter (/is home)"
         else:
-            set slot 11 of {_gui} to 1 of grass block named "&a&l✦ CRÉER MON ÎLE ✦" with lore "&8&m─────────────────────────" and "&7Génère ton île flottante avec générateur !" and "&8&m─────────────────────────" and "&a▸ Cliquer pour créer ton île"
+            set slot 11 of {_gui} to 1 of grass block named "<#2ED573>&l✦ CRÉER MON ÎLE ✦" with lore "&8&m─────────────────────" and "&8▸ &7Génère ton île flottante de départ" and "&8&m─────────────────────" and "&a▶ Cliquer pour créer"
 
         # 2. Améliorations du Domaine (Slot 13)
-        set slot 13 of {_gui} to 1 of diamond pickaxe named "&6&l✦ AMÉLIORATIONS & UPGRADES ✦" with lore "&8&m─────────────────────────" and "&7• Générateur Multi-Blocs & Minerais (Tier 1 à 4)" and "&7• Extension de Taille d'Île (jusqu'à 200m)" and "&7• Pousse des cultures & Limite d'équipe" and "&8&m─────────────────────────" and "&e▸ Cliquer pour ouvrir les Upgrades"
+        set slot 13 of {_gui} to 1 of diamond pickaxe named "<#FFA502>&l✦ UPGRADES & TIER ✦" with lore "&8&m─────────────────────" and "&8▸ &7Générateur, Taille (jusqu'à 400m) & Coop" and "&8&m─────────────────────" and "&e▶ Ouvrir les Upgrades"
 
         # 3. Boutique Skyblock (Slot 15)
-        set slot 15 of {_gui} to 1 of emerald named "&a&l✦ BOUTIQUE & VENTE ✦" with lore "&8&m─────────────────────────" and "&7Vends tes récoltes, blocs & minerais." and "&8&m─────────────────────────" and "&a▸ Cliquer pour ouvrir le Shop"
+        set slot 15 of {_gui} to 1 of emerald named "<#2ED573>&l✦ BOUTIQUE & SHOP ✦" with lore "&8&m─────────────────────" and "&8▸ &7Vends minerais & achète des blocs" and "&8&m─────────────────────" and "&a▶ Ouvrir le Shop"
 
         # ==================== LIGNE 3 : GESTION & ÉQUIPE ====================
 
         # 4. Banque d'Île (Slot 20)
-        set slot 20 of {_gui} to 1 of gold ingot named "&6&l✦ BANQUE D'ÎLE ✦" with lore "&8&m─────────────────────────" and "&7• Coffre partagé : &e%{_bank}%$" and "&8&m─────────────────────────" and "&a▸ Cliquer pour Déposer / Retirer"
+        set slot 20 of {_gui} to 1 of gold ingot named "<#F1C40F>&l✦ BANQUE D'ÎLE ✦" with lore "&8&m─────────────────────" and "&8▸ &7Coffre partagé : &e%{_bank}%$" and "&8&m─────────────────────" and "&a▶ Déposer / Retirer"
 
         # 5. Membres & Équipe (Slot 22)
-        set slot 22 of {_gui} to 1 of player head named "&e&l✦ MEMBRES & ÉQUIPE ✦" with lore "&8&m─────────────────────────" and "&7• Gère ta co-op et tes membres d'île." and "&7• Inviter, exclure ou promouvoir." and "&8&m─────────────────────────" and "&e▸ Cliquer pour gérer l'équipe (/is team)"
+        set slot 22 of {_gui} to 1 of player head named "<#00D4FF>&l✦ COOP & ÉQUIPE ✦" with lore "&8&m─────────────────────" and "&8▸ &7Gérer membres & permissions d'île" and "&8&m─────────────────────" and "&e▶ Gérer l'équipe (/is team)"
 
         # 6. Mode Vol (Fly) (Slot 24)
-        set slot 24 of {_gui} to 1 of feather named "&f&l✦ PASS VOL (FLY) ✦" with lore "&8&m─────────────────────────" and "&7Vole librement au-dessus de ton île." and "&8&m─────────────────────────" and "&a▸ Cliquer pour activer / désactiver"
+        set slot 24 of {_gui} to 1 of feather named "<#00D4FF>&l✦ PASS VOL (FLY) ✦" with lore "&8&m─────────────────────" and "&8▸ &7Vole librement sur ton île" and "&8&m─────────────────────" and "&a▶ Activer / Gérer"
 
         # ==================== LIGNE 4 : RACCOURCIS ====================
 
         # 7. Définir le spawn de l'île (Slot 29)
-        set slot 29 of {_gui} to 1 of compass named "&b&l✦ DÉFINIR LE SPAWN ✦" with lore "&8&m─────────────────────────" and "&7Enregistre ton point d'arrivée." and "&8&m─────────────────────────" and "&e▸ Cliquer pour définir ici (/is sethome)"
+        set slot 29 of {_gui} to 1 of compass named "<#00D4FF>&l✦ DÉFINIR LE SPAWN ✦" with lore "&8&m─────────────────────" and "&8▸ &7Enregistre ton point d'arrivée" and "&8&m─────────────────────" and "&e▶ Définir ici (/is sethome)"
 
         # 8. Mobs & Paramètres (Slot 30)
-        set slot 30 of {_gui} to 1 of zombie head named "&6&l✦ MOBS & PARAMÈTRES ✦" with lore "&8&m─────────────────────────" and "&7• Activer/Désactiver les monstres" and "&7• Activer/Désactiver les animaux" and "&7• Protection Anti-Grief Creepers" and "&8&m─────────────────────────" and "&e▸ Cliquer pour configurer (/is mobs)"
+        set slot 30 of {_gui} to 1 of zombie head named "<#FFA502>&l✦ MOBS & SÉCURITÉ ✦" with lore "&8&m─────────────────────" and "&8▸ &7Hostiles, Animaux, Visiteurs & Anti-Creeper" and "&8&m─────────────────────" and "&e▶ Configurer (/is mobs)"
 
         # 9. Bordure & Limite Céleste (Slot 31)
-        set slot 31 of {_gui} to 1 of barrier named "&4&l✦ GROSSE BORDURE ROUGE ✦" with lore "&8&m─────────────────────────" and "&7• Rayon actuel : <#FF4757>%{_rad}% blocs" and "&7• Mur de lasers rouges ultra-visible" and "&8&m─────────────────────────" and "&4▸ Cliquer pour configurer (/is border)"
+        set slot 31 of {_gui} to 1 of barrier named "<#FF4757>&l✦ BARRIÈRE LASER ✦" with lore "&8&m─────────────────────" and "&8▸ &7Rayon actuel : <#FF4757>%{_rad}% blocs" and "&8&m─────────────────────" and "&c▶ Configurer (/is border)"
 
         # 10. Missions & Quêtes (Slot 33)
-        set slot 33 of {_gui} to 1 of book named "&d&l✦ MISSIONS & DÉFIS ✦" with lore "&8&m─────────────────────────" and "&7Accomplis des défis et gagne des $ !" and "&8&m─────────────────────────" and "&e▸ Cliquer pour voir les défis"
+        set slot 33 of {_gui} to 1 of book named "<#E056FD>&l✦ MISSIONS & DÉFIS ✦" with lore "&8&m─────────────────────" and "&8▸ &7Accomplis 8 quêtes & gagne du cash" and "&8&m─────────────────────" and "&d▶ Voir les défis"
 
         open {_gui} to player
         play sound "block.amethyst_block.hit" to player
@@ -1100,7 +1098,7 @@ command /skyblock [<text>] [<text>] [<number>]:
 # 1. MENU DES AMÉLIORATIONS
 command /is-gui-upgrades:
     trigger:
-        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lAMÉLIORATIONS DE L'ÎLE"
+        set {_gui} to a new chest inventory with 3 rows named "<#FFA502>&lMINE<#FFFFFF>&lSTARS &8▸ &6Améliorations d'Île"
         loop 27 times:
             set slot (loop-number - 1) of {_gui} to gray stained glass pane named "&8✦"
             
@@ -1117,31 +1115,31 @@ command /is-gui-upgrades:
             
         # Upgrade Générateur (Slot 10)
         if {_genLvl} is 1:
-            set slot 10 of {_gui} to cobblestone named "&e&l✦ GÉNÉRATEUR MULTI-BLOCS (Tier 1) ✦" with lore "&8Blocs & Minerais débloqués :" and "&7• Pierres, Charbon, Cuivre, Fer, Bois & Sols" and "" and "&7Palier suivant (Tier 2) : &6Or, Lapis, Redstone, Quartz, Améthyste" and "&7Prix : &a25,000$" and "" and "&e▸ Cliquer pour améliorer au Tier 2"
+            set slot 10 of {_gui} to cobblestone named "<#F1C40F>&l✦ GÉNÉRATEUR : TIER 1 ✦" with lore "&8&m─────────────────────" and "&8▸ &7Pierres, Charbon, Fer, Bois & Sols" and "&8▸ &7Prochain : &6Or, Lapis, Redstone, Quartz (Tier 2)" and "&8▸ &7Prix : &a25,000$" and "&8&m─────────────────────" and "&e▶ Cliquer pour passer au Tier 2"
         else if {_genLvl} is 2:
-            set slot 10 of {_gui} to iron ore named "&6&l✦ GÉNÉRATEUR MULTI-BLOCS (Tier 2) ✦" with lore "&8Blocs & Minerais débloqués :" and "&7• Pierres variées, Fer, Or, Lapis, Redstone, Quartz, Améthyste" and "" and "&7Palier suivant (Tier 3) : &bDiamants, Émeraudes, Obsidienne & Prisme" and "&7Prix : &a75,000$" and "" and "&e▸ Cliquer pour améliorer au Tier 3"
+            set slot 10 of {_gui} to iron ore named "<#FFA502>&l✦ GÉNÉRATEUR : TIER 2 ✦" with lore "&8&m─────────────────────" and "&8▸ &7Fer, Or, Lapis, Redstone, Quartz" and "&8▸ &7Prochain : &bDiamants, Émeraudes, Obsidienne (Tier 3)" and "&8▸ &7Prix : &a75,000$" and "&8&m─────────────────────" and "&e▶ Cliquer pour passer au Tier 3"
         else if {_genLvl} is 3:
-            set slot 10 of {_gui} to diamond ore named "&b&l✦ GÉNÉRATEUR MULTI-BLOCS (Tier 3) ✦" with lore "&8Blocs & Minerais débloqués :" and "&7• Deepslate, Diamants, Émeraudes, Obsidienne, Nether & End" and "" and "&7Palier suivant (Tier 4) : &dAncient Debris, Netherite & Jackpots Célestes" and "&7Prix : &a150,000$" and "" and "&e▸ Cliquer pour améliorer au Tier MAX"
+            set slot 10 of {_gui} to diamond ore named "<#00D4FF>&l✦ GÉNÉRATEUR : TIER 3 ✦" with lore "&8&m─────────────────────" and "&8▸ &7Deepslate, Diamants, Émeraudes, Nether" and "&8▸ &7Prochain : &dAncient Debris, Netherite & Jackpots (Tier MAX)" and "&8▸ &7Prix : &a150,000$" and "&8&m─────────────────────" and "&e▶ Cliquer pour passer au Tier MAX"
         else:
-            set slot 10 of {_gui} to ancient debris named "&d&l✦ GÉNÉRATEUR COSMIQUE (TIER MAX) ✦" with lore "&8Blocs & Minerais débloqués :" and "&7• TOUS les blocs & minerais de Minecraft !" and "&7• Ancient Debris, Netherite, Diamants & Jackpots !" and "" and "&a✔ Niveau Maximum Atteint"
+            set slot 10 of {_gui} to ancient debris named "<#E056FD>&l✦ GÉNÉRATEUR : TIER COSMIQUE (MAX) ✦" with lore "&8&m─────────────────────" and "&8▸ &7TOUS les minerais & blocs rares de Minecraft !" and "&8&m─────────────────────" and "&a✔ Niveau Maximum Atteint"
 
         # Upgrade Taille & Bordure d'Île (Slot 12)
         if {_sizeLvl} is 1:
-            set slot 12 of {_gui} to beacon named "<#00D4FF>&l✦ TAILLE D'ÎLE : 100x100 (50m) ✦" with lore "&8Extension de Bordure Céleste" and "&7• Rayon actuel : <#2ED573>50 blocs" and "&7• Prochain palier : <#FFA502>75 blocs (150x150)" and "" and "&7Prix : &a20,000$" and "" and "&e▸ Cliquer pour agrandir l'île"
+            set slot 12 of {_gui} to beacon named "<#00D4FF>&l✦ TAILLE : 100x100 (50m) ✦" with lore "&8&m─────────────────────" and "&8▸ &7Prochain palier : <#FFA502>150x150 (75m)" and "&8▸ &7Prix : &a20,000$" and "&8&m─────────────────────" and "&e▶ Agrandir"
         else if {_sizeLvl} is 2:
-            set slot 12 of {_gui} to beacon named "<#00D4FF>&l✦ TAILLE D'ÎLE : 150x150 (75m) ✦" with lore "&8Extension de Bordure Céleste" and "&7• Rayon actuel : <#2ED573>75 blocs" and "&7• Prochain palier : <#FFA502>100 blocs (200x200)" and "" and "&7Prix : &a50,000$" and "" and "&e▸ Cliquer pour agrandir l'île"
+            set slot 12 of {_gui} to beacon named "<#00D4FF>&l✦ TAILLE : 150x150 (75m) ✦" with lore "&8&m─────────────────────" and "&8▸ &7Prochain palier : <#FFA502>200x200 (100m)" and "&8▸ &7Prix : &a50,000$" and "&8&m─────────────────────" and "&e▶ Agrandir"
         else if {_sizeLvl} is 3:
-            set slot 12 of {_gui} to beacon named "<#00D4FF>&l✦ TAILLE D'ÎLE : 200x200 (100m) ✦" with lore "&8Extension de Bordure Céleste" and "&7• Rayon actuel : <#2ED573>100 blocs" and "&7• Prochain palier : <#FFA502>150 blocs (300x300)" and "" and "&7Prix : &a100,000$" and "" and "&e▸ Cliquer pour agrandir l'île"
+            set slot 12 of {_gui} to beacon named "<#00D4FF>&l✦ TAILLE : 200x200 (100m) ✦" with lore "&8&m─────────────────────" and "&8▸ &7Prochain palier : <#FFA502>300x300 (150m)" and "&8▸ &7Prix : &a100,000$" and "&8&m─────────────────────" and "&e▶ Agrandir"
         else if {_sizeLvl} is 4:
-            set slot 12 of {_gui} to beacon named "<#00D4FF>&l✦ TAILLE D'ÎLE : 300x300 (150m) ✦" with lore "&8Extension de Bordure Céleste" and "&7• Rayon actuel : <#2ED573>150 blocs" and "&7• Prochain palier : <#FFA502>200 blocs (400x400 - MAX)" and "" and "&7Prix : &a200,000$" and "" and "&e▸ Cliquer pour agrandir l'île"
+            set slot 12 of {_gui} to beacon named "<#00D4FF>&l✦ TAILLE : 300x300 (150m) ✦" with lore "&8&m─────────────────────" and "&8▸ &7Prochain palier : <#FFA502>400x400 (200m - MAX)" and "&8▸ &7Prix : &a200,000$" and "&8&m─────────────────────" and "&e▶ Agrandir"
         else:
-            set slot 12 of {_gui} to nether star named "<#00D4FF>&l✦ TAILLE D'ÎLE : 400x400 (MAX) ✦" with lore "&8Extension de Bordure Céleste" and "&7• Rayon maximal : <#2ED573>200 blocs (400x400)" and "" and "&a✔ Taille Maximale Atteinte"
+            set slot 12 of {_gui} to nether star named "<#00D4FF>&l✦ TAILLE : 400x400 (MAX) ✦" with lore "&8&m─────────────────────" and "&8▸ &7Rayon maximal atteint (400x400)" and "&8&m─────────────────────" and "&a✔ Taille Maximale Atteinte"
 
         # Upgrade Vitesse de Pousse (Slot 14)
-        set slot 14 of {_gui} to wheat named "&a&l✦ FERTILITÉ DES CULTURES ✦" with lore "&8Croissance accélérée" and "&7Accélère la pousse des arbres et du blé." and "" and "&7Prix : &a30,000$" and "" and "&e▸ Cliquer pour booster la fertilité"
+        set slot 14 of {_gui} to wheat named "<#2ED573>&l✦ FERTILITÉ DES CULTURES ✦" with lore "&8&m─────────────────────" and "&8▸ &7Croissance accélérée des récoltes" and "&8▸ &7Prix : &a30,000$" and "&8&m─────────────────────" and "&e▶ Activer le boost"
 
         # Upgrade Limite Membres (Slot 16)
-        set slot 16 of {_gui} to player head named "&d&l✦ TAILLE DE L'ÉQUIPE ✦" with lore "&8Extension Coop" and "&7Permet d'ajouter jusqu'à 8 membres sur ton île." and "" and "&7Prix : &a20,000$" and "" and "&e▸ Cliquer pour débloquer"
+        set slot 16 of {_gui} to player head named "<#FD79A8>&l✦ TAILLE D'ÉQUIPE (8 COOP) ✦" with lore "&8&m─────────────────────" and "&8▸ &7Jusqu'à 8 membres sur ton île" and "&8▸ &7Prix : &a20,000$" and "&8&m─────────────────────" and "&e▶ Débloquer"
 
         # Retour
         set slot 22 of {_gui} to arrow named "&c« Retour au Menu"
@@ -1151,9 +1149,13 @@ command /is-gui-upgrades:
 # 1b. MENU DE GESTION DE LA BORDURE CÉLESTE
 command /is-gui-border:
     trigger:
-        set {_gui} to a new chest inventory with 3 rows named "&8» &4&lBORDURE ROUGE CÉLESTE"
+        set {_gui} to a new chest inventory with 3 rows named "<#FF4757>&lMINE<#FFFFFF>&lSTARS &8▸ &cBordure Céleste"
         loop 27 times:
             set slot (loop-number - 1) of {_gui} to gray stained glass pane named "&8✦"
+        set slot 0 of {_gui} to red stained glass pane named " "
+        set slot 8 of {_gui} to red stained glass pane named " "
+        set slot 18 of {_gui} to red stained glass pane named " "
+        set slot 26 of {_gui} to red stained glass pane named " "
             
         set {_u} to uuid of player
         set {_owner} to "%player%"
@@ -1165,20 +1167,20 @@ command /is-gui-border:
         set {_rad} to getIslandRadius({_owner})
         
         # 1. Statut de la Barrière
-        set slot 10 of {_gui} to 1 of barrier named "&4&l✦ Statut de la Bordure Rouge ✦" with lore "&8Protection Physique & Barrière Laser" and "&7• Domaine : &e%{_owner}%" and "&7• Rayon actuel : <#FF4757>%{_rad}% blocs" and "&7• Diamètre : <#FFA502>%{_rad}*2% x %{_rad}*2% blocs" and "&7• Protection Anti-Hors-Limite : &aActive" and "&7• Visibilité Laser : &cMur Rouge Éclatant"
+        set slot 10 of {_gui} to 1 of barrier named "&c&lBordure Physique" with lore "&8&m─────────────────────" and "&8▸ &7Domaine : &f%{_owner}%" and "&8▸ &7Rayon : <#FF4757>%{_rad}% blocs &8(&7%{_rad}*2%x%{_rad}*2%&8)" and "&8▸ &7Protection : &aActive" and "&8&m─────────────────────"
         
         # 2. Toggle Particules
         if {border_particle::%{_u}%} is false:
-            set slot 12 of {_gui} to red dye named "&c&lMur de Bordure Laser : &cDÉSACTIVÉ" with lore "&7Affiche un gros mur rouge visible" and "&7lorsque vous approchez de la limite." and "" and "&e► Cliquer pour &aACTIVER LE MUR"
+            set slot 12 of {_gui} to red dye named "&7Mur Laser : &c✖ Inactif" with lore "&8&m─────────────────────" and "&8▸ &7Affiche un mur de lasers visibles" and "&8▸ &7à l'approche de la limite." and "&8&m─────────────────────" and "&e▶ Cliquer pour &aActiver"
         else:
-            set slot 12 of {_gui} to lime dye named "&a&lMur de Bordure Laser : &aACTIVÉ" with lore "&7Gros mur de lasers rouges éclatants" and "&7visible à l'approche de la limite." and "" and "&e► Cliquer pour &cDÉSACTIVER"
+            set slot 12 of {_gui} to lime dye named "&aMur Laser : &a✔ Actif" with lore "&8&m─────────────────────" and "&8▸ &7Mur laser visible actif." and "&8&m─────────────────────" and "&e▶ Cliquer pour &cDésactiver"
             
         # 3. Couleur des Particules
         set {_col} to {border_color::%{_u}%} ? "rouge"
-        set slot 14 of {_gui} to red dye named "&4&lCouleur : &c%{_col}% &4(Rouge Éclatant)" with lore "&7Teinte active du champ de force :" and "&8▪ &cRouge Laser &8┃ &bCyan &8┃ &aÉmeraude &8┃ &6Or" and "" and "&e► Cliquer pour changer de couleur"
+        set slot 14 of {_gui} to red dye named "&6Teinte Laser : &e%{_col}%" with lore "&8&m─────────────────────" and "&8▸ &7Couleurs : &cRouge &8┃ &bCyan &8┃ &aVert &8┃ &6Or" and "&8&m─────────────────────" and "&e▶ Cliquer pour changer de couleur"
         
         # 4. Agrandir l'île
-        set slot 16 of {_gui} to beacon named "&6&l✦ Agrandir la Bordure ✦" with lore "&7Augmente la taille de votre île jusqu'à 200m." and "" and "&e► Cliquer pour ouvrir les Upgrades"
+        set slot 16 of {_gui} to beacon named "&6&lAgrandir la Bordure" with lore "&8&m─────────────────────" and "&8▸ &7Augmente la taille jusqu'à 400x400." and "&8&m─────────────────────" and "&e▶ Cliquer pour ouvrir les Upgrades"
         
         # Retour
         set slot 22 of {_gui} to arrow named "&c« Retour au Menu"
@@ -1188,57 +1190,61 @@ command /is-gui-border:
 # 2. MENU DES MISSIONS & DÉFIS (8 QUÊTES COMPLÈTES)
 command /is-gui-quests:
     trigger:
-        set {_gui} to a new chest inventory with 4 rows named "&8» &0&lMISSIONS & DÉFIS SKYBLOCK"
+        set {_gui} to a new chest inventory with 4 rows named "<#FFA502>&lMINE<#FFFFFF>&lSTARS &8▸ &6Quêtes Skyblock"
         loop 36 times:
             set slot (loop-number - 1) of {_gui} to gray stained glass pane named "&8✦"
+        set slot 0 of {_gui} to orange stained glass pane named " "
+        set slot 8 of {_gui} to orange stained glass pane named " "
+        set slot 27 of {_gui} to orange stained glass pane named " "
+        set slot 35 of {_gui} to orange stained glass pane named " "
 
         # Défi 1
         if {island_quest_1::%player%} is true:
-            set slot 10 of {_gui} to cobblestone named "&a&l✦ DÉFI 1 : PREMIERS PAS ✦ &a[✔ VALIDÉ]" with lore "&7• Objectif : Miner le générateur central" and "&7• Récompense : &a+1,000$ &7+ &e16 Terres" and "" and "&a✔ Défi déjà accompli !"
+            set slot 10 of {_gui} to cobblestone named "&a&l1. Premiers Pas &8(&a✔ Validé&8)" with lore "&8&m─────────────────────" and "&8▸ &7Objectif : Miner le générateur" and "&8▸ &7Gain : &a+1,000$ &7+ &e16 Terres" and "&8&m─────────────────────"
         else:
-            set slot 10 of {_gui} to cobblestone named "&e&l✦ DÉFI 1 : PREMIERS PAS ✦" with lore "&7• Objectif : Miner le générateur central" and "&7• Récompense : &a+1,000$ &7+ &e16 Terres" and "" and "&e▸ Cliquer pour réclamer la récompense"
+            set slot 10 of {_gui} to cobblestone named "&e&l1. Premiers Pas" with lore "&8&m─────────────────────" and "&8▸ &7Objectif : Miner le générateur" and "&8▸ &7Gain : &a+1,000$ &7+ &e16 Terres" and "&8&m─────────────────────" and "&e▶ Cliquer pour réclamer"
 
         # Défi 2
         if {island_quest_2::%player%} is true:
-            set slot 11 of {_gui} to oak log named "&a&l✦ DÉFI 2 : BÛCHERON CÉLESTE ✦ &a[✔ VALIDÉ]" with lore "&7• Objectif : Récolter 32 bûches de bois" and "&7• Récompense : &a+1,500$ &7+ &61 Pomme Dorée" and "" and "&a✔ Défi déjà accompli !"
+            set slot 11 of {_gui} to oak log named "&a&l2. Bûcheron &8(&a✔ Validé&8)" with lore "&8&m─────────────────────" and "&8▸ &7Objectif : Récolter 32 bûches" and "&8▸ &7Gain : &a+1,500$ &7+ &61 Pomme Dorée" and "&8&m─────────────────────"
         else:
-            set slot 11 of {_gui} to oak log named "&6&l✦ DÉFI 2 : BÛCHERON CÉLESTE ✦" with lore "&7• Objectif : Récolter 32 bûches de bois" and "&7• Récompense : &a+1,500$ &7+ &61 Pomme Dorée" and "" and "&e▸ Cliquer pour réclamer la récompense"
+            set slot 11 of {_gui} to oak log named "&6&l2. Bûcheron" with lore "&8&m─────────────────────" and "&8▸ &7Objectif : Récolter 32 bûches" and "&8▸ &7Gain : &a+1,500$ &7+ &61 Pomme Dorée" and "&8&m─────────────────────" and "&e▶ Cliquer pour réclamer"
 
         # Défi 3
         if {island_quest_3::%player%} is true:
-            set slot 12 of {_gui} to bread named "&a&l✦ DÉFI 3 : AGRICULTEUR ✦ &a[✔ VALIDÉ]" with lore "&7• Objectif : Récolter du blé et faire du pain" and "&7• Récompense : &a+2,000$ &7+ &a4 Graines de Melon" and "" and "&a✔ Défi déjà accompli !"
+            set slot 12 of {_gui} to bread named "&a&l3. Agriculteur &8(&a✔ Validé&8)" with lore "&8&m─────────────────────" and "&8▸ &7Objectif : Récolter blé & pain" and "&8▸ &7Gain : &a+2,000$ &7+ &a4 Graines Melon" and "&8&m─────────────────────"
         else:
-            set slot 12 of {_gui} to bread named "&a&l✦ DÉFI 3 : AGRICULTEUR ✦" with lore "&7• Objectif : Récolter du blé et faire du pain" and "&7• Récompense : &a+2,000$ &7+ &a4 Graines de Melon" and "" and "&e▸ Cliquer pour réclamer la récompense"
+            set slot 12 of {_gui} to bread named "&a&l3. Agriculteur" with lore "&8&m─────────────────────" and "&8▸ &7Objectif : Récolter blé & pain" and "&8▸ &7Gain : &a+2,000$ &7+ &a4 Graines Melon" and "&8&m─────────────────────" and "&e▶ Cliquer pour réclamer"
 
         # Défi 4
         if {island_quest_4::%player%} is true:
-            set slot 13 of {_gui} to obsidian named "&a&l✦ DÉFI 4 : PORTAIL DU NETHER ✦ &a[✔ VALIDÉ]" with lore "&7• Objectif : Construire le portail du Nether" and "&7• Récompense : &a+5,000$ &7+ &b5 Diamants" and "" and "&a✔ Défi déjà accompli !"
+            set slot 13 of {_gui} to obsidian named "&a&l4. Portail Nether &8(&a✔ Validé&8)" with lore "&8&m─────────────────────" and "&8▸ &7Objectif : Construire portail Nether" and "&8▸ &7Gain : &a+5,000$ &7+ &b5 Diamants" and "&8&m─────────────────────"
         else:
-            set slot 13 of {_gui} to obsidian named "&d&l✦ DÉFI 4 : PORTAIL DU NETHER ✦" with lore "&7• Objectif : Construire le portail du Nether" and "&7• Récompense : &a+5,000$ &7+ &b5 Diamants" and "" and "&e▸ Cliquer pour réclamer la récompense"
+            set slot 13 of {_gui} to obsidian named "&d&l4. Portail Nether" with lore "&8&m─────────────────────" and "&8▸ &7Objectif : Construire portail Nether" and "&8▸ &7Gain : &a+5,000$ &7+ &b5 Diamants" and "&8&m─────────────────────" and "&e▶ Cliquer pour réclamer"
 
         # Défi 5
         if {island_quest_5::%player%} is true:
-            set slot 14 of {_gui} to diamond pickaxe named "&a&l✦ DÉFI 5 : MINEUR D'ÉLITE ✦ &a[✔ VALIDÉ]" with lore "&7• Objectif : Améliorer le générateur au Niveau 2+" and "&7• Récompense : &a+7,500$ &7+ &b3 Diamants" and "" and "&a✔ Défi déjà accompli !"
+            set slot 14 of {_gui} to diamond pickaxe named "&a&l5. Mineur d'Élite &8(&a✔ Validé&8)" with lore "&8&m─────────────────────" and "&8▸ &7Objectif : Générateur Niv 2+" and "&8▸ &7Gain : &a+7,500$ &7+ &b3 Diamants" and "&8&m─────────────────────"
         else:
-            set slot 14 of {_gui} to diamond pickaxe named "&b&l✦ DÉFI 5 : MINEUR D'ÉLITE ✦" with lore "&7• Objectif : Améliorer le générateur au Niveau 2+" and "&7• Récompense : &a+7,500$ &7+ &b3 Diamants" and "" and "&e▸ Cliquer pour réclamer la récompense"
+            set slot 14 of {_gui} to diamond pickaxe named "&b&l5. Mineur d'Élite" with lore "&8&m─────────────────────" and "&8▸ &7Objectif : Générateur Niv 2+" and "&8▸ &7Gain : &a+7,500$ &7+ &b3 Diamants" and "&8&m─────────────────────" and "&e▶ Cliquer pour réclamer"
 
         # Défi 6
         if {island_quest_6::%player%} is true:
-            set slot 15 of {_gui} to gold block named "&a&l✦ DÉFI 6 : GESTIONNAIRE D'ÎLE ✦ &a[✔ VALIDÉ]" with lore "&7• Objectif : Déposer au moins 10,000$ en banque" and "&7• Récompense : &a+10,000$ &7+ &e32 Fers" and "" and "&a✔ Défi déjà accompli !"
+            set slot 15 of {_gui} to gold block named "&a&l6. Gestionnaire &8(&a✔ Validé&8)" with lore "&8&m─────────────────────" and "&8▸ &7Objectif : 10,000$ en banque" and "&8▸ &7Gain : &a+10,000$ &7+ &e32 Fers" and "&8&m─────────────────────"
         else:
-            set slot 15 of {_gui} to gold block named "&6&l✦ DÉFI 6 : GESTIONNAIRE D'ÎLE ✦" with lore "&7• Objectif : Déposer au moins 10,000$ en banque" and "&7• Récompense : &a+10,000$ &7+ &e32 Fers" and "" and "&e▸ Cliquer pour réclamer la récompense"
+            set slot 15 of {_gui} to gold block named "&6&l6. Gestionnaire" with lore "&8&m─────────────────────" and "&8▸ &7Objectif : 10,000$ en banque" and "&8▸ &7Gain : &a+10,000$ &7+ &e32 Fers" and "&8&m─────────────────────" and "&e▶ Cliquer pour réclamer"
 
         # Défi 7
         if {island_quest_7::%player%} is true:
-            set slot 16 of {_gui} to gold block named "&a&l✦ DÉFI 7 : BANQUIER CÉLESTE ✦ &a[✔ VALIDÉ]" with lore "&7• Objectif : Déposer 50,000$ dans la banque d'île" and "&7• Récompense : &a+15,000$ &7+ &81 Netherite" and "" and "&a✔ Défi déjà accompli !"
+            set slot 16 of {_gui} to gold ingot named "&a&l7. Banquier Céleste &8(&a✔ Validé&8)" with lore "&8&m─────────────────────" and "&8▸ &7Objectif : 50,000$ en banque" and "&8▸ &7Gain : &a+15,000$ &7+ &81 Netherite" and "&8&m─────────────────────"
         else:
-            set slot 16 of {_gui} to gold block named "&e&l✦ DÉFI 7 : BANQUIER CÉLESTE ✦" with lore "&7• Objectif : Déposer 50,000$ dans la banque d'île" and "&7• Récompense : &a+15,000$ &7+ &81 Netherite" and "" and "&e▸ Cliquer pour réclamer la récompense"
+            set slot 16 of {_gui} to gold ingot named "&e&l7. Banquier Céleste" with lore "&8&m─────────────────────" and "&8▸ &7Objectif : 50,000$ en banque" and "&8▸ &7Gain : &a+15,000$ &7+ &81 Netherite" and "&8&m─────────────────────" and "&e▶ Cliquer pour réclamer"
 
-        # Défi 8
+        # Défi 8 (Ultime)
         if {island_quest_8::%player%} is true:
-            set slot 22 of {_gui} to nether star named "&a&l✦ DÉFI 8 : SEIGNEUR DES NUAGES ✦ &a[✔ VALIDÉ]" with lore "&7• Objectif : Atteindre le Niveau 100⭐ d'île" and "&7• Récompense : &a+50,000$ &7+ &e1 Totem &7+ &616 Pommes Dorées" and "" and "&a✔ Défi Ultime Accompli !"
+            set slot 22 of {_gui} to nether star named "&a&l8. Seigneur des Nuages &8(&a✔ Validé&8)" with lore "&8&m─────────────────────" and "&8▸ &7Objectif : Niveau 100⭐ d'île" and "&8▸ &7Gain : &a+50,000$ &7+ &e1 Totem &7+ &616 Pommes d'or" and "&8&m─────────────────────"
         else:
-            set slot 22 of {_gui} to nether star named "&5&l✦ DÉFI 8 : SEIGNEUR DES NUAGES ✦" with lore "&7• Objectif : Atteindre le Niveau 100⭐ d'île" and "&7• Récompense : &a+50,000$ &7+ &e1 Totem &7+ &616 Pommes Dorées" and "" and "&e▸ Cliquer pour réclamer la récompense"
+            set slot 22 of {_gui} to nether star named "&5&l8. Seigneur des Nuages &6★" with lore "&8&m─────────────────────" and "&8▸ &7Objectif : Niveau 100⭐ d'île" and "&8▸ &7Gain : &a+50,000$ &7+ &e1 Totem &7+ &616 Pommes d'or" and "&8&m─────────────────────" and "&e▶ Cliquer pour réclamer"
 
         set slot 31 of {_gui} to arrow named "&c« Retour au Menu"
         open {_gui} to player
@@ -1247,28 +1253,37 @@ command /is-gui-quests:
 # 3. MENU DES BIOMES
 command /is-gui-biomes:
     trigger:
-        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lCHOIX DU BIOME D'ÎLE"
+        set {_gui} to a new chest inventory with 3 rows named "<#2ED573>&lMINE<#FFFFFF>&lSTARS &8▸ &aBiomes de l'Île"
         loop 27 times:
             set slot (loop-number - 1) of {_gui} to gray stained glass pane named "&8✦"
+        set slot 0 of {_gui} to lime stained glass pane named " "
+        set slot 8 of {_gui} to lime stained glass pane named " "
+        set slot 18 of {_gui} to lime stained glass pane named " "
+        set slot 26 of {_gui} to lime stained glass pane named " "
 
-        set slot 10 of {_gui} to grass block named "&a&l✦ BIOME PLAINES ✦" with lore "&7Herbe éclatante et ciel pur." and "" and "&a▸ Gratuit - Cliquer pour appliquer"
-        set slot 11 of {_gui} to sand named "&e&l✦ BIOME DÉSERT ✦" with lore "&7Sable chaud, ciel ensoleillé sans pluie." and "" and "&7Prix : &a5,000$" and "&e▸ Cliquer pour appliquer"
-        set slot 12 of {_gui} to jungle leaves named "&2&l✦ BIOME JUNGLE ✦" with lore "&7Verdure dense et tropicale." and "" and "&7Prix : &a10,000$" and "&e▸ Cliquer pour appliquer"
-        set slot 13 of {_gui} to spruce sapling named "&3&l✦ BIOME TAÏGA ✦" with lore "&7Forêt de conifères et ambiance nordique." and "" and "&7Prix : &a10,000$" and "&e▸ Cliquer pour appliquer"
-        set slot 14 of {_gui} to water bucket named "&b&l✦ BIOME OCÉAN ✦" with lore "&7Ambiance marine et eau bleu turquoise." and "" and "&7Prix : &a15,000$" and "&e▸ Cliquer pour appliquer"
-        set slot 15 of {_gui} to netherrack named "&c&l✦ BIOME NETHER ✦" with lore "&7Ciel rougeoyant et ambiance infernale." and "" and "&7Prix : &a25,000$" and "&e▸ Cliquer pour appliquer"
-        set slot 16 of {_gui} to end stone named "&d&l✦ BIOME END ✦" with lore "&7Espace sombre et étoiles lointaines." and "" and "&7Prix : &a35,000$" and "&e▸ Cliquer pour appliquer"
+        set slot 10 of {_gui} to grass block named "&a&lBiome Plaines" with lore "&8&m─────────────────────" and "&8▸ &7Herbe verdoyante et ciel pur." and "&8▸ &7Prix : &aGratuit" and "&8&m─────────────────────" and "&e▶ Cliquer pour appliquer"
+        set slot 11 of {_gui} to sand named "&e&lBiome Désert" with lore "&8&m─────────────────────" and "&8▸ &7Sable chaud et soleil sans pluie." and "&8▸ &7Prix : &a5,000$" and "&8&m─────────────────────" and "&e▶ Cliquer pour appliquer"
+        set slot 12 of {_gui} to jungle leaves named "&2&lBiome Jungle" with lore "&8&m─────────────────────" and "&8▸ &7Verdure dense et tropicale." and "&8▸ &7Prix : &a10,000$" and "&8&m─────────────────────" and "&e▶ Cliquer pour appliquer"
+        set slot 13 of {_gui} to spruce sapling named "&3&lBiome Taïga" with lore "&8&m─────────────────────" and "&8▸ &7Forêt boréale et conifères." and "&8▸ &7Prix : &a10,000$" and "&8&m─────────────────────" and "&e▶ Cliquer pour appliquer"
+        set slot 14 of {_gui} to water bucket named "&b&lBiome Océan" with lore "&8&m─────────────────────" and "&8▸ &7Eau turquoise et brise marine." and "&8▸ &7Prix : &a15,000$" and "&8&m─────────────────────" and "&e▶ Cliquer pour appliquer"
+        set slot 15 of {_gui} to netherrack named "&c&lBiome Nether" with lore "&8&m─────────────────────" and "&8▸ &7Ambiance infernale et ciel pourpre." and "&8▸ &7Prix : &a25,000$" and "&8&m─────────────────────" and "&e▶ Cliquer pour appliquer"
+        set slot 16 of {_gui} to end stone named "&d&lBiome End" with lore "&8&m─────────────────────" and "&8▸ &7Vide interstellaire et mystique." and "&8▸ &7Prix : &a35,000$" and "&8&m─────────────────────" and "&e▶ Cliquer pour appliquer"
 
         set slot 22 of {_gui} to arrow named "&c« Retour au Menu"
         open {_gui} to player
         play sound "block.wooden_button.click_on" to player
 
-# 4. MENU DES PARAMÈTRES & SÉCURITÉ
+# 4. MENU DES PARAMÈTRES & MOBS SKYBLOCK
 command /is-gui-settings:
+    aliases: /is-gui-mobs
     trigger:
-        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lPARAMÈTRES DE L'ÎLE"
+        set {_gui} to a new chest inventory with 3 rows named "<#70A1FF>&lMINE<#FFFFFF>&lSTARS &8▸ &bParamètres & Mobs"
         loop 27 times:
             set slot (loop-number - 1) of {_gui} to gray stained glass pane named "&8✦"
+        set slot 0 of {_gui} to light blue stained glass pane named " "
+        set slot 8 of {_gui} to light blue stained glass pane named " "
+        set slot 18 of {_gui} to light blue stained glass pane named " "
+        set slot 26 of {_gui} to light blue stained glass pane named " "
 
         set {_u} to uuid of player
         set {_owner} to "%player%"
@@ -1277,41 +1292,38 @@ command /is-gui-settings:
         else if {island_team_owner::%player%} is set:
             set {_owner} to "%{island_team_owner::%player%}%"
 
-        # 1. Visiteurs
+        # 1. Visiteurs (Slot 10)
         if {island_locked::%{_owner}%} is true:
-            set slot 10 of {_gui} to iron door named "&c&l✦ VISITEURS : VERROUILLÉ ✦" with lore "&7Les joueurs &cne peuvent pas &7visiter ton île." and "" and "&e▸ Cliquer pour &aOUVRIR &eaux visiteurs"
+            set slot 10 of {_gui} to iron door named "&cVisiteurs : &c✖ Fermé" with lore "&8&m─────────────────────" and "&8▸ &7Visites interdites aux inconnus." and "&8&m─────────────────────" and "&e▶ Cliquer pour &aOuvrir"
         else:
-            set slot 10 of {_gui} to oak door named "&a&l✦ VISITEURS : OUVERT ✦" with lore "&7Tout le monde &apeut &7visiter ton île." and "" and "&e▸ Cliquer pour &cFERMER &eaux visiteurs"
+            set slot 10 of {_gui} to oak door named "&aVisiteurs : &a✔ Ouvert" with lore "&8&m─────────────────────" and "&8▸ &7Tout le monde peut visiter l'île." and "&8&m─────────────────────" and "&e▶ Cliquer pour &cFermer"
 
         # 2. Spawn Monstres Hostiles (Slot 11)
         if {island_mobs_hostile::%{_owner}%} is false:
-            set slot 11 of {_gui} to rotten flesh named "&c&l✦ MONSTRES : DÉSACTIVÉS ✦" with lore "&7Aucun monstre n'apparaît sur ton île." and "&7Idéal pour miner et construire sereinement." and "" and "&e▸ Cliquer pour &aACTIVER &ele spawn de monstres"
+            set slot 11 of {_gui} to rotten flesh named "&cMonstres : &c✖ Inactifs" with lore "&8&m─────────────────────" and "&8▸ &7Aucun monstre n'apparaît." and "&8&m─────────────────────" and "&e▶ Cliquer pour &aActiver"
         else:
-            set slot 11 of {_gui} to zombie head named "&a&l✦ MONSTRES : ACTIVÉS ✦" with lore "&7Les zombies, squelettes et araignées apparaissent." and "&7Parfait pour farmer l'XP et les drops !" and "" and "&e▸ Cliquer pour &cDÉSACTIVER &ele spawn"
+            set slot 11 of {_gui} to zombie head named "&aMonstres : &a✔ Actifs" with lore "&8&m─────────────────────" and "&8▸ &7Zombies, squelettes, etc." and "&8&m─────────────────────" and "&e▶ Cliquer pour &cDésactiver"
 
         # 3. PvP (Slot 12)
         if {island_pvp::%{_owner}%} is true:
-            set slot 12 of {_gui} to diamond sword named "&c&l✦ PVP : ACTIVÉ ✦" with lore "&7Les combats sont &cautorisés &7sur ton île." and "" and "&e▸ Cliquer pour &aDÉSACTIVER &ele PvP"
+            set slot 12 of {_gui} to diamond sword named "&cPvP : &c✔ Autorisé" with lore "&8&m─────────────────────" and "&8▸ &7Les combats sont actifs sur l'île." and "&8&m─────────────────────" and "&e▶ Cliquer pour &aDésactiver"
         else:
-            set slot 12 of {_gui} to wooden sword named "&a&l✦ PVP : DÉSACTIVÉ ✦" with lore "&7Les combats sont &aprotégés &7sur ton île." and "" and "&e▸ Cliquer pour &cACTIVER &ele PvP"
+            set slot 12 of {_gui} to wooden sword named "&aPvP : &a✖ Désactivé" with lore "&8&m─────────────────────" and "&8▸ &7Combats désactivés (sécurisé)." and "&8&m─────────────────────" and "&e▶ Cliquer pour &cActiver"
 
         # 4. Coffres Visiteurs (Slot 14)
         if {island_chest_protect::%{_owner}%} is false:
-            set slot 14 of {_gui} to chest named "&c&l✦ COFFRES VISITEURS : LIBRES ✦" with lore "&7Les visiteurs &cpeuvent ouvrir &7tes coffres !" and "" and "&e▸ Cliquer pour &aPROTÉGER &eles coffres"
+            set slot 14 of {_gui} to chest named "&cCoffres Visiteurs : &c✖ Libres" with lore "&8&m─────────────────────" and "&8▸ &7Les visiteurs peuvent ouvrir !" and "&8&m─────────────────────" and "&e▶ Cliquer pour &aProtéger"
         else:
-            set slot 14 of {_gui} to ender chest named "&a&l✦ COFFRES VISITEURS : PROTÉGÉS ✦" with lore "&7Seuls les membres de ton île peuvent ouvrir les coffres." and "" and "&e▸ Cliquer pour &cAUTORISER &eles visiteurs"
+            set slot 14 of {_gui} to ender chest named "&aCoffres Visiteurs : &a✔ Protégés" with lore "&8&m─────────────────────" and "&8▸ &7Réservé aux membres de l'île." and "&8&m─────────────────────" and "&e▶ Cliquer pour &cLibérer"
 
-        # 5. Spawn Animaux Passifs (Slot 15)
+        # 5. Animaux Passifs (Slot 15)
         if {island_mobs_passive::%{_owner}%} is false:
-            set slot 15 of {_gui} to bone named "&c&l✦ ANIMAUX : DÉSACTIVÉS ✦" with lore "&7Aucun animal naturel n'apparaît sur l'herbe." and "" and "&e▸ Cliquer pour &aACTIVER &ele spawn d'animaux"
+            set slot 15 of {_gui} to bone named "&cAnimaux : &c✖ Inactifs" with lore "&8&m─────────────────────" and "&8▸ &7Aucun animal naturel n'apparaît." and "&8&m─────────────────────" and "&e▶ Cliquer pour &aActiver"
         else:
-            set slot 15 of {_gui} to wheat named "&a&l✦ ANIMAUX : ACTIVÉS ✦" with lore "&7Vaches, moutons, poules et cochons apparaissent." and "" and "&e▸ Cliquer pour &cDÉSACTIVER &ele spawn"
+            set slot 15 of {_gui} to wheat named "&aAnimaux : &a✔ Actifs" with lore "&8&m─────────────────────" and "&8▸ &7Vaches, cochons, moutons, poules." and "&8&m─────────────────────" and "&e▶ Cliquer pour &cDésactiver"
 
-        # 6. Mode Vol (Fly) (Slot 16)
-        if player's flight mode is true:
-            set slot 16 of {_gui} to feather named "&a&l✦ VOL CÉLESTE : ACTIVÉ ✦" with lore "&7Tu peux voler librement." and "" and "&e▸ Cliquer pour désactiver / Gérer"
-        else:
-            set slot 16 of {_gui} to feather named "&7&l✦ VOL CÉLESTE : DÉSACTIVÉ ✦" with lore "&7Le vol est inactif." and "" and "&e▸ Cliquer pour activer / Gérer"
+        # 6. Mode Vol (Slot 16)
+        set slot 16 of {_gui} to feather named "&bGestion du Vol (Fly)" with lore "&8&m─────────────────────" and "&8▸ &7Gérer vos pass et temps de vol." and "&8&m─────────────────────" and "&e▶ Cliquer pour ouvrir le menu Fly"
 
         set slot 22 of {_gui} to arrow named "&c« Retour au Menu"
         open {_gui} to player
@@ -1320,9 +1332,13 @@ command /is-gui-settings:
 # 5. MENU DE GESTION D'ÉQUIPE (COOP)
 command /is-gui-team:
     trigger:
-        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lGESTION D'ÉQUIPE COOP"
+        set {_gui} to a new chest inventory with 3 rows named "<#9B59B6>&lMINE<#FFFFFF>&lSTARS &8▸ &dÉquipe & Coop"
         loop 27 times:
             set slot (loop-number - 1) of {_gui} to gray stained glass pane named "&8✦"
+        set slot 0 of {_gui} to purple stained glass pane named " "
+        set slot 8 of {_gui} to purple stained glass pane named " "
+        set slot 18 of {_gui} to purple stained glass pane named " "
+        set slot 26 of {_gui} to purple stained glass pane named " "
 
         set {_u} to uuid of player
         set {_owner} to "%player%"
@@ -1332,16 +1348,16 @@ command /is-gui-team:
             set {_owner} to "%{island_team_owner::%player%}%"
 
         # Rejoindre / TP sur l'île
-        set slot 10 of {_gui} to grass block named "&a&l✦ REJOINDRE L'ÎLE ✦" with lore "&8&m─────────────────────────" and "&7Téléporte-toi sur le domaine d'équipe." and "&8&m─────────────────────────" and "&a▸ Cliquer pour te téléporter (/is home)"
+        set slot 10 of {_gui} to grass block named "&a&lRejoindre le Domaine" with lore "&8&m─────────────────────" and "&8▸ &7Téléportation au spawn d'île." and "&8&m─────────────────────" and "&e▶ Cliquer pour te téléporter"
 
         # Chef d'île & Statut Équipe
-        set slot 12 of {_gui} to gold block named "&e&l✦ CHEF DU DOMAINE ✦" with lore "&8&m─────────────────────────" and "&7• Propriétaire : &f%{_owner}%" and "&7• Membres dans l'équipe : &b%size of {island_team::%{_owner}%::*}%" and "" and "&7Commandes utiles :" and "&7• &e/is invite <joueur>" and "&7• &e/is accept" and "&7• &e/is kick <joueur>" and "&7• &e/is leave" and "&8&m─────────────────────────"
+        set slot 12 of {_gui} to gold block named "&e&lDomaine & Membres" with lore "&8&m─────────────────────" and "&8▸ &7Propriétaire : &f%{_owner}%" and "&8▸ &7Membres : &b%size of {island_team::%{_owner}%::*}% joueurs" and "&8&m─────────────────────"
         
         # Inviter un membre
-        set slot 14 of {_gui} to paper named "&a&l✦ INVITER UN JOUEUR ✦" with lore "&8&m─────────────────────────" and "&7Partage ton île avec un ami !" and "" and "&e▸ Tape &f/is invite <joueur>" and "&8&m─────────────────────────"
+        set slot 14 of {_gui} to paper named "&a&lInviter un Joueur" with lore "&8&m─────────────────────" and "&8▸ &7Partagez votre île avec des amis !" and "&8&m─────────────────────" and "&e▶ Tape : &f/is invite <joueur>"
 
         # Quitter l'équipe
-        set slot 16 of {_gui} to oak door named "&c&l✦ QUITTER L'ÉQUIPE ✦" with lore "&8&m─────────────────────────" and "&7Quitte ton équipe actuelle." and "" and "&c▸ Cliquer pour quitter l'équipe (/is leave)" and "&8&m─────────────────────────"
+        set slot 16 of {_gui} to oak door named "&c&lQuitter l'Équipe" with lore "&8&m─────────────────────" and "&8▸ &7Quitte le domaine d'équipe actuel." and "&8&m─────────────────────" and "&c▶ Cliquer pour quitter"
 
         set slot 22 of {_gui} to arrow named "&c« Retour au Menu"
         open {_gui} to player
@@ -1350,13 +1366,17 @@ command /is-gui-team:
 # 6. MENU TOP ÎLES DYNAMIQUE
 command /is-gui-top:
     trigger:
-        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lCLASSEMENT TOP ÎLES"
+        set {_gui} to a new chest inventory with 3 rows named "<#FFA502>&lMINE<#FFFFFF>&lSTARS &8▸ &6Top Îles"
         loop 27 times:
             set slot (loop-number - 1) of {_gui} to gray stained glass pane named "&8✦"
+        set slot 0 of {_gui} to yellow stained glass pane named " "
+        set slot 8 of {_gui} to yellow stained glass pane named " "
+        set slot 18 of {_gui} to yellow stained glass pane named " "
+        set slot 26 of {_gui} to yellow stained glass pane named " "
 
-        set slot 11 of {_gui} to gold block named "&e&l✦ TOP 1 - ÎLE LÉGENDAIRE ✦" with lore "&7• Domaine : &fMineStars Champion" and "&7• Niveau : &6500 ⭐" and "&7• Richesse : &a1,000,000$" and "&7• Likes : &c❤ 150 Likes"
-        set slot 13 of {_gui} to iron block named "&f&l✦ TOP 2 - ÎLE EXPERT ✦" with lore "&7• Domaine : &fSkyMaster" and "&7• Niveau : &b350 ⭐" and "&7• Richesse : &a500,000$" and "&7• Likes : &c❤ 95 Likes"
-        set slot 15 of {_gui} to copper block named "&6&l✦ TOP 3 - ÎLE PIONNIER ✦" with lore "&7• Domaine : &fAuraCrafter" and "&7• Niveau : &e200 ⭐" and "&7• Richesse : &a250,000$" and "&7• Likes : &c❤ 45 Likes"
+        set slot 11 of {_gui} to gold block named "&6&l#1 &eChampion Céleste" with lore "&8&m─────────────────────" and "&8▸ &7Domaine : &fMineStars Champion" and "&8▸ &7Niveau : &6500 ⭐" and "&8▸ &7Banque : &a1,000,000$" and "&8&m─────────────────────"
+        set slot 13 of {_gui} to iron block named "&f&l#2 &bSkyMaster" with lore "&8&m─────────────────────" and "&8▸ &7Domaine : &fSkyMaster" and "&8▸ &7Niveau : &b350 ⭐" and "&8▸ &7Banque : &a500,000$" and "&8&m─────────────────────"
+        set slot 15 of {_gui} to copper block named "&c&l#3 &eAuraCrafter" with lore "&8&m─────────────────────" and "&8▸ &7Domaine : &fAuraCrafter" and "&8▸ &7Niveau : &e200 ⭐" and "&8▸ &7Banque : &a250,000$" and "&8&m─────────────────────"
 
         set slot 22 of {_gui} to arrow named "&c« Retour au Menu"
         open {_gui} to player
@@ -1365,48 +1385,43 @@ command /is-gui-top:
 # 7. MENU GESTION & PASS VOL TEMPORAIRE (FLY)
 command /is-gui-fly:
     trigger:
-        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lPASS VOL TEMPORAIRE (SKYBLOCK)"
+        set {_gui} to a new chest inventory with 3 rows named "<#00D2D3>&lMINE<#FFFFFF>&lSTARS &8▸ &bPass Vol Céleste"
         loop 27 times:
             set slot (loop-number - 1) of {_gui} to gray stained glass pane named "&8✦"
+        set slot 0 of {_gui} to cyan stained glass pane named " "
+        set slot 8 of {_gui} to cyan stained glass pane named " "
+        set slot 18 of {_gui} to cyan stained glass pane named " "
+        set slot 26 of {_gui} to cyan stained glass pane named " "
 
         # Statut Actuel du Joueur
-        set {_status} to "&cInactif &7(Pass requis)"
-        set {_timeInfo} to "&7Tu n'as aucun temps de vol actif."
+        set {_status} to "&cInactif"
         set {_canToggle} to false
         if player is op:
-            set {_status} to "&a&lACTIF (ADMIN OP)"
-            set {_timeInfo} to "&aAccès illimité permanent"
+            set {_status} to "&a&lILLIMITÉ (OP)"
             set {_canToggle} to true
         else if {island_fly_expire::%player%} is set:
             if now < {island_fly_expire::%player%}:
                 set {_rem} to difference between {island_fly_expire::%player%} and now
-                set {_status} to "&a&lACTIF &e(%{_rem}% restant)"
-                set {_timeInfo} to "&7Expire le : &e%{island_fly_expire::%player%}%"
+                set {_status} to "&a&lACTIF &8(&e%{_rem}%&8)"
                 set {_canToggle} to true
 
         # En-tête profil Fly (Slot 4)
-        set slot 4 of {_gui} to feather named "&b&l✦ STATUT VOL SKYBLOCK : %{_status}% &b&l✦" with lore "%{_timeInfo}%" and "" and "&7Le mode vol est utilisable pendant la durée choisie." and "&7(Désactivé en Survie pour l'équité)"
+        set slot 4 of {_gui} to feather named "&b&lStatut Vol : %{_status}%" with lore "&8&m─────────────────────" and "&8▸ &7Valable uniquement sur l'île Skyblock." and "&8&m─────────────────────"
 
         # Bouton Activer / Désactiver (Slot 10)
         if player's flight mode is true:
-            set slot 10 of {_gui} to lime dye named "&a&l✦ VOL : ACTIVÉ ✦" with lore "&7Tu es actuellement en vol." and "" and "&c▸ Cliquer pour DÉSACTIVER le vol"
+            set slot 10 of {_gui} to lime dye named "&aVol : &a✔ En cours" with lore "&8&m─────────────────────" and "&8▸ &7Vous volez actuellement." and "&8&m─────────────────────" and "&c▶ Cliquer pour Désactiver"
         else:
             if {_canToggle} is true:
-                set slot 10 of {_gui} to gray dye named "&7&l✦ VOL : DÉSACTIVÉ ✦" with lore "&7Le vol est en pause." and "" and "&a▸ Cliquer pour ACTIVER le vol"
+                set slot 10 of {_gui} to gray dye named "&7Vol : &7✖ En pause" with lore "&8&m─────────────────────" and "&8▸ &7Pass disponible." and "&8&m─────────────────────" and "&a▶ Cliquer pour Activer"
             else:
-                set slot 10 of {_gui} to barrier named "&c&l✦ VOL : NON DISPONIBLE ✦" with lore "&cAchète un forfait ci-dessous pour voler !"
+                set slot 10 of {_gui} to barrier named "&cVol : &c✖ Aucun pass" with lore "&8&m─────────────────────" and "&8▸ &7Achetez un forfait ci-dessous." and "&8&m─────────────────────"
 
-        # Option 1: Pass 15 Minutes (3,000$)
-        set slot 12 of {_gui} to clock named "&e&l✦ PASS VOL 15 MINUTES ✦" with lore "&8Forfait Express" and "" and "&7• Durée : &e15 Minutes" and "&7• Prix : &a3,000$" and "" and "&e▸ Cliquer pour acheter (3,000$)"
-
-        # Option 2: Pass 1 Heure (8,000$)
-        set slot 13 of {_gui} to clock named "&6&l✦ PASS VOL 1 HEURE ✦" with lore "&8Forfait Découverte" and "" and "&7• Durée : &61 Heure (60 min)" and "&7• Prix : &a8,000$" and "" and "&6▸ Cliquer pour acheter (8,000$)"
-
-        # Option 3: Pass 24 Heures (20,000$)
-        set slot 15 of {_gui} to gold ingot named "&b&l✦ PASS VOL 24 HEURES ✦ &6[POPULAIRE]" with lore "&8Forfait 1 Jour" and "" and "&7• Durée : &b24 Heures (1 jour)" and "&7• Prix : &a20,000$" and "" and "&b▸ Cliquer pour acheter (20,000$)"
-
-        # Option 4: Pass 7 Jours (60,000$)
-        set slot 16 of {_gui} to nether star named "&d&l✦ PASS VOL 7 JOURS ✦ &d[ÉLITE]" with lore "&8Forfait 1 Semaine" and "" and "&7• Durée : &d7 Jours (1 semaine)" and "&7• Prix : &a60,000$" and "" and "&d▸ Cliquer pour acheter (60,000$)"
+        # Forfaits de temps
+        set slot 12 of {_gui} to clock named "&e&lPass 15 Minutes" with lore "&8&m─────────────────────" and "&8▸ &7Durée : &e15 min &8┃ &7Prix : &a3,000$" and "&8&m─────────────────────" and "&e▶ Cliquer pour acheter"
+        set slot 13 of {_gui} to clock named "&6&lPass 1 Heure" with lore "&8&m─────────────────────" and "&8▸ &7Durée : &61 heure &8┃ &7Prix : &a8,000$" and "&8&m─────────────────────" and "&e▶ Cliquer pour acheter"
+        set slot 15 of {_gui} to gold ingot named "&b&lPass 24 Heures &6★" with lore "&8&m─────────────────────" and "&8▸ &7Durée : &b24 heures &8┃ &7Prix : &a20,000$" and "&8&m─────────────────────" and "&e▶ Cliquer pour acheter"
+        set slot 16 of {_gui} to nether star named "&d&lPass 7 Jours &d👑" with lore "&8&m─────────────────────" and "&8▸ &7Durée : &d7 jours &8┃ &7Prix : &a60,000$" and "&8&m─────────────────────" and "&e▶ Cliquer pour acheter"
 
         set slot 22 of {_gui} to arrow named "&c« Retour au Menu"
         open {_gui} to player
@@ -1415,9 +1430,13 @@ command /is-gui-fly:
 # 8. MENU BANQUE INTERACTIVE
 command /is-gui-bank:
     trigger:
-        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lBANQUE D'ÎLE INTERACTIVE"
+        set {_gui} to a new chest inventory with 3 rows named "<#FFA502>&lMINE<#FFFFFF>&lSTARS &8▸ &6Banque de l'Île"
         loop 27 times:
             set slot (loop-number - 1) of {_gui} to gray stained glass pane named "&8✦"
+        set slot 0 of {_gui} to yellow stained glass pane named " "
+        set slot 8 of {_gui} to yellow stained glass pane named " "
+        set slot 18 of {_gui} to yellow stained glass pane named " "
+        set slot 26 of {_gui} to yellow stained glass pane named " "
 
         set {_u} to uuid of player
         set {_owner} to "%player%"
@@ -1431,17 +1450,17 @@ command /is-gui-bank:
             set {_bank} to 0
 
         # Solde (Slot 4)
-        set slot 4 of {_gui} to gold block named "&e&l✦ COFFRE-FORT DE L'ÎLE ✦" with lore "&7• Domaine : &e%{_owner}%" and "&7• Solde Banque : &a%{_bank}%$" and "&7• Ton Argent Personnel : &e%player's balance%$" and "" and "&7Partage tes richesses avec ton équipe !"
+        set slot 4 of {_gui} to gold block named "&6&lCoffre de l'Île : &e%{_bank}%$" with lore "&8&m─────────────────────" and "&8▸ &7Domaine : &f%{_owner}%" and "&8▸ &7Votre Solde : &a%player's balance%$" and "&8&m─────────────────────"
 
         # Déposer (Slots 10, 11, 12)
-        set slot 10 of {_gui} to green stained glass pane named "&a&l+ DÉPOSER 1,000$" with lore "&7Dépose 1,000$ en banque." and "" and "&a▸ Cliquer pour déposer"
-        set slot 11 of {_gui} to green stained glass pane named "&a&l+ DÉPOSER 10,000$" with lore "&7Dépose 10,000$ en banque." and "" and "&a▸ Cliquer pour déposer"
-        set slot 12 of {_gui} to lime concrete named "&a&l+ DÉPOSER TOUT" with lore "&7Dépose tout ton solde actuel." and "" and "&a▸ Cliquer pour déposer tout"
+        set slot 10 of {_gui} to green stained glass pane named "&a&l+ Déposer 1,000$" with lore "&8&m─────────────────────" and "&8▸ &7Ajoute 1,000$ en banque." and "&8&m─────────────────────" and "&a▶ Cliquer pour déposer"
+        set slot 11 of {_gui} to lime stained glass pane named "&a&l+ Déposer 10,000$" with lore "&8&m─────────────────────" and "&8▸ &7Ajoute 10,000$ en banque." and "&8&m─────────────────────" and "&a▶ Cliquer pour déposer"
+        set slot 12 of {_gui} to emerald named "&a&l+ Tout Déposer" with lore "&8&m─────────────────────" and "&8▸ &7Dépose l'intégralité de vos fonds." and "&8&m─────────────────────" and "&a▶ Cliquer pour tout déposer"
 
         # Retirer (Slots 14, 15, 16)
-        set slot 14 of {_gui} to red stained glass pane named "&c&l- RETIRER 1,000$" with lore "&7Retire 1,000$ de la banque." and "" and "&c▸ Cliquer pour retirer"
-        set slot 15 of {_gui} to red stained glass pane named "&c&l- RETIRER 10,000$" with lore "&7Retire 10,000$ de la banque." and "" and "&c▸ Cliquer pour retirer"
-        set slot 16 of {_gui} to red concrete named "&c&l- RETIRER TOUT" with lore "&7Retire tous les fonds de la banque." and "" and "&c▸ Cliquer pour retirer tout"
+        set slot 14 of {_gui} to red stained glass pane named "&c&l- Retirer 1,000$" with lore "&8&m─────────────────────" and "&8▸ &7Retire 1,000$ de la banque." and "&8&m─────────────────────" and "&c▶ Cliquer pour retirer"
+        set slot 15 of {_gui} to red stained glass pane named "&c&l- Retirer 10,000$" with lore "&8&m─────────────────────" and "&8▸ &7Retire 10,000$ de la banque." and "&8&m─────────────────────" and "&c▶ Cliquer pour retirer"
+        set slot 16 of {_gui} to redstone named "&c&l- Tout Retirer" with lore "&8&m─────────────────────" and "&8▸ &7Retire tous les fonds d'île." and "&8&m─────────────────────" and "&c▶ Cliquer pour tout retirer"
 
         set slot 22 of {_gui} to arrow named "&c« Retour au Menu"
         open {_gui} to player
@@ -1450,13 +1469,17 @@ command /is-gui-bank:
 # 9. MENU DES BOOSTERS
 command /is-gui-boosters:
     trigger:
-        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lBOOSTERS DE L'ÎLE"
+        set {_gui} to a new chest inventory with 3 rows named "<#FF6B81>&lMINE<#FFFFFF>&lSTARS &8▸ &cBoosters d'Île"
         loop 27 times:
             set slot (loop-number - 1) of {_gui} to gray stained glass pane named "&8✦"
+        set slot 0 of {_gui} to red stained glass pane named " "
+        set slot 8 of {_gui} to red stained glass pane named " "
+        set slot 18 of {_gui} to red stained glass pane named " "
+        set slot 26 of {_gui} to red stained glass pane named " "
 
-        set slot 11 of {_gui} to experience bottle named "&e&l✦ BOOSTER DOUBLE XP ✦" with lore "&8Multiplicateur x2" and "&7Double l'XP reçue sur le générateur central !" and "" and "&7Prix : &a15,000$" and "&e▸ Cliquer pour activer (1h)"
-        set slot 13 of {_gui} to sugar named "&b&l✦ BOOSTER CROISSANCE RAPIDE ✦" with lore "&8Vitesse de pousse" and "&7Accélère instantanément la croissance des cultures." and "" and "&7Prix : &a10,000$" and "&e▸ Cliquer pour activer (1h)"
-        set slot 15 of {_gui} to emerald named "&a&l✦ BOOSTER VENTE +25%% ✦" with lore "&8Bonus Économie" and "&7Augmente de 25%% les gains de vente au shop." and "" and "&7Prix : &a25,000$" and "&e▸ Cliquer pour activer (1h)"
+        set slot 11 of {_gui} to experience bottle named "&e&lBooster Double XP &8(1h)" with lore "&8&m─────────────────────" and "&8▸ &7Multiplie par 2 l'XP du générateur." and "&8▸ &7Prix : &a15,000$" and "&8&m─────────────────────" and "&e▶ Cliquer pour activer"
+        set slot 13 of {_gui} to sugar named "&b&lCroissance Rapide &8(1h)" with lore "&8&m─────────────────────" and "&8▸ &7Accélère la pousse des cultures." and "&8▸ &7Prix : &a10,000$" and "&8&m─────────────────────" and "&e▶ Cliquer pour activer"
+        set slot 15 of {_gui} to emerald named "&a&lBonus Vente +25%% &8(1h)" with lore "&8&m─────────────────────" and "&8▸ &7Augmente tous vos gains de vente." and "&8▸ &7Prix : &a25,000$" and "&8&m─────────────────────" and "&e▶ Cliquer pour activer"
 
         set slot 22 of {_gui} to arrow named "&c« Retour au Menu"
         open {_gui} to player
@@ -1465,29 +1488,33 @@ command /is-gui-boosters:
 # 10. BOUTIQUE & VENTE RAPIDE SKYBLOCK
 command /is-gui-shop:
     trigger:
-        set {_gui} to a new chest inventory with 4 rows named "&8» &0&lBOUTIQUE SKYBLOCK & VENTE"
+        set {_gui} to a new chest inventory with 4 rows named "<#2ED573>&lMINE<#FFFFFF>&lSTARS &8▸ &aBoutique & Vente"
         loop 36 times:
             set slot (loop-number - 1) of {_gui} to gray stained glass pane named "&8✦"
+        set slot 0 of {_gui} to green stained glass pane named " "
+        set slot 8 of {_gui} to green stained glass pane named " "
+        set slot 27 of {_gui} to green stained glass pane named " "
+        set slot 35 of {_gui} to green stained glass pane named " "
 
         # Bouton TOUT VENDRE (Slot 4)
-        set slot 4 of {_gui} to chest named "&a&l✦ TOUT VENDRE (SELL ALL) ✦" with lore "&7Vend automatiquement tous les minerais," and "&7cultures et bois présents dans ton inventaire !" and "" and "&a▸ Cliquer pour Vendre tout ton inventaire"
+        set slot 4 of {_gui} to chest named "&a&l✦ TOUT VENDRE (SELL ALL) ✦" with lore "&8&m─────────────────────" and "&8▸ &7Vend tous les minerais et récoltes" and "&8▸ &7présents dans votre inventaire." and "&8&m─────────────────────" and "&a▶ Cliquer pour Tout Vendre"
 
-        # Ventes Minerais & Blocs
-        set slot 10 of {_gui} to cobblestone named "&7Vendre 64 Pierres" with lore "&7Gain : &a50$" and "&a▸ Clic pour vendre"
-        set slot 11 of {_gui} to coal named "&8Vendre 16 Charbons" with lore "&7Gain : &a100$" and "&a▸ Clic pour vendre"
-        set slot 12 of {_gui} to iron ingot named "&fVendre 16 Fers" with lore "&7Gain : &a300$" and "&a▸ Clic pour vendre"
-        set slot 13 of {_gui} to gold ingot named "&6Vendre 16 Ors" with lore "&7Gain : &a600$" and "&a▸ Clic pour vendre"
-        set slot 14 of {_gui} to diamond named "&bVendre 8 Diamants" with lore "&7Gain : &a1,200$" and "&a▸ Clic pour vendre"
-        set slot 15 of {_gui} to emerald named "&aVendre 8 Émeraudes" with lore "&7Gain : &a1,600$" and "&a▸ Clic pour vendre"
-        set slot 16 of {_gui} to ancient debris named "&dVendre 1 Ancient Debris" with lore "&7Gain : &a2,500$" and "&a▸ Clic pour vendre"
+        # Ventes Minerais
+        set slot 10 of {_gui} to cobblestone named "&764x Pierre" with lore "&8▸ &7Gain : &a50$" and "&a▶ Vendre"
+        set slot 11 of {_gui} to coal named "&816x Charbon" with lore "&8▸ &7Gain : &a100$" and "&a▶ Vendre"
+        set slot 12 of {_gui} to iron ingot named "&f16x Fer" with lore "&8▸ &7Gain : &a300$" and "&a▶ Vendre"
+        set slot 13 of {_gui} to gold ingot named "&616x Or" with lore "&8▸ &7Gain : &a600$" and "&a▶ Vendre"
+        set slot 14 of {_gui} to diamond named "&b8x Diamant" with lore "&8▸ &7Gain : &a1,200$" and "&a▶ Vendre"
+        set slot 15 of {_gui} to emerald named "&a8x Émeraude" with lore "&8▸ &7Gain : &a1,600$" and "&a▶ Vendre"
+        set slot 16 of {_gui} to ancient debris named "&d1x Debris Antique" with lore "&8▸ &7Gain : &a2,500$" and "&a▶ Vendre"
 
         # Achats Blocs Utiles
-        set slot 19 of {_gui} to dirt named "&6Acheter 64 Terres" with lore "&7Prix : &c250$" and "&e▸ Clic pour acheter"
-        set slot 20 of {_gui} to sand named "&eAcheter 64 Sables" with lore "&7Prix : &c300$" and "&e▸ Clic pour acheter"
-        set slot 21 of {_gui} to packed ice named "&bAcheter 4 Glaces Comprimées" with lore "&7Prix : &c500$" and "&e▸ Clic pour acheter"
-        set slot 23 of {_gui} to lava bucket named "&cAcheter 1 Seau de Lave" with lore "&7Prix : &c1,000$" and "&e▸ Clic pour acheter"
-        set slot 24 of {_gui} to cow spawn egg named "&fAcheter 2 Œufs de Vache" with lore "&7Prix : &c2,000$" and "&e▸ Clic pour acheter"
-        set slot 25 of {_gui} to spawner or iron block named "&dSpawners & Raretés" with lore "&7Prix : &c50,000$" and "&e▸ Clic pour acheter"
+        set slot 19 of {_gui} to dirt named "&664x Terre" with lore "&8▸ &7Prix : &c250$" and "&e▶ Acheter"
+        set slot 20 of {_gui} to sand named "&e64x Sable" with lore "&8▸ &7Prix : &c300$" and "&e▶ Acheter"
+        set slot 21 of {_gui} to packed ice named "&b4x Glace Compacte" with lore "&8▸ &7Prix : &c500$" and "&e▶ Acheter"
+        set slot 23 of {_gui} to lava bucket named "&c1x Seau de Lave" with lore "&8▸ &7Prix : &c1,000$" and "&e▶ Acheter"
+        set slot 24 of {_gui} to cow spawn egg named "&f2x Œufs de Vache" with lore "&8▸ &7Prix : &c2,000$" and "&e▶ Acheter"
+        set slot 25 of {_gui} to iron block named "&dSpawners & Raretés" with lore "&8▸ &7Prix : &c50,000$" and "&e▶ Acheter"
 
         set slot 31 of {_gui} to arrow named "&c« Retour au Menu"
         open {_gui} to player
@@ -1552,7 +1579,7 @@ on break:
 
 on inventory click:
     # 1. MENU PRINCIPAL SKYBLOCK (4 RANGÉES)
-    if name of event-inventory is "&8» &0&lMINESTARS &8- &e&lSKYBLOCK":
+    if name of event-inventory contains "Skyblock Céleste" or name of event-inventory contains "SKYBLOCK":
         cancel event
         
         # Rejoindre / Créer mon île (Slot 11)
@@ -1608,7 +1635,7 @@ on inventory click:
             execute player command "is-gui-quests"
 
     # 2. MENU UPGRADES
-    else if name of event-inventory is "&8» &0&lAMÉLIORATIONS DE L'ÎLE":
+    else if name of event-inventory contains "Améliorations" or name of event-inventory contains "AMÉLIORATIONS":
         cancel event
         if index of event-slot is 22:
             execute player command "is"
@@ -1722,7 +1749,7 @@ on inventory click:
                 send "{@prefix}&cIl te faut 20,000$ pour cette amélioration !" to player
 
     # 2b. MENU BORDURE & BARRIÈRE CÉLESTE
-    else if name of event-inventory is "&8» &4&lBORDURE ROUGE CÉLESTE" or "&8» <#00D4FF>&lBORDURE & BARRIÈRE CÉLESTE":
+    else if name of event-inventory contains "Bordure Céleste" or name of event-inventory contains "BORDURE":
         cancel event
         set {_u} to uuid of player
         if index of event-slot is 22:
@@ -1762,7 +1789,7 @@ on inventory click:
             execute player command "is-gui-upgrades"
 
     # 3. MENU MISSIONS & DÉFIS
-    else if name of event-inventory is "&8» &0&lMISSIONS & DÉFIS SKYBLOCK":
+    else if name of event-inventory contains "Quêtes Skyblock" or name of event-inventory contains "MISSIONS":
         cancel event
         if index of event-slot is 31:
             execute player command "is"
@@ -1876,7 +1903,7 @@ on inventory click:
                 send "{@prefix}&cTu as déjà validé ce défi !" to player
 
     # 4. MENU BIOMES
-    else if name of event-inventory is "&8» &0&lCHOIX DU BIOME D'ÎLE":
+    else if name of event-inventory contains "Biomes de l'Île" or name of event-inventory contains "BIOME":
         cancel event
         if index of event-slot is 22:
             execute player command "is"
@@ -1936,7 +1963,7 @@ on inventory click:
                 send "{@prefix}&cIl te faut 35,000$ pour ce biome !" to player
 
     # 5. MENU BOOSTERS
-    else if name of event-inventory is "&8» &0&lBOOSTERS DE L'ÎLE":
+    else if name of event-inventory contains "Boosters" or name of event-inventory contains "BOOSTERS":
         cancel event
         if index of event-slot is 22:
             execute player command "is"
@@ -1964,8 +1991,8 @@ on inventory click:
             else:
                 send "{@prefix}&cIl te faut 25,000$ pour ce booster !" to player
 
-    # 7. MENU PARAMÈTRES
-    else if name of event-inventory is "&8» &0&lPARAMÈTRES DE L'ÎLE":
+    # 7. MENU PARAMÈTRES & MOBS
+    else if name of event-inventory contains "Paramètres & Mobs" or name of event-inventory contains "PARAMÈTRES" or name of event-inventory contains "GESTION MOBS":
         cancel event
         if index of event-slot is 22:
             execute player command "is"
@@ -2038,7 +2065,7 @@ on inventory click:
             execute player command "is-gui-fly"
 
     # 8. MENU ÉQUIPE COOP
-    else if name of event-inventory is "&8» &0&lGESTION D'ÉQUIPE COOP":
+    else if name of event-inventory contains "Équipe & Coop" or name of event-inventory contains "GESTION D'ÉQUIPE":
         cancel event
         if index of event-slot is 22:
             execute player command "is"
@@ -2054,13 +2081,13 @@ on inventory click:
             execute player command "is leave"
 
     # 8bis. RETOUR TOP
-    else if name of event-inventory is "&8» &0&lCLASSEMENT TOP ÎLES":
+    else if name of event-inventory contains "Top Îles" or name of event-inventory contains "CLASSEMENT":
         cancel event
         if index of event-slot is 22:
             execute player command "is"
 
     # 9. MENU GESTION & PASS VOL TEMPORAIRE
-    else if name of event-inventory is "&8» &0&lPASS VOL TEMPORAIRE (SKYBLOCK)":
+    else if name of event-inventory contains "Pass Vol Céleste" or name of event-inventory contains "PASS VOL":
         cancel event
         if index of event-slot is 22:
             execute player command "is"
@@ -2175,7 +2202,7 @@ on inventory click:
                 send "{@prefix}&cIl te faut 60,000$ pour le Pass Vol 7 Jours !" to player
 
     # 10. MENU BANQUE INTERACTIVE
-    else if name of event-inventory is "&8» &0&lBANQUE D'ÎLE INTERACTIVE":
+    else if name of event-inventory contains "Banque de l'Île" or name of event-inventory contains "BANQUE":
         cancel event
         if index of event-slot is 22:
             execute player command "is"
@@ -2257,7 +2284,7 @@ on inventory click:
                 send "{@prefix}&cLa banque est vide !" to player
 
     # 11. BOUTIQUE & VENTE RAPIDE SKYBLOCK
-    else if name of event-inventory is "&8» &0&lBOUTIQUE SKYBLOCK & VENTE":
+    else if name of event-inventory contains "Boutique & Vente" or name of event-inventory contains "BOUTIQUE":
         cancel event
         if index of event-slot is 31:
             execute player command "is"
@@ -2432,6 +2459,22 @@ on inventory click:
                 play sound "entity.experience_orb.pickup" to player
             else:
                 send "{@prefix}&cPas assez d'argent !" to player
+
+    # 12. MENU ADMIN LISTE DES ÎLES
+    else if name of event-inventory contains "Îles Skyblock" or name of event-inventory contains "ÎLES SKYBLOCK":
+        cancel event
+        if event-item is player head:
+            set {_headName} to uncolored name of event-item
+            replace all "✦ Île de " with "" in {_headName}
+            replace all " ✦" with "" in {_headName}
+            set {_targetOwner} to {_headName}
+            if click type is left mouse button:
+                close player's inventory
+                execute player command "is tp %{_targetOwner}%"
+            else if click type is right mouse button:
+                close player's inventory
+                send "{@prefix}&ePour régénérer l'île de %{_targetOwner}%, tape : &c/isadmin regen %{_targetOwner}%" to player
+                play sound "block.note_block.pling" to player
 
 
 # ==================== COMMANDES STAFF & JOUEURS POUR LE GÉNÉRATEUR ====================

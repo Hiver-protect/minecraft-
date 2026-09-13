@@ -102,9 +102,9 @@ on join:
 # ==================== 3. MENU MODERNE DES MÉTIERS (/jobs) 3 RANGÉES ====================
 
 function openJobsMenu(p: player):
-    set {_gui} to a new chest inventory with 3 rows named "&8» &0&lMINESTARS &8- &3&lMÉTIERS"
+    set {_gui} to a new chest inventory with 3 rows named "<#0984E3>&lMINE<#FFFFFF>&lSTARS &8▸ &bMétiers"
     
-    # Fond Glassmorphism sombre et bordures cyan
+    # Fond sombre et bordures cyan
     loop 27 times:
         set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
         
@@ -141,34 +141,34 @@ function openJobsMenu(p: player):
     set {_bF} to ({_lvlF} - 1) * 10
 
     # En-tête profil Métier (Slot 4)
-    set slot 4 of {_gui} to 1 of player head named "&e&l✦ MÉTIER ACTIF : &f&l%{_cur}% &e&l✦" with lore "&8&m─────────────────────────────────" and "&7• Joueur : &f%{_p}%" and "&7• Carrière active : &b%{_cur}%" and "&7• Sauvegarde : &aProgression 100%% conservée à vie" and "&8&m─────────────────────────────────" and "&e▸ Clique sur une carrière pour l'activer :"
+    set slot 4 of {_gui} to 1 of player head named "<#0984E3>&l✦ CARRIÈRE : &f&l%{_cur}% <#0984E3>&l✦" with lore "&8&m─────────────────────" and "&8▸ &7Métier actif : &b%{_cur}%" and "&8▸ &7Progression : &a100%% sauvegardée à vie" and "&8&m─────────────────────"
 
     # 1. MINEUR (Slot 10)
     if {_cur} is "Mineur":
-        set slot 10 of {_gui} to 1 of diamond pickaxe named "&b&l✦ MINEUR &a[✔ ACTIF]" with lore "&8&m─────────────────────────" and "&7• Statut : &a&lACTUELLEMENT CHOISI" and "&7• Niveau : &e%{_lvlM}% / 10" and "&7• Progression : &b%{_xpM}% / %{_reqM}% XP" and "&7• Bonus de gains : &a+%{_bM}%%% &7par bloc" and "" and "&fGains par ressource :" and "&7• Pierre / Deepslate: &a+1$" and "&7• Charbon / Fer: &a+3$ à +5$" and "&7• Or / Lapis / Redstone: &a+8$ à +12$" and "&7• Diamant / Émeraude: &a+25$ à +35$" and "&7• Netherite: &a+100$" and "&8&m─────────────────────────" and "&a✔ Métier actif dans ton profil"
+        set slot 10 of {_gui} to 1 of diamond pickaxe named "<#00D4FF>&l✦ MINEUR &a[✔ ACTIF]" with lore "&8&m─────────────────────" and "&8▸ &7Niveau : &e%{_lvlM}%/10 &8(Bonus: &a+%{_bM}%%%&8)" and "&8▸ &7XP : &b%{_xpM}%/%{_reqM}%" and "&8▸ &7Gains : &7Minage de pierres & minerais" and "&8&m─────────────────────" and "&a✔ Métier actuellement actif"
     else:
-        set slot 10 of {_gui} to 1 of diamond pickaxe named "&b&l✦ MINEUR" with lore "&8&m─────────────────────────" and "&7• Niveau sauvegardé : &e%{_lvlM}% / 10" and "&7• Progression : &b%{_xpM}% / %{_reqM}% XP" and "&7• Bonus de gains : &a+%{_bM}%%%" and "" and "&fGains par ressource :" and "&7• Pierre / Deepslate: &a+1$" and "&7• Charbon / Fer: &a+3$ à +5$" and "&7• Or / Lapis / Redstone: &a+8$ à +12$" and "&7• Diamant / Émeraude: &a+25$ à +35$" and "&7• Netherite: &a+100$" and "&8&m─────────────────────────" and "&e▸ Cliquer pour choisir ce métier"
+        set slot 10 of {_gui} to 1 of diamond pickaxe named "<#00D4FF>&l✦ MINEUR" with lore "&8&m─────────────────────" and "&8▸ &7Niveau : &e%{_lvlM}%/10 &8(Bonus: &a+%{_bM}%%%&8)" and "&8▸ &7XP : &b%{_xpM}%/%{_reqM}%" and "&8▸ &7Gains : &7Minage de pierres & minerais" and "&8&m─────────────────────" and "&e▶ Cliquer pour choisir"
 
     # 2. BÛCHERON (Slot 12)
     if {_cur} is "Bûcheron" or "Bucheron":
-        set slot 12 of {_gui} to 1 of diamond axe named "&6&l✦ BÛCHERON &a[✔ ACTIF]" with lore "&8&m─────────────────────────" and "&7• Statut : &a&lACTUELLEMENT CHOISI" and "&7• Niveau : &e%{_lvlB}% / 10" and "&7• Progression : &6%{_xpB}% / %{_reqB}% XP" and "&7• Bonus de gains : &a+%{_bB}%%% &7par bûche" and "" and "&fGains par ressource :" and "&7• Bûches de bois (Tous types): &a+3$" and "&7• Bois du Nether: &a+5$" and "&7• Pommes / Feuilles: &a+1$" and "&8&m─────────────────────────" and "&a✔ Métier actif dans ton profil"
+        set slot 12 of {_gui} to 1 of diamond axe named "<#FFA502>&l✦ BÛCHERON &a[✔ ACTIF]" with lore "&8&m─────────────────────" and "&8▸ &7Niveau : &e%{_lvlB}%/10 &8(Bonus: &a+%{_bB}%%%&8)" and "&8▸ &7XP : &6%{_xpB}%/%{_reqB}%" and "&8▸ &7Gains : &7Coupe de bois & feuilles" and "&8&m─────────────────────" and "&a✔ Métier actuellement actif"
     else:
-        set slot 12 of {_gui} to 1 of diamond axe named "&6&l✦ BÛCHERON" with lore "&8&m─────────────────────────" and "&7• Niveau sauvegardé : &e%{_lvlB}% / 10" and "&7• Progression : &6%{_xpB}% / %{_reqB}% XP" and "&7• Bonus de gains : &a+%{_bB}%%%" and "" and "&fGains par ressource :" and "&7• Bûches de bois (Tous types): &a+3$" and "&7• Bois du Nether: &a+5$" and "&7• Pommes / Feuilles: &a+1$" and "&8&m─────────────────────────" and "&e▸ Cliquer pour choisir ce métier"
+        set slot 12 of {_gui} to 1 of diamond axe named "<#FFA502>&l✦ BÛCHERON" with lore "&8&m─────────────────────" and "&8▸ &7Niveau : &e%{_lvlB}%/10 &8(Bonus: &a+%{_bB}%%%&8)" and "&8▸ &7XP : &6%{_xpB}%/%{_reqB}%" and "&8▸ &7Gains : &7Coupe de bois & feuilles" and "&8&m─────────────────────" and "&e▶ Cliquer pour choisir"
 
     # 3. CHASSEUR (Slot 14)
     if {_cur} is "Chasseur":
-        set slot 14 of {_gui} to 1 of diamond sword named "&c&l✦ CHASSEUR &a[✔ ACTIF]" with lore "&8&m─────────────────────────" and "&7• Statut : &a&lACTUELLEMENT CHOISI" and "&7• Niveau : &e%{_lvlC}% / 10" and "&7• Progression : &c%{_xpC}% / %{_reqC}% XP" and "&7• Bonus de gains : &a+%{_bC}%%% &7par monstre" and "" and "&fGains par monstre :" and "&7• Zombie / Squelette / Araignée: &a+8$" and "&7• Creeper / Enderman / Sorcière: &a+15$" and "&7• Boss (Wither / Dragon / Warden): &a+150$" and "&8&m─────────────────────────" and "&a✔ Métier actif dans ton profil"
+        set slot 14 of {_gui} to 1 of diamond sword named "<#FF4757>&l✦ CHASSEUR &a[✔ ACTIF]" with lore "&8&m─────────────────────" and "&8▸ &7Niveau : &e%{_lvlC}%/10 &8(Bonus: &a+%{_bC}%%%&8)" and "&8▸ &7XP : &c%{_xpC}%/%{_reqC}%" and "&8▸ &7Gains : &7Élimination de monstres & boss" and "&8&m─────────────────────" and "&a✔ Métier actuellement actif"
     else:
-        set slot 14 of {_gui} to 1 of diamond sword named "&c&l✦ CHASSEUR" with lore "&8&m─────────────────────────" and "&7• Niveau sauvegardé : &e%{_lvlC}% / 10" and "&7• Progression : &c%{_xpC}% / %{_reqC}% XP" and "&7• Bonus de gains : &a+%{_bC}%%%" and "" and "&fGains par monstre :" and "&7• Zombie / Squelette / Araignée: &a+8$" and "&7• Creeper / Enderman / Sorcière: &a+15$" and "&7• Boss (Wither / Dragon / Warden): &a+150$" and "&8&m─────────────────────────" and "&e▸ Cliquer pour choisir ce métier"
+        set slot 14 of {_gui} to 1 of diamond sword named "<#FF4757>&l✦ CHASSEUR" with lore "&8&m─────────────────────" and "&8▸ &7Niveau : &e%{_lvlC}%/10 &8(Bonus: &a+%{_bC}%%%&8)" and "&8▸ &7XP : &c%{_xpC}%/%{_reqC}%" and "&8▸ &7Gains : &7Élimination de monstres & boss" and "&8&m─────────────────────" and "&e▶ Cliquer pour choisir"
 
     # 4. FERMIER (Slot 16)
     if {_cur} is "Fermier":
-        set slot 16 of {_gui} to 1 of diamond hoe named "&a&l✦ FERMIER &a[✔ ACTIF]" with lore "&8&m─────────────────────────" and "&7• Statut : &a&lACTUELLEMENT CHOISI" and "&7• Niveau : &e%{_lvlF}% / 10" and "&7• Progression : &a%{_xpF}% / %{_reqF}% XP" and "&7• Bonus de gains : &a+%{_bF}%%% &7par récolte" and "" and "&fGains par récolte :" and "&7• Blé / Carottes / Patates: &a+2$" and "&7• Canne à sucre / Melon / Citrouille: &a+3$" and "&7• Verrues du Nether / Cacao: &a+4$" and "&8&m─────────────────────────" and "&a✔ Métier actif dans ton profil"
+        set slot 16 of {_gui} to 1 of diamond hoe named "<#2ED573>&l✦ FERMIER &a[✔ ACTIF]" with lore "&8&m─────────────────────" and "&8▸ &7Niveau : &e%{_lvlF}%/10 &8(Bonus: &a+%{_bF}%%%&8)" and "&8▸ &7XP : &a%{_xpF}%/%{_reqF}%" and "&8▸ &7Gains : &7Récolte de blé, cannes & melons" and "&8&m─────────────────────" and "&a✔ Métier actuellement actif"
     else:
-        set slot 16 of {_gui} to 1 of diamond hoe named "&a&l✦ FERMIER" with lore "&8&m─────────────────────────" and "&7• Niveau sauvegardé : &e%{_lvlF}% / 10" and "&7• Progression : &a%{_xpF}% / %{_reqF}% XP" and "&7• Bonus de gains : &a+%{_bF}%%%" and "" and "&fGains par récolte :" and "&7• Blé / Carottes / Patates: &a+2$" and "&7• Canne à sucre / Melon / Citrouille: &a+3$" and "&7• Verrues du Nether / Cacao: &a+4$" and "&8&m─────────────────────────" and "&e▸ Cliquer pour choisir ce métier"
+        set slot 16 of {_gui} to 1 of diamond hoe named "<#2ED573>&l✦ FERMIER" with lore "&8&m─────────────────────" and "&8▸ &7Niveau : &e%{_lvlF}%/10 &8(Bonus: &a+%{_bF}%%%&8)" and "&8▸ &7XP : &a%{_xpF}%/%{_reqF}%" and "&8▸ &7Gains : &7Récolte de blé, cannes & melons" and "&8&m─────────────────────" and "&e▶ Cliquer pour choisir"
 
     # Quitter son métier (Slot 22)
-    set slot 22 of {_gui} to 1 of barrier named "&c&l✦ DÉMISSIONNER ✦" with lore "&8&m─────────────────────────" and "&7Quitter ton métier actif." and "&7(Ta progression reste 100%% sauvegardée)" and "&8&m─────────────────────────" and "&c▸ Cliquer pour démissionner"
+    set slot 22 of {_gui} to 1 of barrier named "<#FF4757>&l✦ DÉMISSIONNER ✦" with lore "&8&m─────────────────────" and "&8▸ &7Quitter le métier en cours" and "&8▸ &7Progression conservée" and "&8&m─────────────────────" and "&c▶ Cliquer pour démissionner"
 
     open {_gui} to {_p}
     play sound "block.chest.open" to {_p}
@@ -181,7 +181,7 @@ command /jobs [<text>]:
         openJobsMenu(player)
 
 on inventory click:
-    if name of event-inventory is "&8» &0&lMINESTARS &8- &3&lMÉTIERS":
+    if name of event-inventory contains "Métiers":
         cancel event
         
         # 1. Mineur (Slot 10)

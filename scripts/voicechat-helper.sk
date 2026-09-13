@@ -32,7 +32,7 @@ command /voicechat [<text>]:
         set {_p} to player
         set {_uuid} to uuid of {_p}
         
-        set {_gui} to a new chest inventory with 4 rows named "&8» &0&lMINESTARS &8- <#00D4FF>&lCHAT VOCAL 3D"
+        set {_gui} to a new chest inventory with 4 rows named "<#00D4FF>&lMINE<#FFFFFF>&lSTARS &8▸ &bChat Vocal 3D"
         
         loop 36 times:
             set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
@@ -44,31 +44,31 @@ command /voicechat [<text>]:
         set slot 35 of {_gui} to 1 of cyan stained glass pane named " "
 
         # 1. Raccourcis Clavier
-        set slot 10 of {_gui} to 1 of paper named "<#00D4FF>&lTouches & Raccourcis Clavier" with lore "&8▪ <#2ED573>[V] &7: Paramètres du micro & volume" and "&8▪ <#FFA502>[G] &7: Groupes vocaux privés d'équipe" and "&8▪ <#FF4757>[M] &7: Couper / Activer son micro (Mute)" and "&8▪ <#E056FD>[H] &7: Couper le son reçu (Deafen)" and "&8▪ <#70A1FF>[Verr Maj] &7: Push-to-Talk (Parler)" and "" and "&e► Cliquez pour afficher le récap dans le chat"
+        set slot 10 of {_gui} to 1 of paper named "<#00D4FF>&lTouches & Raccourcis" with lore "&8&m─────────────────────" and "&8▸ <#2ED573>[V] &7: Réglages micro & volume" and "&8▸ <#FFA502>[G] &7: Salons vocaux privés" and "&8▸ <#FF4757>[M] &7: Couper son micro" and "&8&m─────────────────────" and "&e▶ Cliquer pour le récap"
         
         # 2. Portées & Audio 3D
-        set slot 12 of {_gui} to 1 of jukebox named "&6&lPortées Vocales & Audio Spatial" with lore "&8▪ &7Voix normale : <#2ED573>48 blocs &7(Atténuation 3D)" and "&8▪ &7Chuchotement (Sneak) : <#FFA502>8 blocs" and "&8▪ &7Mégaphone : &e120 blocs &7(Portée amplifiée)" and "&8▪ &7Talkie-Walkie : &bIllimité &7(Fréquence d'équipe)" and "" and "&7Qualité audio : &aHD VOIP Faible Latence"
+        set slot 12 of {_gui} to 1 of jukebox named "<#FFA502>&lAudio Spatialisé 3D" with lore "&8&m─────────────────────" and "&8▸ &7Voix normale : <#2ED573>48 blocs" and "&8▸ &7Chuchoter : <#FFA502>8 blocs" and "&8▸ &7Mégaphone : &e120 blocs" and "&8&m─────────────────────"
         
         # 3. Test Audio Spatial 3D Stéréo
-        set slot 14 of {_gui} to 1 of note block named "&e&lTesteur Audio 3D Stéréo" with lore "&7Vérifiez la balance gauche/droite et le" and "&7volume de votre casque en direct." and "" and "&e► Cliquez pour &aLANCER LE TEST 3D"
+        set slot 14 of {_gui} to 1 of note block named "<#F1C40F>&lTest Stéréo 3D" with lore "&8&m─────────────────────" and "&8▸ &7Tester balance & volume casque" and "&8&m─────────────────────" and "&a▶ Lancer le test sonore"
         
         # 4. Obtenir un Mégaphone ou Talkie-Walkie
-        set slot 16 of {_gui} to 1 of goat horn named "&d&lÉquipements Vocaux & Radios" with lore "&7Découvrez les objets d'amplification vocale :" and "&8▪ &eMégaphone de Zone" and "&8▪ &bTalkie-Walkie de Faction" and "" and "&e► Cliquez pour voir les détails"
+        set slot 16 of {_gui} to 1 of goat horn named "<#FD79A8>&lMégaphone & Talkie" with lore "&8&m─────────────────────" and "&8▸ &7Diffusion & radios d'équipe" and "&8&m─────────────────────" and "&e▶ Découvrir"
         
         # 5. Dépannage & FAQ
-        set slot 21 of {_gui} to 1 of redstone torch named "&c&lDépannage & Solutions Micro" with lore "&7Micro muet ou mod non détecté ?" and "&8▪ &7Sélection du bon micro dans [V]" and "&8▪ &7Vérification du pare-feu & port UDP" and "" and "&e► Cliquez pour les astuces"
+        set slot 21 of {_gui} to 1 of redstone torch named "<#FF4757>&lDépannage & Aide" with lore "&8&m─────────────────────" and "&8▸ &7Micro non détecté ou muet ?" and "&8&m─────────────────────" and "&e▶ Voir solutions"
         
         # 6. Téléchargement Modrinth / Curseforge
-        set slot 23 of {_gui} to 1 of ender eye named "&b&lTélécharger le Mod Simple Voice Chat" with lore "&7Compatible 1.20 - 1.21+ (Fabric, Forge, NeoForge)" and "&8▪ &bhttps://modrinth.com/plugin/simple-voice-chat" and "" and "&e► Cliquez pour recevoir le lien en jeu"
+        set slot 23 of {_gui} to 1 of ender eye named "<#00D4FF>&lTélécharger le Mod" with lore "&8&m─────────────────────" and "&8▸ &7Simple Voice Chat 1.20 - 1.21+" and "&8&m─────────────────────" and "&b▶ Obtenir le lien"
         
         # Statut du joueur en bas
-        set slot 31 of {_gui} to 1 of compass named "<#00D4FF>&lStatut Vocal du Joueur" with lore "&8▪ &7Serveur Audio : &aEn ligne (UDP 25567)" and "&8▪ &7Spatialisation 3D : &aActive" and "&8▪ &7Votre statut : &eConnecté au serveur"
+        set slot 31 of {_gui} to 1 of compass named "<#00D4FF>&lStatut Audio" with lore "&8&m─────────────────────" and "&8▸ &7Port UDP : &a25567 (En ligne)" and "&8▸ &7Spatialisation : &aActive" and "&8&m─────────────────────"
         
         open {_gui} to {_p}
         play sound "ui.button.click" with pitch 1.2 to {_p}
 
 on inventory click:
-    if name of current inventory of player is "&8» &0&lMINESTARS &8- <#00D4FF>&lCHAT VOCAL 3D":
+    if name of current inventory of player contains "Chat Vocal 3D":
         cancel event
         set {_slot} to clicked slot
         

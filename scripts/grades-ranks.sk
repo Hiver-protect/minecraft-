@@ -580,52 +580,46 @@ command /kitgrade [<text>]:
             set {last_kit_star::%{_u}%} to now
             execute console command "eco give %player% 7500"
             give 1 of netherite ingot to player
-            give 12 of diamond to player
-            give 1 of totem of undying to player
-            give 2 of enchanted golden apple to player
-            send "{@prefix}&aKit &d[STAR] &arécupéré avec succès ! (+7,500$, 1 Netherite, 12 Diamants, 1 Totem, 2 Notchs)" to player
             play sound "ui.toast.challenge_complete" to player
         else:
             execute player command "grades"
 
-# ==================== MENU DES GRADES & AVANTAGES (/grades) ====================
-
 command /grades:
     aliases: /ranks, /grade, /ranklist
     trigger:
-        set {_gui} to a new chest inventory with 4 rows named "&8» &0&lMINESTARS &8- &6&lGRADES & PERKS"
+        set {_gui} to a new chest inventory with 4 rows named "<#A855F7>&lMINE<#FFFFFF>&lSTARS &8▸ &dGrades & Rangs"
         
         loop 36 times:
             set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
             
-        set slot 0 of {_gui} to 1 of yellow stained glass pane named " "
-        set slot 8 of {_gui} to 1 of yellow stained glass pane named " "
-        set slot 27 of {_gui} to 1 of yellow stained glass pane named " "
-        set slot 35 of {_gui} to 1 of yellow stained glass pane named " "
+        set slot 0 of {_gui} to 1 of magenta stained glass pane named " "
+        set slot 8 of {_gui} to 1 of magenta stained glass pane named " "
+        set slot 27 of {_gui} to 1 of magenta stained glass pane named " "
+        set slot 35 of {_gui} to 1 of magenta stained glass pane named " "
         
         set {_u} to uuid of player
         set {_r} to {rank::%{_u}%} ? "Joueur"
         
         # En-tête profil (Slot 4)
-        set slot 4 of {_gui} to 1 of player head named "&e&l✦ TON GRADE : &f&l%{_r}% &e&l✦" with lore "&8&m─────────────────────────" and "&7• Statut : &e%{_r}%" and "&7• Boutique officielle : &fminestars.craftingstore.net" and "&8&m─────────────────────────" and "&e▸ Découvre les grades & clique pour réclamer tes kits :"
+        set slot 4 of {_gui} to 1 of player head named "<#A855F7>&l✦ RANG : &f&l%{_r}% <#A855F7>&l✦" with lore "&8&m─────────────────────" and "&8▸ &7Statut : &e%{_r}%" and "&8▸ &7Boutique : &fminestars.craftingstore.net" and "&8&m─────────────────────"
         
         # 1. VIP (Slot 10)
-        set slot 10 of {_gui} to 1 of gold ingot named "&e&l✦ GRADE VIP ✦" with lore "&8&m─────────────────────────" and "&7• Préfixe : &e&l[VIP]" and "&7• Commandes : &f/fly &7(Skyblock & Spawn), &f/condense" and "&7• Résidences : &f3 Homes &7en survie" and "&7• Économie : &a+15%% de gains &7sur tous les métiers" and "&7• Chat : &fCouleurs autorisées" and "&8&m─────────────────────────" and "&e▸ Clique sur le Kit VIP ci-dessous pour réclamer"
+        set slot 10 of {_gui} to 1 of gold ingot named "<#F1C40F>&l✦ GRADE VIP ✦" with lore "&8&m─────────────────────" and "&8▸ &7Commandes : &f/fly&7, &f/condense" and "&8▸ &7Avantages : &e3 Homes &8┃ &a+15%% $ Métiers" and "&8&m─────────────────────" and "&e▶ Kit VIP disponible ci-dessous"
         
         # 2. MVP (Slot 12)
-        set slot 12 of {_gui} to 1 of diamond named "&b&l✦ GRADE MVP ✦" with lore "&8&m─────────────────────────" and "&7• Préfixe : &b&l[MVP]" and "&7• Commandes : &fTous VIP &7+ &f/craft&7, &f/furnace&7, &f/hat" and "&7• Résidences : &f5 Homes &7en survie" and "&7• Économie : &a+30%% de gains &7sur tous les métiers" and "&8&m─────────────────────────" and "&b▸ Clique sur le Kit MVP ci-dessous pour réclamer"
+        set slot 12 of {_gui} to 1 of diamond named "<#00D4FF>&l✦ GRADE MVP ✦" with lore "&8&m─────────────────────" and "&8▸ &7Commandes : &f/craft&7, &f/furnace&7, &f/hat" and "&8▸ &7Avantages : &b5 Homes &8┃ &a+30%% $ Métiers" and "&8&m─────────────────────" and "&b▶ Kit MVP disponible ci-dessous"
         
         # 3. STAR (Slot 14)
-        set slot 14 of {_gui} to 1 of nether star named "&d&l✦ GRADE STAR (ULTIME) ✦" with lore "&8&m─────────────────────────" and "&7• Préfixe : &d&l[STAR]" and "&7• Commandes : &fTous VIP/MVP &7+ &f/fly partout&7, &f/ec&7, &f/anvil&7, &f/feed&7, &f/glow&7, &f/near" and "&7• Résidences : &f10 Homes &7en survie" and "&7• Économie : &a+50%% de gains &7sur tous les métiers" and "&8&m─────────────────────────" and "&d▸ Le grade Prestige du serveur"
+        set slot 14 of {_gui} to 1 of nether star named "<#E056FD>&l✦ GRADE STAR ✦" with lore "&8&m─────────────────────" and "&8▸ &7Commandes : &f/ec&7, &f/anvil&7, &f/feed&7, &f/fly" and "&8▸ &7Avantages : &d10 Homes &8┃ &a+50%% $ Métiers" and "&8&m─────────────────────" and "&d▶ Grade Ultime du serveur"
         
         # 4. STAFF (Slot 16)
-        set slot 16 of {_gui} to 1 of book named "&c&l✦ RECRUTEMENT STAFF ✦" with lore "&8&m─────────────────────────" and "&7Tu souhaites aider le serveur ?" and "&7• Rangs Staff : &aHelper&7, &9Modo&7, &cAdmin" and "&7• Candidatures : &fdiscord.gg/minestars" and "&8&m─────────────────────────" and "&e▸ Clique pour obtenir le lien Discord"
+        set slot 16 of {_gui} to 1 of book named "<#FF4757>&l✦ RECRUTEMENT ✦" with lore "&8&m─────────────────────" and "&8▸ &7Rangs : &aHelper&7, &9Modo&7, &cAdmin" and "&8▸ &7Candidatures : &fdiscord.gg/minestars" and "&8&m─────────────────────" and "&e▶ Cliquer pour le Discord"
 
         # Rangée 3 : Boutons Réclamer Kits de Grade
-        set slot 19 of {_gui} to 1 of chest named "&e&l✦ RÉCLAMER KIT VIP ✦" with lore "&7• 1,000$, Ors, Steaks, Potions" and "&e▸ Cliquer pour réclamer (/kitgrade vip)"
-        set slot 21 of {_gui} to 1 of chest named "&b&l✦ RÉCLAMER KIT MVP ✦" with lore "&7• 2,500$, Diamants, Pommes Dorées, XP" and "&b▸ Cliquer pour réclamer (/kitgrade mvp)"
-        set slot 23 of {_gui} to 1 of chest named "&d&l✦ RÉCLAMER KIT STAR ✦" with lore "&7• 7,500$, Netherite, Diamants, Totem, Notchs" and "&d▸ Cliquer pour réclamer (/kitgrade star)"
-        set slot 25 of {_gui} to 1 of emerald named "&a&l✦ BOUTIQUE EN LIGNE ✦" with lore "&7Ouvrir le lien de la boutique officielle" and "&a▸ minestars.craftingstore.net"
+        set slot 19 of {_gui} to 1 of chest named "<#F1C40F>&l✦ KIT VIP ✦" with lore "&8▸ &71,000$, Or, Steaks, Potions" and "&e▶ Réclamer (/kitgrade vip)"
+        set slot 21 of {_gui} to 1 of chest named "<#00D4FF>&l✦ KIT MVP ✦" with lore "&8▸ &72,500$, Diamants, G-Apples, XP" and "&b▶ Réclamer (/kitgrade mvp)"
+        set slot 23 of {_gui} to 1 of chest named "<#E056FD>&l✦ KIT STAR ✦" with lore "&8▸ &77,500$, Netherite, Totem, Notchs" and "&d▶ Réclamer (/kitgrade star)"
+        set slot 25 of {_gui} to 1 of emerald named "<#2ED573>&l✦ BOUTIQUE ✦" with lore "&8▸ &7Boutique officielle du serveur" and "&a▶ minestars.craftingstore.net"
 
         # Fermer (Slot 31)
         set slot 31 of {_gui} to 1 of barrier named "&c&l✦ FERMER ✦" with lore "&7Fermer l'interface"
@@ -634,7 +628,7 @@ command /grades:
         play sound "block.chest.open" to player
 
 on inventory click:
-    if name of event-inventory is "&8» &0&lMINESTARS &8- &6&lGRADES & PERKS":
+    if name of event-inventory contains "Grades & Rangs":
         cancel event
         if index of event-slot is 31:
             close player's inventory

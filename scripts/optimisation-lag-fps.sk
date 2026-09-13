@@ -51,7 +51,7 @@ command /fps:
         set {_p} to player
         set {_uuid} to uuid of {_p}
         
-        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lMINESTARS &8- &a&lFPS BOOST"
+        set {_gui} to a new chest inventory with 3 rows named "<#00B894>&lMINE<#FFFFFF>&lSTARS &8▸ &aBoost FPS & Fluidité"
         
         loop 27 times:
             set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
@@ -59,34 +59,34 @@ command /fps:
         # 1. Statut global FPS
         if {fps_boost::%{_uuid}%} is true:
             set {_status_fps} to "&a&lACTIVÉ"
-            set {_item_fps} to lime dye named "&a&lMode Ultra-FPS : &2ACTIVÉ" with lore "&7Réduit les particules et optimise" and "&7l'affichage pour maximiser vos FPS." and "" and "&e► Cliquez pour &cDÉSACTIVER"
+            set {_item_fps} to lime dye named "<#2ED573>&lMode Ultra-FPS : &aACTIVÉ" with lore "&8&m─────────────────────" and "&8▸ &7Optimisation des rendus client" and "&8&m─────────────────────" and "&c▶ Cliquer pour DÉSACTIVER"
         else:
             set {_status_fps} to "&c&lDÉSACTIVÉ"
-            set {_item_fps} to gray dye named "&7&lMode Ultra-FPS : &cDÉSACTIVÉ" with lore "&7Réduit les particules et optimise" and "&7l'affichage pour maximiser vos FPS." and "" and "&e► Cliquez pour &aACTIVER"
+            set {_item_fps} to gray dye named "&7&lMode Ultra-FPS : &cDÉSACTIVÉ" with lore "&8&m─────────────────────" and "&8▸ &7Optimisation des rendus client" and "&8&m─────────────────────" and "&a▶ Cliquer pour ACTIVER"
         set slot 11 of {_gui} to {_item_fps}
         
         # 2. Particules simplifiées
         if {fps_particles::%{_uuid}%} is false:
-            set {_item_part} to red dye named "&c&lParticules : &cDÉSACTIVÉES" with lore "&7Supprime les micro-particules de combat" and "&7et de l'environnement." and "" and "&e► Cliquez pour &aRÉACTIVER"
+            set {_item_part} to red dye named "<#FF4757>&lParticules : &cDÉSACTIVÉES" with lore "&8&m─────────────────────" and "&8▸ &7Supprime les micro-particules" and "&8&m─────────────────────" and "&a▶ Cliquer pour ACTIVER"
         else:
-            set {_item_part} to light blue dye named "&b&lParticules : &aACTIVÉES" with lore "&7Affichage complet des particules immersives." and "" and "&e► Cliquez pour &cDÉSACTIVER"
+            set {_item_part} to light blue dye named "<#00D4FF>&lParticules : &aACTIVÉES" with lore "&8&m─────────────────────" and "&8▸ &7Affichage complet des particules" and "&8&m─────────────────────" and "&c▶ Cliquer pour DÉSACTIVER"
         set slot 13 of {_gui} to {_item_part}
         
         # 3. Météo Client Clair
         if {fps_weather::%{_uuid}%} is true:
-            set {_item_rain} to yellow dye named "&e&lMétéo Client : &6TOUJOURS CLAIR" with lore "&7Désactive le rendu de la pluie et de la neige" and "&7sur votre écran client." and "" and "&e► Cliquez pour &7METTRE EN AUTOMATIQUE"
+            set {_item_rain} to yellow dye named "<#FFA502>&lMétéo Client : &6TOUJOURS CLAIR" with lore "&8&m─────────────────────" and "&8▸ &7Désactive la pluie/neige client" and "&8&m─────────────────────" and "&e▶ Remettre en AUTOMATIQUE"
         else:
-            set {_item_rain} to blue dye named "&9&lMétéo Client : &aAUTOMATIQUE" with lore "&7Suit la météo naturelle du serveur." and "" and "&e► Cliquez pour &eFORCER LE CIEL CLAIR"
+            set {_item_rain} to blue dye named "<#0984E3>&lMétéo Client : &aAUTOMATIQUE" with lore "&8&m─────────────────────" and "&8▸ &7Météo dynamique du monde" and "&8&m─────────────────────" and "&e▶ Forcer le CIEL CLAIR"
         set slot 15 of {_gui} to {_item_rain}
         
         # Statistique serveur en bas
-        set slot 22 of {_gui} to 1 of clock named "&6&lÉtat du Serveur" with lore "&8▪ &7TPS Moyen: &a20.0 / 20.0" and "&8▪ &7Stabilité: &a100%% (Optimisé)" and "&8▪ &7Votre Ping: &e%ping of {_p}% ms"
+        set slot 22 of {_gui} to 1 of clock named "<#FFA502>&lÉtat du Serveur" with lore "&8&m─────────────────────" and "&8▸ &7TPS Serveur : &a20.0 / 20.0" and "&8▸ &7Votre Ping : &e%ping of {_p}% ms" and "&8&m─────────────────────"
         
         open {_gui} to {_p}
         play sound "ui.button.click" with pitch 1.2 to {_p}
 
 on inventory click:
-    if name of current inventory of player is "&8» &0&lMINESTARS &8- &a&lFPS BOOST":
+    if name of current inventory of player contains "Boost FPS":
         cancel event
         set {_slot} to clicked slot
         set {_uuid} to uuid of player

@@ -221,10 +221,10 @@ command /clefs:
         openCratesMenu(player)
 
 function openCratesMenu(p: player):
-    set {_gui} to chest inventory with 6 rows named "&8&l✦ &6&lBOX & CLÉS MYTHIQUES &8&l✦"
+    set {_gui} to chest inventory with 6 rows named "<#FF7675>&lMINE<#FFFFFF>&lSTARS &8▸ &6Box & Clés"
     
     # Vitres de décoration sombre
-    set {_g1} to gray stained glass pane named " "
+    set {_g1} to gray stained glass pane named "&8✦"
     set {_g2} to orange stained glass pane named " "
     set {_g3} to yellow stained glass pane named " "
     
@@ -251,13 +251,14 @@ function openCratesMenu(p: player):
     set slot 33 of {_gui} to getCustomKey("cle_titan")
     
     # Header Info
-    set {_info} to nether star named "&6&l✦ INFORMATIONS SUR LES CAISSES ✦" with lore "&8&m─────────────────────────" and "&7• Les clés ouvrent les Caisses au Spawn !" and "&7• Vous pouvez prévisualiser les récompenses" and "&7  ou utiliser vos clés pour gagner du butin." and "&8&m─────────────────────────" and "&e⭐ CLIQUEZ SUR UNE CLÉ POUR L'UTILISER"
+    set {_info} to nether star named "<#FF7675>&l✦ CAISSES DU SPAWN ✦" with lore "&8&m─────────────────────" and "&8▸ &7Ouvrez les caisses physiques au Spawn !" and "&8▸ &7Armes 3D, artefacts & butins rares" and "&8&m─────────────────────"
     set slot 4 of {_gui} to {_info}
     
     # Bouton Fermer
-    set slot 49 of {_gui} to barrier named "&c&lFERMER LE MENU"
+    set slot 49 of {_gui} to barrier named "&c&l✦ FERMER ✦" with lore "&7Fermer l'interface"
     
     open {_gui} to {_p}
+    play sound "block.chest.open" to {_p}
 
 # ==================== INTERACTION & OUVERTURE DE CRATE ====================
 

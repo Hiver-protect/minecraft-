@@ -153,7 +153,7 @@ on death of monster:
 command /tags:
     aliases: /tag, /titres, /titre, /chattags
     trigger:
-        set {_gui} to a new chest inventory with 4 rows named "&8» &0&lMINESTARS &8- &d&lCHAT TAGS"
+        set {_gui} to a new chest inventory with 4 rows named "<#FD79A8>&lMINE<#FFFFFF>&lSTARS &8▸ &dTitres du Chat"
         
         # Fond sombre & bordures
         loop 36 times:
@@ -173,109 +173,109 @@ command /tags:
                 set {_r} to "Fondateur"
 
         # En-tête profil (Slot 4)
-        set slot 4 of {_gui} to 1 of player head named "&d&l✦ TES TITRES DU CHAT ✦" with lore "&8&m─────────────────────────" and "&7• Tag équipé : %{_curTag}%" and "&7• Niveau actuel : &e★ %{_lvl}%/100" and "&7• Grade : &e%{_r}%" and "&8&m─────────────────────────" and "&e▸ Clique sur un tag pour l'afficher dans le chat !"
+        set slot 4 of {_gui} to 1 of player head named "<#FD79A8>&l✦ TITRES & BADGES ✦" with lore "&8&m─────────────────────" and "&8▸ &7Tag équipé : %{_curTag}%" and "&8▸ &7Niveau : &e★ %{_lvl}%/100" and "&8&m─────────────────────"
 
         # --- TAGS DE NIVEAU (Rangée 2) ---
         # 1. Apprenti (Niv 5) - Slot 10
         if hasTagUnlocked(player, "apprenti", 5) is true:
-            set slot 10 of {_gui} to 1 of wheat named "&a🌱 Apprenti" with lore "&7• Requis : &eNiveau 5" and "&a✔ Débloqué &8(Clique pour équiper)"
+            set slot 10 of {_gui} to 1 of wheat named "&a🌱 Apprenti" with lore "&8▸ &7Requis : &eNiv. 5" and "&a✔ Débloqué"
         else:
-            set slot 10 of {_gui} to 1 of structure_void named "&8🌱 &7Apprenti" with lore "&7• Requis : &eNiveau 5" and "&c🔒 Bloqué"
+            set slot 10 of {_gui} to 1 of structure_void named "&8🌱 &7Apprenti" with lore "&8▸ &7Requis : &eNiv. 5" and "&c✖ Verrouillé"
 
         # 2. Guerrier (Niv 10) - Slot 11
         if hasTagUnlocked(player, "guerrier", 10) is true:
-            set slot 11 of {_gui} to 1 of iron sword named "&c⚔️ Guerrier" with lore "&7• Requis : &eNiveau 10" and "&a✔ Débloqué &8(Clique pour équiper)"
+            set slot 11 of {_gui} to 1 of iron sword named "&c⚔️ Guerrier" with lore "&8▸ &7Requis : &eNiv. 10" and "&a✔ Débloqué"
         else:
-            set slot 11 of {_gui} to 1 of structure_void named "&8⚔️ &7Guerrier" with lore "&7• Requis : &eNiveau 10" and "&c🔒 Bloqué"
+            set slot 11 of {_gui} to 1 of structure_void named "&8⚔️ &7Guerrier" with lore "&8▸ &7Requis : &eNiv. 10" and "&c✖ Verrouillé"
 
         # 3. Traqueur (Niv 15) - Slot 12
         if hasTagUnlocked(player, "traqueur", 15) is true:
-            set slot 12 of {_gui} to 1 of bow named "&6🏹 Traqueur" with lore "&7• Requis : &eNiveau 15" and "&a✔ Débloqué &8(Clique pour équiper)"
+            set slot 12 of {_gui} to 1 of bow named "&6🏹 Traqueur" with lore "&8▸ &7Requis : &eNiv. 15" and "&a✔ Débloqué"
         else:
-            set slot 12 of {_gui} to 1 of structure_void named "&8🏹 &7Traqueur" with lore "&7• Requis : &eNiveau 15" and "&c🔒 Bloqué"
+            set slot 12 of {_gui} to 1 of structure_void named "&8🏹 &7Traqueur" with lore "&8▸ &7Requis : &eNiv. 15" and "&c✖ Verrouillé"
 
         # 4. Mineur (Niv 20) - Slot 13
         if hasTagUnlocked(player, "mineur", 20) is true:
-            set slot 13 of {_gui} to 1 of iron pickaxe named "&b⛏️ Mineur" with lore "&7• Requis : &eNiveau 20" and "&a✔ Débloqué &8(Clique pour équiper)"
+            set slot 13 of {_gui} to 1 of iron pickaxe named "&b⛏️ Mineur" with lore "&8▸ &7Requis : &eNiv. 20" and "&a✔ Débloqué"
         else:
-            set slot 13 of {_gui} to 1 of structure_void named "&8⛏️ &7Mineur" with lore "&7• Requis : &eNiveau 20" and "&c🔒 Bloqué"
+            set slot 13 of {_gui} to 1 of structure_void named "&8⛏️ &7Mineur" with lore "&8▸ &7Requis : &eNiv. 20" and "&c✖ Verrouillé"
 
         # 5. Godlike (Niv 25) - Slot 14
         if hasTagUnlocked(player, "godlike", 25) is true:
-            set slot 14 of {_gui} to 1 of blaze rod named "&e⚡ Godlike" with lore "&7• Requis : &eNiveau 25" and "&a✔ Débloqué &8(Clique pour équiper)"
+            set slot 14 of {_gui} to 1 of blaze rod named "&e⚡ Godlike" with lore "&8▸ &7Requis : &eNiv. 25" and "&a✔ Débloqué"
         else:
-            set slot 14 of {_gui} to 1 of structure_void named "&8⚡ &7Godlike" with lore "&7• Requis : &eNiveau 25" and "&c🔒 Bloqué"
+            set slot 14 of {_gui} to 1 of structure_void named "&8⚡ &7Godlike" with lore "&8▸ &7Requis : &eNiv. 25" and "&c✖ Verrouillé"
 
         # 6. Riche (Niv 30) - Slot 15
         if hasTagUnlocked(player, "riche", 30) is true:
-            set slot 15 of {_gui} to 1 of gold ingot named "&6💎 Riche" with lore "&7• Requis : &eNiveau 30" and "&a✔ Débloqué &8(Clique pour équiper)"
+            set slot 15 of {_gui} to 1 of gold ingot named "&6💎 Riche" with lore "&8▸ &7Requis : &eNiv. 30" and "&a✔ Débloqué"
         else:
-            set slot 15 of {_gui} to 1 of structure_void named "&8💎 &7Riche" with lore "&7• Requis : &eNiveau 30" and "&c🔒 Bloqué"
+            set slot 15 of {_gui} to 1 of structure_void named "&8💎 &7Riche" with lore "&8▸ &7Requis : &eNiv. 30" and "&c✖ Verrouillé"
 
         # 7. Phénix (Niv 40) - Slot 16
         if hasTagUnlocked(player, "phenix", 40) is true:
-            set slot 16 of {_gui} to 1 of magma cream named "&c🔥 Phénix" with lore "&7• Requis : &eNiveau 40" and "&a✔ Débloqué &8(Clique pour équiper)"
+            set slot 16 of {_gui} to 1 of magma cream named "&c🔥 Phénix" with lore "&8▸ &7Requis : &eNiv. 40" and "&a✔ Débloqué"
         else:
-            set slot 16 of {_gui} to 1 of structure_void named "&8🔥 &7Phénix" with lore "&7• Requis : &eNiveau 40" and "&c🔒 Bloqué"
+            set slot 16 of {_gui} to 1 of structure_void named "&8🔥 &7Phénix" with lore "&8▸ &7Requis : &eNiv. 40" and "&c✖ Verrouillé"
 
         # --- TAGS PRESTIGE & BOUTIQUE (Rangée 3) ---
         # 8. Majesté (Niv 50) - Slot 19
         if hasTagUnlocked(player, "majeste", 50) is true:
-            set slot 19 of {_gui} to 1 of golden helmet named "&e👑 Majesté" with lore "&7• Requis : &eNiveau 50" and "&a✔ Débloqué &8(Clique pour équiper)"
+            set slot 19 of {_gui} to 1 of golden helmet named "&e👑 Majesté" with lore "&8▸ &7Requis : &eNiv. 50" and "&a✔ Débloqué"
         else:
-            set slot 19 of {_gui} to 1 of structure_void named "&8👑 &7Majesté" with lore "&7• Requis : &eNiveau 50" and "&c🔒 Bloqué"
+            set slot 19 of {_gui} to 1 of structure_void named "&8👑 &7Majesté" with lore "&8▸ &7Requis : &eNiv. 50" and "&c✖ Verrouillé"
 
         # 9. Astral (Niv 75) - Slot 20
         if hasTagUnlocked(player, "astral", 75) is true:
-            set slot 20 of {_gui} to 1 of amethyst shard named "&5🌌 Astral" with lore "&7• Requis : &eNiveau 75" and "&a✔ Débloqué &8(Clique pour équiper)"
+            set slot 20 of {_gui} to 1 of amethyst shard named "&5🌌 Astral" with lore "&8▸ &7Requis : &eNiv. 75" and "&a✔ Débloqué"
         else:
-            set slot 20 of {_gui} to 1 of structure_void named "&8🌌 &7Astral" with lore "&7• Requis : &eNiveau 75" and "&c🔒 Bloqué"
+            set slot 20 of {_gui} to 1 of structure_void named "&8🌌 &7Astral" with lore "&8▸ &7Requis : &eNiv. 75" and "&c✖ Verrouillé"
 
         # 10. Légende (Niv 100) - Slot 21
         if hasTagUnlocked(player, "legende", 100) is true:
-            set slot 21 of {_gui} to 1 of nether star named "&d⭐ Légende" with lore "&7• Requis : &eNiveau 100 (Max)" and "&a✔ Débloqué &8(Clique pour équiper)"
+            set slot 21 of {_gui} to 1 of nether star named "&d⭐ Légende" with lore "&8▸ &7Requis : &eNiv. 100 (Max)" and "&a✔ Débloqué"
         else:
-            set slot 21 of {_gui} to 1 of structure_void named "&8⭐ &7Légende" with lore "&7• Requis : &eNiveau 100" and "&c🔒 Bloqué"
+            set slot 21 of {_gui} to 1 of structure_void named "&8⭐ &7Légende" with lore "&8▸ &7Requis : &eNiv. 100" and "&c✖ Verrouillé"
 
         # 11. VIP - Slot 22
         if hasRankUnlocked(player, "vip") is true:
-            set slot 22 of {_gui} to 1 of gold block named "&e⚡ VIP" with lore "&7• Requis : &eGrade VIP+" and "&a✔ Débloqué &8(Clique pour équiper)"
+            set slot 22 of {_gui} to 1 of gold block named "&e⚡ VIP" with lore "&8▸ &7Requis : &eGrade VIP+" and "&a✔ Débloqué"
         else:
-            set slot 22 of {_gui} to 1 of structure_void named "&8⚡ &7VIP" with lore "&7• Requis : &eGrade VIP (/grades)" and "&c🔒 Bloqué"
+            set slot 22 of {_gui} to 1 of structure_void named "&8⚡ &7VIP" with lore "&8▸ &7Requis : &eGrade VIP" and "&c✖ Verrouillé"
 
         # 12. MVP - Slot 23
         if hasRankUnlocked(player, "mvp") is true:
-            set slot 23 of {_gui} to 1 of diamond block named "&b💎 MVP" with lore "&7• Requis : &bGrade MVP+" and "&a✔ Débloqué &8(Clique pour équiper)"
+            set slot 23 of {_gui} to 1 of diamond block named "&b💎 MVP" with lore "&8▸ &7Requis : &bGrade MVP+" and "&a✔ Débloqué"
         else:
-            set slot 23 of {_gui} to 1 of structure_void named "&8💎 &7MVP" with lore "&7• Requis : &bGrade MVP (/grades)" and "&c🔒 Bloqué"
+            set slot 23 of {_gui} to 1 of structure_void named "&8💎 &7MVP" with lore "&8▸ &7Requis : &bGrade MVP" and "&c✖ Verrouillé"
 
         # 13. STAR - Slot 24
         if hasRankUnlocked(player, "star") is true:
-            set slot 24 of {_gui} to 1 of beacon named "&d✨ Star" with lore "&7• Requis : &dGrade STAR" and "&a✔ Débloqué &8(Clique pour équiper)"
+            set slot 24 of {_gui} to 1 of beacon named "&d✨ Star" with lore "&8▸ &7Requis : &dGrade STAR" and "&a✔ Débloqué"
         else:
-            set slot 24 of {_gui} to 1 of structure_void named "&8✨ &7Star" with lore "&7• Requis : &dGrade STAR (/grades)" and "&c🔒 Bloqué"
+            set slot 24 of {_gui} to 1 of structure_void named "&8✨ &7Star" with lore "&8▸ &7Requis : &dGrade STAR" and "&c✖ Verrouillé"
 
         # 14. Staff - Slot 25
         if hasRankUnlocked(player, "staff") is true:
-            set slot 25 of {_gui} to 1 of shield named "&4🛡️ Staff" with lore "&7• Requis : &cÉquipe Staff" and "&a✔ Débloqué &8(Clique pour équiper)"
+            set slot 25 of {_gui} to 1 of shield named "&4🛡️ Staff" with lore "&8▸ &7Requis : &cStaff" and "&a✔ Débloqué"
         else:
-            set slot 25 of {_gui} to 1 of structure_void named "&8🛡️ &7Staff" with lore "&7• Requis : &cStaff uniquement" and "&c🔒 Bloqué"
+            set slot 25 of {_gui} to 1 of structure_void named "&8🛡️ &7Staff" with lore "&8▸ &7Requis : &cStaff" and "&c✖ Verrouillé"
 
         # --- ACTIONS BAS (Rangée 4) ---
         # Voir progression Niveau (Slot 29)
-        set slot 29 of {_gui} to 1 of experience bottle named "&e&l✦ NIVEAU JOUEUR ✦" with lore "&7Consulte tes récompenses de palier (/level)" and "&e▸ Cliquer pour ouvrir"
+        set slot 29 of {_gui} to 1 of experience bottle named "<#FFA502>&l✦ NIVEAU JOUEUR ✦" with lore "&8▸ &7Consulter les paliers" and "&e▶ Ouvrir (/level)"
 
         # Retirer le tag actuel (Slot 31)
-        set slot 31 of {_gui} to 1 of barrier named "&c&l✦ RETIRER MON TAG ✦" with lore "&7Déséquipe ton tag pour avoir un chat sans titre" and "&c▸ Cliquer pour retirer"
+        set slot 31 of {_gui} to 1 of barrier named "<#FF4757>&l✦ RETIRER MON TAG ✦" with lore "&8▸ &7Déséquiper le tag actif" and "&c▶ Cliquer pour retirer"
 
         # Voir les grades boutique (Slot 33)
-        set slot 33 of {_gui} to 1 of gold ingot named "&e&l✦ BOUTIQUE GRADES ✦" with lore "&7Découvre les avantages VIP, MVP & STAR" and "&e▸ Cliquer pour voir (/grades)"
+        set slot 33 of {_gui} to 1 of gold ingot named "<#A855F7>&l✦ GRADES & RANGS ✦" with lore "&8▸ &7Découvrir les avantages" and "&d▶ Ouvrir (/grades)"
 
         open {_gui} to player
         play sound "block.chest.open" to player
 
 on inventory click:
-    if name of event-inventory is "&8» &0&lMINESTARS &8- &d&lCHAT TAGS":
+    if name of event-inventory contains "Titres du Chat":
         cancel event
         set {_u} to uuid of player
 
@@ -413,7 +413,7 @@ on inventory click:
 command /level:
     aliases: /lvl, /niveaux, /progression
     trigger:
-        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lMINESTARS &8- &e&lNIVEAU JOUEUR"
+        set {_gui} to a new chest inventory with 3 rows named "<#FFA502>&lMINE<#FFFFFF>&lSTARS &8▸ &eNiveau Joueur"
         
         loop 27 times:
             set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
@@ -440,22 +440,22 @@ command /level:
                 set {_bar} to "%{_bar}%&7■"
 
         # Profil Niveau (Slot 4)
-        set slot 4 of {_gui} to 1 of player head named "&e&l✦ %player% &8(★ %{_lvl}%/100) ✦" with lore "&8&m─────────────────────────" and "&7• Progression : &b%{_xp}% / %{_req}% XP" and "&7• Barre : %{_bar}% &8(&e%{_pct}%%%&8)" and "&7• Tag équipé : %{_curTag}%" and "&8&m─────────────────────────"
+        set slot 4 of {_gui} to 1 of player head named "<#FFA502>&l✦ %player% &8(★ %{_lvl}%/100) ✦" with lore "&8&m─────────────────────" and "&8▸ &7Progression : &b%{_xp}% / %{_req}% XP" and "&8▸ &7Barre : %{_bar}% &8(&e%{_pct}%%%&8)" and "&8▸ &7Tag équipé : %{_curTag}%" and "&8&m─────────────────────"
 
         # Paliers & Avantages
-        set slot 10 of {_gui} to 1 of iron ingot named "&f&l✦ PALIER NIVEAU 10 ✦" with lore "&7• Tag &c⚔️ Guerrier &7débloqué" and "&7• Bonus cash & diamants"
-        set slot 12 of {_gui} to 1 of diamond named "&b&l✦ PALIER NIVEAU 25 ✦" with lore "&7• Tag &e⚡ Godlike &7débloqué" and "&7• Bonus de récompenses"
-        set slot 14 of {_gui} to 1 of golden helmet named "&6&l✦ PALIER NIVEAU 50 ✦" with lore "&7• Tag &e👑 Majesté &7débloqué" and "&7• Gros bonus de cash"
-        set slot 16 of {_gui} to 1 of nether star named "&d&l★ PALIER NIVEAU 100 ★" with lore "&7• Tag &d⭐ Légende &7Ultime" and "&7• Annonce globale serveur !"
+        set slot 10 of {_gui} to 1 of iron ingot named "<#FFFFFF>&l✦ PALIER NIVEAU 10 ✦" with lore "&8▸ &7Tag &c⚔️ Guerrier &7débloqué" and "&8▸ &aBonus cash & diamants"
+        set slot 12 of {_gui} to 1 of diamond named "<#00D4FF>&l✦ PALIER NIVEAU 25 ✦" with lore "&8▸ &7Tag &e⚡ Godlike &7débloqué" and "&8▸ &aRécompenses accrues"
+        set slot 14 of {_gui} to 1 of golden helmet named "<#FFA502>&l✦ PALIER NIVEAU 50 ✦" with lore "&8▸ &7Tag &e👑 Majesté &7débloqué" and "&8▸ &aGros bonus cash"
+        set slot 16 of {_gui} to 1 of nether star named "<#E056FD>&l★ PALIER NIVEAU 100 ★" with lore "&8▸ &7Tag &d⭐ Légende &7Ultime" and "&8▸ &dAnnonce globale serveur !"
 
         # Bouton Tags (Slot 22)
-        set slot 22 of {_gui} to 1 of name tag named "&d&l✦ VOIR LES TAGS (/tags) ✦" with lore "&7Équipe tes titres débloqués !" and "&d▸ Cliquer pour ouvrir"
+        set slot 22 of {_gui} to 1 of name tag named "<#FD79A8>&l✦ TITRES & TAGS ✦" with lore "&8▸ &7Équipe tes titres débloqués" and "&d▶ Ouvrir (/tags)"
 
         open {_gui} to player
         play sound "block.chest.open" to player
 
 on inventory click:
-    if name of event-inventory is "&8» &0&lMINESTARS &8- &e&lNIVEAU JOUEUR":
+    if name of event-inventory contains "Niveau Joueur":
         cancel event
         if index of event-slot is 22:
             close player's inventory

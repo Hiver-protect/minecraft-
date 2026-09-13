@@ -48,7 +48,7 @@ command /survie [<text>]:
             play sound "entity.experience_orb.pickup" to player
             stop
 
-        set {_gui} to a new chest inventory with 4 rows named "&8» &0&lMINESTARS &8- &a&lSURVIE"
+        set {_gui} to a new chest inventory with 4 rows named "<#2ED573>&lMINE<#FFFFFF>&lSTARS &8▸ &aSurvie 1.20+"
         loop 36 times:
             set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
 
@@ -60,10 +60,10 @@ command /survie [<text>]:
 
         # Profil & Infos Saison (Slot 4)
         set {_diff} to difference between {survie_last_reset} and now
-        set slot 4 of {_gui} to 1 of player head named "&a&l✦ MONDE SURVIE SAISONNIÈRE ✦" with lore "&8&m─────────────────────────" and "&7• Mode de jeu : &fSurvie Vanilla & Économie" and "&7• Ancienneté du monde : &e%{_diff}% / 30 jours" and "&7• Protection RTP : &aActive (Anti-chute)" and "&8&m─────────────────────────" and "&e▸ Choisis une option de navigation ci-dessous :"
+        set slot 4 of {_gui} to 1 of player head named "<#2ED573>&l✦ SAISON SURVIE ✦" with lore "&8&m─────────────────────" and "&8▸ &7Mode : &fSurvie Vanilla & Économie" and "&8▸ &7Âge du monde : &e%{_diff}% / 30j" and "&8▸ &7Protection RTP : &aActive (Anti-chute)" and "&8&m─────────────────────"
 
         # 1. RTP (Slot 10)
-        set slot 10 of {_gui} to 1 of compass named "&6&l✦ TÉLÉPORTATION ALÉATOIRE (RTP) ✦" with lore "&8&m─────────────────────────" and "&7Téléporte-toi instantanément dans la nature." and "&7Protection anti-dégâts de chute incluse !" and "&8&m─────────────────────────" and "&a▸ Cliquer pour lancer la téléportation (/rtp)"
+        set slot 10 of {_gui} to 1 of compass named "<#FFA502>&l✦ TÉLÉPORTATION RTP ✦" with lore "&8&m─────────────────────" and "&8▸ &7Téléportation nature aléatoire" and "&8▸ &7Protection chute 10s incluse" and "&8&m─────────────────────" and "&a▶ Lancer (/rtp)"
 
         # 2. Homes (Slot 12)
         set {_hCount} to size of {survie_homes::%uuid of player%::*}
@@ -81,22 +81,22 @@ command /survie [<text>]:
         else if {_r} is "Fondateur" or "Admin" or "Resp" or "Modo" or "Helper" or "Build":
             set {_maxHomes} to 100
             
-        set slot 12 of {_gui} to 1 of red bed named "&c&l✦ MES HOMES & RÉSIDENCES ✦" with lore "&8&m─────────────────────────" and "&7Gère tes points de sauvegarde." and "&7• Maisons créées : &e%{_hCount}% / %{_maxHomes}%" and "&7• Grade : &e%{_r}%" and "&8&m─────────────────────────" and "&e▸ Cliquer pour ouvrir le menu (/homes)"
+        set slot 12 of {_gui} to 1 of red bed named "<#FF4757>&l✦ MES RÉSIDENCES ✦" with lore "&8&m─────────────────────" and "&8▸ &7Maisons : &e%{_hCount}% / %{_maxHomes}% &7(Grade &e%{_r}%&7)" and "&8▸ &7Gestion & téléportation rapide" and "&8&m─────────────────────" and "&e▶ Ouvrir (/homes)"
 
         # 3. Kit Départ (Slot 14)
-        set slot 14 of {_gui} to 1 of chest named "&e&l✦ KIT DE DÉPART QUOTIDIEN ✦" with lore "&8&m─────────────────────────" and "&7Outils en fer, vivres et torches." and "&7Disponible toutes les 24 heures." and "&8&m─────────────────────────" and "&e▸ Cliquer pour récupérer ton kit (/kit)"
+        set slot 14 of {_gui} to 1 of chest named "<#F1C40F>&l✦ KIT QUOTIDIEN ✦" with lore "&8&m─────────────────────" and "&8▸ &7Outils fer, vivres & torches" and "&8▸ &7Disponible toutes les 24h" and "&8&m─────────────────────" and "&e▶ Récupérer (/kit)"
 
         # 4. TPA (Slot 16)
-        set slot 16 of {_gui} to 1 of ender eye named "&b&l✦ TÉLÉPORTATION TPA ✦" with lore "&8&m─────────────────────────" and "&7Rejoins tes amis en un instant." and "&7Tape en jeu : &f/tpa <pseudo>" and "&8&m─────────────────────────" and "&b▸ /tpa <joueur>"
+        set slot 16 of {_gui} to 1 of ender eye named "<#00D4FF>&l✦ TÉLÉPORTATION TPA ✦" with lore "&8&m─────────────────────" and "&8▸ &7Rejoins tes amis instantanément" and "&8▸ &7Commande : &f/tpa <pseudo>" and "&8&m─────────────────────" and "&b▶ Utiliser /tpa"
 
         # 5. Spawn Survie (Slot 20)
-        set slot 20 of {_gui} to 1 of oak door named "&f&l✦ POINT DE DÉPART SURVIE ✦" with lore "&8&m─────────────────────────" and "&7Retourne au point central de la Survie." and "&8&m─────────────────────────" and "&a▸ Cliquer pour te téléporter (/survie tp)"
+        set slot 20 of {_gui} to 1 of oak door named "<#2ED573>&l✦ SPAWN SURVIE ✦" with lore "&8&m─────────────────────" and "&8▸ &7Point central de la Survie" and "&8&m─────────────────────" and "&a▶ Se téléporter"
 
         # 6. Back (Slot 22)
-        set slot 22 of {_gui} to 1 of totem of undying named "&d&l✦ RETOUR DE MORT (/back) ✦" with lore "&8&m─────────────────────────" and "&7Retourne à ta dernière position de décès." and "&8&m─────────────────────────" and "&d▸ Cliquer pour retourner sur les lieux (/back)"
+        set slot 22 of {_gui} to 1 of totem of undying named "<#E056FD>&l✦ DERNIÈRE MORT ✦" with lore "&8&m─────────────────────" and "&8▸ &7Retourne à ton dernier décès" and "&8&m─────────────────────" and "&d▶ Retourner (/back)"
 
         # 7. Spawn Hub (Slot 24)
-        set slot 24 of {_gui} to 1 of beacon named "&e&l✦ RETOUR AU SPAWN HUB ✦" with lore "&8&m─────────────────────────" and "&7Retourne au hub principal du serveur." and "&8&m─────────────────────────" and "&e▸ Cliquer pour rejoindre le Hub (/spawn)"
+        set slot 24 of {_gui} to 1 of beacon named "<#00D4FF>&l✦ RETOUR HUB ✦" with lore "&8&m─────────────────────" and "&8▸ &7Hub & portails du serveur" and "&8&m─────────────────────" and "&e▶ Rejoindre (/spawn)"
 
         # Fermer (Slot 31)
         set slot 31 of {_gui} to 1 of barrier named "&c&l✦ FERMER ✦" with lore "&7Fermer l'interface"
@@ -200,7 +200,7 @@ command /delhome [<text>]:
 
 command /homes:
     trigger:
-        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lMINESTARS &8- &c&lMES HOMES"
+        set {_gui} to a new chest inventory with 3 rows named "<#2ED573>&lMINE<#FFFFFF>&lSTARS &8▸ &cMes Résidences"
         loop 27 times:
             set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
 
@@ -210,7 +210,7 @@ command /homes:
             set {_x} to round(x-coordinate of {_loc})
             set {_y} to round(y-coordinate of {_loc})
             set {_z} to round(z-coordinate of {_loc})
-            set slot {_slot} of {_gui} to 1 of red bed named "&e&l✦ %loop-index% ✦" with lore "&8&m─────────────────────────" and "&7• Coordonnées : &eX: %{_x}% Y: %{_y}% Z: %{_z}%" and "&8&m─────────────────────────" and "&a▸ Clic Gauche : Se téléporter" and "&c▸ Clic Droit : Supprimer ce home"
+            set slot {_slot} of {_gui} to 1 of red bed named "<#FF4757>&l✦ %loop-index% ✦" with lore "&8&m─────────────────────" and "&8▸ &7Coord : &eX: %{_x}% Y: %{_y}% Z: %{_z}%" and "&8&m─────────────────────" and "&a▶ Clic Gauche : Se téléporter" and "&c▶ Clic Droit : Supprimer"
             add 2 to {_slot}
             if {_slot} > 15:
                 stop loop
@@ -313,7 +313,7 @@ command /kit:
 # ==================== CLIC SUR LES MENUS ====================
 
 on inventory click:
-    if name of event-inventory is "&8» &0&lMINESTARS &8- &a&lSURVIE":
+    if name of event-inventory contains "Survie 1.20+":
         cancel event
         
         # 1. RTP (Slot 10)
@@ -351,7 +351,7 @@ on inventory click:
             close player's inventory
             play sound "block.chest.close" to player
 
-    else if name of event-inventory is "&8» &0&lMINESTARS &8- &c&lMES HOMES":
+    else if name of event-inventory contains "Mes Résidences":
         cancel event
         
         if index of event-slot is 22:

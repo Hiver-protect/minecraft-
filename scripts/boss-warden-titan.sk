@@ -204,7 +204,7 @@ command /boss [<text>]:
             stop
             
         # Menu GUI Interactif (3 Rows)
-        set {_gui} to a new chest inventory with 3 rows named "&8» &4&lINVOQUER UN BOSS &8(Admin)"
+        set {_gui} to a new chest inventory with 3 rows named "<#D63031>&lMINE<#FFFFFF>&lSTARS &8▸ &4Boss & Titans"
         loop 27 times:
             set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
             
@@ -215,25 +215,25 @@ command /boss [<text>]:
         set slot 26 of {_gui} to 1 of red stained glass pane named " "
         
         # 1. WARDEN TITAN (Slot 10)
-        set slot 10 of {_gui} to 1 of sculk catalyst named "&4&l✦ WARDEN TITAN ✦ &c(Boss Ultime)" with lore "&8&m─────────────────────────" and "&7• Santé : &c500❤ &7(3 Phases Épiques)" and "&7• Attaques : &3Vortex Sculk & Rayon Sonique" and "&7• Butin : &a+1,500$&7, &d✦ Lame du Sculk ✦" and "&7& et &bClé de Caisse Titanesque" and "&8&m─────────────────────────" and "&a▸ Cliquer pour Invoquer (/boss warden)"
+        set slot 10 of {_gui} to 1 of sculk catalyst named "<#D63031>&l✦ WARDEN TITAN ✦" with lore "&8&m─────────────────────" and "&8▸ &7Santé : &c500❤ &8(3 Phases)" and "&8▸ &7Butin : &a+1,500$ &8┃ &d✦ Lame Sculk ✦" and "&8&m─────────────────────" and "&a▶ Invoquer (/boss warden)"
         
         # 2. WITHER BOSS (Slot 12)
-        set slot 12 of {_gui} to 1 of wither skeleton skull named "&8&l✦ WITHER BOSS ✦ &c(Vanilla)" with lore "&8&m─────────────────────────" and "&7• Santé : &c150❤ / 300❤" and "&7• Attaques : &8Crânes explosifs & Effet Wither" and "&7• Butin : &bÉtoile du Nether" and "&8&m─────────────────────────" and "&a▸ Cliquer pour Invoquer (/boss wither)"
+        set slot 12 of {_gui} to 1 of wither skeleton skull named "<#747D8C>&l✦ WITHER BOSS ✦" with lore "&8&m─────────────────────" and "&8▸ &7Santé : &c300❤" and "&8▸ &7Butin : &bÉtoile du Nether" and "&8&m─────────────────────" and "&a▶ Invoquer (/boss wither)"
         
         # 3. ENDER DRAGON (Slot 14)
-        set slot 14 of {_gui} to 1 of dragon egg named "&d&l✦ ENDER DRAGON ✦ &c(Vanilla)" with lore "&8&m─────────────────────────" and "&7• Santé : &c200❤" and "&7• Attaques : &dSouffle de Dragon & Vol Céleste" and "&7• Butin : &eOeuf de Dragon & Beaucoup d'XP" and "&8&m─────────────────────────" and "&a▸ Cliquer pour Invoquer (/boss dragon)"
+        set slot 14 of {_gui} to 1 of dragon egg named "<#E056FD>&l✦ ENDER DRAGON ✦" with lore "&8&m─────────────────────" and "&8▸ &7Santé : &c200❤" and "&8▸ &7Butin : &eOeuf de Dragon & XP" and "&8&m─────────────────────" and "&a▶ Invoquer (/boss dragon)"
         
         # 4. GARDE CÉLESTE (Slot 16)
-        set slot 16 of {_gui} to 1 of golden chestplate named "&6&l✦ GARDE CÉLESTE ✦ &e(Mini-Boss)" with lore "&8&m─────────────────────────" and "&7• Santé : &e60❤" and "&7• Équipement : &8Netherite & Or" and "&7• Butin : &6Lingots d'or & Diamants" and "&8&m─────────────────────────" and "&a▸ Cliquer pour Invoquer (/boss guard)"
+        set slot 16 of {_gui} to 1 of golden chestplate named "<#FFA502>&l✦ GARDE CÉLESTE ✦" with lore "&8&m─────────────────────" and "&8▸ &7Santé : &e60❤ &8(Mini-Boss)" and "&8▸ &7Butin : &6Or & Diamants" and "&8&m─────────────────────" and "&a▶ Invoquer (/boss guard)"
         
         # 5. SPECTRE DU NÉANT (Slot 22)
-        set slot 22 of {_gui} to 1 of bow named "&d&l✦ SPECTRE DU NÉANT ✦ &d(Mini-Boss)" with lore "&8&m─────────────────────────" and "&7• Santé : &d50❤" and "&7• Équipement : &bDiamant & Arc Power" and "&7• Butin : &aLivre Enchanté & XP" and "&8&m─────────────────────────" and "&a▸ Cliquer pour Invoquer (/boss spectre)"
+        set slot 22 of {_gui} to 1 of bow named "<#00D4FF>&l✦ SPECTRE DU NÉANT ✦" with lore "&8&m─────────────────────" and "&8▸ &7Santé : &d50❤ &8(Mini-Boss)" and "&8▸ &7Butin : &aLivre Enchanté & XP" and "&8&m─────────────────────" and "&a▶ Invoquer (/boss spectre)"
         
         open {_gui} to player
         play sound "block.chest.open" to player
 
 on inventory click:
-    if name of event-inventory is "&8» &4&lINVOQUER UN BOSS &8(Admin)":
+    if name of event-inventory contains "Boss & Titans":
         cancel event
         
         # 1. Warden Titan (Slot 10)

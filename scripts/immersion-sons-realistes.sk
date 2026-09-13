@@ -118,40 +118,40 @@ command /immersion:
         set {_p} to player
         set {_uuid} to uuid of {_p}
         
-        set {_gui} to a new chest inventory with 3 rows named "&8» &0&lMINESTARS &8- &3&lIMMERSION HD"
+        set {_gui} to a new chest inventory with 3 rows named "<#74B9FF>&lMINE<#FFFFFF>&lSTARS &8▸ &3Immersion Sonore"
         
         loop 27 times:
             set slot (loop-number - 1) of {_gui} to 1 of gray stained glass pane named "&8✦"
             
         # 1. Battement de Coeur (Low HP)
         if {immersion_heartbeat::%{_uuid}%} is false:
-            set {_item_heart} to gray dye named "&7&lBattement de Cœur : &cDÉSACTIVÉ" with lore "&7Joue un rythme cardiaque lourd" and "&7lorsque votre santé tombe sous 35%%." and "" and "&e► Cliquez pour &aACTIVER"
+            set {_item_heart} to gray dye named "&7&lBattement de Cœur : &cDÉSACTIVÉ" with lore "&8&m─────────────────────" and "&8▸ &7Rythme cardiaque si santé < 35%%" and "&8&m─────────────────────" and "&a▶ Cliquer pour ACTIVER"
         else:
-            set {_item_heart} to red dye named "&c&lBattement de Cœur : &aACTIVÉ" with lore "&7Joue un rythme cardiaque lourd" and "&7lorsque votre santé tombe sous 35%%." and "" and "&e► Cliquez pour &cDÉSACTIVER"
+            set {_item_heart} to red dye named "<#FF4757>&lBattement de Cœur : &aACTIVÉ" with lore "&8&m─────────────────────" and "&8▸ &7Rythme cardiaque si santé < 35%%" and "&8&m─────────────────────" and "&c▶ Cliquer pour DÉSACTIVER"
         set slot 11 of {_gui} to {_item_heart}
         
         # 2. Particules de Sang Réalistes
         if {immersion_blood::%{_uuid}%} is false:
-            set {_item_blood} to gray dye named "&7&lEffets de Sang : &cDÉSACTIVÉS" with lore "&7Éclats de sang immersifs lors" and "&7des frappes en combat." and "" and "&e► Cliquez pour &aACTIVER"
+            set {_item_blood} to gray dye named "&7&lEffets de Sang : &cDÉSACTIVÉS" with lore "&8&m─────────────────────" and "&8▸ &7Éclats de sang lors des frappes" and "&8&m─────────────────────" and "&a▶ Cliquer pour ACTIVER"
         else:
-            set {_item_blood} to pink dye named "&d&lEffets de Sang : &aACTIVÉS" with lore "&7Éclats de sang immersifs lors" and "&7des frappes en combat." and "" and "&e► Cliquez pour &cDÉSACTIVER"
+            set {_item_blood} to pink dye named "<#FD79A8>&lEffets de Sang : &aACTIVÉS" with lore "&8&m─────────────────────" and "&8▸ &7Éclats de sang lors des frappes" and "&8&m─────────────────────" and "&c▶ Cliquer pour DÉSACTIVER"
         set slot 13 of {_gui} to {_item_blood}
         
         # 3. Ambiances Sonores Naturelles
         if {immersion_ambience::%{_uuid}%} is false:
-            set {_item_amb} to gray dye named "&7&lAmbiances de Biomes : &cDÉSACTIVÉES" with lore "&7Échos de cavernes, vents d'altitude" and "&7et sons d'immersion dynamiques." and "" and "&e► Cliquez pour &aACTIVER"
+            set {_item_amb} to gray dye named "&7&lAmbiances Biomes : &cDÉSACTIVÉES" with lore "&8&m─────────────────────" and "&8▸ &7Échos de cavernes & vents" and "&8&m─────────────────────" and "&a▶ Cliquer pour ACTIVER"
         else:
-            set {_item_amb} to cyan dye named "&3&lAmbiances de Biomes : &aACTIVÉES" with lore "&7Échos de cavernes, vents d'altitude" and "&7et sons d'immersion dynamiques." and "" and "&e► Cliquez pour &cDÉSACTIVER"
+            set {_item_amb} to cyan dye named "<#00D4FF>&lAmbiances Biomes : &aACTIVÉES" with lore "&8&m─────────────────────" and "&8▸ &7Échos de cavernes & vents" and "&8&m─────────────────────" and "&c▶ Cliquer pour DÉSACTIVER"
         set slot 15 of {_gui} to {_item_amb}
         
         # Pack info
-        set slot 22 of {_gui} to 1 of music disc chirp named "&e&lPack HD Sons & Visuels CurseForge" with lore "&8▪ &7Modèles 3D : &aInclus & Actifs" and "&8▪ &7Animations Fresh Animations : &aActives" and "&8▪ &7Sons Ambiance & Mobs HD : &aPrêts"
+        set slot 22 of {_gui} to 1 of music disc chirp named "<#FFA502>&lPack HD & Sons Spatiaux" with lore "&8&m─────────────────────" and "&8▸ &7Modèles 3D, Sons & Textures HD" and "&8&m─────────────────────"
         
         open {_gui} to {_p}
         play sound "ui.button.click" with pitch 1.2 to {_p}
 
 on inventory click:
-    if name of current inventory of player is "&8» &0&lMINESTARS &8- &3&lIMMERSION HD":
+    if name of current inventory of player contains "Immersion Sonore":
         cancel event
         set {_slot} to clicked slot
         set {_uuid} to uuid of player
