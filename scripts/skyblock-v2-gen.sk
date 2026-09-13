@@ -38,8 +38,39 @@ on load:
 
 on join:
     wait 10 ticks
+    set {_u} to uuid of player
+    set {_name} to "%player%"
+    
+    # 1. Synchronisation UUID <-> Pseudo (Empêche toute perte d'île)
+    if {island_uuid::%{_u}%::x} is set:
+        if {island::%{_name}%::x} is not set:
+            set {island::%{_name}%::x} to {island_uuid::%{_u}%::x}
+            set {island::%{_name}%::y} to 150
+            set {island::%{_name}%::z} to {island_uuid::%{_u}%::z}
+            set {island::%{_name}%::world} to {island_uuid::%{_u}%::world}
+            set {island_home::%{_name}%} to {island_uuid::%{_u}%::home}
+    else if {island::%{_name}%::x} is set:
+        set {island_uuid::%{_u}%::x} to {island::%{_name}%::x}
+        set {island_uuid::%{_u}%::y} to 150
+        set {island_uuid::%{_u}%::z} to {island::%{_name}%::z}
+        set {island_uuid::%{_u}%::world} to {island::%{_name}%::world}
+        set {island_uuid::%{_u}%::home} to {island_home::%{_name}%}
+        
+    # 2. Auto-Détection si le joueur se trouve sur une île physique existante
     if "%world of player%" contains "skyblock":
-        set {_u} to uuid of player
+        if {island::%{_name}%::x} is not set:
+            set {_px} to x-coordinate of player
+            set {_roundedX} to round({_px} / 1000) * 1000
+            if abs({_px} - {_roundedX}) <= 150:
+                set {island::%{_name}%::x} to {_roundedX}
+                set {island::%{_name}%::y} to 150
+                set {island::%{_name}%::z} to 0
+                set {island::%{_name}%::world} to world "skyblock"
+                set {island_home::%{_name}%} to location(({_roundedX} + 0.5), 151, 2.5, world "skyblock")
+                set {island_uuid::%{_u}%::x} to {_roundedX}
+                set {island_uuid::%{_u}%::z} to 0
+                send "{@prefix}&aVotre île a été automatiquement reconnue et rattachée (X: %{_roundedX}%) !" to player
+                
         set {_owner} to "%player%"
         if {island_team_owner::%{_u}%} is set:
             set {_owner} to "%{island_team_owner::%{_u}%}%"
