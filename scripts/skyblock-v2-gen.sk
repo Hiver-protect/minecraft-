@@ -255,6 +255,85 @@ function createIsland(p: player, x: number, z: number):
     send "&7• Menu de gestion : &e/is &7ou &e/island" to {_p}
     send "" to {_p}
 
+# ==================== COMMANDES ADMIN / RÉCUPÉRATION D'ÎLE (/isadmin) ====================
+
+command /isadmin [<text>] [<text>] [<text>]:
+    aliases: /isadm, /islandadmin
+    permission: op
+    permission message: &cTu n'as pas la permission!
+    trigger:
+        if arg-1 is not set:
+            send "" to player
+            send "&e&l✦ GESTION ADMIN SKYBLOCK ✦" to player
+            send "&7• &e/isadmin tp <joueur> &7- Se téléporter sur l'île d'un joueur" to player
+            send "&7• &e/isadmin regen <joueur> &7- Régénérer l'île de départ d'un joueur" to player
+            send "&7• &e/isadmin setisland <joueur> &7- Définir l'île du joueur à votre position" to player
+            send "&7• &e/isadmin fixhome <joueur> &7- Réinitialiser le spawn d'île du joueur" to player
+            send "&7• &e/isadmin delete <joueur> &7- Supprimer l'enregistrement d'une île" to player
+            send "" to player
+            stop
+            
+        set {_target} to arg-2
+        if {_target} is not set:
+            send "{@prefix}&cPrécisez le pseudo du joueur !" to player
+            stop
+            
+        if arg-1 is "tp" or "teleport" or "goto":
+            if {island::%{_target}%::x} is set:
+                set {_w} to world "skyblock"
+                if {_w} is not set:
+                    set {_w} to "skyblock" parsed as world
+                set {_targetLoc} to location(({island::%{_target}%::x} + 0.5), 151, ({island::%{_target}%::z} + 2.5), {_w})
+                if {island_home::%{_target}%} is set:
+                    set {_targetLoc} to {island_home::%{_target}%}
+                teleport player to {_targetLoc}
+                send "{@prefix}&aTéléporté sur l'île de &e%{_target}% &7(X: %{island::%{_target}%::x}%, Z: %{island::%{_target}%::z}%) !" to player
+                play sound "entity.enderman.teleport" to player
+            else:
+                send "{@prefix}&cLe joueur &e%{_target}% &cn'a pas d'île enregistrée !" to player
+                
+        else if arg-1 is "regen" or "recreate" or "reset":
+            if {island::%{_target}%::x} is set:
+                set {_x} to {island::%{_target}%::x}
+                set {_z} to {island::%{_target}%::z}
+                set {_targetP} to {_target} parsed as player
+                if {_targetP} is online:
+                    createIsland({_targetP}, {_x}, {_z})
+                    teleport {_targetP} to location(({_x} + 0.5), 151, ({_z} + 2.5), world "skyblock")
+                else:
+                    createIsland(player, {_x}, {_z})
+                send "{@prefix}&aÎle de &e%{_target}% &arégénérée avec succès !" to player
+                play sound "entity.player.levelup" to player
+            else:
+                send "{@prefix}&cLe joueur n'a pas d'île enregistrée. Fais &e/isadmin create <joueur>&c." to player
+                
+        else if arg-1 is "setisland" or "set":
+            set {island::%{_target}%::x} to round(x-coordinate of player)
+            set {island::%{_target}%::y} to 150
+            set {island::%{_target}%::z} to round(z-coordinate of player)
+            set {island::%{_target}%::world} to world of player
+            set {island_home::%{_target}%} to location of player
+            send "{@prefix}&aL'île de &e%{_target}% &aa été assignée à vos coordonnées actuelles !" to player
+            play sound "block.note_block.pling" to player
+            
+        else if arg-1 is "fixhome":
+            if {island::%{_target}%::x} is set:
+                set {_w} to world "skyblock"
+                set {island_home::%{_target}%} to location(({island::%{_target}%::x} + 0.5), 151, ({island::%{_target}%::z} + 2.5), {_w})
+                send "{@prefix}&aSpawn d'île de &e%{_target}% &aréinitialisé aux coordonnées d'origine !" to player
+                play sound "block.note_block.pling" to player
+            else:
+                send "{@prefix}&cLe joueur n'a pas d'île enregistrée !" to player
+                
+        else if arg-1 is "delete" or "remove":
+            delete {island::%{_target}%::x}
+            delete {island::%{_target}%::y}
+            delete {island::%{_target}%::z}
+            delete {island::%{_target}%::world}
+            delete {island_home::%{_target}%}
+            send "{@prefix}&aDonnées d'île de &e%{_target}% &asupprimées avec succès !" to player
+            play sound "block.wooden_button.click_off" to player
+
 # ==================== COMMANDE PRINCIPALE SKYBLOCK (/is) ====================
 
 command /skyblock [<text>] [<text>] [<number>]:
