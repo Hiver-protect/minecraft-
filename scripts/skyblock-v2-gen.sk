@@ -265,15 +265,67 @@ command /isadmin [<text>] [<text>] [<text>] [<text>]:
         if arg-1 is not set:
             send "" to player
             send "&e&l✦ GESTION ADMIN SKYBLOCK ✦" to player
+            send "&7• &e/isadmin list &7- Liste et menu GUI de toutes les îles créées" to player
+            send "&7• &e/isadmin scan &7- Scanner les coordonnées physiques d'îles dans le monde" to player
             send "&7• &e/isadmin link <joueur> <x> <z> &7- Relier une île existante aux coordonnées X Z" to player
             send "&7• &e/isadmin setisland <joueur> &7- Assigner l'île du joueur à votre position actuelle" to player
-            send "&7• &e/isadmin tpcoord <x> <z> &7- Se téléporter aux coordonnées de l'île" to player
+            send "&7• &e/isadmin tpcoord <x> <z> &7- Se téléporter aux coordonnées X Z" to player
             send "&7• &e/isadmin tp <joueur> &7- Se téléporter sur l'île d'un joueur" to player
             send "&7• &e/isadmin create <joueur> &7- Créer une île neuve pour un joueur" to player
             send "&7• &e/isadmin regen <joueur> &7- Régénérer l'île d'un joueur" to player
             send "&7• &e/isadmin fixhome <joueur> &7- Réinitialiser le spawn d'île du joueur" to player
             send "&7• &e/isadmin delete <joueur> &7- Supprimer l'enregistrement d'une île" to player
             send "" to player
+            stop
+            
+        if arg-1 is "list" or "liste" or "islands":
+            send "" to player
+            send "&e&l✦ LISTE DES ÎLES SKYBLOCK ENREGISTRÉES ✦" to player
+            set {_count} to 0
+            loop {island::*}:
+                set {_owner} to loop-index
+                set {_x} to {island::%{_owner}%::x}
+                set {_z} to {island::%{_owner}%::z}
+                set {_lvl} to {island_level::%{_owner}%} ? 10
+                send "&7• &e%{_owner}% &8» &fX: %{_x}%, Z: %{_z}% &8┃ &a★ %{_lvl}% ⭐ &7(/isadmin tp %{_owner}%)" to player
+                add 1 to {_count}
+                
+            if {_count} is 0:
+                send "&7Aucune île enregistrée dans les variables actuelles." to player
+                send "&7Astuce : Utilisez &e/isadmin scan &7pour détecter les îles physiques dans le monde !" to player
+            else:
+                send "&aTotal : %{_count}% îles enregistrées." to player
+            send "" to player
+            stop
+            
+        if arg-1 is "scan" or "scanner" or "find":
+            send "" to player
+            send "&e&l✦ SCANNER DES ÎLES PHYSIQUES SKYBLOCK ✦" to player
+            send "&7Recherche des îles construites de X: 0 à X: %{skyblock_next_x} ? 15000%..." to player
+            set {_found} to 0
+            set {_w} to world "skyblock"
+            if {_w} is not set:
+                set {_w} to "skyblock" parsed as world
+            if {_w} is not set:
+                set {_w} to world of player
+                
+            set {_maxScan} to {skyblock_next_x} ? 15000
+            if {_maxScan} < 10000:
+                set {_maxScan} to 15000
+                
+            set {_curX} to 0
+            while {_curX} <= {_maxScan}:
+                set {_checkLoc} to location({_curX}, 149, 0, {_w})
+                set {_b} to block at {_checkLoc}
+                set {_bTop} to block at location({_curX}, 150, 0, {_w})
+                if {_b} is not air:
+                    add 1 to {_found}
+                    send "&a[ÎLE DÉTECTÉE] &7Emplacement &eX: %{_curX}%, Z: 0 &8(Bloc: &f%{_b}% / %{_bTop}%&8) ➔ &b/isadmin tpcoord %{_curX}% 0" to player
+                add 1000 to {_curX}
+                
+            send "&eScan terminé : %{_found}% emplacements d'îles physiques trouvés." to player
+            send "" to player
+            play sound "block.note_block.pling" to player
             stop
             
         if arg-1 is "tpcoord" or "gotocoord":
