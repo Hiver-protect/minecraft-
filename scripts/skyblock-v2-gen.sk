@@ -265,9 +265,10 @@ command /isadmin [<text>] [<text>] [<text>]:
         if arg-1 is not set:
             send "" to player
             send "&e&l✦ GESTION ADMIN SKYBLOCK ✦" to player
+            send "&7• &e/isadmin create <joueur> &7- Créer et téléporter une île neuve pour un joueur" to player
             send "&7• &e/isadmin tp <joueur> &7- Se téléporter sur l'île d'un joueur" to player
-            send "&7• &e/isadmin regen <joueur> &7- Régénérer l'île de départ d'un joueur" to player
-            send "&7• &e/isadmin setisland <joueur> &7- Définir l'île du joueur à votre position" to player
+            send "&7• &e/isadmin regen <joueur> &7- Régénérer l'île d'un joueur" to player
+            send "&7• &e/isadmin setisland <joueur> &7- Assigner l'île du joueur à votre position" to player
             send "&7• &e/isadmin fixhome <joueur> &7- Réinitialiser le spawn d'île du joueur" to player
             send "&7• &e/isadmin delete <joueur> &7- Supprimer l'enregistrement d'une île" to player
             send "" to player
@@ -277,6 +278,43 @@ command /isadmin [<text>] [<text>] [<text>]:
         if {_target} is not set:
             send "{@prefix}&cPrécisez le pseudo du joueur !" to player
             stop
+            
+        if arg-1 is "create" or "new" or "add":
+            set {_w} to world "skyblock"
+            if {_w} is not set:
+                set {_w} to "skyblock" parsed as world
+            if {_w} is not set:
+                set {_w} to world of player
+                
+            if {skyblock_next_x} is not set:
+                set {skyblock_next_x} to 1000
+            if {skyblock_next_z} is not set:
+                set {skyblock_next_z} to 0
+                
+            set {_x} to {skyblock_next_x}
+            set {_z} to {skyblock_next_z}
+            
+            set {island::%{_target}%::x} to {_x}
+            set {island::%{_target}%::y} to 150
+            set {island::%{_target}%::z} to {_z}
+            set {island::%{_target}%::world} to {_w}
+            
+            add {@distance} to {skyblock_next_x}
+            if {skyblock_next_x} > 100000:
+                set {skyblock_next_x} to 0
+                add {@distance} to {skyblock_next_z}
+                
+            set {_targetP} to {_target} parsed as player
+            if {_targetP} is online:
+                createIsland({_targetP}, {_x}, {_z})
+                set {_targetLoc} to location(({_x} + 0.5), 151, ({_z} + 2.5), {_w})
+                teleport {_targetP} to {_targetLoc}
+                send "{@prefix}&aUne île a été créée par un administrateur pour vous !" to {_targetP}
+            else:
+                createIsland(player, {_x}, {_z})
+                
+            send "{@prefix}&aNouvelle île Skyblock créée avec succès pour &e%{_target}% &7(X: %{_x}%, Z: %{_z}%) !" to player
+            play sound "entity.player.levelup" to player
             
         if arg-1 is "tp" or "teleport" or "goto":
             if {island::%{_target}%::x} is set:
